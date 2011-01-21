@@ -10,7 +10,7 @@ spawn     = require('child_process').spawn
 _         = require 'underscore'
 
 # the current brunch version number
-exports.VERSION = '0.0.2'
+exports.VERSION = '0.0.3'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -76,6 +76,9 @@ exports.dispatch = (file) ->
 
   if file.match(/coffee$/)
     execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir, exports.settings.input_dir])
+    execute_coffee.stderr.on('data', (data) ->
+      util.log(data)
+    )
     execute_coffee.on('exit', (code) ->
       if code == 0
         util.log('compiled .coffee to .js')

@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "with coffee",
-  "version":      "0.0.2",
+  "version":      "0.0.3",
   "keywords":     ["jst", "templates", "rest", "backbone"],
   "homepage":     "http://brunchwithcoffee.org/",
   "author":       "Thomas Schranz @__tosh",
