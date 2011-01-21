@@ -21,9 +21,9 @@
   },
   "dependencies": {
     "watch": "0.3.0",
-    "yaml":  "0.1.1"
+    "yaml":  "0.1.1",
     "coffee-script": ">= 1.0.0",
-    "underscore": ">= 1.1.4",
+    "underscore": ">= 1.1.4"
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
