@@ -1,27 +1,29 @@
 {
   "name":         "brunch",
   "description":  "with coffee",
-  "version":      "0.0.1",
+  "version":      "0.0.2",
   "keywords":     ["jst", "templates", "rest", "backbone"],
   "homepage":     "http://brunchwithcoffee.org/",
   "author":       "Thomas Schranz @__tosh",
   "licenses":     [{
     "type":       "MIT",
-    "url":        "http://github.com/deck/brunch/raw/master/LICENSE"
+    "url":        "http://github.com/brunchwithcoffee/brunch-cli/raw/master/LICENSE"
   }],
   "engines":      {
-    "node":       ">=0.3.2"
+    "node":       ">=0.2.6"
   },
   "directories" : {
     "lib" : "./lib"
   },
   "main" : "./lib/brunch",
   "bin":          {
-    "fusion": "./bin/brunch"
+    "brunch": "./bin/brunch"
   },
   "dependencies": {
     "watch": "0.3.0",
     "yaml":  "0.1.1"
+    "coffee-script": ">= 1.0.0",
+    "underscore": ">= 1.1.4",
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
