@@ -7,7 +7,7 @@
   watcher = require('watch');
   spawn = require('child_process').spawn;
   _ = require('underscore');
-  exports.VERSION = '0.0.1';
+  exports.VERSION = '0.0.3';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -16,7 +16,7 @@
   };
   exports.newProject = function() {
     var app_name, directory, directory_layout, main_content, _i, _len;
-    directory_layout = ["", "app", "config", "controllers", "lib", "models", "templates", "vendor", "views", "stylesheets"];
+    directory_layout = ["build", "src", "src/app", "src/config", "src/controllers", "src/lib", "src/models", "src/templates", "src/vendor", "src/views", "src/stylesheets"];
     for (_i = 0, _len = directory_layout.length; _i < _len; _i++) {
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
@@ -46,6 +46,9 @@
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir, exports.settings.input_dir]);
+      execute_coffee.stderr.on('data', function(data) {
+        return util.log(data);
+      });
       execute_coffee.on('exit', function(code) {
         if (code === 0) {
           return util.log('compiled .coffee to .js');

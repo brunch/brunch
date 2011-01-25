@@ -22,16 +22,17 @@ exports.run = (settings) ->
 # * create main.coffee bootstrapping file
 # TODO: create index.html and decide where to put it
 exports.newProject = ->
-  directory_layout = ["",
-                      "app",
-                      "config",
-                      "controllers",
-                      "lib",
-                      "models",
-                      "templates",
-                      "vendor",
-                      "views",
-                      "stylesheets"]
+  directory_layout = ["build",
+                      "src",
+                      "src/app",
+                      "src/config",
+                      "src/controllers",
+                      "src/lib",
+                      "src/models",
+                      "src/templates",
+                      "src/vendor",
+                      "src/views",
+                      "src/stylesheets"]
 
   for directory in directory_layout
     fs.mkdirSync("brunch/#{directory}", 0755)
