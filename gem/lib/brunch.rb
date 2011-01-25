@@ -1,0 +1,3 @@
+module Brunch
+  # Your code goes here...
+end
