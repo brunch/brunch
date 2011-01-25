@@ -10,7 +10,7 @@ spawn     = require('child_process').spawn
 _         = require 'underscore'
 
 # the current brunch version number
-exports.VERSION = '0.0.3'
+exports.VERSION = '0.0.4'
 
 exports.run = (settings) ->
   exports.settings = settings
