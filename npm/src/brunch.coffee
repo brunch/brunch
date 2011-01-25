@@ -53,7 +53,7 @@ exports.newProject = ->
                      window.location.hash = 'home'
                    Backbone.history.start()
                  """
-  fs.writeFileSync("brunch/app/main.coffee", main_content)
+  fs.writeFileSync("brunch/src/app/main.coffee", main_content)
 
   console.log("created brunch directory layout")
 

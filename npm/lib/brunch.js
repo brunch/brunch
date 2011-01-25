@@ -23,7 +23,7 @@
     }
     app_name = 'br';
     main_content = "window." + app_name + " = {}\n" + app_name + ".controllers = {}\n" + app_name + ".models = {}\n" + app_name + ".views = {}\n" + app_name + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
-    fs.writeFileSync("brunch/app/main.coffee", main_content);
+    fs.writeFileSync("brunch/src/app/main.coffee", main_content);
     return console.log("created brunch directory layout");
   };
   exports.watch = function() {
