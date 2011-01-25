@@ -7,7 +7,7 @@
   watcher = require('watch');
   spawn = require('child_process').spawn;
   _ = require('underscore');
-  exports.VERSION = '0.0.5';
+  exports.VERSION = '0.0.6';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
