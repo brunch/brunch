@@ -10,7 +10,7 @@ spawn     = require('child_process').spawn
 _         = require 'underscore'
 
 # the current brunch version number
-exports.VERSION = '0.0.4'
+exports.VERSION = '0.0.5'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -22,7 +22,8 @@ exports.run = (settings) ->
 # * create main.coffee bootstrapping file
 # TODO: create index.html and decide where to put it
 exports.newProject = ->
-  directory_layout = ["build",
+  directory_layout = ["",
+                      "build",
                       "src",
                       "src/app",
                       "src/config",
