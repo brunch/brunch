@@ -13,7 +13,7 @@ _         = require 'underscore'
 #console.log(abs_root)
 
 # the current brunch version number
-exports.VERSION = '0.0.7'
+exports.VERSION = '0.0.8'
 
 exports.run = (settings) ->
   exports.settings = settings
