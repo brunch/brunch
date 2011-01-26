@@ -34,6 +34,7 @@ exports.run = ->
     return newProject(projectName)
   exports.loadSettingsFromFile(opts.config) if opts.config
   exports.loadSettingsFromArguments(opts)
+  console.log(settings)
   brunch.run(settings)
 
 # Load settings from a settings file or at least set some

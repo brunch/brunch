@@ -23,7 +23,7 @@
     }
     main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n" + projectName + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
-    compass_content = "sass_dir = \"../stylesheets\"\n\nhttp_path = \"/static/\"\n\ncss_dir = \"../../build/stylesheets\"\nhttp_stylesheets_path = \"/static/css\"\n\nimages_dir = \"../../gae/static/img\"\nhttp_images_path = \"/static/img\"\n\njavascripts_dir = \"../../gae/static/js\"\nhttp_javascripts_path = \"/static/js\"";
+    compass_content = "sass_dir = \"../src/stylesheets\"\nhttp_path = \"/static/\"\n\ncss_dir = \"css\"\nimages_dir = \"img\"\njavascripts_dir = \"js\"";
     fs.writeFileSync("brunch/src/config/compass.rb", main_content);
     return console.log("created brunch directory layout");
   };
@@ -43,7 +43,7 @@
     });
   };
   exports.dispatch = function(file) {
-    var execute_coffee, execute_fusion;
+    var execute_coffee, execute_compass, execute_fusion;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir, exports.settings.input_dir]);
@@ -60,8 +60,14 @@
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
       execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir, exports.settings.input_dir]);
-      return execute_fusion.stdout.on('data', function(data) {
+      execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
+      });
+    }
+    if (file.match(/sass$/)) {
+      execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'build/web']);
+      return execute_compass.stdout.on('data', function(data) {
+        return console.log('compiling .sass to .css:\n' + data);
       });
     }
   };

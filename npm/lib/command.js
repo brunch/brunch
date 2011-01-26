@@ -24,6 +24,7 @@
       exports.loadSettingsFromFile(opts.config);
     }
     exports.loadSettingsFromArguments(opts);
+    console.log(settings);
     return brunch.run(settings);
   };
   exports.loadSettingsFromFile = function(settings_file) {
