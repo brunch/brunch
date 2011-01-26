@@ -9,8 +9,11 @@ watcher   = require 'watch'
 spawn     = require('child_process').spawn
 _         = require 'underscore'
 
+#abs_root = path.resolve(root)
+#console.log(abs_root)
+
 # the current brunch version number
-exports.VERSION = '0.0.6'
+exports.VERSION = '0.0.7'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -21,9 +24,11 @@ exports.run = (settings) ->
 # * create directory strucutre
 # * create main.coffee bootstrapping file
 # TODO: create index.html and decide where to put it
-exports.newProject = ->
+exports.newProject = (projectName) ->
+
   directory_layout = ["",
                       "build",
+                      "build/web",
                       "src",
                       "src/app",
                       "src/config",
@@ -39,13 +44,12 @@ exports.newProject = ->
     fs.mkdirSync("brunch/#{directory}", 0755)
 
   # create main.coffee app file
-  app_name = 'br'
   main_content = """
-                 window.#{app_name} = {}
-                 #{app_name}.controllers = {}
-                 #{app_name}.models = {}
-                 #{app_name}.views = {}
-                 #{app_name}.app = {}
+                 window.#{projectName} = {}
+                 #{projectName}.controllers = {}
+                 #{projectName}.models = {}
+                 #{projectName}.views = {}
+                 #{projectName}.app = {}
 
                  # app bootstrapping on document ready
                  $(document).ready ->

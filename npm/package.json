@@ -1,8 +1,8 @@
 {
   "name":         "brunch",
   "description":  "with coffee",
-  "version":      "0.0.6",
-  "keywords":     ["jst", "templates", "rest", "backbone"],
+  "version":      "0.0.7",
+  "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
   "homepage":     "http://brunchwithcoffee.org/",
   "author":       "Thomas Schranz @__tosh",
   "licenses":     [{

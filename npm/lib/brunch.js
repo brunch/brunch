@@ -7,16 +7,16 @@
   watcher = require('watch');
   spawn = require('child_process').spawn;
   _ = require('underscore');
-  exports.VERSION = '0.0.6';
+  exports.VERSION = '0.0.7';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
       return exports.watch();
     }
   };
-  exports.newProject = function() {
-    var app_name, directory, directory_layout, main_content, _i, _len;
-    directory_layout = ["", "build", "src", "src/app", "src/config", "src/controllers", "src/lib", "src/models", "src/templates", "src/vendor", "src/views", "src/stylesheets"];
+  exports.newProject = function(projectName) {
+    var compass_content, directory, directory_layout, main_content, _i, _len;
+    directory_layout = ["", "build", "build/web", "src", "src/app", "src/config", "src/controllers", "src/lib", "src/models", "src/templates", "src/vendor", "src/views", "src/stylesheets"];
     for (_i = 0, _len = directory_layout.length; _i < _len; _i++) {
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);

@@ -29,7 +29,9 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
-  return newProject() if opts.new
+  projectName = opts.arguments[1]
+  if opts.new
+    return newProject(projectName)
   exports.loadSettingsFromFile(opts.config) if opts.config
   exports.loadSettingsFromArguments(opts)
   brunch.run(settings)
@@ -69,5 +71,5 @@ version = ->
   process.stdout.write("brunch version #{brunch.VERSION}\n")
   process.exit 0
 
-newProject = ->
-  brunch.newProject()
+newProject = (projectName) ->
+  brunch.newProject(projectName)

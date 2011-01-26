@@ -8,7 +8,7 @@
   BANNER = 'Usage: brunch [options] [<directory>]';
   settings = {};
   exports.run = function() {
-    var opts;
+    var opts, projectName;
     opts = parseOptions();
     if (opts.help) {
       return usage();
@@ -16,8 +16,9 @@
     if (opts.version) {
       return version();
     }
+    projectName = opts.arguments[1];
     if (opts["new"]) {
-      return newProject();
+      return newProject(projectName);
     }
     if (opts.config) {
       exports.loadSettingsFromFile(opts.config);
@@ -73,7 +74,7 @@
     process.stdout.write("brunch version " + brunch.VERSION + "\n");
     return process.exit(0);
   };
-  newProject = function() {
-    return brunch.newProject();
+  newProject = function(projectName) {
+    return brunch.newProject(projectName);
   };
 }).call(this);
