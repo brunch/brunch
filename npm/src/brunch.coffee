@@ -92,7 +92,7 @@ exports.dispatch = (file) ->
   console.log('file: ' + file)
 
   if file.match(/coffee$/)
-    execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir, exports.settings.input_dir])
+    execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir + 'web', exports.settings.input_dir])
     execute_coffee.stderr.on('data', (data) ->
       util.log(data)
     )
@@ -104,13 +104,14 @@ exports.dispatch = (file) ->
     )
 
   if file.match(/html$/) or file.match(/jst$/)
-    execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir, exports.settings.input_dir])
+    console.log('fusion')
+    execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir + 'web/app/templates.js', exports.settings.input_dir + 'templates'])
     execute_fusion.stdout.on('data', (data) ->
       util.log(data)
     )
 
   if file.match(/sass$/)
-    execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'build/web'])
+    execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'src/stylesheets'])
     execute_compass.stdout.on('data', (data) ->
       console.log('compiling .sass to .css:\n' + data)
     )

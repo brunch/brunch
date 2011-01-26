@@ -46,7 +46,7 @@
     var execute_coffee, execute_compass, execute_fusion;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
-      execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir, exports.settings.input_dir]);
+      execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir + 'web', exports.settings.input_dir]);
       execute_coffee.stderr.on('data', function(data) {
         return util.log(data);
       });
@@ -59,13 +59,14 @@
       });
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
-      execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir, exports.settings.input_dir]);
+      console.log('fusion');
+      execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir + 'web/app/templates.js', exports.settings.input_dir + 'templates']);
       execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
       });
     }
     if (file.match(/sass$/)) {
-      execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'build/web']);
+      execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'src/stylesheets']);
       return execute_compass.stdout.on('data', function(data) {
         return console.log('compiling .sass to .css:\n' + data);
       });
