@@ -59,6 +59,23 @@ exports.newProject = (projectName) ->
                  """
   fs.writeFileSync("brunch/src/app/main.coffee", main_content)
 
+  # create compass.rb config file for compass
+  compass_content = """
+                    sass_dir = "../stylesheets"
+
+                    http_path = "/static/"
+
+                    css_dir = "../../build/stylesheets"
+                    http_stylesheets_path = "/static/css"
+
+                    images_dir = "../../gae/static/img"
+                    http_images_path = "/static/img"
+
+                    javascripts_dir = "../../gae/static/js"
+                    http_javascripts_path = "/static/js"
+                    """
+  fs.writeFileSync("brunch/src/config/compass.rb", main_content)
+
   console.log("created brunch directory layout")
 
 # file watcher

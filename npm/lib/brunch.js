@@ -21,9 +21,10 @@
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
     }
-    app_name = 'br';
-    main_content = "window." + app_name + " = {}\n" + app_name + ".controllers = {}\n" + app_name + ".models = {}\n" + app_name + ".views = {}\n" + app_name + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
+    main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n" + projectName + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
+    compass_content = "sass_dir = \"../stylesheets\"\n\nhttp_path = \"/static/\"\n\ncss_dir = \"../../build/stylesheets\"\nhttp_stylesheets_path = \"/static/css\"\n\nimages_dir = \"../../gae/static/img\"\nhttp_images_path = \"/static/img\"\n\njavascripts_dir = \"../../gae/static/js\"\nhttp_javascripts_path = \"/static/js\"";
+    fs.writeFileSync("brunch/src/config/compass.rb", main_content);
     return console.log("created brunch directory layout");
   };
   exports.watch = function() {
