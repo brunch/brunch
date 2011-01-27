@@ -1,13 +1,13 @@
 {
   "name":         "brunch",
-  "description":  "with coffee",
+  "description":  "~ with coffee",
   "version":      "0.1.1",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
   "homepage":     "http://brunchwithcoffee.org/",
-  "author":       "Thomas Schranz @__tosh",
+  "author":       "Thomas Schranz <tosh@deck.cc>, twitter: @__tosh",
   "licenses":     [{
     "type":       "MIT",
-    "url":        "http://github.com/brunchwithcoffee/brunch-cli/raw/master/LICENSE"
+    "url":        "http://github.com/brunchwithcoffee/brunch/raw/master/LICENSE"
   }],
   "engines":      {
     "node":       ">=0.2.6"
