@@ -5,15 +5,11 @@ root = __dirname + "/../"
 util      = require 'util'
 fs        = require 'fs'
 path      = require 'path'
-watcher   = require 'watch'
 spawn     = require('child_process').spawn
 _         = require 'underscore'
 
-#abs_root = path.resolve(root)
-#console.log(abs_root)
-
 # the current brunch version number
-exports.VERSION = '0.1.0'
+exports.VERSION = '0.1.1'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -87,16 +83,54 @@ exports.newProject = (projectName) ->
 
 # file watcher
 exports.watch = ->
-  watcher.createMonitor('brunch', {interval: 10}, (monitor) ->
-    monitor.on("changed", (file) ->
-      exports.dispatch(file)
+  ## copied source from watch_dir, because it did not work as package
+  fs.watchDir = (_opts, callback) ->
+  
+    opts = _.extend(
+      { path: '.', persistent: true, interval: 500, callOnAdd: false },
+      _opts
     )
-    monitor.on("created", (file) ->
-      exports.dispatch(file)
-    )
-    monitor.on("removed", (file) ->
-      exports.dispatch(file)
-    )
+  
+    watched = []
+  
+    addToWatch = (file) ->
+  
+      fs.realpath file, (err, filePath) ->
+  
+        callOnAdd = opts.callOnAdd
+  
+        unless _.include(watched, filePath)
+          isDir = false
+          watched.push filePath
+  
+          fs.watchFile filePath, { persistent: opts.persistent, interval: opts.interval }, (curr, prev) ->
+            return if curr.mtime.getTime() is prev.mtime.getTime()
+  
+            if isDir
+              addToWatch filePath
+            else
+              callback filePath
+  
+        else
+          callOnAdd = false
+  
+  
+        fs.stat filePath, (err, stats) ->
+          if stats.isDirectory()
+            isDir = true
+  
+            fs.readdir filePath, (err, files) ->
+              process.nextTick () ->
+                addToWatch filePath + '/' + file for file in files
+          else
+            callback filePath if callOnAdd
+  
+  
+    addToWatch opts.path
+  
+  # let's watch
+  fs.watchDir(path: 'brunch', callOnAdd: true, (file) ->
+    exports.dispatch(file)
   )
 
 # dispatcher for file watching which determines which action needs to be done

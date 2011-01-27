@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "with coffee",
-  "version":      "0.1.0",
+  "version":      "0.1.1",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
   "homepage":     "http://brunchwithcoffee.org/",
   "author":       "Thomas Schranz @__tosh",
@@ -20,7 +20,6 @@
     "brunch": "./bin/brunch"
   },
   "dependencies": {
-    "watch": "0.3.0",
     "yaml":  "0.1.1",
     "coffee-script": ">= 1.0.0",
     "underscore": ">= 1.1.4",
@@ -33,9 +32,9 @@
   "engines": ["node"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/deck/brunch.git"
+    "url": "https://github.com/brunchwithcoffee/brunch.git"
   },
   "bugs": {
-    "url": "http://github.com/deck/brunch/issues"
+    "url": "http://github.com/brunchwithcoffee/brunch/issues"
   }
 }

@@ -1,13 +1,12 @@
 (function() {
-  var fs, path, root, spawn, util, watcher, _;
+  var fs, path, root, spawn, util, _;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
   path = require('path');
-  watcher = require('watch');
   spawn = require('child_process').spawn;
   _ = require('underscore');
-  exports.VERSION = '0.1.0';
+  exports.VERSION = '0.1.1';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -29,18 +28,67 @@
     return console.log("added compass setup");
   };
   exports.watch = function() {
-    return watcher.createMonitor('brunch', {
-      interval: 10
-    }, function(monitor) {
-      monitor.on("changed", function(file) {
-        return exports.dispatch(file);
-      });
-      monitor.on("created", function(file) {
-        return exports.dispatch(file);
-      });
-      return monitor.on("removed", function(file) {
-        return exports.dispatch(file);
-      });
+    fs.watchDir = function(_opts, callback) {
+      var addToWatch, opts, watched;
+      opts = _.extend({
+        path: '.',
+        persistent: true,
+        interval: 500,
+        callOnAdd: false
+      }, _opts);
+      watched = [];
+      addToWatch = function(file) {
+        return fs.realpath(file, function(err, filePath) {
+          var callOnAdd, isDir;
+          callOnAdd = opts.callOnAdd;
+          if (!_.include(watched, filePath)) {
+            isDir = false;
+            watched.push(filePath);
+            fs.watchFile(filePath, {
+              persistent: opts.persistent,
+              interval: opts.interval
+            }, function(curr, prev) {
+              if (curr.mtime.getTime() === prev.mtime.getTime()) {
+                return;
+              }
+              if (isDir) {
+                return addToWatch(filePath);
+              } else {
+                return callback(filePath);
+              }
+            });
+          } else {
+            callOnAdd = false;
+          }
+          return fs.stat(filePath, function(err, stats) {
+            if (stats.isDirectory()) {
+              isDir = true;
+              return fs.readdir(filePath, function(err, files) {
+                return process.nextTick(function() {
+                  var file, _i, _len, _results;
+                  _results = [];
+                  for (_i = 0, _len = files.length; _i < _len; _i++) {
+                    file = files[_i];
+                    _results.push(addToWatch(filePath + '/' + file));
+                  }
+                  return _results;
+                });
+              });
+            } else {
+              if (callOnAdd) {
+                return callback(filePath);
+              }
+            }
+          });
+        });
+      };
+      return addToWatch(opts.path);
+    };
+    return fs.watchDir({
+      path: 'brunch',
+      callOnAdd: true
+    }, function(file) {
+      return exports.dispatch(file);
     });
   };
   exports.dispatch = function(file) {
