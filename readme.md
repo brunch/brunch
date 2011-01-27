@@ -1,6 +1,12 @@
 early alpha, use with caution
 
-## usage
+## How to Install
+
+you can get brunch using the node package manager
+
+    npm install brunch
+
+## How to Use
 
 create a new project using 'proj' as app namespace
 
