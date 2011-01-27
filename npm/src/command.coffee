@@ -12,7 +12,7 @@ SWITCHES = [
   ['-i', '--input [DIR]',                 'set input path of project']
   ['-o', '--output [DIR]',                'set output path of project']
   ['-c', '--config [FILE]',               'set path of settings file']
-  ['-w', '--watch',                       'watch files (currently you have to restart if files are added or renamed)']
+  ['watch', '--watch',                    'watch files (currently you have to restart if files are added or renamed)']
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -34,7 +34,6 @@ exports.run = ->
     return newProject(projectName)
   exports.loadSettingsFromFile(opts.config) if opts.config
   exports.loadSettingsFromArguments(opts)
-  console.log(settings)
   brunch.run(settings)
 
 # Load settings from a settings file or at least set some

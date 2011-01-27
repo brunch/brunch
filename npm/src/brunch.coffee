@@ -13,7 +13,7 @@ _         = require 'underscore'
 #console.log(abs_root)
 
 # the current brunch version number
-exports.VERSION = '0.0.9'
+exports.VERSION = '0.1.0'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -27,11 +27,12 @@ exports.run = (settings) ->
 exports.newProject = (projectName) ->
 
   directory_layout = ["",
+                      "config",
+                      "config/compass",
                       "build",
                       "build/web",
                       "src",
                       "src/app",
-                      "src/config",
                       "src/controllers",
                       "src/lib",
                       "src/models",
@@ -59,22 +60,34 @@ exports.newProject = (projectName) ->
                  """
   fs.writeFileSync("brunch/src/app/main.coffee", main_content)
 
-  # create compass.rb config file for compass
-  compass_content = """
-                    sass_dir = "../src/stylesheets"
-                    http_path = "/static/"
+  ## create compass.rb config file for compass
+  #compass_content = """
+  #                  sass_dir = "../src/stylesheets"
+  #                  http_path = "/static/"
 
-                    css_dir = "css"
-                    images_dir = "img"
-                    javascripts_dir = "js"
-                    """
-  fs.writeFileSync("brunch/src/config/compass.rb", main_content)
-
+  #                  css_dir = "css"
+  #                  images_dir = "img"
+  #                  javascripts_dir = "js"
+  #                  """
+  #fs.writeFileSync("brunch/src/config/compass.rb", main_content)
+ 
   console.log("created brunch directory layout")
+
+  compassParams = ['create',
+                    'brunch/config/compass',
+                    '--syntax=sass', # sexy indention!
+                    '--using=blueprint/semantic',
+                    '--sass-dir=../../src/stylesheets',
+                    '--css-dir=../../build/stylesheets',
+                    '--images-dir=../../build/images',
+                    '--javascripts-dir=../../build/javascript']
+
+  execute_compass = spawn('compass', compassParams)
+  console.log("added compass setup")
 
 # file watcher
 exports.watch = ->
-  watcher.createMonitor(exports.settings.input_dir, {interval: 10}, (monitor) ->
+  watcher.createMonitor('brunch', {interval: 10}, (monitor) ->
     monitor.on("changed", (file) ->
       exports.dispatch(file)
     )
@@ -92,7 +105,7 @@ exports.dispatch = (file) ->
   console.log('file: ' + file)
 
   if file.match(/coffee$/)
-    execute_coffee = spawn('coffee', ['--lint', '--output', exports.settings.output_dir + 'web', exports.settings.input_dir])
+    execute_coffee = spawn('coffee', ['--lint', '--output', 'brunch/build/web', 'brunch/src/'])
     execute_coffee.stderr.on('data', (data) ->
       util.log(data)
     )
@@ -105,13 +118,13 @@ exports.dispatch = (file) ->
 
   if file.match(/html$/) or file.match(/jst$/)
     console.log('fusion')
-    execute_fusion = spawn('fusion', ['--output', exports.settings.output_dir + 'web/app/templates.js', exports.settings.input_dir + 'templates'])
+    execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/app/templates.js', 'brunch/src/templates'])
     execute_fusion.stdout.on('data', (data) ->
       util.log(data)
     )
 
   if file.match(/sass$/)
-    execute_compass = spawn('compass', ['--config', 'brunch/config/compass.rb', 'src/stylesheets'])
+    execute_compass = spawn('compass', ['compile', '--config', 'brunch/config/compass/config.rb', 'brunch/config/compass/'])
     execute_compass.stdout.on('data', (data) ->
       console.log('compiling .sass to .css:\n' + data)
     )

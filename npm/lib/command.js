@@ -4,7 +4,7 @@
   yaml = require('yaml');
   brunch = require('./brunch');
   optparse = require('./optparse');
-  SWITCHES = [['new', '--new', 'create new brunch project'], ['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-i', '--input [DIR]', 'set input path of project'], ['-o', '--output [DIR]', 'set output path of project'], ['-c', '--config [FILE]', 'set path of settings file'], ['-w', '--watch', 'watch files (currently you have to restart if files are added or renamed)']];
+  SWITCHES = [['new', '--new', 'create new brunch project'], ['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-i', '--input [DIR]', 'set input path of project'], ['-o', '--output [DIR]', 'set output path of project'], ['-c', '--config [FILE]', 'set path of settings file'], ['watch', '--watch', 'watch files (currently you have to restart if files are added or renamed)']];
   BANNER = 'Usage: brunch [options] [<directory>]';
   settings = {};
   exports.run = function() {
@@ -24,7 +24,6 @@
       exports.loadSettingsFromFile(opts.config);
     }
     exports.loadSettingsFromArguments(opts);
-    console.log(settings);
     return brunch.run(settings);
   };
   exports.loadSettingsFromFile = function(settings_file) {
