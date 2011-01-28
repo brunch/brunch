@@ -7,9 +7,10 @@ fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
 _         = require 'underscore'
+glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.1.1'
+exports.VERSION = '0.1.2'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -29,12 +30,13 @@ exports.newProject = (projectName) ->
                       "build/web",
                       "src",
                       "src/app",
-                      "src/controllers",
+                      "src/app/controllers",
+                      "src/app/models",
+                      "src/app/templates",
+                      "src/app/helpers",
+                      "src/app/views",
                       "src/lib",
-                      "src/models",
-                      "src/templates",
                       "src/vendor",
-                      "src/views",
                       "src/stylesheets"]
 
   for directory in directory_layout
@@ -139,7 +141,26 @@ exports.dispatch = (file) ->
   console.log('file: ' + file)
 
   if file.match(/coffee$/)
-    execute_coffee = spawn('coffee', ['--lint', '--output', 'brunch/build/web', 'brunch/src/'])
+    app_sources = ['brunch/src/app/helpers/*.coffee',
+                   'brunch/src/app/models/*.coffee',
+                   'brunch/src/app/collections/*.coffee',
+                   'brunch/src/app/controllers/*.coffee',
+                   'brunch/src/app/views/*.coffee']
+    source_paths = []
+    for app_source in app_sources
+      globbedPaths = glob.globSync(app_source, 0)
+      source_paths = source_paths.concat(globbedPaths)
+
+    source_paths.push('brunch/src/app/main.coffee')
+  
+    coffeeParams = ['--output',
+                    'brunch/build/web/',
+                    '--join',
+                    '--lint',
+                    '--compile']
+    coffeeParams = coffeeParams.concat(source_paths)
+  
+    execute_coffee = spawn('coffee', coffeeParams)
     execute_coffee.stderr.on('data', (data) ->
       util.log(data)
     )
@@ -160,5 +181,5 @@ exports.dispatch = (file) ->
   if file.match(/sass$/)
     execute_compass = spawn('compass', ['compile', '--config', 'brunch/config/compass/config.rb', 'brunch/config/compass/'])
     execute_compass.stdout.on('data', (data) ->
-      console.log('compiling .sass to .css:\n' + data)
+      util.log('compiling .sass to .css:\n' + data)
     )

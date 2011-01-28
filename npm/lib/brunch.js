@@ -1,12 +1,13 @@
 (function() {
-  var fs, path, root, spawn, util, _;
+  var fs, glob, path, root, spawn, util, _;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
   path = require('path');
   spawn = require('child_process').spawn;
   _ = require('underscore');
-  exports.VERSION = '0.1.1';
+  glob = require('glob');
+  exports.VERSION = '0.1.2';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -15,7 +16,7 @@
   };
   exports.newProject = function(projectName) {
     var compassParams, directory, directory_layout, execute_compass, main_content, _i, _len;
-    directory_layout = ["", "config", "config/compass", "build", "build/web", "src", "src/app", "src/controllers", "src/lib", "src/models", "src/templates", "src/vendor", "src/views", "src/stylesheets"];
+    directory_layout = ["", "config", "config/compass", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/models", "src/app/templates", "src/app/helpers", "src/app/views", "src/lib", "src/vendor", "src/stylesheets"];
     for (_i = 0, _len = directory_layout.length; _i < _len; _i++) {
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
@@ -92,10 +93,20 @@
     });
   };
   exports.dispatch = function(file) {
-    var execute_coffee, execute_compass, execute_fusion;
+    var app_source, app_sources, coffeeParams, execute_coffee, execute_compass, execute_fusion, globbedPaths, source_paths, _i, _len;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
-      execute_coffee = spawn('coffee', ['--lint', '--output', 'brunch/build/web', 'brunch/src/']);
+      app_sources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
+      source_paths = [];
+      for (_i = 0, _len = app_sources.length; _i < _len; _i++) {
+        app_source = app_sources[_i];
+        globbedPaths = glob.globSync(app_source, 0);
+        source_paths = source_paths.concat(globbedPaths);
+      }
+      source_paths.push('brunch/src/app/main.coffee');
+      coffeeParams = ['--output', 'brunch/build/web/', '--join', '--lint', '--compile'];
+      coffeeParams = coffeeParams.concat(source_paths);
+      execute_coffee = spawn('coffee', coffeeParams);
       execute_coffee.stderr.on('data', function(data) {
         return util.log(data);
       });
@@ -117,7 +128,7 @@
     if (file.match(/sass$/)) {
       execute_compass = spawn('compass', ['compile', '--config', 'brunch/config/compass/config.rb', 'brunch/config/compass/']);
       return execute_compass.stdout.on('data', function(data) {
-        return console.log('compiling .sass to .css:\n' + data);
+        return util.log('compiling .sass to .css:\n' + data);
       });
     }
   };
