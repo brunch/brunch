@@ -10,7 +10,7 @@ _         = require 'underscore'
 glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.1.3'
+exports.VERSION = '0.1.4'
 
 exports.run = (settings) ->
   exports.settings = settings

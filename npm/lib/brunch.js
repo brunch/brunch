@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.1.3';
+  exports.VERSION = '0.1.4';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
