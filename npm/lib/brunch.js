@@ -24,7 +24,7 @@
     main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n" + projectName + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
     console.log("created brunch directory layout");
-    compassParams = ['create', 'brunch/config/compass', '--syntax=sass', '--using=blueprint/semantic', '--sass-dir=../../src/stylesheets', '--css-dir=../../build/stylesheets', '--images-dir=../../build/images', '--javascripts-dir=../../build/javascript'];
+    compassParams = ['create', 'brunch/config/compass', '--syntax=sass', '--using=blueprint/semantic', '--sass-dir=../../src/stylesheets', '--css-dir=../../build/web/stylesheets', '--images-dir=../../build/web/images', '--javascripts-dir=../../build/web/javascript'];
     execute_compass = spawn('compass', compassParams);
     return console.log("added compass setup");
   };
