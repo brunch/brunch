@@ -104,7 +104,7 @@
         source_paths = source_paths.concat(globbedPaths);
       }
       source_paths.push('brunch/src/app/main.coffee');
-      coffeeParams = ['--output', 'brunch/build/web/', '--join', '--lint', '--compile'];
+      coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
       coffeeParams = coffeeParams.concat(source_paths);
       execute_coffee = spawn('coffee', coffeeParams);
       execute_coffee.stderr.on('data', function(data) {
@@ -125,7 +125,7 @@
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
       console.log('fusion');
-      execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/app/templates.js', 'brunch/src/templates']);
+      execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/templates']);
       execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
       });
