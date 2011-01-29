@@ -182,7 +182,7 @@ exports.dispatch = (file) ->
   # handle template changes  
   if file.match(/html$/) or file.match(/jst$/)
     console.log('fusion')
-    execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/templates'])
+    execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
     execute_fusion.stdout.on('data', (data) ->
       util.log(data)
     )

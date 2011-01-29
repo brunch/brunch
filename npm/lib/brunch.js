@@ -125,7 +125,7 @@
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
       console.log('fusion');
-      execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/templates']);
+      execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates']);
       execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
       });
