@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.1.2';
+  exports.VERSION = '0.1.3';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -93,7 +93,7 @@
     });
   };
   exports.dispatch = function(file) {
-    var app_source, app_sources, coffeeParams, execute_coffee, execute_compass, execute_fusion, globbedPaths, source_paths, _i, _len;
+    var app_source, app_sources, coffeeParams, executeDocco, execute_coffee, execute_compass, execute_fusion, globbedPaths, source_paths, _i, _len;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       app_sources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
@@ -116,6 +116,11 @@
         } else {
           return util.log('there was a problem during .coffee to .js compilation. see above');
         }
+      });
+      globbedPaths = glob.globSync('brunch/src/app/*.coffee', 0);
+      executeDocco = spawn('docco', globbedPaths);
+      executeDocco.stderr.on('data', function(data) {
+        return util.log(data);
       });
     }
     if (file.match(/html$/) || file.match(/jst$/)) {

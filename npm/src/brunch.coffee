@@ -10,7 +10,7 @@ _         = require 'underscore'
 glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.1.2'
+exports.VERSION = '0.1.3'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -140,6 +140,7 @@ exports.watch = ->
 exports.dispatch = (file) ->
   console.log('file: ' + file)
 
+  # handle coffee changes
   if file.match(/coffee$/)
     app_sources = ['brunch/src/app/helpers/*.coffee',
                    'brunch/src/app/models/*.coffee',
@@ -171,6 +172,14 @@ exports.dispatch = (file) ->
         util.log('there was a problem during .coffee to .js compilation. see above')
     )
 
+    globbedPaths = glob.globSync('brunch/src/app/*.coffee', 0)
+    executeDocco = spawn('docco', globbedPaths)
+    executeDocco.stderr.on('data', (data) ->
+      util.log(data)
+    )
+
+
+  # handle template changes  
   if file.match(/html$/) or file.match(/jst$/)
     console.log('fusion')
     execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/app/templates.js', 'brunch/src/templates'])
