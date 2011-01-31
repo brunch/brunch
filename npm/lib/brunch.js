@@ -129,7 +129,7 @@
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
       console.log('fusion');
-      execute_fusion = spawn('fusion', ['--config', 'brunch/config/fusion/settings.yaml', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates']);
+      execute_fusion = spawn('fusion', ['--hook', 'brunch/config/fusion/hook.js', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates']);
       execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
       });
