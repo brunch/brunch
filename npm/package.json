@@ -24,7 +24,8 @@
     "coffee-script": ">= 1.0.0",
     "underscore": ">= 1.1.4",
     "fusion": ">= 0.0.3",
-    "glob": ">= 1.1.0"
+    "glob": ">= 1.1.0",
+    "eco": ">= 1.0.1"
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
