@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.1.6';
+  exports.VERSION = '0.1.7';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -23,7 +23,7 @@
     }
     main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
-    fusion_config = "hook: \"brunch/config/fusion/hooks.js\"";
+    fusion_config = "hook: \"brunch/config/fusion/hook.js\"";
     fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config);
     fusion_hook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n   return eco.compile(content);\n};";
     fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook);

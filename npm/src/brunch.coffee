@@ -10,7 +10,7 @@ _         = require 'underscore'
 glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.1.6'
+exports.VERSION = '0.1.7'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -60,7 +60,7 @@ exports.newProject = (projectName) ->
 
   # create fusion config and eco hook files
   fusion_config = """
-                  hook: "brunch/config/fusion/hooks.js"
+                  hook: "brunch/config/fusion/hook.js"
                   """
   fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config)
 
