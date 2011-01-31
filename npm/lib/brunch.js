@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.1.5';
+  exports.VERSION = '0.1.6';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -15,14 +15,18 @@
     }
   };
   exports.newProject = function(projectName) {
-    var compassParams, directory, directory_layout, execute_compass, main_content, _i, _len;
-    directory_layout = ["", "config", "config/compass", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/models", "src/app/templates", "src/app/helpers", "src/app/views", "src/lib", "src/vendor", "src/stylesheets"];
+    var compassParams, directory, directory_layout, execute_compass, fusion_config, fusion_hook, main_content, _i, _len;
+    directory_layout = ["", "config", "config/compass", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/models", "src/app/templates", "src/app/helpers", "src/app/views", "src/lib", "src/vendor", "src/stylesheets"];
     for (_i = 0, _len = directory_layout.length; _i < _len; _i++) {
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
     }
-    main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n" + projectName + ".app = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
+    main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
+    fusion_config = "hook: \"brunch/config/fusion/hooks.js\"";
+    fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config);
+    fusion_hook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n   return eco.compile(content);\n};";
+    fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook);
     console.log("created brunch directory layout");
     compassParams = ['create', 'brunch/config/compass', '--syntax=sass', '--using=blueprint/semantic', '--sass-dir=../../src/stylesheets', '--css-dir=../../build/web/css', '--images-dir=../../build/web/img', '--javascripts-dir=../../build/web/js'];
     execute_compass = spawn('compass', compassParams);
@@ -125,7 +129,7 @@
     }
     if (file.match(/html$/) || file.match(/jst$/)) {
       console.log('fusion');
-      execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates']);
+      execute_fusion = spawn('fusion', ['--settings', 'brunch/config/fusion/settings.yaml', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates']);
       execute_fusion.stdout.on('data', function(data) {
         return util.log(data);
       });

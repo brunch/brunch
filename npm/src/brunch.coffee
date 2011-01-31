@@ -10,7 +10,7 @@ _         = require 'underscore'
 glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.1.5'
+exports.VERSION = '0.1.6'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -26,6 +26,7 @@ exports.newProject = (projectName) ->
   directory_layout = ["",
                       "config",
                       "config/compass",
+                      "config/fusion",
                       "build",
                       "build/web",
                       "src",
@@ -48,7 +49,6 @@ exports.newProject = (projectName) ->
                  #{projectName}.controllers = {}
                  #{projectName}.models = {}
                  #{projectName}.views = {}
-                 #{projectName}.app = {}
 
                  # app bootstrapping on document ready
                  $(document).ready ->
@@ -57,6 +57,21 @@ exports.newProject = (projectName) ->
                    Backbone.history.start()
                  """
   fs.writeFileSync("brunch/src/app/main.coffee", main_content)
+
+  # create fusion config and eco hook files
+  fusion_config = """
+                  hook: "brunch/config/fusion/hooks.js"
+                  """
+  fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config)
+
+  # create fusion config and eco hook files
+  fusion_hook = """
+                var eco = require('eco');
+                exports.compileTemplate = function(content) {
+                   return eco.compile(content);
+                };
+                """
+  fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook)
 
   ## create compass.rb config file for compass
   #compass_content = """
@@ -182,7 +197,7 @@ exports.dispatch = (file) ->
   # handle template changes  
   if file.match(/html$/) or file.match(/jst$/)
     console.log('fusion')
-    execute_fusion = spawn('fusion', ['--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
+    execute_fusion = spawn('fusion', ['--settings', 'brunch/config/fusion/settings.yaml', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
     execute_fusion.stdout.on('data', (data) ->
       util.log(data)
     )
