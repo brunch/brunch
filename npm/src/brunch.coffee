@@ -10,7 +10,7 @@ _         = require 'underscore'
 glob      = require 'glob'
 
 # the current brunch version number
-exports.VERSION = '0.2.2'
+exports.VERSION = '0.2.3'
 
 exports.run = (settings) ->
   exports.settings = settings
@@ -180,7 +180,7 @@ exports.dispatch = (file) ->
 
   if file.match(/style$/)
     console.log('style')
-    execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css'])
+    execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css'])
     execute_stylus.stdout.on('data', (data) ->
       util.log('compiling .style to .css:\n' + data)
     )
