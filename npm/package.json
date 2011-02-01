@@ -10,7 +10,7 @@
     "url":        "http://github.com/brunchwithcoffee/brunch/raw/master/LICENSE"
   }],
   "engines":      {
-    "node":       ">=0.2.6"
+    "node":       ">=0.2.5"
   },
   "directories" : {
     "lib" : "./lib"

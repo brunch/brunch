@@ -25,20 +25,19 @@ exports.newProject = (projectName) ->
 
   directory_layout = ["",
                       "config",
-                      "config/compass",
                       "config/fusion",
                       "build",
                       "build/web",
                       "src",
                       "src/app",
                       "src/app/controllers",
-                      "src/app/models",
-                      "src/app/templates",
                       "src/app/helpers",
+                      "src/app/models",
+                      "src/app/styles",
+                      "src/app/templates",
                       "src/app/views",
                       "src/lib",
-                      "src/vendor",
-                      "src/stylesheets"]
+                      "src/vendor"]
 
   for directory in directory_layout
     fs.mkdirSync("brunch/#{directory}", 0755)
@@ -73,30 +72,7 @@ exports.newProject = (projectName) ->
                 """
   fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook)
 
-  ## create compass.rb config file for compass
-  #compass_content = """
-  #                  sass_dir = "../src/stylesheets"
-  #                  http_path = "/static/"
-
-  #                  css_dir = "css"
-  #                  images_dir = "img"
-  #                  javascripts_dir = "js"
-  #                  """
-  #fs.writeFileSync("brunch/src/config/compass.rb", main_content)
- 
   console.log("created brunch directory layout")
-
-  compassParams = ['create',
-                    'brunch/config/compass',
-                    '--syntax=sass', # sexy indention!
-                    '--using=blueprint/semantic',
-                    '--sass-dir=../../src/stylesheets',
-                    '--css-dir=../../build/web/css',
-                    '--images-dir=../../build/web/img',
-                    '--javascripts-dir=../../build/web/js']
-
-  execute_compass = spawn('compass', compassParams)
-  console.log("added compass setup")
 
 # file watcher
 exports.watch = ->
@@ -202,8 +178,8 @@ exports.dispatch = (file) ->
       util.log(data)
     )
 
-  if file.match(/sass$/)
-    execute_compass = spawn('compass', ['compile', '--config', 'brunch/config/compass/config.rb', 'brunch/config/compass/'])
+  if file.match(/style$/)
+    execute_compass = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css'])
     execute_compass.stdout.on('data', (data) ->
       util.log('compiling .sass to .css:\n' + data)
     )
