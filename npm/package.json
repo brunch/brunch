@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "~ with coffee",
-  "version":      "0.2.1",
+  "version":      "0.2.2",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
   "homepage":     "http://brunchwithcoffee.org/",
   "author":       "Thomas Schranz <tosh@deck.cc>, twitter: @__tosh",
