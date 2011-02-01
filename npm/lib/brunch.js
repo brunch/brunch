@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.2.1';
+  exports.VERSION = '0.2.2';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -132,9 +132,10 @@
       });
     }
     if (file.match(/style$/)) {
+      console.log('style');
       execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css']);
       return execute_stylus.stdout.on('data', function(data) {
-        return util.log('compiling .sass to .css:\n' + data);
+        return util.log('compiling .style to .css:\n' + data);
       });
     }
   };
