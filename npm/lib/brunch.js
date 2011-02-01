@@ -15,7 +15,7 @@
     }
   };
   exports.newProject = function(projectName) {
-    var directory, directoryLayout, fusionConfig, fusionHook, mainContent, _i, _len;
+    var directory, directoryLayout, fusionConfig, fusionHook, indexHtml, mainContent, _i, _len;
     directoryLayout = ["", "config", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
     for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
       directory = directoryLayout[_i];
@@ -27,6 +27,8 @@
     fs.writeFileSync("brunch/config/fusion/settings.yaml", fusionConfig);
     fusionHook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n  return eco.compile(content);\n};";
     fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook);
+    indexHtml = "<!doctype html>\n<html lang=\"en\">\n<head>\n</head>\n<body>\n  <h1>Hello World!</h1>\n</body>";
+    fs.writeFileSync("brunch/build/index.html", indexHtml);
     return console.log("created brunch directory layout");
   };
   exports.watch = function() {

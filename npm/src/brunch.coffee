@@ -71,6 +71,18 @@ exports.newProject = (projectName) ->
                 """
   fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook)
 
+  # create index.html including introduction
+  indexHtml = """
+              <!doctype html>
+              <html lang="en">
+              <head>
+              </head>
+              <body>
+                <h1>Hello World!</h1>
+              </body>
+              """
+  fs.writeFileSync("brunch/build/index.html", indexHtml)
+
   console.log("created brunch directory layout")
 
 # file watcher
