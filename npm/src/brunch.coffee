@@ -51,8 +51,7 @@ exports.newProject = (projectName) ->
 
                  # app bootstrapping on document ready
                  $(document).ready ->
-                   if window.location.hash == ''
-                     window.location.hash = 'home'
+                   Backbone.history.saveLocation("!/home") if '' == Backbone.history.getFragment()
                    Backbone.history.start()
                  """
   fs.writeFileSync("brunch/src/app/main.coffee", main_content)

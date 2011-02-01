@@ -21,7 +21,7 @@
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
     }
-    main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  if window.location.hash == ''\n    window.location.hash = 'home'\n  Backbone.history.start()";
+    main_content = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\n\n# app bootstrapping on document ready\n$(document).ready ->\n  Backbone.history.saveLocation(\"!/home\") if '' == Backbone.history.getFragment()\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
     fusion_config = "hook: \"brunch/config/fusion/hook.js\"";
     fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config);
