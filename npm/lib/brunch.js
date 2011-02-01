@@ -25,7 +25,7 @@
     fs.writeFileSync("brunch/src/app/main.coffee", main_content);
     fusion_config = "hook: \"brunch/config/fusion/hook.js\"";
     fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config);
-    fusion_hook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n   return eco.compile(content);\n};";
+    fusion_hook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n  return eco.compile(content);\n};";
     fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook);
     return console.log("created brunch directory layout");
   };

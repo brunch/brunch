@@ -67,7 +67,7 @@ exports.newProject = (projectName) ->
   fusion_hook = """
                 var eco = require('eco');
                 exports.compileTemplate = function(content) {
-                   return eco.compile(content);
+                  return eco.compile(content);
                 };
                 """
   fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook)
@@ -134,10 +134,10 @@ exports.dispatch = (file) ->
   # handle coffee changes
   if file.match(/coffee$/)
     app_sources = ['brunch/src/app/helpers/*.coffee',
-                   'brunch/src/app/models/*.coffee',
-                   'brunch/src/app/collections/*.coffee',
-                   'brunch/src/app/controllers/*.coffee',
-                   'brunch/src/app/views/*.coffee']
+      'brunch/src/app/models/*.coffee',
+      'brunch/src/app/collections/*.coffee',
+      'brunch/src/app/controllers/*.coffee',
+      'brunch/src/app/views/*.coffee']
     source_paths = []
     for app_source in app_sources
       globbedPaths = glob.globSync(app_source, 0)
@@ -146,10 +146,10 @@ exports.dispatch = (file) ->
     source_paths.push('brunch/src/app/main.coffee')
 
     coffeeParams = ['--output',
-                    'brunch/build/web/js',
-                    '--join',
-                    '--lint',
-                    '--compile']
+      'brunch/build/web/js',
+      '--join',
+      '--lint',
+      '--compile']
     coffeeParams = coffeeParams.concat(source_paths)
 
     execute_coffee = spawn('coffee', coffeeParams)
