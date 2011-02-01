@@ -179,7 +179,7 @@ exports.dispatch = (file) ->
     )
 
   if file.match(/style$/)
-    execute_compass = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css'])
-    execute_compass.stdout.on('data', (data) ->
+    execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css'])
+    execute_stylus.stdout.on('data', (data) ->
       util.log('compiling .sass to .css:\n' + data)
     )
