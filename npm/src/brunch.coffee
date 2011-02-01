@@ -23,7 +23,7 @@ exports.run = (settings) ->
 # TODO: create index.html and decide where to put it
 exports.newProject = (projectName) ->
 
-  directory_layout = ["",
+  directoryLayout = ["",
                       "config",
                       "config/fusion",
                       "build",
@@ -39,11 +39,11 @@ exports.newProject = (projectName) ->
                       "src/lib",
                       "src/vendor"]
 
-  for directory in directory_layout
+  for directory in directoryLayout
     fs.mkdirSync("brunch/#{directory}", 0755)
 
   # create main.coffee app file
-  main_content = """
+  mainContent = """
                  window.#{projectName} = {}
                  #{projectName}.controllers = {}
                  #{projectName}.models = {}
@@ -54,22 +54,22 @@ exports.newProject = (projectName) ->
                    Backbone.history.saveLocation("!/home") if '' == Backbone.history.getFragment()
                    Backbone.history.start()
                  """
-  fs.writeFileSync("brunch/src/app/main.coffee", main_content)
+  fs.writeFileSync("brunch/src/app/main.coffee", mainContent)
 
   # create fusion config and eco hook files
-  fusion_config = """
+  fusionConfig = """
                   hook: "brunch/config/fusion/hook.js"
                   """
-  fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config)
+  fs.writeFileSync("brunch/config/fusion/settings.yaml", fusionConfig)
 
   # create fusion config and eco hook files
-  fusion_hook = """
+  fusionHook = """
                 var eco = require('eco');
                 exports.compileTemplate = function(content) {
                   return eco.compile(content);
                 };
                 """
-  fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook)
+  fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook)
 
   console.log("created brunch directory layout")
 
@@ -132,30 +132,30 @@ exports.dispatch = (file) ->
 
   # handle coffee changes
   if file.match(/coffee$/)
-    app_sources = ['brunch/src/app/helpers/*.coffee',
+    appSources = ['brunch/src/app/helpers/*.coffee',
       'brunch/src/app/models/*.coffee',
       'brunch/src/app/collections/*.coffee',
       'brunch/src/app/controllers/*.coffee',
       'brunch/src/app/views/*.coffee']
-    source_paths = []
-    for app_source in app_sources
-      globbedPaths = glob.globSync(app_source, 0)
-      source_paths = source_paths.concat(globbedPaths)
+    sourcePaths = []
+    for appSource in appSources
+      globbedPaths = glob.globSync(appSource, 0)
+      sourcePaths = sourcePaths.concat(globbedPaths)
 
-    source_paths.push('brunch/src/app/main.coffee')
+    sourcePaths.push('brunch/src/app/main.coffee')
 
     coffeeParams = ['--output',
       'brunch/build/web/js',
       '--join',
       '--lint',
       '--compile']
-    coffeeParams = coffeeParams.concat(source_paths)
+    coffeeParams = coffeeParams.concat(sourcePaths)
 
-    execute_coffee = spawn('coffee', coffeeParams)
-    execute_coffee.stderr.on('data', (data) ->
+    executeCoffee = spawn('coffee', coffeeParams)
+    executeCoffee.stderr.on('data', (data) ->
       util.log(data)
     )
-    execute_coffee.on('exit', (code) ->
+    executeCoffee.on('exit', (code) ->
       if code == 0
         util.log('compiled .coffee to .js')
       else
@@ -172,14 +172,14 @@ exports.dispatch = (file) ->
   # handle template changes
   if file.match(/html$/) or file.match(/jst$/)
     console.log('fusion')
-    execute_fusion = spawn('fusion', ['--hook', 'brunch/config/fusion/hook.js', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
-    execute_fusion.stdout.on('data', (data) ->
+    executeFusion = spawn('fusion', ['--hook', 'brunch/config/fusion/hook.js', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
+    executeFusion.stdout.on('data', (data) ->
       util.log(data)
     )
 
   if file.match(/style$/)
     console.log('style')
-    execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css'])
-    execute_stylus.stdout.on('data', (data) ->
+    executeStylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css'])
+    executeStylus.stdout.on('data', (data) ->
       util.log('compiling .style to .css:\n' + data)
     )
