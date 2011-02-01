@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
-  exports.VERSION = '0.1.7';
+  exports.VERSION = '0.2.1';
   exports.run = function(settings) {
     exports.settings = settings;
     if (exports.settings.watch) {
@@ -15,8 +15,8 @@
     }
   };
   exports.newProject = function(projectName) {
-    var compassParams, directory, directory_layout, execute_compass, fusion_config, fusion_hook, main_content, _i, _len;
-    directory_layout = ["", "config", "config/compass", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/models", "src/app/templates", "src/app/helpers", "src/app/views", "src/lib", "src/vendor", "src/stylesheets"];
+    var directory, directory_layout, fusion_config, fusion_hook, main_content, _i, _len;
+    directory_layout = ["", "config", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
     for (_i = 0, _len = directory_layout.length; _i < _len; _i++) {
       directory = directory_layout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
@@ -27,10 +27,7 @@
     fs.writeFileSync("brunch/config/fusion/settings.yaml", fusion_config);
     fusion_hook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n   return eco.compile(content);\n};";
     fs.writeFileSync("brunch/config/fusion/hook.js", fusion_hook);
-    console.log("created brunch directory layout");
-    compassParams = ['create', 'brunch/config/compass', '--syntax=sass', '--using=blueprint/semantic', '--sass-dir=../../src/stylesheets', '--css-dir=../../build/web/css', '--images-dir=../../build/web/img', '--javascripts-dir=../../build/web/js'];
-    execute_compass = spawn('compass', compassParams);
-    return console.log("added compass setup");
+    return console.log("created brunch directory layout");
   };
   exports.watch = function() {
     fs.watchDir = function(_opts, callback) {
@@ -97,7 +94,7 @@
     });
   };
   exports.dispatch = function(file) {
-    var app_source, app_sources, coffeeParams, executeDocco, execute_coffee, execute_compass, execute_fusion, globbedPaths, source_paths, _i, _len;
+    var app_source, app_sources, coffeeParams, executeDocco, execute_coffee, execute_fusion, execute_stylus, globbedPaths, source_paths, _i, _len;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       app_sources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
@@ -134,9 +131,9 @@
         return util.log(data);
       });
     }
-    if (file.match(/sass$/)) {
-      execute_compass = spawn('compass', ['compile', '--config', 'brunch/config/compass/config.rb', 'brunch/config/compass/']);
-      return execute_compass.stdout.on('data', function(data) {
+    if (file.match(/style$/)) {
+      execute_stylus = spawn('stylus', ['--compress', '<', 'brunch/src/styles/main.style', '>', 'brunch/build/web/css/main.css']);
+      return execute_stylus.stdout.on('data', function(data) {
         return util.log('compiling .sass to .css:\n' + data);
       });
     }
