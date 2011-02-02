@@ -7,6 +7,7 @@ optparse    = require './optparse'
 # The list of all the valid option flags that 'brunch' knows how to handle.
 SWITCHES = [
   ['new', '--new',                        'create new brunch project']
+  ['compile', '--compile',                'compile brunch project']
   ['-v', '--version',                     'display brunch version']
   ['-h', '--help',                        'display this help message']
   ['-p', '--projectTemplate [type]',      'set which kind of project template should be used']
@@ -33,7 +34,12 @@ exports.run = ->
   options = exports.loadOptionsFromArguments opts, options
   if opts.new
     return brunch.newProject projectName, options
-  brunch.run options
+  else if opts.watch
+    return brunch.watch options
+  else if opts.compile
+    return brunch.compile options
+  else
+    usage()
 
 # Load settings from arguments.
 exports.loadOptionsFromArguments = (opts, options) ->

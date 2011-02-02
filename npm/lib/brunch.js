@@ -9,16 +9,6 @@
   glob = require('glob');
   brunch = require('brunch');
   exports.VERSION = '0.2.6';
-  exports.run = function(options) {
-    var executeServer;
-    exports.options = options;
-    if (exports.options.watch) {
-      if (exports.options.projectTemplate === "express") {
-        executeServer = spawn('node', ['brunch/server/main.js']);
-      }
-      return exports.watch();
-    }
-  };
   exports.newProject = function(projectName, options) {
     var directory, directoryLayout, projectTemplatePath, _i, _len;
     exports.options = options;
@@ -43,7 +33,12 @@
     }
     return console.log("created brunch directory layout");
   };
-  exports.watch = function() {
+  exports.watch = function(options) {
+    var executeServer;
+    exports.options = options;
+    if (exports.options.projectTemplate === "express") {
+      executeServer = spawn('node', ['brunch/server/main.js']);
+    }
     fs.watchDir = function(_opts, callback) {
       var addToWatch, opts, watched;
       opts = _.extend({
@@ -106,6 +101,14 @@
     }, function(file) {
       return exports.dispatch(file);
     });
+  };
+  exports.compile = function() {
+    var sourcePaths;
+    sourcePaths = exports.generateSourcePaths();
+    exports.spawnCoffee(sourcePaths);
+    exports.spawnDocco(sourcePaths);
+    exports.spawnFusion();
+    return exports.spawnStylus();
   };
   exports.dispatch = function(file) {
     var sourcePaths, templateExtensionRegex;

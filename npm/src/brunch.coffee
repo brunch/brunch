@@ -13,13 +13,6 @@ brunch    = require 'brunch'
 # the current brunch version number
 exports.VERSION = '0.2.6'
 
-exports.run = (options) ->
-  exports.options = options
-  if exports.options.watch
-    if(exports.options.projectTemplate is "express")
-      executeServer = spawn 'node', ['brunch/server/main.js']
-    exports.watch()
-
 # project skeleton generator
 # * create directory strucutre
 # * create main.coffee bootstrapping file
@@ -68,7 +61,13 @@ exports.newProject = (projectName, options) ->
   console.log "created brunch directory layout"
 
 # file watcher
-exports.watch  = ->
+exports.watch  = (options) ->
+  exports.options = options
+
+  # run node server if projectTemplate is express
+  if(exports.options.projectTemplate is "express")
+    executeServer = spawn 'node', ['brunch/server/main.js']
+
   ## copied source from watch_dir, because it did not work as package
   fs.watchDir = (_opts, callback) ->
 
@@ -107,6 +106,14 @@ exports.watch  = ->
   fs.watchDir(path: 'brunch', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
+
+# compiling all files
+exports.compile = ->
+  sourcePaths = exports.generateSourcePaths()
+  exports.spawnCoffee(sourcePaths)
+  exports.spawnDocco(sourcePaths)
+  exports.spawnFusion()
+  exports.spawnStylus()
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
