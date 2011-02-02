@@ -108,17 +108,10 @@
     });
   };
   exports.dispatch = function(file) {
-    var appSource, appSources, globbedPaths, sourcePaths, templateExtensionRegex, _i, _len;
+    var sourcePaths, templateExtensionRegex;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
-      appSources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
-      sourcePaths = [];
-      for (_i = 0, _len = appSources.length; _i < _len; _i++) {
-        appSource = appSources[_i];
-        globbedPaths = glob.globSync(appSource, 0);
-        sourcePaths = sourcePaths.concat(globbedPaths);
-      }
-      sourcePaths.unshift('brunch/src/app/main.coffee');
+      sourcePaths = exports.generateSourcePaths();
       exports.spawnCoffee(sourcePaths);
       exports.spawnDocco(sourcePaths);
     }
@@ -129,6 +122,18 @@
     if (file.match(/styl$/)) {
       return exports.spawnStylus();
     }
+  };
+  exports.generateSourcePaths = function() {
+    var appSource, appSources, globbedPaths, sourcePaths, _i, _len;
+    appSources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
+    sourcePaths = [];
+    for (_i = 0, _len = appSources.length; _i < _len; _i++) {
+      appSource = appSources[_i];
+      globbedPaths = glob.globSync(appSource, 0);
+      sourcePaths = sourcePaths.concat(globbedPaths);
+    }
+    sourcePaths.unshift('brunch/src/app/main.coffee');
+    return sourcePaths;
   };
   exports.spawnCoffee = function(sourcePaths) {
     var coffeeParams, executeCoffee;

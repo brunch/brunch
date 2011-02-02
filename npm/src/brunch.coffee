@@ -115,17 +115,7 @@ exports.dispatch = (file) ->
 
   # handle coffee changes
   if file.match(/coffee$/)
-    appSources = ['brunch/src/app/helpers/*.coffee',
-      'brunch/src/app/models/*.coffee',
-      'brunch/src/app/collections/*.coffee',
-      'brunch/src/app/controllers/*.coffee',
-      'brunch/src/app/views/*.coffee']
-    sourcePaths = []
-    for appSource in appSources
-      globbedPaths = glob.globSync(appSource, 0)
-      sourcePaths = sourcePaths.concat(globbedPaths)
-
-    sourcePaths.unshift('brunch/src/app/main.coffee')
+    sourcePaths = exports.generateSourcePaths()
 
     exports.spawnCoffee(sourcePaths)
     exports.spawnDocco(sourcePaths)
@@ -137,6 +127,19 @@ exports.dispatch = (file) ->
 
   if file.match(/styl$/)
     exports.spawnStylus()
+
+exports.generateSourcePaths = ->
+  appSources = ['brunch/src/app/helpers/*.coffee',
+    'brunch/src/app/models/*.coffee',
+    'brunch/src/app/collections/*.coffee',
+    'brunch/src/app/controllers/*.coffee',
+    'brunch/src/app/views/*.coffee']
+  sourcePaths = []
+  for appSource in appSources
+    globbedPaths = glob.globSync(appSource, 0)
+    sourcePaths = sourcePaths.concat(globbedPaths)
+  sourcePaths.unshift('brunch/src/app/main.coffee')
+  sourcePaths
 
 exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = ['--output',
