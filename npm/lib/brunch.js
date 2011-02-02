@@ -18,7 +18,7 @@
   exports.newProject = function(projectName, options) {
     var directory, directoryLayout, projectTemplatePath, _i, _len;
     exports.options = options;
-    projectTemplatePath = path.join(module.id + "/../../template");
+    projectTemplatePath = path.join(module.id + "/../../template/base");
     directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
     for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
       directory = directoryLayout[_i];

@@ -24,7 +24,7 @@ exports.run = (options) ->
 exports.newProject = (projectName, options) ->
   exports.options = options
 
-  projectTemplatePath = path.join(module.id + "/../../template")
+  projectTemplatePath = path.join(module.id + "/../../template/base")
 
   # TODO use walk to automatically copy the project template!!!!
   directoryLayout = ["",
