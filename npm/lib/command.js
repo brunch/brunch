@@ -24,37 +24,10 @@
     }
     return brunch.run(options);
   };
-  exports.loadSettingsFromFile = function(settings_file) {
-    var settings;
-    settings_file || (settings_file = "settings.yaml");
-    settings = yaml.eval(fs.readFileSync(settings_file, 'utf8'));
-    if (!settings.namespace) {
-      settings.namespace = "window";
-    }
-    if (!settings.templateExtension) {
-      settings.templateExtension = "html";
-    }
-    if (!settings.input) {
-      settings.input_dir = ".";
-    }
-    if (!settings.output) {
-      settings.output_dir = "../build";
-    }
-    return settings;
-  };
   exports.loadOptionsFromArguments = function(opts) {
     options = {};
-    if (opts.namespace) {
-      options.namespace = opts.namespace;
-    }
     if (opts.templateExtension) {
       options.templateExtension = opts.templateExtension;
-    }
-    if (opts.input) {
-      options.input_dir = opts.input;
-    }
-    if (opts.output) {
-      options.output_dir = opts.output;
     }
     if (opts.watch) {
       options.watch = opts.watch;

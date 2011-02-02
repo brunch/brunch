@@ -43,7 +43,7 @@ exports.newProject = (projectName, options) ->
 
   # create directory layout
   for directory in directoryLayout
-    fs.mkdirSync("brunch/#{directory}", 0755)
+    fs.mkdirSync "brunch/#{directory}", 0755
 
   # create main_controller.coffee
   mainController = """
@@ -61,7 +61,7 @@ exports.newProject = (projectName, options) ->
                     #{projectName}.controllers.main = new MainController()
                     """
 
-  fs.writeFileSync("brunch/src/app/controllers/main_controller.coffee", mainController)
+  fs.writeFileSync "brunch/src/app/controllers/main_controller.coffee", mainController
 
   # create home_view.coffee
   homeView = """
@@ -75,14 +75,14 @@ exports.newProject = (projectName, options) ->
               #{projectName}.views.home = new HomeView()
              """
 
-  fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView)
+  fs.writeFileSync "brunch/src/app/views/home_view.coffee", homeView
 
   # create home template
   homeTemplate = """
                   <h1>Hello World! Welcome to brunch</h1>
                   """
 
-  fs.writeFileSync("brunch/src/app/templates/home.eco", homeTemplate)
+  fs.writeFileSync "brunch/src/app/templates/home.eco", homeTemplate
 
   # create main.coffee app file
   mainContent = """
@@ -98,7 +98,7 @@ exports.newProject = (projectName, options) ->
                    Backbone.history.start()
                  """
 
-  fs.writeFileSync("brunch/src/app/main.coffee", mainContent)
+  fs.writeFileSync "brunch/src/app/main.coffee", mainContent
 
   # create fusion config and eco hook files
   fusionConfig = """
@@ -107,7 +107,7 @@ exports.newProject = (projectName, options) ->
                   templateExtension: "#{exports.options.templateExtension}"
                   namespace: "window.#{projectName}"
                   """
-  fs.writeFileSync("brunch/config/fusion/options.yaml", fusionConfig)
+  fs.writeFileSync "brunch/config/fusion/options.yaml", fusionConfig
 
   # create fusion config and eco hook files
   fusionHook = """
@@ -116,7 +116,7 @@ exports.newProject = (projectName, options) ->
                   return eco.compile(content);
                 };
                 """
-  fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook)
+  fs.writeFileSync "brunch/config/fusion/hook.js", fusionHook
 
   # create index.html including introduction
   indexHtml = """
@@ -132,9 +132,9 @@ exports.newProject = (projectName, options) ->
               <body>
               </body>
               """
-  fs.writeFileSync("brunch/build/index.html", indexHtml)
+  fs.writeFileSync "brunch/build/index.html", indexHtml
 
-  console.log("created brunch directory layout")
+  console.log "created brunch directory layout"
 
 # file watcher
 exports.watch  = ->
@@ -191,7 +191,7 @@ exports.watch  = ->
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
 exports.dispatch = (file) ->
-  console.log('file: ' + file)
+  console.log 'file: ' + file
 
   # handle coffee changes
   if file.match(/coffee$/)
@@ -214,35 +214,31 @@ exports.dispatch = (file) ->
       '--compile']
     coffeeParams = coffeeParams.concat(sourcePaths)
 
-    executeCoffee = spawn('coffee', coffeeParams)
-    executeCoffee.stderr.on('data', (data) ->
+    executeCoffee = spawn 'coffee', coffeeParams
+    executeCoffee.stderr.on 'data', (data) ->
       util.log(data)
-    )
-    executeCoffee.on('exit', (code) ->
+
+    executeCoffee.on 'exit', (code) ->
       if code == 0
         util.log('compiled .coffee to .js')
       else
         util.log('there was a problem during .coffee to .js compilation. see above')
-    )
 
     globbedPaths = glob.globSync('brunch/src/app/*.coffee', 0)
     executeDocco = spawn('docco', globbedPaths)
-    executeDocco.stderr.on('data', (data) ->
+    executeDocco.stderr.on 'data', (data) ->
       util.log(data)
-    )
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
   if file.match(templateExtensionRegex)
     console.log('fusion')
-    executeFusion = spawn('fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates'])
-    executeFusion.stdout.on('data', (data) ->
+    executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
+    executeFusion.stdout.on 'data', (data) ->
       util.log data
-    )
 
   if file.match(/style$/)
-    console.log('style')
+    console.log 'style'
     executeStylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css'])
-    executeStylus.stdout.on('data', (data) ->
+    executeStylus.stdout.on 'data', (data) ->
       util.log('compiling .style to .css:\n' + data)
-    )

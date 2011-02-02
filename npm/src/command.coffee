@@ -34,26 +34,12 @@ exports.run = ->
   options.templateExtension = "eco"
   if opts.new
     return brunch.newProject projectName, options
-  brunch.run(options)
-
-# Load settings from a settings file or at least set some
-# reasonable defaults.
-exports.loadSettingsFromFile = (settings_file) ->
-  settings_file or= "settings.yaml"
-  settings = yaml.eval fs.readFileSync settings_file, 'utf8'
-  settings.namespace = "window" unless settings.namespace
-  settings.templateExtension = "html" unless settings.templateExtension
-  settings.input_dir = "." unless settings.input
-  settings.output_dir = "../build" unless settings.output
-  settings
+  brunch.run options
 
 # Load settings from arguments.
 exports.loadOptionsFromArguments = (opts) ->
   options = {}
-  options.namespace = opts.namespace if opts.namespace
   options.templateExtension = opts.templateExtension if opts.templateExtension
-  options.input_dir = opts.input if opts.input
-  options.output_dir = opts.output if opts.output
   options.watch = opts.watch if opts.watch
   options
 
@@ -64,10 +50,10 @@ parseOptions = ->
 
 # Print the '--help' usage message and exit.
 usage = ->
-  process.stdout.write((new optparse.OptionParser SWITCHES, BANNER).help())
+  process.stdout.write (new optparse.OptionParser SWITCHES, BANNER).help()
   process.exit 0
 
 # Print the '--version' message and exit.
 version = ->
-  process.stdout.write("brunch version #{brunch.VERSION}\n")
+  process.stdout.write "brunch version #{brunch.VERSION}\n"
   process.exit 0
