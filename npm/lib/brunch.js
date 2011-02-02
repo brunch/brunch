@@ -108,7 +108,7 @@
     });
   };
   exports.dispatch = function(file) {
-    var appSource, appSources, coffeeParams, executeCoffee, executeDocco, executeFusion, executeStylus, globbedPaths, sourcePaths, templateExtensionRegex, _i, _len;
+    var appSource, appSources, globbedPaths, sourcePaths, templateExtensionRegex, _i, _len;
     console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       appSources = ['brunch/src/app/helpers/*.coffee', 'brunch/src/app/models/*.coffee', 'brunch/src/app/collections/*.coffee', 'brunch/src/app/controllers/*.coffee', 'brunch/src/app/views/*.coffee'];
@@ -119,38 +119,52 @@
         sourcePaths = sourcePaths.concat(globbedPaths);
       }
       sourcePaths.unshift('brunch/src/app/main.coffee');
-      coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
-      coffeeParams = coffeeParams.concat(sourcePaths);
-      executeCoffee = spawn('coffee', coffeeParams);
-      executeCoffee.stderr.on('data', function(data) {
-        return util.log(data);
-      });
-      executeCoffee.on('exit', function(code) {
-        if (code === 0) {
-          return util.log('compiled .coffee to .js');
-        } else {
-          return util.log('there was a problem during .coffee to .js compilation. see above');
-        }
-      });
-      executeDocco = spawn('docco', sourcePaths);
-      executeDocco.stderr.on('data', function(data) {
-        return util.log(data);
-      });
+      exports.spawnCoffee(sourcePaths);
+      exports.spawnDocco(sourcePaths);
     }
     templateExtensionRegex = new RegExp("" + exports.options.templateExtension + "$");
     if (file.match(templateExtensionRegex)) {
-      console.log('fusion');
-      executeFusion = spawn('fusion', ['--config', 'brunch/config/fusion/options.yaml', 'brunch/src/app/templates']);
-      executeFusion.stdout.on('data', function(data) {
-        return util.log(data);
-      });
+      exports.spawnFusion();
     }
     if (file.match(/styl$/)) {
-      console.log('stylesheets');
-      executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl']);
-      return executeStylus.stdout.on('data', function(data) {
-        return util.log('compiling .style to .css:\n' + data);
-      });
+      return exports.spawnStylus();
     }
+  };
+  exports.spawnCoffee = function(sourcePaths) {
+    var coffeeParams, executeCoffee;
+    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
+    coffeeParams = coffeeParams.concat(sourcePaths);
+    executeCoffee = spawn('coffee', coffeeParams);
+    executeCoffee.stderr.on('data', function(data) {
+      return util.log(data);
+    });
+    return executeCoffee.on('exit', function(code) {
+      if (code === 0) {
+        return util.log('compiled .coffee to .js');
+      } else {
+        return util.log('there was a problem during .coffee to .js compilation. see above');
+      }
+    });
+  };
+  exports.spawnDocco = function(sourcePaths) {
+    var executeDocco;
+    executeDocco = spawn('docco', sourcePaths);
+    return executeDocco.stderr.on('data', function(data) {
+      return util.log(data);
+    });
+  };
+  exports.spawnFusion = function() {
+    var executeFusion;
+    executeFusion = spawn('fusion', ['--config', 'brunch/config/fusion/options.yaml', 'brunch/src/app/templates']);
+    return executeFusion.stdout.on('data', function(data) {
+      return util.log(data);
+    });
+  };
+  exports.spawnStylus = function() {
+    var executeStylus;
+    executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl']);
+    return executeStylus.stdout.on('data', function(data) {
+      return util.log('compiling .style to .css:\n' + data);
+    });
   };
 }).call(this);

@@ -127,37 +127,46 @@ exports.dispatch = (file) ->
 
     sourcePaths.unshift('brunch/src/app/main.coffee')
 
-    coffeeParams = ['--output',
-      'brunch/build/web/js',
-      '--join',
-      '--lint',
-      '--compile']
-    coffeeParams = coffeeParams.concat(sourcePaths)
-
-    executeCoffee = spawn 'coffee', coffeeParams
-    executeCoffee.stderr.on 'data', (data) ->
-      util.log data
-
-    executeCoffee.on 'exit', (code) ->
-      if code == 0
-        util.log('compiled .coffee to .js')
-      else
-        util.log('there was a problem during .coffee to .js compilation. see above')
-
-    executeDocco = spawn('docco', sourcePaths)
-    executeDocco.stderr.on 'data', (data) ->
-      util.log data
+    exports.spawnCoffee(sourcePaths)
+    exports.spawnDocco(sourcePaths)
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
   if file.match(templateExtensionRegex)
-    console.log('fusion')
-    executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
-    executeFusion.stdout.on 'data', (data) ->
-      util.log data
+    exports.spawnFusion()
 
   if file.match(/styl$/)
-    console.log 'stylesheets'
-    executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
-    executeStylus.stdout.on 'data', (data) ->
-      util.log('compiling .style to .css:\n' + data)
+    exports.spawnStylus()
+
+exports.spawnCoffee = (sourcePaths) ->
+  coffeeParams = ['--output',
+    'brunch/build/web/js',
+    '--join',
+    '--lint',
+    '--compile']
+  coffeeParams = coffeeParams.concat(sourcePaths)
+
+  executeCoffee = spawn 'coffee', coffeeParams
+  executeCoffee.stderr.on 'data', (data) ->
+    util.log data
+
+  executeCoffee.on 'exit', (code) ->
+    if code == 0
+      util.log('compiled .coffee to .js')
+    else
+      util.log('there was a problem during .coffee to .js compilation. see above')
+
+exports.spawnDocco = (sourcePaths) ->
+  executeDocco = spawn('docco', sourcePaths)
+  executeDocco.stderr.on 'data', (data) ->
+    util.log data
+
+exports.spawnFusion = ->
+  executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
+  executeFusion.stdout.on 'data', (data) ->
+    util.log data
+
+exports.spawnStylus = ->
+  executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
+  executeStylus.stdout.on 'data', (data) ->
+    util.log('compiling .style to .css:\n' + data)
