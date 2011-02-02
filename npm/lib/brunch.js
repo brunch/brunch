@@ -124,8 +124,7 @@
           return util.log('there was a problem during .coffee to .js compilation. see above');
         }
       });
-      globbedPaths = glob.globSync('brunch/src/app/*.coffee', 0);
-      executeDocco = spawn('docco', globbedPaths);
+      executeDocco = spawn('docco', sourcePaths);
       executeDocco.stderr.on('data', function(data) {
         return util.log(data);
       });
