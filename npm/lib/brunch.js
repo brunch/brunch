@@ -15,7 +15,7 @@
     }
   };
   exports.newProject = function(projectName, options) {
-    var directory, directoryLayout, fusionConfig, fusionHook, homeTemplate, homeView, indexHtml, mainContent, mainController, _i, _len;
+    var directory, directoryLayout, fusionConfig, fusionHook, homeTemplate, homeView, indexHtml, mainContent, mainController, mainStyle, _i, _len;
     exports.options = options;
     directoryLayout = ["", "config", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
     for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
@@ -28,6 +28,8 @@
     fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView);
     homeTemplate = "<h1>Hello World! Welcome to brunch</h1>";
     fs.writeFileSync("brunch/src/app/templates/home.eco", homeTemplate);
+    mainStyle = "h1\n  color #999";
+    fs.writeFileSync("brunch/src/app/styles/main.styl", mainStyle);
     mainContent = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\nwindow.module = {} # dirty workaround until eco's namespace is fixed\n\n# app bootstrapping on document ready\n$(document).ready ->\n  Backbone.history.saveLocation(\"!/home\") if '' == Backbone.history.getFragment()\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", mainContent);
     fusionConfig = "hook: \"brunch/config/fusion/hook.js\"\noutput: \"brunch/build/web/js/templates.js\"\ntemplateExtension: \"" + exports.options.templateExtension + "\"\nnamespace: \"window." + projectName + "\"";
@@ -141,9 +143,9 @@
         return util.log(data);
       });
     }
-    if (file.match(/style$/)) {
-      console.log('style');
-      executeStylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css']);
+    if (file.match(/styl$/)) {
+      console.log('stylesheets');
+      executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl']);
       return executeStylus.stdout.on('data', function(data) {
         return util.log('compiling .style to .css:\n' + data);
       });

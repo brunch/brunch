@@ -20,7 +20,6 @@ exports.run = (options) ->
 # project skeleton generator
 # * create directory strucutre
 # * create main.coffee bootstrapping file
-# TODO: create index.html and decide where to put it
 exports.newProject = (projectName, options) ->
 
   exports.options = options
@@ -83,6 +82,14 @@ exports.newProject = (projectName, options) ->
                   """
 
   fs.writeFileSync "brunch/src/app/templates/home.eco", homeTemplate
+
+  # create main stylesheet
+  mainStyle = """
+              h1
+                color #999
+              """
+
+  fs.writeFileSync "brunch/src/app/styles/main.styl", mainStyle
 
   # create main.coffee app file
   mainContent = """
@@ -237,8 +244,8 @@ exports.dispatch = (file) ->
     executeFusion.stdout.on 'data', (data) ->
       util.log data
 
-  if file.match(/style$/)
-    console.log 'style'
-    executeStylus = spawn('stylus', ['--compress', '<', 'brunch/src/app/styles/main.style', '>', 'brunch/build/web/css/main.css'])
+  if file.match(/styl$/)
+    console.log 'stylesheets'
+    executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
     executeStylus.stdout.on 'data', (data) ->
       util.log('compiling .style to .css:\n' + data)
