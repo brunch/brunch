@@ -140,7 +140,7 @@
   };
   exports.spawnCoffee = function(sourcePaths) {
     var coffeeParams, executeCoffee;
-    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--build'];
+    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
     coffeeParams = coffeeParams.concat(sourcePaths);
     executeCoffee = spawn('coffee', coffeeParams);
     executeCoffee.stderr.on('data', function(data) {

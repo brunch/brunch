@@ -155,7 +155,7 @@ exports.spawnCoffee = (sourcePaths) ->
     'brunch/build/web/js',
     '--join',
     '--lint',
-    '--build']
+    '--compile']
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams

@@ -6,17 +6,19 @@ optparse    = require './optparse'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
 SWITCHES = [
-  ['new', '--new',                        'create new brunch project']
-  ['build', '--build',                    'build brunch project']
   ['-v', '--version',                     'display brunch version']
   ['-h', '--help',                        'display this help message']
   ['-p', '--projectTemplate [type]',      'set which kind of project template should be used']
-  ['watch', '--watch',                    'watch files (currently you have to restart if files are added or renamed)']
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
 BANNER = '''
-  Usage: brunch [options] [<directory>]
+  Usage: brunch [options] [command]
+
+  Possible commands are:
+    new           create new brunch project
+    build         build project
+    watch         watch brunch directory and rebuild if something changed
          '''
 options = {}
 
@@ -28,16 +30,17 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
-  projectName = opts.arguments[1]
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options = exports.loadOptionsFromArguments opts, options
-  if opts.new
-    brunch.newProject projectName, options
+  command = opts.arguments[0]
+  if command is "new"
+    return usage() unless opts.arguments[1]
+    brunch.newProject opts.arguments[1], options
     return brunch.build options
-  else if opts.watch
+  else if command is "watch"
     return brunch.watch options
-  else if opts.build
+  else if command is "build"
     return brunch.build options
   else
     usage()
@@ -46,7 +49,6 @@ exports.run = ->
 exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
-  options.watch = opts.watch if opts.watch
   options
 
 # Run optparser which was taken from Coffeescript 1.0.0
