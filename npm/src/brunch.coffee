@@ -26,6 +26,7 @@ exports.newProject = (projectName, options) ->
 
   projectTemplatePath = path.join(module.id + "/../../template")
 
+  # TODO use walk to automatically copy the project template!!!!
   directoryLayout = ["",
                       "config",
                       "config/fusion",
@@ -47,104 +48,16 @@ exports.newProject = (projectName, options) ->
   for directory in directoryLayout
     fs.mkdirSync "brunch/#{directory}", 0755
 
-  # create main_controller.coffee
-  mainController = """
-                    class MainController extends Backbone.Controller
-                      routes :
-                        "!/home": "home"
-
-                      constructor: ->
-                        super
-
-                      home: ->
-                        app.views.home.render()
-
-                    # init controller
-                    app.controllers.main = new MainController()
-                    """
-
-  fs.writeFileSync "brunch/src/app/controllers/main_controller.coffee", mainController
-
-  # create home_view.coffee
-  homeView = """
-              class HomeView extends Backbone.View
-                id: 'home-view'
-
-                render: ->
-                  $(@.el).html(app.templates.home())
-                  $('body').html(@.el)
-
-              app.views.home = new HomeView()
-             """
-
-  fs.writeFileSync "brunch/src/app/views/home_view.coffee", homeView
-
-  # create home template
-  homeTemplate = """
-                  <h1>Hello World! Welcome to brunch</h1>
-                  """
-
-  fs.writeFileSync "brunch/src/app/templates/home.eco", homeTemplate
-
-  # create main stylesheet
-  mainStyle = """
-              h1
-                color #999
-              """
-
-  fs.writeFileSync "brunch/src/app/styles/main.styl", mainStyle
-
-  # create main.coffee app file
-  mainContent = """
-                 window.app = {}
-                 app.controllers = {}
-                 app.models = {}
-                 app.views = {}
-                 window.module = {} # dirty workaround until eco's namespace is fixed
-
-                 # app bootstrapping on document ready
-                 $(document).ready ->
-                   Backbone.history.saveLocation("!/home") if '' == Backbone.history.getFragment()
-                   Backbone.history.start()
-                 """
-
-  fs.writeFileSync "brunch/src/app/main.coffee", mainContent
-
-  # create fusion config and eco hook files
-  fusionConfig = """
-                  hook: "brunch/config/fusion/hook.js"
-                  output: "brunch/build/web/js/templates.js"
-                  templateExtension: "#{exports.options.templateExtension}"
-                  namespace: "window.app"
-                  """
-  fs.writeFileSync "brunch/config/fusion/options.yaml", fusionConfig
-
-  # create fusion config and eco hook files
-  fusionHook = """
-                var eco = require('eco');
-                exports.compileTemplate = function(content) {
-                  return eco.compile(content);
-                };
-                """
-  fs.writeFileSync "brunch/config/fusion/hook.js", fusionHook
-
-  # create index.html including introduction
-  indexHtml = """
-              <!doctype html>
-              <html lang="en">
-              <head>
-                <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js"></script>
-                <script src="http://cdn.brunchwithcoffee.com/js/underscore/1.1.3/underscore-min.js"></script>
-                <script src="http://cdn.brunchwithcoffee.com/js/backbone/0.3.3/backbone-min.js"></script>
-                <script src="web/js/concatenation.js"></script>
-                <script src="web/js/templates.js"></script>
-              </head>
-              <body>
-              </body>
-              """
-  fs.writeFileSync "brunch/build/index.html", indexHtml
-
-  fs.linkSync path.join(projectTemplatePath, "app", "styles", "reset.styl"), "brunch/src/app/styles/reset.styl"
+  # copy files into new project
+  fs.linkSync path.join(projectTemplatePath, "src/app/controllers/main_controller.coffee"), "brunch/src/app/controllers/main_controller.coffee"
+  fs.linkSync path.join(projectTemplatePath, "src/app/views/home_view.coffee"), "brunch/src/app/views/home_view.coffee"
+  fs.linkSync path.join(projectTemplatePath, "src/app/templates/home.eco"), "brunch/src/app/templates/home.eco"
+  fs.linkSync path.join(projectTemplatePath, "src/app/main.coffee"), "brunch/src/app/main.coffee"
+  fs.linkSync path.join(projectTemplatePath, "src/app/styles/main.styl"), "brunch/src/app/styles/main.styl"
+  fs.linkSync path.join(projectTemplatePath, "src/app/styles/reset.styl"), "brunch/src/app/styles/reset.styl"
+  fs.linkSync path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml"
+  fs.linkSync path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js"
+  fs.linkSync path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html"
 
   console.log "created brunch directory layout"
 

@@ -16,7 +16,7 @@
     }
   };
   exports.newProject = function(projectName, options) {
-    var directory, directoryLayout, fusionConfig, fusionHook, homeTemplate, homeView, indexHtml, mainContent, mainController, mainStyle, projectTemplatePath, _i, _len;
+    var directory, directoryLayout, projectTemplatePath, _i, _len;
     exports.options = options;
     projectTemplatePath = path.join(module.id + "/../../template");
     directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
@@ -24,23 +24,15 @@
       directory = directoryLayout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
     }
-    mainController = "class MainController extends Backbone.Controller\n  routes :\n    \"!/home\": \"home\"\n\n  constructor: ->\n    super\n\n  home: ->\n    app.views.home.render()\n\n# init controller\napp.controllers.main = new MainController()";
-    fs.writeFileSync("brunch/src/app/controllers/main_controller.coffee", mainController);
-    homeView = "class HomeView extends Backbone.View\n  id: 'home-view'\n\n  render: ->\n    $(@.el).html(app.templates.home())\n    $('body').html(@.el)\n\napp.views.home = new HomeView()";
-    fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView);
-    homeTemplate = "<h1>Hello World! Welcome to brunch</h1>";
-    fs.writeFileSync("brunch/src/app/templates/home.eco", homeTemplate);
-    mainStyle = "h1\n  color #999";
-    fs.writeFileSync("brunch/src/app/styles/main.styl", mainStyle);
-    mainContent = "window.app = {}\napp.controllers = {}\napp.models = {}\napp.views = {}\nwindow.module = {} # dirty workaround until eco's namespace is fixed\n\n# app bootstrapping on document ready\n$(document).ready ->\n  Backbone.history.saveLocation(\"!/home\") if '' == Backbone.history.getFragment()\n  Backbone.history.start()";
-    fs.writeFileSync("brunch/src/app/main.coffee", mainContent);
-    fusionConfig = "hook: \"brunch/config/fusion/hook.js\"\noutput: \"brunch/build/web/js/templates.js\"\ntemplateExtension: \"" + exports.options.templateExtension + "\"\nnamespace: \"window.app\"";
-    fs.writeFileSync("brunch/config/fusion/options.yaml", fusionConfig);
-    fusionHook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n  return eco.compile(content);\n};";
-    fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook);
-    indexHtml = "<!doctype html>\n<html lang=\"en\">\n<head>\n  <script src=\"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js\"></script>\n  <script src=\"http://cdn.brunchwithcoffee.com/js/underscore/1.1.3/underscore-min.js\"></script>\n  <script src=\"http://cdn.brunchwithcoffee.com/js/backbone/0.3.3/backbone-min.js\"></script>\n  <script src=\"web/js/concatenation.js\"></script>\n  <script src=\"web/js/templates.js\"></script>\n</head>\n<body>\n</body>";
-    fs.writeFileSync("brunch/build/index.html", indexHtml);
-    fs.linkSync(path.join(projectTemplatePath, "app", "styles", "reset.styl"), "brunch/src/app/styles/reset.styl");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/controllers/main_controller.coffee"), "brunch/src/app/controllers/main_controller.coffee");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/views/home_view.coffee"), "brunch/src/app/views/home_view.coffee");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/templates/home.eco"), "brunch/src/app/templates/home.eco");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/main.coffee"), "brunch/src/app/main.coffee");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/styles/main.styl"), "brunch/src/app/styles/main.styl");
+    fs.linkSync(path.join(projectTemplatePath, "src/app/styles/reset.styl"), "brunch/src/app/styles/reset.styl");
+    fs.linkSync(path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml");
+    fs.linkSync(path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js");
+    fs.linkSync(path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html");
     return console.log("created brunch directory layout");
   };
   exports.watch = function() {

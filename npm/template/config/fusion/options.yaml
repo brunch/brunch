@@ -1,0 +1,4 @@
+hook: "brunch/config/fusion/hook.js"
+output: "brunch/build/web/js/templates.js"
+templateExtension: "eco"
+namespace: "window.app"
