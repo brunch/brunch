@@ -10,5 +10,5 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-console.log("starting server on port 3000");
-app.listen(3000);
+console.log("starting server on port 8080");
+app.listen(8080);

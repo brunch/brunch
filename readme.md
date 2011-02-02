@@ -25,12 +25,23 @@ build the project
 brunch provides the possibility to choose between different project templates
 currently these are available
 
-* express (default) - includes build in express server which will be started with "brunch watch"
-* base - just the basic brunch layout including src, config and build
+* express (default)
+* base
 
 you can choose between them via option "--projectTemplate"
 
     brunch new my_app --projectTemplate base
+
+## project templates
+
+### base
+
+Just the basic brunch layout including src, config and build.
+
+### express
+
+Includes build in express server which will be started with "brunch watch".
+You can take a look at the app at "localhost:8080".
 
 ## TODO
 
