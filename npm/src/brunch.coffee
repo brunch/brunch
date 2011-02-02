@@ -57,10 +57,10 @@ exports.newProject = (projectName, options) ->
                         super
 
                       home: ->
-                        #{projectName}.views.home.render()
+                        app.views.home.render()
 
                     # init controller
-                    #{projectName}.controllers.main = new MainController()
+                    app.controllers.main = new MainController()
                     """
 
   fs.writeFileSync "brunch/src/app/controllers/main_controller.coffee", mainController
@@ -71,10 +71,10 @@ exports.newProject = (projectName, options) ->
                 id: 'home-view'
 
                 render: ->
-                  $(@.el).html(#{projectName}.templates.home())
+                  $(@.el).html(app.templates.home())
                   $('body').html(@.el)
 
-              #{projectName}.views.home = new HomeView()
+              app.views.home = new HomeView()
              """
 
   fs.writeFileSync "brunch/src/app/views/home_view.coffee", homeView
@@ -96,10 +96,10 @@ exports.newProject = (projectName, options) ->
 
   # create main.coffee app file
   mainContent = """
-                 window.#{projectName} = {}
-                 #{projectName}.controllers = {}
-                 #{projectName}.models = {}
-                 #{projectName}.views = {}
+                 window.app = {}
+                 app.controllers = {}
+                 app.models = {}
+                 app.views = {}
                  window.module = {} # dirty workaround until eco's namespace is fixed
 
                  # app bootstrapping on document ready
@@ -115,7 +115,7 @@ exports.newProject = (projectName, options) ->
                   hook: "brunch/config/fusion/hook.js"
                   output: "brunch/build/web/js/templates.js"
                   templateExtension: "#{exports.options.templateExtension}"
-                  namespace: "window.#{projectName}"
+                  namespace: "window.app"
                   """
   fs.writeFileSync "brunch/config/fusion/options.yaml", fusionConfig
 

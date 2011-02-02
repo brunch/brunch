@@ -24,17 +24,17 @@
       directory = directoryLayout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
     }
-    mainController = "class MainController extends Backbone.Controller\n  routes :\n    \"!/home\": \"home\"\n\n  constructor: ->\n    super\n\n  home: ->\n    " + projectName + ".views.home.render()\n\n# init controller\n" + projectName + ".controllers.main = new MainController()";
+    mainController = "class MainController extends Backbone.Controller\n  routes :\n    \"!/home\": \"home\"\n\n  constructor: ->\n    super\n\n  home: ->\n    app.views.home.render()\n\n# init controller\napp.controllers.main = new MainController()";
     fs.writeFileSync("brunch/src/app/controllers/main_controller.coffee", mainController);
-    homeView = "class HomeView extends Backbone.View\n  id: 'home-view'\n\n  render: ->\n    $(@.el).html(" + projectName + ".templates.home())\n    $('body').html(@.el)\n\n" + projectName + ".views.home = new HomeView()";
+    homeView = "class HomeView extends Backbone.View\n  id: 'home-view'\n\n  render: ->\n    $(@.el).html(app.templates.home())\n    $('body').html(@.el)\n\napp.views.home = new HomeView()";
     fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView);
     homeTemplate = "<h1>Hello World! Welcome to brunch</h1>";
     fs.writeFileSync("brunch/src/app/templates/home.eco", homeTemplate);
     mainStyle = "h1\n  color #999";
     fs.writeFileSync("brunch/src/app/styles/main.styl", mainStyle);
-    mainContent = "window." + projectName + " = {}\n" + projectName + ".controllers = {}\n" + projectName + ".models = {}\n" + projectName + ".views = {}\nwindow.module = {} # dirty workaround until eco's namespace is fixed\n\n# app bootstrapping on document ready\n$(document).ready ->\n  Backbone.history.saveLocation(\"!/home\") if '' == Backbone.history.getFragment()\n  Backbone.history.start()";
+    mainContent = "window.app = {}\napp.controllers = {}\napp.models = {}\napp.views = {}\nwindow.module = {} # dirty workaround until eco's namespace is fixed\n\n# app bootstrapping on document ready\n$(document).ready ->\n  Backbone.history.saveLocation(\"!/home\") if '' == Backbone.history.getFragment()\n  Backbone.history.start()";
     fs.writeFileSync("brunch/src/app/main.coffee", mainContent);
-    fusionConfig = "hook: \"brunch/config/fusion/hook.js\"\noutput: \"brunch/build/web/js/templates.js\"\ntemplateExtension: \"" + exports.options.templateExtension + "\"\nnamespace: \"window." + projectName + "\"";
+    fusionConfig = "hook: \"brunch/config/fusion/hook.js\"\noutput: \"brunch/build/web/js/templates.js\"\ntemplateExtension: \"" + exports.options.templateExtension + "\"\nnamespace: \"window.app\"";
     fs.writeFileSync("brunch/config/fusion/options.yaml", fusionConfig);
     fusionHook = "var eco = require('eco');\nexports.compileTemplate = function(content) {\n  return eco.compile(content);\n};";
     fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook);
