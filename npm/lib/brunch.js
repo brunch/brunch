@@ -8,7 +8,7 @@
   _ = require('underscore');
   glob = require('glob');
   brunch = require('brunch');
-  exports.VERSION = '0.2.3';
+  exports.VERSION = '0.2.6';
   exports.run = function(options) {
     var executeServer;
     exports.options = options;

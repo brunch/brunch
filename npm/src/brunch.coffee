@@ -11,7 +11,7 @@ glob      = require 'glob'
 brunch    = require 'brunch'
 
 # the current brunch version number
-exports.VERSION = '0.2.4'
+exports.VERSION = '0.2.6'
 
 exports.run = (options) ->
   exports.options = options
