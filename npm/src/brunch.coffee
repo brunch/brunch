@@ -42,6 +42,38 @@ exports.newProject = (projectName) ->
   for directory in directoryLayout
     fs.mkdirSync("brunch/#{directory}", 0755)
 
+  # create main_controller.coffee file
+  mainController = """
+                    class MainController extends Backbone.Controller
+                      routes :
+                        "!/home": "home"
+
+                      constructor: ->
+                        super
+
+                      home: ->
+                        #{projectName}.views.home.render()
+
+                    # init controller
+                    #{projectName}.controllers.main = new MainController()
+                    """
+
+  fs.writeFileSync("brunch/src/app/controllers/main_controller.coffee", mainController)
+
+  # create main_controller.coffee file
+  homeView = """
+              class HomeView extends Backbone.View
+                id: 'home-view'
+
+                render: ->
+                  $(@.el).html("<h1>Hello World!</h1>")
+                  $('body').html(@.el)
+
+              #{projectName}.views.home = new HomeView()
+             """
+
+  fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView)
+
   # create main.coffee app file
   mainContent = """
                  window.#{projectName} = {}
@@ -54,6 +86,7 @@ exports.newProject = (projectName) ->
                    Backbone.history.saveLocation("!/home") if '' == Backbone.history.getFragment()
                    Backbone.history.start()
                  """
+
   fs.writeFileSync("brunch/src/app/main.coffee", mainContent)
 
   # create fusion config and eco hook files
@@ -76,9 +109,13 @@ exports.newProject = (projectName) ->
               <!doctype html>
               <html lang="en">
               <head>
+                <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js"></script>
+                <script src="http://cdn.brunchwithcoffee.com/js/underscore/1.1.3/underscore-min.js"></script>
+                <script src="http://cdn.brunchwithcoffee.com/js/backbone/0.3.3/backbone-min.js"></script>
+                <script src="web/js/templates.js"></script>
+                <script src="web/js/concatenation.js"></script>
               </head>
               <body>
-                <h1>Hello World!</h1>
               </body>
               """
   fs.writeFileSync("brunch/build/index.html", indexHtml)
@@ -154,7 +191,7 @@ exports.dispatch = (file) ->
       globbedPaths = glob.globSync(appSource, 0)
       sourcePaths = sourcePaths.concat(globbedPaths)
 
-    sourcePaths.push('brunch/src/app/main.coffee')
+    sourcePaths.unshift('brunch/src/app/main.coffee')
 
     coffeeParams = ['--output',
       'brunch/build/web/js',
