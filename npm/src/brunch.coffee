@@ -28,13 +28,13 @@ exports.newProject = (projectName, options) ->
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
-  # TODO use walk to automatically copy the project template!!!!
+  # TODO use walk to automatically copy the project template
   directoryLayout = ["",
                       "config",
                       "config/fusion",
                       "build",
                       "build/web",
-                      "build/web/css", # TODO workaroung until stylus creates it output dirs by itself
+                      "build/web/css", # TODO workaroung until stylus creates its output dirs by itself
                       "src",
                       "src/app",
                       "src/app/controllers",
