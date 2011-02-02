@@ -107,8 +107,8 @@ exports.watch  = (options) ->
     exports.dispatch(file)
   )
 
-# compiling all files
-exports.compile = ->
+# building all files
+exports.build = ->
   sourcePaths = exports.generateSourcePaths()
   exports.spawnCoffee(sourcePaths)
   exports.spawnDocco(sourcePaths)
@@ -155,7 +155,7 @@ exports.spawnCoffee = (sourcePaths) ->
     'brunch/build/web/js',
     '--join',
     '--lint',
-    '--compile']
+    '--build']
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams

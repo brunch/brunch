@@ -102,7 +102,7 @@
       return exports.dispatch(file);
     });
   };
-  exports.compile = function() {
+  exports.build = function() {
     var sourcePaths;
     sourcePaths = exports.generateSourcePaths();
     exports.spawnCoffee(sourcePaths);
@@ -140,7 +140,7 @@
   };
   exports.spawnCoffee = function(sourcePaths) {
     var coffeeParams, executeCoffee;
-    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
+    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--build'];
     coffeeParams = coffeeParams.concat(sourcePaths);
     executeCoffee = spawn('coffee', coffeeParams);
     executeCoffee.stderr.on('data', function(data) {

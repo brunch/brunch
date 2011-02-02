@@ -20,6 +20,9 @@ start the file watcher to process all .coffee, .sass or .html file changes autom
 
 ## TODO
 
-after creating the directory structure it should be compiled once
-move watch to own node package or at least to another file
-move js files from src
+* documentation, documentation und documentation!!!!!!!
+* move js files from src to build
+* move watch to own node package or at least to another file
+* proper error message if brunch directory already exist
+* proper output info
+* tests!!!!!!!
