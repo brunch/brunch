@@ -12,11 +12,25 @@ you can get brunch using the node package manager
 
 create a new project using 'proj' as app namespace
 
-    brunch new proj
+    brunch new <proj>
 
 start the file watcher to process all .coffee, .sass or .html file changes automatically
 
     brunch watch
+
+build the project
+
+    brunch build
+
+brunch provides the possibility to choose between different project templates
+currently these are available
+
+* express (default) - includes build in express server which will be started with "brunch watch"
+* base - just the basic brunch layout including src, config and build
+
+you can choose between them via option "--projectTemplate"
+
+    brunch --projectTemplate base new my_app
 
 ## TODO
 
