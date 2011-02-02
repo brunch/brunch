@@ -39,10 +39,11 @@ exports.newProject = (projectName) ->
                       "src/lib",
                       "src/vendor"]
 
+  # create directory layout
   for directory in directoryLayout
     fs.mkdirSync("brunch/#{directory}", 0755)
 
-  # create main_controller.coffee file
+  # create main_controller.coffee
   mainController = """
                     class MainController extends Backbone.Controller
                       routes :
@@ -60,13 +61,13 @@ exports.newProject = (projectName) ->
 
   fs.writeFileSync("brunch/src/app/controllers/main_controller.coffee", mainController)
 
-  # create main_controller.coffee file
+  # create home_view.coffee
   homeView = """
               class HomeView extends Backbone.View
                 id: 'home-view'
 
                 render: ->
-                  $(@.el).html("<h1>Hello World!</h1>")
+                  $(@.el).html(templates.home())
                   $('body').html(@.el)
 
               #{projectName}.views.home = new HomeView()
@@ -74,12 +75,20 @@ exports.newProject = (projectName) ->
 
   fs.writeFileSync("brunch/src/app/views/home_view.coffee", homeView)
 
+  # create home template
+  homeTemplate = """
+                  <h1>Hello World! Welcome to brunch</h1>
+                  """
+
+  fs.writeFileSync("brunch/src/app/templates/home.html", homeTemplate)
+
   # create main.coffee app file
   mainContent = """
                  window.#{projectName} = {}
                  #{projectName}.controllers = {}
                  #{projectName}.models = {}
                  #{projectName}.views = {}
+                 window.module = {} # dirty workaround until eco's namespace is fixed
 
                  # app bootstrapping on document ready
                  $(document).ready ->
@@ -112,8 +121,8 @@ exports.newProject = (projectName) ->
                 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js"></script>
                 <script src="http://cdn.brunchwithcoffee.com/js/underscore/1.1.3/underscore-min.js"></script>
                 <script src="http://cdn.brunchwithcoffee.com/js/backbone/0.3.3/backbone-min.js"></script>
-                <script src="web/js/templates.js"></script>
                 <script src="web/js/concatenation.js"></script>
+                <script src="web/js/templates.js"></script>
               </head>
               <body>
               </body>

@@ -17,3 +17,7 @@ create a new project using 'proj' as app namespace
 start the file watcher to process all .coffee, .sass or .html file changes automatically
 
     brunch watch
+
+## TODO
+
+fix template namespace via settings file
