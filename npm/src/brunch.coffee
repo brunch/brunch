@@ -128,6 +128,7 @@ exports.dispatch = (file) ->
   if file.match(/styl$/)
     exports.spawnStylus()
 
+# generate a list of paths containing all coffee files
 exports.generateSourcePaths = ->
   appSources = ['brunch/src/app/helpers/*.coffee',
     'brunch/src/app/models/*.coffee',
@@ -141,6 +142,7 @@ exports.generateSourcePaths = ->
   sourcePaths.unshift('brunch/src/app/main.coffee')
   sourcePaths
 
+# spawns a new coffee process which merges all *.coffee files into on js file
 exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = ['--output',
     'brunch/build/web/js',
@@ -159,16 +161,19 @@ exports.spawnCoffee = (sourcePaths) ->
     else
       util.log('there was a problem during .coffee to .js compilation. see above')
 
+# spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->
   executeDocco = spawn('docco', sourcePaths)
   executeDocco.stderr.on 'data', (data) ->
     util.log data
 
+# spawns a new fusion compiling which merges all the templates into one namespace
 exports.spawnFusion = ->
   executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
   executeFusion.stdout.on 'data', (data) ->
     util.log data
 
+# spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
   executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
   executeStylus.stdout.on 'data', (data) ->
