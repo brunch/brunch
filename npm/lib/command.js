@@ -21,7 +21,8 @@
     options.projectTemplate = "express";
     options = exports.loadOptionsFromArguments(opts, options);
     if (opts["new"]) {
-      return brunch.newProject(projectName, options);
+      brunch.newProject(projectName, options);
+      return brunch.compile(options);
     } else if (opts.watch) {
       return brunch.watch(options);
     } else if (opts.compile) {
