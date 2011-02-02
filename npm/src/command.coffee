@@ -19,7 +19,7 @@ SWITCHES = [
 BANNER = '''
   Usage: brunch [options] [<directory>]
          '''
-settings = {}
+options = {}
 
 # Run 'brunch' by parsing passed options and determining what action to take.
 # This also includes checking for a settings file. Settings in commandline arguments
@@ -30,11 +30,11 @@ exports.run = ->
   return usage() if opts.help
   return version() if opts.version
   projectName = opts.arguments[1]
+  options = exports.loadOptionsFromArguments opts
+  options.templateExtension = "eco"
   if opts.new
-    return newProject(projectName)
-  exports.loadSettingsFromFile(opts.config) if opts.config
-  exports.loadSettingsFromArguments(opts)
-  brunch.run(settings)
+    return brunch.newProject projectName, options
+  brunch.run(options)
 
 # Load settings from a settings file or at least set some
 # reasonable defaults.
@@ -48,13 +48,14 @@ exports.loadSettingsFromFile = (settings_file) ->
   settings
 
 # Load settings from arguments.
-exports.loadSettingsFromArguments = (opts) ->
-  settings.namespace = opts.namespace if opts.namespace
-  settings.templateExtension = opts.templateExtension if opts.templateExtension
-  settings.input_dir = opts.input if opts.input
-  settings.output_dir = opts.output if opts.output
-  settings.watch = opts.watch if opts.watch
-  settings
+exports.loadOptionsFromArguments = (opts) ->
+  options = {}
+  options.namespace = opts.namespace if opts.namespace
+  options.templateExtension = opts.templateExtension if opts.templateExtension
+  options.input_dir = opts.input if opts.input
+  options.output_dir = opts.output if opts.output
+  options.watch = opts.watch if opts.watch
+  options
 
 # Run optparser which was taken from Coffeescript 1.0.0
 parseOptions = ->
@@ -70,6 +71,3 @@ usage = ->
 version = ->
   process.stdout.write("brunch version #{brunch.VERSION}\n")
   process.exit 0
-
-newProject = (projectName) ->
-  brunch.newProject(projectName)

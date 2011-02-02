@@ -1,4 +1,4 @@
-# brunch can be used via command-line tool or manually by calling run(settings).
+# brunch can be used via command-line tool or manually by calling run(options).
 
 root = __dirname + "/../"
 # External dependencies.
@@ -12,16 +12,18 @@ glob      = require 'glob'
 # the current brunch version number
 exports.VERSION = '0.2.3'
 
-exports.run = (settings) ->
-  exports.settings = settings
-  if exports.settings.watch
+exports.run = (options) ->
+  exports.options = options
+  if exports.options.watch
     exports.watch()
 
 # project skeleton generator
 # * create directory strucutre
 # * create main.coffee bootstrapping file
 # TODO: create index.html and decide where to put it
-exports.newProject = (projectName) ->
+exports.newProject = (projectName, options) ->
+
+  exports.options = options
 
   directoryLayout = ["",
                       "config",
@@ -67,7 +69,7 @@ exports.newProject = (projectName) ->
                 id: 'home-view'
 
                 render: ->
-                  $(@.el).html(templates.home())
+                  $(@.el).html(#{projectName}.templates.home())
                   $('body').html(@.el)
 
               #{projectName}.views.home = new HomeView()
@@ -80,7 +82,7 @@ exports.newProject = (projectName) ->
                   <h1>Hello World! Welcome to brunch</h1>
                   """
 
-  fs.writeFileSync("brunch/src/app/templates/home.html", homeTemplate)
+  fs.writeFileSync("brunch/src/app/templates/home.eco", homeTemplate)
 
   # create main.coffee app file
   mainContent = """
@@ -101,8 +103,11 @@ exports.newProject = (projectName) ->
   # create fusion config and eco hook files
   fusionConfig = """
                   hook: "brunch/config/fusion/hook.js"
+                  output: "brunch/build/web/js/templates.js"
+                  templateExtension: "#{exports.options.templateExtension}"
+                  namespace: "window.#{projectName}"
                   """
-  fs.writeFileSync("brunch/config/fusion/settings.yaml", fusionConfig)
+  fs.writeFileSync("brunch/config/fusion/options.yaml", fusionConfig)
 
   # create fusion config and eco hook files
   fusionHook = """
@@ -132,7 +137,7 @@ exports.newProject = (projectName) ->
   console.log("created brunch directory layout")
 
 # file watcher
-exports.watch = ->
+exports.watch  = ->
   ## copied source from watch_dir, because it did not work as package
   fs.watchDir = (_opts, callback) ->
 
@@ -226,13 +231,13 @@ exports.dispatch = (file) ->
       util.log(data)
     )
 
-
   # handle template changes
-  if file.match(/html$/) or file.match(/jst$/)
+  templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
+  if file.match(templateExtensionRegex)
     console.log('fusion')
-    executeFusion = spawn('fusion', ['--hook', 'brunch/config/fusion/hook.js', '--output', 'brunch/build/web/js/templates.js', 'brunch/src/app/templates'])
+    executeFusion = spawn('fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates'])
     executeFusion.stdout.on('data', (data) ->
-      util.log(data)
+      util.log data
     )
 
   if file.match(/style$/)

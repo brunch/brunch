@@ -19,5 +19,3 @@ start the file watcher to process all .coffee, .sass or .html file changes autom
     brunch watch
 
 ## TODO
-
-fix template namespace via settings file

@@ -1,12 +1,12 @@
 (function() {
-  var BANNER, SWITCHES, brunch, fs, newProject, optparse, parseOptions, settings, usage, version, yaml;
+  var BANNER, SWITCHES, brunch, fs, options, optparse, parseOptions, usage, version, yaml;
   fs = require('fs');
   yaml = require('yaml');
   brunch = require('./brunch');
   optparse = require('./optparse');
   SWITCHES = [['new', '--new', 'create new brunch project'], ['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-i', '--input [DIR]', 'set input path of project'], ['-o', '--output [DIR]', 'set output path of project'], ['-c', '--config [FILE]', 'set path of settings file'], ['watch', '--watch', 'watch files (currently you have to restart if files are added or renamed)']];
   BANNER = 'Usage: brunch [options] [<directory>]';
-  settings = {};
+  options = {};
   exports.run = function() {
     var opts, projectName;
     opts = parseOptions();
@@ -17,16 +17,15 @@
       return version();
     }
     projectName = opts.arguments[1];
+    options = exports.loadOptionsFromArguments(opts);
+    options.templateExtension = "eco";
     if (opts["new"]) {
-      return newProject(projectName);
+      return brunch.newProject(projectName, options);
     }
-    if (opts.config) {
-      exports.loadSettingsFromFile(opts.config);
-    }
-    exports.loadSettingsFromArguments(opts);
-    return brunch.run(settings);
+    return brunch.run(options);
   };
   exports.loadSettingsFromFile = function(settings_file) {
+    var settings;
     settings_file || (settings_file = "settings.yaml");
     settings = yaml.eval(fs.readFileSync(settings_file, 'utf8'));
     if (!settings.namespace) {
@@ -43,23 +42,24 @@
     }
     return settings;
   };
-  exports.loadSettingsFromArguments = function(opts) {
+  exports.loadOptionsFromArguments = function(opts) {
+    options = {};
     if (opts.namespace) {
-      settings.namespace = opts.namespace;
+      options.namespace = opts.namespace;
     }
     if (opts.templateExtension) {
-      settings.templateExtension = opts.templateExtension;
+      options.templateExtension = opts.templateExtension;
     }
     if (opts.input) {
-      settings.input_dir = opts.input;
+      options.input_dir = opts.input;
     }
     if (opts.output) {
-      settings.output_dir = opts.output;
+      options.output_dir = opts.output;
     }
     if (opts.watch) {
-      settings.watch = opts.watch;
+      options.watch = opts.watch;
     }
-    return settings;
+    return options;
   };
   parseOptions = function() {
     var optionParser;
@@ -73,8 +73,5 @@
   version = function() {
     process.stdout.write("brunch version " + brunch.VERSION + "\n");
     return process.exit(0);
-  };
-  newProject = function(projectName) {
-    return brunch.newProject(projectName);
   };
 }).call(this);
