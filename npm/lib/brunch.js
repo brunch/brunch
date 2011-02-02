@@ -1,5 +1,5 @@
 (function() {
-  var fs, glob, path, root, spawn, util, _;
+  var brunch, fs, glob, path, root, spawn, util, _;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
@@ -7,6 +7,7 @@
   spawn = require('child_process').spawn;
   _ = require('underscore');
   glob = require('glob');
+  brunch = require('brunch');
   exports.VERSION = '0.2.3';
   exports.run = function(options) {
     exports.options = options;
@@ -15,9 +16,10 @@
     }
   };
   exports.newProject = function(projectName, options) {
-    var directory, directoryLayout, fusionConfig, fusionHook, homeTemplate, homeView, indexHtml, mainContent, mainController, mainStyle, _i, _len;
+    var directory, directoryLayout, fusionConfig, fusionHook, homeTemplate, homeView, indexHtml, mainContent, mainController, mainStyle, projectTemplatePath, _i, _len;
     exports.options = options;
-    directoryLayout = ["", "config", "config/fusion", "build", "build/web", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
+    projectTemplatePath = path.join(module.id + "/../../template");
+    directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
     for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
       directory = directoryLayout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
@@ -38,6 +40,7 @@
     fs.writeFileSync("brunch/config/fusion/hook.js", fusionHook);
     indexHtml = "<!doctype html>\n<html lang=\"en\">\n<head>\n  <script src=\"http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.min.js\"></script>\n  <script src=\"http://cdn.brunchwithcoffee.com/js/underscore/1.1.3/underscore-min.js\"></script>\n  <script src=\"http://cdn.brunchwithcoffee.com/js/backbone/0.3.3/backbone-min.js\"></script>\n  <script src=\"web/js/concatenation.js\"></script>\n  <script src=\"web/js/templates.js\"></script>\n</head>\n<body>\n</body>";
     fs.writeFileSync("brunch/build/index.html", indexHtml);
+    fs.linkSync(path.join(projectTemplatePath, "app", "styles", "reset.styl"), "brunch/src/app/styles/reset.styl");
     return console.log("created brunch directory layout");
   };
   exports.watch = function() {

@@ -8,6 +8,7 @@ path      = require 'path'
 spawn     = require('child_process').spawn
 _         = require 'underscore'
 glob      = require 'glob'
+brunch    = require 'brunch'
 
 # the current brunch version number
 exports.VERSION = '0.2.3'
@@ -21,14 +22,16 @@ exports.run = (options) ->
 # * create directory strucutre
 # * create main.coffee bootstrapping file
 exports.newProject = (projectName, options) ->
-
   exports.options = options
+
+  projectTemplatePath = path.join(module.id + "/../../template")
 
   directoryLayout = ["",
                       "config",
                       "config/fusion",
                       "build",
                       "build/web",
+                      "build/web/css", # TODO workaroung until stylus creates it output dirs by itself
                       "src",
                       "src/app",
                       "src/app/controllers",
@@ -140,6 +143,8 @@ exports.newProject = (projectName, options) ->
               </body>
               """
   fs.writeFileSync "brunch/build/index.html", indexHtml
+
+  fs.linkSync path.join(projectTemplatePath, "app", "styles", "reset.styl"), "brunch/src/app/styles/reset.styl"
 
   console.log "created brunch directory layout"
 
