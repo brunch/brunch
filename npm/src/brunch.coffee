@@ -44,7 +44,7 @@ exports.newProject = (projectName, options) ->
     fs.mkdirSync "brunch/#{directory}", 0755
 
   # copy files into new project
-  fs.linkSync path.join(projectTemplatePath, "src/app/controllers/main_controller.coffee"), "brunch/src/app/controllers/main_controller.coffee"
+  fs.linkSync path.join(projectTemplatePath, "src/app/controllers/MainController.coffee"), "brunch/src/app/controllers/main_controller.coffee"
   fs.linkSync path.join(projectTemplatePath, "src/app/views/home_view.coffee"), "brunch/src/app/views/home_view.coffee"
   fs.linkSync path.join(projectTemplatePath, "src/app/templates/home.eco"), "brunch/src/app/templates/home.eco"
   fs.linkSync path.join(projectTemplatePath, "src/app/main.coffee"), "brunch/src/app/main.coffee"

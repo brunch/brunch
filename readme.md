@@ -30,7 +30,7 @@ currently these are available
 
 you can choose between them via option "--projectTemplate"
 
-    brunch --projectTemplate base new my_app
+    brunch new my_app --projectTemplate base
 
 ## TODO
 
