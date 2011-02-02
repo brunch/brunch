@@ -4,7 +4,7 @@
   yaml = require('yaml');
   brunch = require('./brunch');
   optparse = require('./optparse');
-  SWITCHES = [['new', '--new', 'create new brunch project'], ['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-i', '--input [DIR]', 'set input path of project'], ['-o', '--output [DIR]', 'set output path of project'], ['-c', '--config [FILE]', 'set path of settings file'], ['watch', '--watch', 'watch files (currently you have to restart if files are added or renamed)']];
+  SWITCHES = [['new', '--new', 'create new brunch project'], ['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-p', '--projectTemplate [type]', 'set which kind of project template should be used'], ['watch', '--watch', 'watch files (currently you have to restart if files are added or renamed)']];
   BANNER = 'Usage: brunch [options] [<directory>]';
   options = {};
   exports.run = function() {
@@ -17,17 +17,20 @@
       return version();
     }
     projectName = opts.arguments[1];
-    options = exports.loadOptionsFromArguments(opts);
     options.templateExtension = "eco";
+    options.projectTemplate = "express";
+    options = exports.loadOptionsFromArguments(opts, options);
     if (opts["new"]) {
       return brunch.newProject(projectName, options);
     }
     return brunch.run(options);
   };
-  exports.loadOptionsFromArguments = function(opts) {
-    options = {};
+  exports.loadOptionsFromArguments = function(opts, options) {
     if (opts.templateExtension) {
       options.templateExtension = opts.templateExtension;
+    }
+    if (opts.projectTemplate) {
+      options.projectTemplate = opts.projectTemplate;
     }
     if (opts.watch) {
       options.watch = opts.watch;

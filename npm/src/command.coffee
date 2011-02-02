@@ -9,9 +9,7 @@ SWITCHES = [
   ['new', '--new',                        'create new brunch project']
   ['-v', '--version',                     'display brunch version']
   ['-h', '--help',                        'display this help message']
-  ['-i', '--input [DIR]',                 'set input path of project']
-  ['-o', '--output [DIR]',                'set output path of project']
-  ['-c', '--config [FILE]',               'set path of settings file']
+  ['-p', '--projectTemplate [type]',      'set which kind of project template should be used']
   ['watch', '--watch',                    'watch files (currently you have to restart if files are added or renamed)']
 ]
 
@@ -30,16 +28,17 @@ exports.run = ->
   return usage() if opts.help
   return version() if opts.version
   projectName = opts.arguments[1]
-  options = exports.loadOptionsFromArguments opts
   options.templateExtension = "eco"
+  options.projectTemplate = "express"
+  options = exports.loadOptionsFromArguments opts, options
   if opts.new
     return brunch.newProject projectName, options
   brunch.run options
 
 # Load settings from arguments.
-exports.loadOptionsFromArguments = (opts) ->
-  options = {}
+exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
+  options.projectTemplate = opts.projectTemplate if opts.projectTemplate
   options.watch = opts.watch if opts.watch
   options
 

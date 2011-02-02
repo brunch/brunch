@@ -16,6 +16,8 @@ exports.VERSION = '0.2.3'
 exports.run = (options) ->
   exports.options = options
   if exports.options.watch
+    if(exports.options.projectTemplate is "express")
+      executeServer = spawn 'node', ['brunch/server/main.js']
     exports.watch()
 
 # project skeleton generator
@@ -24,7 +26,7 @@ exports.run = (options) ->
 exports.newProject = (projectName, options) ->
   exports.options = options
 
-  projectTemplatePath = path.join(module.id + "/../../template/base")
+  projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
   # TODO use walk to automatically copy the project template!!!!
   directoryLayout = ["",
@@ -58,6 +60,10 @@ exports.newProject = (projectName, options) ->
   fs.linkSync path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml"
   fs.linkSync path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js"
   fs.linkSync path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html"
+
+  if(exports.options.projectTemplate is "express")
+    fs.mkdirSync "brunch/server", 0755
+    fs.linkSync path.join(projectTemplatePath, "server/main.js"), "brunch/server/main.js"
 
   console.log "created brunch directory layout"
 
@@ -141,7 +147,7 @@ exports.dispatch = (file) ->
 
     executeCoffee = spawn 'coffee', coffeeParams
     executeCoffee.stderr.on 'data', (data) ->
-      util.log(data)
+      util.log data
 
     executeCoffee.on 'exit', (code) ->
       if code == 0
@@ -151,7 +157,7 @@ exports.dispatch = (file) ->
 
     executeDocco = spawn('docco', sourcePaths)
     executeDocco.stderr.on 'data', (data) ->
-      util.log(data)
+      util.log data
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
