@@ -66,7 +66,6 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 
 ### other stuff
 
-* add twitter account
 * register irc channel
 * add zepto to brunch cdn
 
