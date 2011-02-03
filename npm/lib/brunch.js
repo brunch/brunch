@@ -13,7 +13,7 @@
     var directory, directoryLayout, projectTemplatePath, _i, _len;
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
-    directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib", "src/vendor"];
+    directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib"];
     for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
       directory = directoryLayout[_i];
       fs.mkdirSync("brunch/" + directory, 0755);
@@ -27,6 +27,7 @@
     fs.linkSync(path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml");
     fs.linkSync(path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js");
     fs.linkSync(path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html");
+    fs.linkSync(path.join(projectTemplatePath, "src/vendor"), "brunch/src/vendor");
     if (exports.options.projectTemplate === "express") {
       fs.mkdirSync("brunch/server", 0755);
       fs.linkSync(path.join(projectTemplatePath, "server/main.js"), "brunch/server/main.js");

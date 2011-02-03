@@ -36,8 +36,8 @@ exports.newProject = (projectName, options) ->
                       "src/app/styles",
                       "src/app/templates",
                       "src/app/views",
-                      "src/lib",
-                      "src/vendor"]
+                      "src/lib"
+                      ]
 
   # create directory layout
   for directory in directoryLayout
@@ -53,6 +53,8 @@ exports.newProject = (projectName, options) ->
   fs.linkSync path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml"
   fs.linkSync path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js"
   fs.linkSync path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html"
+
+  fs.linkSync path.join(projectTemplatePath, "src/vendor"), "brunch/src/vendor"
 
   if(exports.options.projectTemplate is "express")
     fs.mkdirSync "brunch/server", 0755
