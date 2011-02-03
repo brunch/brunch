@@ -62,11 +62,13 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * proper error message if brunch directory already exists
 * proper output info
 * tests
+* impove childspawn - see http://nodejs.org/docs/v0.3.7/api/child_processes.html#child_process.spawn
 
 ### other stuff
 
-add twitter account
-register irc channel
+* add twitter account
+* register irc channel
+* add zepto to brunch cdn
 
 ## Future plans
 
