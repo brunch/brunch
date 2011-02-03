@@ -47,12 +47,12 @@ You can take a look at the app at "localhost:8080".
 
 Instead of reinventing the wheel, brunch assembles awesome wheels.
 
-[CoffeeScript](http://jashkenas.github.com/coffee-script/)
-[Backbone](http://documentcloud.github.com/backbone/)
-[Underscore](http://documentcloud.github.com/underscore/)
-[jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
-[Stylus](https://github.com/LearnBoost/stylus)
-[Eco](https://github.com/sstephenson/eco)
+* [CoffeeScript](http://jashkenas.github.com/coffee-script/)
+* [Backbone](http://documentcloud.github.com/backbone/)
+* [Underscore](http://documentcloud.github.com/underscore/)
+* [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
+* [Stylus](https://github.com/LearnBoost/stylus)
+* [Eco](https://github.com/sstephenson/eco)
 
 ## TODO
 
@@ -62,3 +62,14 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * proper error message if brunch directory already exists
 * proper output info
 * tests
+
+### other stuff
+
+add twitter account
+register irc channel
+
+## Future plans
+
+* add vendor scripts for development
+* add "build deploy" which generates index.html with script tags using cdn
+* add phonegap support
