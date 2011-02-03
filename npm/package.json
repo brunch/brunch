@@ -3,7 +3,7 @@
   "description":  "~ with coffee",
   "version":      "0.2.6",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
-  "homepage":     "http://brunchwithcoffee.org/",
+  "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
   "licenses":     [{
     "type":       "MIT",
