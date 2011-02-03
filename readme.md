@@ -45,9 +45,9 @@ You can take a look at the app at "localhost:8080".
 
 ## TODO
 
-* documentation, documentation und documentation!!!!!!!
-* move js files from src to build
+* more & improved documentation
+* copy js files from src to build
 * move watch to own node package or at least to another file
-* proper error message if brunch directory already exist
+* proper error message if brunch directory already exists
 * proper output info
-* tests!!!!!!!
+* tests
