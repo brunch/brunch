@@ -43,6 +43,17 @@ Just the basic brunch layout including src, config and build.
 Includes build in express server which will be started with "brunch watch".
 You can take a look at the app at "localhost:8080".
 
+## Standing on the Shoulders of Giants
+
+Instead of reinventing the wheel, brunch assembles awesome wheels.
+
+[CoffeeScript](http://jashkenas.github.com/coffee-script/)
+[Backbone](http://documentcloud.github.com/backbone/)
+[Underscore](http://documentcloud.github.com/underscore/)
+[jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
+[Stylus](https://github.com/LearnBoost/stylus)
+[Eco](https://github.com/sstephenson/eco)
+
 ## TODO
 
 * more & improved documentation
