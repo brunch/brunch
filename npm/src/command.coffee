@@ -1,6 +1,7 @@
 # External dependencies.
 fs          = require 'fs'
 yaml        = require 'yaml'
+nomnom      = require 'nomnom'
 brunch      = require './brunch'
 optparse    = require './optparse'
 
@@ -8,12 +9,32 @@ optparse    = require './optparse'
 SWITCHES = [
   ['-v', '--version',                     'display brunch version']
   ['-h', '--help',                        'display this help message']
-  ['-p', '--projectTemplate [type]',      'set which kind of project template should be used']
+  ['-p', '--projectTemplate=[type]',      'set which kind of project template should be used']
+]
+
+# The config for the nomnom command-line parser
+NOMNOM_CONFIG = [
+  { 
+    "name"    : 'projectTemplate',
+    "string"  : '-p TEMPLATE, --projectTemplate=TEMPLATE',
+    "default" : 'express',
+    "help"    : 'set which kind of project template should be used'
+  },
+  { 
+    "name"    : 'version',
+    "string"  : '-v, --version',
+    "help"    : 'display brunch version'
+  },
+  { 
+    "name"    : 'help',
+    "string"  : '-h, --help',
+    "help"    : 'display brunch help'
+  }
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
 BANNER = '''
-  Usage: brunch [options] [command]
+  Usage: brunch [command] [options]
 
   Possible commands are:
     new           create new brunch project
@@ -33,11 +54,10 @@ exports.run = ->
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options = exports.loadOptionsFromArguments opts, options
-  command = opts.arguments[0]
+  command = opts[0]
   if command is "new"
-    return usage() unless opts.arguments[1]
-    brunch.newProject opts.arguments[1], options
-    return brunch.build options
+    name = opts[1] || "app"
+    brunch.newProject name, options
   else if command is "watch"
     return brunch.watch options
   else if command is "build"
@@ -51,10 +71,9 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
   options
 
-# Run optparser which was taken from Coffeescript 1.0.0
+# Run nomnom to parse the arguments
 parseOptions = ->
-  optionParser  = new optparse.OptionParser SWITCHES, BANNER
-  optionParser.parse process.argv.slice 2
+  nomnom.parseArgs NOMNOM_CONFIG, { printHelp: false }
 
 # Print the '--help' usage message and exit.
 usage = ->
