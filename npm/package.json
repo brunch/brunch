@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "~ with coffee",
-  "version":      "0.2.6",
+  "version":      "0.2.7",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "json2", "framework", "brunch", "coffee", "coffeescript", "sass"],
   "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
@@ -26,7 +26,7 @@
     "fusion": ">= 0.0.5",
     "glob": ">= 1.1.0",
     "eco": ">= 1.0.1",
-    "stylus": ">= 0.2.0"
+    "stylus": ">= 0.2.1"
     "watch": ">=0.1.8"
   },
   "devDependencies": {
