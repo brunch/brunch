@@ -8,7 +8,7 @@
   _ = require('underscore');
   glob = require('glob');
   brunch = require('brunch');
-  exports.VERSION = '0.2.7';
+  exports.VERSION = '0.2.8';
   exports.newProject = function(projectName, options) {
     var directory, directoryLayout, projectTemplatePath, _i, _len;
     exports.options = options;

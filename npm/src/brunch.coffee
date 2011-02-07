@@ -11,7 +11,7 @@ glob      = require 'glob'
 brunch    = require 'brunch'
 
 # the current brunch version number
-exports.VERSION = '0.2.7'
+exports.VERSION = '0.2.8'
 
 # project skeleton generator
 # * create directory strucutre
