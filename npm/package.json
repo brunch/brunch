@@ -26,9 +26,10 @@
     "fusion": ">= 0.0.5",
     "glob": ">= 1.1.0",
     "eco": ">= 1.0.1",
-    "stylus": ">= 0.2.1",
     "watch": ">=0.1.8",
     "nomnom": ">=0.1.2"
+    "stylus": ">= 0.3.1",
+    "watch": ">=0.1.8"
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
