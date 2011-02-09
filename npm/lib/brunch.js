@@ -1,5 +1,5 @@
 (function() {
-  var brunch, fs, glob, path, root, spawn, util, _;
+  var brunch, fs, glob, helpers, path, root, spawn, util, _;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
@@ -8,29 +8,18 @@
   _ = require('underscore');
   glob = require('glob');
   brunch = require('brunch');
+  helpers = require('./helpers');
   exports.VERSION = '0.2.8';
   exports.newProject = function(projectName, options) {
-    var directory, directoryLayout, projectTemplatePath, _i, _len;
+    var projectTemplatePath;
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
-    directoryLayout = ["", "config", "config/fusion", "build", "build/web", "build/web/css", "src", "src/app", "src/app/controllers", "src/app/helpers", "src/app/models", "src/app/styles", "src/app/templates", "src/app/views", "src/lib"];
-    for (_i = 0, _len = directoryLayout.length; _i < _len; _i++) {
-      directory = directoryLayout[_i];
-      fs.mkdirSync("brunch/" + directory, 0755);
-    }
-    fs.linkSync(path.join(projectTemplatePath, "src/app/controllers/MainController.coffee"), "brunch/src/app/controllers/main_controller.coffee");
-    fs.linkSync(path.join(projectTemplatePath, "src/app/views/home_view.coffee"), "brunch/src/app/views/home_view.coffee");
-    fs.linkSync(path.join(projectTemplatePath, "src/app/templates/home.eco"), "brunch/src/app/templates/home.eco");
-    fs.linkSync(path.join(projectTemplatePath, "src/app/main.coffee"), "brunch/src/app/main.coffee");
-    fs.linkSync(path.join(projectTemplatePath, "src/app/styles/main.styl"), "brunch/src/app/styles/main.styl");
-    fs.linkSync(path.join(projectTemplatePath, "src/app/styles/reset.styl"), "brunch/src/app/styles/reset.styl");
-    fs.linkSync(path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml");
-    fs.linkSync(path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js");
-    fs.linkSync(path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html");
-    fs.linkSync(path.join(projectTemplatePath, "src/vendor"), "brunch/src/vendor");
+    fs.mkdirSync("brunch", 0755);
+    helpers.cp(path.join(projectTemplatePath, 'src/'), 'brunch/src');
+    helpers.cp(path.join(projectTemplatePath, 'build/'), 'brunch/build');
+    helpers.cp(path.join(projectTemplatePath, 'config/'), 'brunch/config');
     if (exports.options.projectTemplate === "express") {
-      fs.mkdirSync("brunch/server", 0755);
-      fs.linkSync(path.join(projectTemplatePath, "server/main.js"), "brunch/server/main.js");
+      helpers.cp(path.join(projectTemplatePath, 'server/'), 'brunch/server');
     }
     return console.log("created brunch directory layout");
   };

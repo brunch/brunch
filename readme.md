@@ -63,6 +63,7 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * proper output info
 * tests
 * impove childspawn - see http://nodejs.org/docs/v0.3.7/api/child_processes.html#child_process.spawn
+* directly call fusion, stylus and coffeescript instead of spawning child process
 
 ### other stuff
 

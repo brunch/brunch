@@ -9,6 +9,7 @@ spawn     = require('child_process').spawn
 _         = require 'underscore'
 glob      = require 'glob'
 brunch    = require 'brunch'
+helpers   = require './helpers'
 
 # the current brunch version number
 exports.VERSION = '0.2.8'
@@ -21,45 +22,15 @@ exports.newProject = (projectName, options) ->
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
-  # TODO use walk to automatically copy the project template
-  directoryLayout = ["",
-                      "config",
-                      "config/fusion",
-                      "build",
-                      "build/web",
-                      "build/web/css", # TODO workaroung until stylus creates its output dirs by itself
-                      "src",
-                      "src/app",
-                      "src/app/controllers",
-                      "src/app/helpers",
-                      "src/app/models",
-                      "src/app/styles",
-                      "src/app/templates",
-                      "src/app/views",
-                      "src/lib"
-                      ]
-
-  # create directory layout
-  for directory in directoryLayout
-    fs.mkdirSync "brunch/#{directory}", 0755
-
-  # copy files into new project
-  fs.linkSync path.join(projectTemplatePath, "src/app/controllers/MainController.coffee"), "brunch/src/app/controllers/main_controller.coffee"
-  fs.linkSync path.join(projectTemplatePath, "src/app/views/home_view.coffee"), "brunch/src/app/views/home_view.coffee"
-  fs.linkSync path.join(projectTemplatePath, "src/app/templates/home.eco"), "brunch/src/app/templates/home.eco"
-  fs.linkSync path.join(projectTemplatePath, "src/app/main.coffee"), "brunch/src/app/main.coffee"
-  fs.linkSync path.join(projectTemplatePath, "src/app/styles/main.styl"), "brunch/src/app/styles/main.styl"
-  fs.linkSync path.join(projectTemplatePath, "src/app/styles/reset.styl"), "brunch/src/app/styles/reset.styl"
-  fs.linkSync path.join(projectTemplatePath, "config/fusion/options.yaml"), "brunch/config/fusion/options.yaml"
-  fs.linkSync path.join(projectTemplatePath, "config/fusion/hook.js"), "brunch/config/fusion/hook.js"
-  fs.linkSync path.join(projectTemplatePath, "build/index.html"), "brunch/build/index.html"
-
-  fs.linkSync path.join(projectTemplatePath, "src/vendor"), "brunch/src/vendor"
+  fs.mkdirSync "brunch", 0755
+  helpers.cp path.join(projectTemplatePath, 'src/'), 'brunch/src'
+  helpers.cp path.join(projectTemplatePath, 'build/'), 'brunch/build'
+  helpers.cp path.join(projectTemplatePath, 'config/'), 'brunch/config'
 
   if(exports.options.projectTemplate is "express")
-    fs.mkdirSync "brunch/server", 0755
-    fs.linkSync path.join(projectTemplatePath, "server/main.js"), "brunch/server/main.js"
+    helpers.cp path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
+  # TODO inform user which template was used and give futher instructions how to use brunch
   console.log "created brunch directory layout"
 
 # file watcher
