@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
-    "vows": "0.5.3"
+    "vows": ">= 0.5.3"
   },
   "engines": ["node"],
   "repository": {
