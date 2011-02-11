@@ -1,7 +1,7 @@
 (function() {
   var exec;
   exec = require('child_process').exec;
-  exports.cp = function(source, target) {
+  exports.copy = function(source, target) {
     return exec('cp -R ' + source + ' ' + target, function(error, stdout, stderr) {
       if (stdout) {
         console.log(stdout);

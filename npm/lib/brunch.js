@@ -15,11 +15,11 @@
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
     fs.mkdirSync("brunch", 0755);
-    helpers.cp(path.join(projectTemplatePath, 'src/'), 'brunch/src');
-    helpers.cp(path.join(projectTemplatePath, 'build/'), 'brunch/build');
-    helpers.cp(path.join(projectTemplatePath, 'config/'), 'brunch/config');
+    helpers.copy(path.join(projectTemplatePath, 'src/'), 'brunch/src');
+    helpers.copy(path.join(projectTemplatePath, 'build/'), 'brunch/build');
+    helpers.copy(path.join(projectTemplatePath, 'config/'), 'brunch/config');
     if (exports.options.projectTemplate === "express") {
-      helpers.cp(path.join(projectTemplatePath, 'server/'), 'brunch/server');
+      helpers.copy(path.join(projectTemplatePath, 'server/'), 'brunch/server');
     }
     return console.log("created brunch directory layout");
   };
