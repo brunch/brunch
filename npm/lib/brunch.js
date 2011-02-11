@@ -165,4 +165,5 @@
       return util.log('compiling .style to .css:\n' + data);
     });
   };
+  exports.copyJsFiles = function() {};
 }).call(this);

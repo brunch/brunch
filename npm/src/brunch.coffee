@@ -158,3 +158,7 @@ exports.spawnStylus = ->
   executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
   executeStylus.stdout.on 'data', (data) ->
     util.log('compiling .style to .css:\n' + data)
+
+# copy all js files from src to build
+exports.copyJsFiles = ->
+  jsFiles =
