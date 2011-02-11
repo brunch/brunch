@@ -57,7 +57,7 @@ exports.run = ->
   command = opts[0]
   if command is "new"
     name = opts[1] || "app"
-    brunch.newProject name, options
+    brunch.new name, options
     brunch.build options
   else if command is "watch"
     return brunch.watch options

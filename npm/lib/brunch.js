@@ -10,7 +10,7 @@
   brunch = require('brunch');
   helpers = require('./helpers');
   exports.VERSION = '0.2.8';
-  exports.newProject = function(projectName, options) {
+  exports["new"] = function(projectName, options) {
     var projectTemplatePath;
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);

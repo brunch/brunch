@@ -17,7 +17,7 @@ exports.VERSION = '0.2.8'
 # project skeleton generator
 # * create directory strucutre
 # * create main.coffee bootstrapping file
-exports.newProject = (projectName, options) ->
+exports.new = (projectName, options) ->
   exports.options = options
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
