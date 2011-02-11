@@ -39,7 +39,8 @@
     command = opts[0];
     if (command === "new") {
       name = opts[1] || "app";
-      return brunch.newProject(name, options);
+      brunch.newProject(name, options);
+      return brunch.build(options);
     } else if (command === "watch") {
       return brunch.watch(options);
     } else if (command === "build") {

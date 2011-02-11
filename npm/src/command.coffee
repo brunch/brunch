@@ -14,18 +14,18 @@ SWITCHES = [
 
 # The config for the nomnom command-line parser
 NOMNOM_CONFIG = [
-  { 
+  {
     "name"    : 'projectTemplate',
     "string"  : '-p TEMPLATE, --projectTemplate=TEMPLATE',
     "default" : 'express',
     "help"    : 'set which kind of project template should be used'
   },
-  { 
+  {
     "name"    : 'version',
     "string"  : '-v, --version',
     "help"    : 'display brunch version'
   },
-  { 
+  {
     "name"    : 'help',
     "string"  : '-h, --help',
     "help"    : 'display brunch help'
@@ -58,6 +58,7 @@ exports.run = ->
   if command is "new"
     name = opts[1] || "app"
     brunch.newProject name, options
+    brunch.build options
   else if command is "watch"
     return brunch.watch options
   else if command is "build"
