@@ -54,6 +54,12 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * [Stylus](https://github.com/LearnBoost/stylus)
 * [Eco](https://github.com/sstephenson/eco)
 
+## Development
+
+Watch coffeescript files and compile them via
+
+    cake watch
+
 ## TODO
 
 * more & improved documentation
@@ -67,6 +73,5 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 
 ## Future plans
 
-* add vendor scripts for development
 * add "build deploy" which generates index.html with script tags using cdn
 * add phonegap support
