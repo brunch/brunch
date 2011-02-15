@@ -4,6 +4,7 @@ exec      = require('child_process').exec
 async     = require 'async'
 fileUtil  = require 'file'
 
+# copy source to destination recursively
 exports.copy = (source, target) ->
   exec 'cp -R ' + source + ' ' + target, (error, stdout, stderr) ->
     console.log(stdout) if stdout
@@ -52,6 +53,7 @@ exports.getFilesInTree = (directory, callback) ->
       files = filterForJsFiles files
       callback err, files.sort()
 
+# create directory path for the given file
 exports.mkdirsForFile = (file, mode) ->
   newPath = file.replace(/\/[^\/]*$/, '')
   fileUtil.mkdirsSync newPath, mode
