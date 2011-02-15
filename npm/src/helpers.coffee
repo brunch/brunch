@@ -91,3 +91,12 @@ exports.watchDirectory = (_opts, callback) ->
         else
           callback filePath if callOnAdd
   addToWatch opts.path
+
+# return a string of available options
+# originally taken from nomnom helpString
+exports.optionsInfo = (options) ->
+  output = "\n\nAvailable options:\n"
+  for option in options
+    if option.position == undefined
+      output += "  #{option.string}\t#{option.help}\n"
+  output

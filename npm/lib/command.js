@@ -1,16 +1,14 @@
 (function() {
-  var BANNER, NOMNOM_CONFIG, SWITCHES, brunch, fs, nomnom, options, optparse, parseOptions, usage, version, yaml;
+  var BANNER, NOMNOM_CONFIG, argParser, brunch, fs, helpers, nomnom, options, parseOptions, usage, version, yaml;
   fs = require('fs');
   yaml = require('yaml');
   nomnom = require('nomnom');
   brunch = require('./brunch');
-  optparse = require('./optparse');
-  SWITCHES = [['-v', '--version', 'display brunch version'], ['-h', '--help', 'display this help message'], ['-p', '--projectTemplate=[type]', 'set which kind of project template should be used']];
+  helpers = require('./helpers');
   NOMNOM_CONFIG = [
     {
       "name": 'projectTemplate',
-      "string": '-p TEMPLATE, --projectTemplate=TEMPLATE',
-      "default": 'express',
+      "string": '-p <template>, --projectTemplate=<template>',
       "help": 'set which kind of project template should be used'
     }, {
       "name": 'version',
@@ -24,6 +22,7 @@
   ];
   BANNER = 'Usage: brunch [command] [options]\n\nPossible commands are:\n  new           create new brunch project\n  build         build project\n  watch         watch brunch directory and rebuild if something changed';
   options = {};
+  argParser = {};
   exports.run = function() {
     var command, name, opts;
     opts = parseOptions();
@@ -64,7 +63,8 @@
     });
   };
   usage = function() {
-    process.stdout.write((new optparse.OptionParser(SWITCHES, BANNER)).help());
+    process.stdout.write(BANNER);
+    process.stdout.write(helpers.optionsInfo(NOMNOM_CONFIG));
     return process.exit(0);
   };
   version = function() {

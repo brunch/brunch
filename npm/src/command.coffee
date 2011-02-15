@@ -3,21 +3,13 @@ fs          = require 'fs'
 yaml        = require 'yaml'
 nomnom      = require 'nomnom'
 brunch      = require './brunch'
-optparse    = require './optparse'
+helpers   = require './helpers'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
-SWITCHES = [
-  ['-v', '--version',                     'display brunch version']
-  ['-h', '--help',                        'display this help message']
-  ['-p', '--projectTemplate=[type]',      'set which kind of project template should be used']
-]
-
-# The config for the nomnom command-line parser
 NOMNOM_CONFIG = [
   {
     "name"    : 'projectTemplate',
-    "string"  : '-p TEMPLATE, --projectTemplate=TEMPLATE',
-    "default" : 'express',
+    "string"  : '-p <template>, --projectTemplate=<template>',
     "help"    : 'set which kind of project template should be used'
   },
   {
@@ -41,7 +33,9 @@ BANNER = '''
     build         build project
     watch         watch brunch directory and rebuild if something changed
          '''
+
 options = {}
+argParser = {}
 
 # Run 'brunch' by parsing passed options and determining what action to take.
 # This also includes checking for a settings file. Settings in commandline arguments
@@ -78,7 +72,8 @@ parseOptions = ->
 
 # Print the '--help' usage message and exit.
 usage = ->
-  process.stdout.write (new optparse.OptionParser SWITCHES, BANNER).help()
+  process.stdout.write BANNER
+  process.stdout.write helpers.optionsInfo(NOMNOM_CONFIG)
   process.exit 0
 
 # Print the '--version' message and exit.

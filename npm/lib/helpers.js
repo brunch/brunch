@@ -134,4 +134,15 @@
     };
     return addToWatch(opts.path);
   };
+  exports.optionsInfo = function(options) {
+    var option, output, _i, _len;
+    output = "\n\nAvailable options:\n";
+    for (_i = 0, _len = options.length; _i < _len; _i++) {
+      option = options[_i];
+      if (option.position === void 0) {
+        output += "  " + option.string + "\t" + option.help + "\n";
+      }
+    }
+    return output;
+  };
 }).call(this);
