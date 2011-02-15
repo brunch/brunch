@@ -60,6 +60,10 @@ Watch coffeescript files and compile them via
 
     cake watch
 
+and run tests via
+
+    cake test
+
 ## TODO
 
 * more & improved documentation
