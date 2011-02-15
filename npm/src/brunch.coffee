@@ -12,7 +12,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.2.8'
+exports.VERSION = '0.2.9'
 
 # project skeleton generator
 # * create directory strucutre
