@@ -11,11 +11,9 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.2.9'
+exports.VERSION = '0.3.0'
 
 # project skeleton generator
-# * create directory strucutre
-# * create main.coffee bootstrapping file
 exports.new = (projectName, options, callback) ->
   exports.options = options
 
