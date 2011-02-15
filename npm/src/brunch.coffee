@@ -87,6 +87,7 @@ exports.build = ->
   exports.spawnDocco(sourcePaths)
   exports.spawnFusion()
   exports.spawnStylus()
+  exports.copyJsFiles()
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
@@ -107,6 +108,9 @@ exports.dispatch = (file) ->
 
   if file.match(/styl$/)
     exports.spawnStylus()
+
+  if file.match(/^brunch\/src\/.*js$/)
+    exports.copyJsFile(file)
 
 # generate a list of paths containing all coffee files
 exports.generateSourcePaths = ->
@@ -159,6 +163,16 @@ exports.spawnStylus = ->
   executeStylus.stdout.on 'data', (data) ->
     util.log('compiling .style to .css:\n' + data)
 
+# copy one single js file to build directory
+exports.copyJsFile = (file) ->
+  newLocation = file.replace('brunch/src', 'brunch/build/web/js')
+  helpers.mkdirsForFile(newLocation, 0755)
+  helpers.copy file, newLocation
+
 # copy all js files from src to build
 exports.copyJsFiles = ->
-  jsFiles =
+  helpers.getFilesInTree 'brunch/src', (err, files) ->
+    console.log err if err
+    for file in files
+      exports.copyJsFile file
+    util.log('copied .js files to build folder')

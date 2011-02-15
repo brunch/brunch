@@ -98,7 +98,8 @@
     exports.spawnCoffee(sourcePaths);
     exports.spawnDocco(sourcePaths);
     exports.spawnFusion();
-    return exports.spawnStylus();
+    exports.spawnStylus();
+    return exports.copyJsFiles();
   };
   exports.dispatch = function(file) {
     var sourcePaths, templateExtensionRegex;
@@ -113,7 +114,10 @@
       exports.spawnFusion();
     }
     if (file.match(/styl$/)) {
-      return exports.spawnStylus();
+      exports.spawnStylus();
+    }
+    if (file.match(/^brunch\/src\/.*js$/)) {
+      return exports.copyJsFile(file);
     }
   };
   exports.generateSourcePaths = function() {
@@ -165,5 +169,23 @@
       return util.log('compiling .style to .css:\n' + data);
     });
   };
-  exports.copyJsFiles = function() {};
+  exports.copyJsFile = function(file) {
+    var newLocation;
+    newLocation = file.replace('brunch/src', 'brunch/build/web/js');
+    helpers.mkdirsForFile(newLocation, 0755);
+    return helpers.copy(file, newLocation);
+  };
+  exports.copyJsFiles = function() {
+    return helpers.getFilesInTree('brunch/src', function(err, files) {
+      var file, _i, _len;
+      if (err) {
+        console.log(err);
+      }
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        exports.copyJsFile(file);
+      }
+      return util.log('copied .js files to build folder');
+    });
+  };
 }).call(this);
