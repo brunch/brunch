@@ -58,9 +58,7 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 
 * more & improved documentation
 * proper error message if brunch directory already exists
-* proper output info
 * tests
-* remove optsparser
 * impove childspawn - see http://nodejs.org/docs/v0.3.7/api/child_processes.html#child_process.spawn
 * directly call fusion, stylus and coffeescript instead of spawning child process
 

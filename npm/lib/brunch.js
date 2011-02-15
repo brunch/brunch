@@ -9,18 +9,25 @@
   brunch = require('brunch');
   helpers = require('./helpers');
   exports.VERSION = '0.2.9';
-  exports["new"] = function(projectName, options) {
+  exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
-    fs.mkdirSync("brunch", 0755);
-    helpers.copy(path.join(projectTemplatePath, 'src/'), 'brunch/src');
-    helpers.copy(path.join(projectTemplatePath, 'build/'), 'brunch/build');
-    helpers.copy(path.join(projectTemplatePath, 'config/'), 'brunch/config');
-    if (exports.options.projectTemplate === "express") {
-      helpers.copy(path.join(projectTemplatePath, 'server/'), 'brunch/server');
-    }
-    return util.log("Brunch:     created brunch directory layout");
+    return path.exists('brunch', function(exists) {
+      if (exists) {
+        util.log("Brunch: brunch directory already exists - can't create another project");
+        process.exit(0);
+      }
+      fs.mkdirSync('brunch', 0755);
+      helpers.copy(path.join(projectTemplatePath, 'src/'), 'brunch/src');
+      helpers.copy(path.join(projectTemplatePath, 'build/'), 'brunch/build');
+      helpers.copy(path.join(projectTemplatePath, 'config/'), 'brunch/config');
+      if (exports.options.projectTemplate === "express") {
+        helpers.copy(path.join(projectTemplatePath, 'server/'), 'brunch/server');
+      }
+      util.log("Brunch: created brunch directory layout\n");
+      return callback();
+    });
   };
   exports.watch = function(options) {
     var executeServer;

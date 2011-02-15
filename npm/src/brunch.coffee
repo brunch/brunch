@@ -16,21 +16,26 @@ exports.VERSION = '0.2.9'
 # project skeleton generator
 # * create directory strucutre
 # * create main.coffee bootstrapping file
-exports.new = (projectName, options) ->
+exports.new = (projectName, options, callback) ->
   exports.options = options
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
-  fs.mkdirSync "brunch", 0755
-  helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
-  helpers.copy path.join(projectTemplatePath, 'build/'), 'brunch/build'
-  helpers.copy path.join(projectTemplatePath, 'config/'), 'brunch/config'
+  path.exists 'brunch', (exists) ->
+    if exists
+      util.log "Brunch: brunch directory already exists - can't create another project"
+      process.exit 0
+    fs.mkdirSync 'brunch', 0755
+    helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
+    helpers.copy path.join(projectTemplatePath, 'build/'), 'brunch/build'
+    helpers.copy path.join(projectTemplatePath, 'config/'), 'brunch/config'
 
-  if(exports.options.projectTemplate is "express")
-    helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
+    if(exports.options.projectTemplate is "express")
+      helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
-  # TODO inform user which template was used and give futher instructions how to use brunch
-  util.log "Brunch:     created brunch directory layout"
+    # TODO inform user which template was used and give futher instructions how to use brunch
+    util.log "Brunch: created brunch directory layout\n"
+    callback()
 
 # file watcher
 exports.watch  = (options) ->
