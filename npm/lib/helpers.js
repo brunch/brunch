@@ -1,11 +1,12 @@
 (function() {
-  var async, exec, fileUtil, filterForJsFiles, fs, path, walkTree;
+  var async, exec, fileUtil, filterForJsFiles, fs, path, walkTree, _;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   fs = require('fs');
   path = require('path');
   exec = require('child_process').exec;
   async = require('async');
   fileUtil = require('file');
+  _ = require('underscore');
   exports.copy = function(source, target) {
     return exec('cp -R ' + source + ' ' + target, function(error, stdout, stderr) {
       if (stdout) {
@@ -76,5 +77,61 @@
     var newPath;
     newPath = file.replace(/\/[^\/]*$/, '');
     return fileUtil.mkdirsSync(newPath, mode);
+  };
+  exports.watchDirectory = function(_opts, callback) {
+    var addToWatch, opts, watched;
+    opts = _.extend({
+      path: '.',
+      persistent: true,
+      interval: 500,
+      callOnAdd: false
+    }, _opts);
+    watched = [];
+    addToWatch = function(file) {
+      return fs.realpath(file, function(err, filePath) {
+        var callOnAdd, isDir;
+        callOnAdd = opts.callOnAdd;
+        if (!_.include(watched, filePath)) {
+          isDir = false;
+          watched.push(filePath);
+          fs.watchFile(filePath, {
+            persistent: opts.persistent,
+            interval: opts.interval
+          }, function(curr, prev) {
+            if (curr.mtime.getTime() === prev.mtime.getTime()) {
+              return;
+            }
+            if (isDir) {
+              return addToWatch(filePath);
+            } else {
+              return callback(filePath);
+            }
+          });
+        } else {
+          callOnAdd = false;
+        }
+        return fs.stat(filePath, function(err, stats) {
+          if (stats.isDirectory()) {
+            isDir = true;
+            return fs.readdir(filePath, function(err, files) {
+              return process.nextTick(function() {
+                var file, _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = files.length; _i < _len; _i++) {
+                  file = files[_i];
+                  _results.push(addToWatch(filePath + '/' + file));
+                }
+                return _results;
+              });
+            });
+          } else {
+            if (callOnAdd) {
+              return callback(filePath);
+            }
+          }
+        });
+      });
+    };
+    return addToWatch(opts.path);
   };
 }).call(this);

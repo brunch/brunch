@@ -1,11 +1,10 @@
 (function() {
-  var brunch, fs, glob, helpers, path, root, spawn, util, _;
+  var brunch, fs, glob, helpers, path, root, spawn, util;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
   path = require('path');
   spawn = require('child_process').spawn;
-  _ = require('underscore');
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
@@ -29,63 +28,7 @@
     if (exports.options.projectTemplate === "express") {
       executeServer = spawn('node', ['brunch/server/main.js']);
     }
-    fs.watchDir = function(_opts, callback) {
-      var addToWatch, opts, watched;
-      opts = _.extend({
-        path: '.',
-        persistent: true,
-        interval: 500,
-        callOnAdd: false
-      }, _opts);
-      watched = [];
-      addToWatch = function(file) {
-        return fs.realpath(file, function(err, filePath) {
-          var callOnAdd, isDir;
-          callOnAdd = opts.callOnAdd;
-          if (!_.include(watched, filePath)) {
-            isDir = false;
-            watched.push(filePath);
-            fs.watchFile(filePath, {
-              persistent: opts.persistent,
-              interval: opts.interval
-            }, function(curr, prev) {
-              if (curr.mtime.getTime() === prev.mtime.getTime()) {
-                return;
-              }
-              if (isDir) {
-                return addToWatch(filePath);
-              } else {
-                return callback(filePath);
-              }
-            });
-          } else {
-            callOnAdd = false;
-          }
-          return fs.stat(filePath, function(err, stats) {
-            if (stats.isDirectory()) {
-              isDir = true;
-              return fs.readdir(filePath, function(err, files) {
-                return process.nextTick(function() {
-                  var file, _i, _len, _results;
-                  _results = [];
-                  for (_i = 0, _len = files.length; _i < _len; _i++) {
-                    file = files[_i];
-                    _results.push(addToWatch(filePath + '/' + file));
-                  }
-                  return _results;
-                });
-              });
-            } else {
-              if (callOnAdd) {
-                return callback(filePath);
-              }
-            }
-          });
-        });
-      };
-      return addToWatch(opts.path);
-    };
-    return fs.watchDir({
+    return helpers.watchDirectory({
       path: 'brunch',
       callOnAdd: true
     }, function(file) {
@@ -103,7 +46,6 @@
   };
   exports.dispatch = function(file) {
     var sourcePaths, templateExtensionRegex;
-    console.log('file: ' + file);
     if (file.match(/coffee$/)) {
       sourcePaths = exports.generateSourcePaths();
       exports.spawnCoffee(sourcePaths);

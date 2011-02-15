@@ -6,7 +6,6 @@ util      = require 'util'
 fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
-_         = require 'underscore'
 glob      = require 'glob'
 brunch    = require 'brunch'
 helpers   = require './helpers'
@@ -41,42 +40,8 @@ exports.watch  = (options) ->
   if(exports.options.projectTemplate is "express")
     executeServer = spawn 'node', ['brunch/server/main.js']
 
-  ## copied source from watch_dir, because it did not work as package
-  fs.watchDir = (_opts, callback) ->
-
-    opts = _.extend(
-      { path: '.', persistent: true, interval: 500, callOnAdd: false },
-      _opts
-    )
-    watched = []
-    addToWatch = (file) ->
-      fs.realpath file, (err, filePath) ->
-        callOnAdd = opts.callOnAdd
-
-        unless _.include(watched, filePath)
-          isDir = false
-          watched.push filePath
-          fs.watchFile filePath, { persistent: opts.persistent, interval: opts.interval }, (curr, prev) ->
-            return if curr.mtime.getTime() is prev.mtime.getTime()
-            if isDir
-              addToWatch filePath
-            else
-              callback filePath
-        else
-          callOnAdd = false
-
-        fs.stat filePath, (err, stats) ->
-          if stats.isDirectory()
-            isDir = true
-            fs.readdir filePath, (err, files) ->
-              process.nextTick () ->
-                addToWatch filePath + '/' + file for file in files
-          else
-            callback filePath if callOnAdd
-    addToWatch opts.path
-
   # let's watch
-  fs.watchDir(path: 'brunch', callOnAdd: true, (file) ->
+  helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
 
@@ -92,7 +57,6 @@ exports.build = ->
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
 exports.dispatch = (file) ->
-  console.log 'file: ' + file
 
   # handle coffee changes
   if file.match(/coffee$/)

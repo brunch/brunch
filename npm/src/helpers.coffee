@@ -3,6 +3,7 @@ path      = require 'path'
 exec      = require('child_process').exec
 async     = require 'async'
 fileUtil  = require 'file'
+_         = require 'underscore'
 
 # copy source to destination recursively
 exports.copy = (source, target) ->
@@ -57,3 +58,36 @@ exports.getFilesInTree = (directory, callback) ->
 exports.mkdirsForFile = (file, mode) ->
   newPath = file.replace(/\/[^\/]*$/, '')
   fileUtil.mkdirsSync newPath, mode
+
+## copied source from watch_dir, because it did not work as package
+exports.watchDirectory = (_opts, callback) ->
+  opts = _.extend(
+    { path: '.', persistent: true, interval: 500, callOnAdd: false },
+    _opts
+  )
+  watched = []
+  addToWatch = (file) ->
+    fs.realpath file, (err, filePath) ->
+      callOnAdd = opts.callOnAdd
+
+      unless _.include(watched, filePath)
+        isDir = false
+        watched.push filePath
+        fs.watchFile filePath, { persistent: opts.persistent, interval: opts.interval }, (curr, prev) ->
+          return if curr.mtime.getTime() is prev.mtime.getTime()
+          if isDir
+            addToWatch filePath
+          else
+            callback filePath
+      else
+        callOnAdd = false
+
+      fs.stat filePath, (err, stats) ->
+        if stats.isDirectory()
+          isDir = true
+          fs.readdir filePath, (err, files) ->
+            process.nextTick () ->
+              addToWatch filePath + '/' + file for file in files
+        else
+          callback filePath if callOnAdd
+  addToWatch opts.path

@@ -57,8 +57,6 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 ## TODO
 
 * more & improved documentation
-* copy js files from src to build
-* move watch to own node package or at least to another file
 * proper error message if brunch directory already exists
 * proper output info
 * tests
