@@ -7,17 +7,17 @@
   helpers = require('./helpers');
   NOMNOM_CONFIG = [
     {
-      "name": 'projectTemplate',
-      "string": '-p <template>, --projectTemplate=<template>',
-      "help": 'set which kind of project template should be used'
+      name: 'projectTemplate',
+      string: '-p <template>, --projectTemplate=<template>',
+      help: 'set which kind of project template should be used'
     }, {
-      "name": 'version',
-      "string": '-v, --version',
-      "help": 'display brunch version'
+      name: 'version',
+      string: '-v, --version',
+      help: 'display brunch version'
     }, {
-      "name": 'help',
-      "string": '-h, --help',
-      "help": 'display brunch help'
+      name: 'help',
+      string: '-h, --help',
+      help: 'display brunch help'
     }
   ];
   BANNER = 'Usage: brunch [command] [options]\n\nPossible commands are:\n  new           create new brunch project\n  build         build project\n  watch         watch brunch directory and rebuild if something changed';

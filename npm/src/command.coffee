@@ -7,21 +7,17 @@ helpers   = require './helpers'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
 NOMNOM_CONFIG = [
-  {
-    "name"    : 'projectTemplate',
-    "string"  : '-p <template>, --projectTemplate=<template>',
-    "help"    : 'set which kind of project template should be used'
-  },
-  {
-    "name"    : 'version',
-    "string"  : '-v, --version',
-    "help"    : 'display brunch version'
-  },
-  {
-    "name"    : 'help',
-    "string"  : '-h, --help',
-    "help"    : 'display brunch help'
-  }
+    name  : 'projectTemplate',
+    string: '-p <template>, --projectTemplate=<template>',
+    help  : 'set which kind of project template should be used'
+  ,
+    name  : 'version',
+    string: '-v, --version',
+    help  : 'display brunch version'
+  ,
+    name  : 'help',
+    string: '-h, --help',
+    help  : 'display brunch help'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
