@@ -30,7 +30,7 @@ exports.new = (projectName, options) ->
     helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
   # TODO inform user which template was used and give futher instructions how to use brunch
-  console.log "created brunch directory layout"
+  util.log "Brunch:     created brunch directory layout"
 
 # file watcher
 exports.watch  = (options) ->
@@ -100,32 +100,39 @@ exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams
+  executeCoffee.stdout.on 'data', (data) ->
+    util.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    util.log data
-
+    util.log 'Coffee err: ' + data
   executeCoffee.on 'exit', (code) ->
     if code == 0
-      util.log('compiled .coffee to .js')
+      util.log('Coffee: compiled .coffee to .js\n')
     else
-      util.log('there was a problem during .coffee to .js compilation. see above')
+      util.log('Coffee err: There was a problem during .coffee to .js compilation. see above')
 
 # spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->
   executeDocco = spawn('docco', sourcePaths)
+  executeDocco.stdout.on 'data', (data) ->
+    util.log 'Docco:  ' + data
   executeDocco.stderr.on 'data', (data) ->
-    util.log data
+    util.log 'Docco err:  ' + data
 
 # spawns a new fusion compiling which merges all the templates into one namespace
 exports.spawnFusion = ->
   executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
   executeFusion.stdout.on 'data', (data) ->
-    util.log data
+    util.log 'Fusion: ' + data
+  executeFusion.stderr.on 'data', (data) ->
+    util.log 'Fusion err: ' + data
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
   executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
   executeStylus.stdout.on 'data', (data) ->
-    util.log('compiling .style to .css:\n' + data)
+    util.log 'Stylus: ' + data
+  executeStylus.stderr.on 'data', (data) ->
+    util.log 'Stylus err: ' + data
 
 # copy one single js file to build directory
 exports.copyJsFile = (file) ->
@@ -136,7 +143,7 @@ exports.copyJsFile = (file) ->
 # copy all js files from src to build
 exports.copyJsFiles = ->
   helpers.getFilesInTree 'brunch/src', (err, files) ->
-    console.log err if err
+    util.log err if err
     for file in files
       exports.copyJsFile file
-    util.log('copied .js files to build folder')
+    util.log('Brunch: copied .js files to build folder\n')
