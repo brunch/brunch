@@ -69,6 +69,7 @@ and run tests via
 * more & improved documentation
 * tests
 * come up with a require solution
+* add support for subfolders - see issue #16
 * move concatination.js to app.js
 * directly call fusion, stylus and coffeescript instead of spawning child process
 
