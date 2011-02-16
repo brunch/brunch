@@ -68,6 +68,8 @@ and run tests via
 
 * more & improved documentation
 * tests
+* come up with a require solution
+* move concatination.js to app.js
 * directly call fusion, stylus and coffeescript instead of spawning child process
 
 ### other stuff
