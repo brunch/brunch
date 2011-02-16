@@ -64,6 +64,10 @@ and run tests via
 
     cake test
 
+## Contact
+
+Feel free to contact us at Freenode #brunch in the IRC client of your choice.
+
 ## TODO
 
 * more & improved documentation
@@ -75,7 +79,6 @@ and run tests via
 
 ### other stuff
 
-* register irc channel
 * add zepto to brunch cdn
 
 ## Future plans
