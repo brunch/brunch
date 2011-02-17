@@ -1,13 +1,13 @@
 {
   "name":         "brunch",
   "description":  "~ with coffee",
-  "version":      "0.3.1",
+  "version":      "0.3.2",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "zepto", "json2", "framework", "brunch", "coffeescript", "stylus", "eco", "underscore", "localstorage"],
   "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
   "licenses":     [{
     "type":       "MIT",
-    "url":        "http://github.com/brunchwithcoffee/brunch/raw/master/LICENSE"
+    "url":        "http://github.com/brunch/brunch/raw/master/LICENSE"
   }],
   "engines":      {
     "node":       ">=0.2.5"
@@ -38,9 +38,9 @@
   "engines": ["node"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/brunchwithcoffee/brunch.git"
+    "url": "https://github.com/brunch/brunch.git"
   },
   "bugs": {
-    "url": "http://github.com/brunchwithcoffee/brunch/issues"
+    "url": "http://github.com/brunch/brunch/issues"
   }
 }
