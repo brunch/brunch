@@ -4,5 +4,3 @@ class HomeView extends Backbone.View
   render: ->
     $(@.el).html(app.templates.home())
     $('body').html(@.el)
-
-app.views.home = new HomeView()
