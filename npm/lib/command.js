@@ -34,6 +34,7 @@
     }
     options.templateExtension = "eco";
     options.projectTemplate = "express";
+    options.expressPort = "8080";
     options = exports.loadOptionsFromArguments(opts, options);
     command = opts[0];
     if (command === "new") {
@@ -55,6 +56,9 @@
     }
     if (opts.projectTemplate) {
       options.projectTemplate = opts.projectTemplate;
+    }
+    if (opts.expressPort) {
+      options.projectTemplate = opts.expressPort;
     }
     return options;
   };

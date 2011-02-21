@@ -33,7 +33,7 @@
     var executeServer;
     exports.options = options;
     if (exports.options.projectTemplate === "express") {
-      executeServer = spawn('node', ['brunch/server/main.js']);
+      executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
     }
     return helpers.watchDirectory({
       path: 'brunch',

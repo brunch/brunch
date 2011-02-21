@@ -41,7 +41,7 @@ exports.watch  = (options) ->
 
   # run node server if projectTemplate is express
   if(exports.options.projectTemplate is "express")
-    executeServer = spawn 'node', ['brunch/server/main.js']
+    executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
 
   # let's watch
   helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->

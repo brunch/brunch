@@ -1,3 +1,6 @@
+var util = require('util');
+var port = process.argv[2];
+
 var express = require("express");
 var app = express.createServer();
 
@@ -10,5 +13,5 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-console.log("starting server on port 8080");
-app.listen(8080);
+console.log("starting server on port " + port);
+app.listen(parseInt(port, 10));
