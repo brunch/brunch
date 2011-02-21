@@ -8,7 +8,7 @@
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
-  exports.VERSION = '0.3.4';
+  exports.VERSION = '0.3.5';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
@@ -33,6 +33,7 @@
     var executeServer;
     exports.options = options;
     if (exports.options.projectTemplate === "express") {
+      util.log(exports.options.expressPort);
       executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
     }
     return helpers.watchDirectory({

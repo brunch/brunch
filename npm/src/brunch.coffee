@@ -11,7 +11,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.3.4'
+exports.VERSION = '0.3.5'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -41,6 +41,7 @@ exports.watch  = (options) ->
 
   # run node server if projectTemplate is express
   if(exports.options.projectTemplate is "express")
+    util.log(exports.options.expressPort)
     executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
 
   # let's watch

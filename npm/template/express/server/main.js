@@ -13,5 +13,5 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-console.log("starting server on port " + port);
+util.log("starting server on port " + port);
 app.listen(parseInt(port, 10));

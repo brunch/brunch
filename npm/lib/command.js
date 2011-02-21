@@ -1,12 +1,17 @@
 (function() {
-  var BANNER, NOMNOM_CONFIG, argParser, brunch, fs, helpers, nomnom, options, parseOptions, usage, version, yaml;
+  var BANNER, NOMNOM_CONFIG, argParser, brunch, fs, helpers, nomnom, options, parseOptions, usage, util, version, yaml;
   fs = require('fs');
+  util = require('util');
   yaml = require('yaml');
   nomnom = require('nomnom');
   brunch = require('./brunch');
   helpers = require('./helpers');
   NOMNOM_CONFIG = [
     {
+      name: 'expressPort',
+      string: '-ep <port>, --expressPort=<port>',
+      help: 'set the express server port'
+    }, {
       name: 'projectTemplate',
       string: '-p <template>, --projectTemplate=<template>',
       help: 'set which kind of project template should be used'
@@ -58,8 +63,9 @@
       options.projectTemplate = opts.projectTemplate;
     }
     if (opts.expressPort) {
-      options.projectTemplate = opts.expressPort;
+      options.expressPort = opts.expressPort;
     }
+    util.log(options.expressPort);
     return options;
   };
   parseOptions = function() {

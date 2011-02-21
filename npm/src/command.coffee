@@ -1,22 +1,27 @@
 # External dependencies.
 fs          = require 'fs'
+util        = require 'util'
 yaml        = require 'yaml'
 nomnom      = require 'nomnom'
 brunch      = require './brunch'
-helpers   = require './helpers'
+helpers     = require './helpers'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
 NOMNOM_CONFIG = [
-    name  : 'projectTemplate',
-    string: '-p <template>, --projectTemplate=<template>',
+    name  : 'expressPort'
+    string: '-ep <port>, --expressPort=<port>'
+    help  : 'set the express server port'
+  ,
+    name  : 'projectTemplate'
+    string: '-p <template>, --projectTemplate=<template>'
     help  : 'set which kind of project template should be used'
   ,
-    name  : 'version',
-    string: '-v, --version',
+    name  : 'version'
+    string: '-v, --version'
     help  : 'display brunch version'
   ,
-    name  : 'help',
-    string: '-h, --help',
+    name  : 'help'
+    string: '-h, --help'
     help  : 'display brunch help'
 ]
 
@@ -61,7 +66,8 @@ exports.run = ->
 exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
-  options.projectTemplate = opts.expressPort if opts.expressPort
+  options.expressPort = opts.expressPort if opts.expressPort
+  util.log(options.expressPort)
   options
 
 # Run nomnom to parse the arguments
