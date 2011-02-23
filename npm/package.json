@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "~ with coffee",
-  "version":      "0.3.7",
+  "version":      "0.4.0",
   "keywords":     ["jst", "templates", "rest", "backbone", "fusion", "jquery", "zepto", "json2", "framework", "brunch", "coffeescript", "stylus", "eco", "underscore", "localstorage"],
   "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
