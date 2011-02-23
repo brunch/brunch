@@ -1,6 +1,6 @@
 Early alpha, please use with caution!
 
-brunch is an opinionated client side framework on top of backbone.js, eco and stylus using coffee-script
+brunch is lightweight client side framework on top of backbone.js, eco and stylus using coffee-script
 
 ## How to Install
 
