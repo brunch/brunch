@@ -67,7 +67,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
   options.expressPort = opts.expressPort if opts.expressPort
-  util.log(options.expressPort)
+  helpers.log(options.expressPort)
   options
 
 # Run nomnom to parse the arguments

@@ -145,4 +145,21 @@
     }
     return output;
   };
+  exports.log = function(info, options) {
+    var d, timestamp;
+    d = new Date();
+    timestamp = exports.formatIsodate(d);
+    return process.stdout.write(timestamp + " " + info);
+  };
+  exports.formatIsodate = function(d) {
+    var pad;
+    pad = function(n) {
+      if (n < 10) {
+        return '0' + n;
+      } else {
+        return n;
+      }
+    };
+    return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds()) + 'Z';
+  };
 }).call(this);

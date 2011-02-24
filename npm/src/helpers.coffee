@@ -100,3 +100,18 @@ exports.optionsInfo = (options) ->
     if option.position == undefined
       output += "  #{option.string}\t#{option.help}\n"
   output
+
+exports.log = (info, options) ->
+  d = new Date()
+  timestamp = exports.formatIsodate(d)
+  process.stdout.write timestamp + " " + info
+
+# iso date formatting taken from
+# https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference:Global_Objects:Date#Example.3a_ISO_8601_formatted_dates
+exports.formatIsodate = (d) ->
+  pad = (n) ->
+    if n<10
+      '0'+n
+    else
+      n
+  d.getUTCFullYear()+'-'+ pad(d.getUTCMonth()+1)+'-'+ pad(d.getUTCDate())+'T'+ pad(d.getUTCHours())+':'+ pad(d.getUTCMinutes())+':'+ pad(d.getUTCSeconds())+'Z'

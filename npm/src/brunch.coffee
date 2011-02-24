@@ -11,7 +11,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.4.1'
+exports.VERSION = '0.4.2'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -21,7 +21,7 @@ exports.new = (projectName, options, callback) ->
 
   path.exists 'brunch', (exists) ->
     if exists
-      util.log "Brunch: brunch directory already exists - can't create another project"
+      helpers.log "Brunch: brunch directory already exists - can't create another project"
       process.exit 0
     fs.mkdirSync 'brunch', 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
@@ -32,7 +32,7 @@ exports.new = (projectName, options, callback) ->
       helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
     # TODO inform user which template was used and give futher instructions how to use brunch
-    util.log "Brunch: created brunch directory layout\n"
+    helpers.log "Brunch: created brunch directory layout\n"
     callback()
 
 # file watcher
@@ -41,10 +41,10 @@ exports.watch  = (options) ->
 
   # run node server if projectTemplate is express
   if(exports.options.projectTemplate is "express")
-    util.log(exports.options.expressPort)
+    helpers.log(exports.options.expressPort)
     executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
     executeServer.stderr.on 'data', (data) ->
-      util.log 'Express err: ' + data
+      helpers.log 'Express err: ' + data
 
   # let's watch
   helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->
@@ -107,38 +107,38 @@ exports.spawnCoffee = (sourcePaths) ->
 
   executeCoffee = spawn 'coffee', coffeeParams
   executeCoffee.stdout.on 'data', (data) ->
-    util.log 'Coffee:  ' + data
+    helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    util.log 'Coffee err: ' + data
+    helpers.log 'Coffee err: ' + data
   executeCoffee.on 'exit', (code) ->
     if code == 0
-      util.log('Coffee: compiled .coffee to .js\n')
+      helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')
     else
-      util.log('Coffee err: There was a problem during .coffee to .js compilation. see above')
+      helpers.log('coffee err: There was a problem during .coffee to .js compilation. see above')
 
 # spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->
   executeDocco = spawn('docco', sourcePaths)
   executeDocco.stdout.on 'data', (data) ->
-    util.log 'Docco:  ' + data
+    helpers.log data
   executeDocco.stderr.on 'data', (data) ->
-    util.log 'Docco err:  ' + data
+    helpers.log 'err:  ' + data
 
 # spawns a new fusion compiling which merges all the templates into one namespace
 exports.spawnFusion = ->
   executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
   executeFusion.stdout.on 'data', (data) ->
-    util.log 'Fusion: ' + data
+    helpers.log 'fusion: ' + data
   executeFusion.stderr.on 'data', (data) ->
-    util.log 'Fusion err: ' + data
+    helpers.log 'fusion err: ' + data
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
   executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
   executeStylus.stdout.on 'data', (data) ->
-    util.log 'Stylus: ' + data
+    helpers.log 'stylus: ' + data
   executeStylus.stderr.on 'data', (data) ->
-    util.log 'Stylus err: ' + data
+    helpers.log 'stylus err: ' + data
 
 # copy one single js file to build directory
 exports.copyJsFile = (file) ->
@@ -149,7 +149,7 @@ exports.copyJsFile = (file) ->
 # copy all js files from src to build
 exports.copyJsFiles = ->
   helpers.getFilesInTree 'brunch/src', (err, files) ->
-    util.log err if err
+    helpers.log err if err
     for file in files
       exports.copyJsFile file
-    util.log('Brunch: copied .js files to build folder\n')
+    helpers.log('brunch:   \033[90mcopied\033[0m .js files to build folder\n')

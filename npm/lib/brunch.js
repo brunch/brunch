@@ -8,14 +8,14 @@
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
-  exports.VERSION = '0.4.1';
+  exports.VERSION = '0.4.2';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
     return path.exists('brunch', function(exists) {
       if (exists) {
-        util.log("Brunch: brunch directory already exists - can't create another project");
+        helpers.log("Brunch: brunch directory already exists - can't create another project");
         process.exit(0);
       }
       fs.mkdirSync('brunch', 0755);
@@ -25,7 +25,7 @@
       if (exports.options.projectTemplate === "express") {
         helpers.copy(path.join(projectTemplatePath, 'server/'), 'brunch/server');
       }
-      util.log("Brunch: created brunch directory layout\n");
+      helpers.log("Brunch: created brunch directory layout\n");
       return callback();
     });
   };
@@ -33,10 +33,10 @@
     var executeServer;
     exports.options = options;
     if (exports.options.projectTemplate === "express") {
-      util.log(exports.options.expressPort);
+      helpers.log(exports.options.expressPort);
       executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
       executeServer.stderr.on('data', function(data) {
-        return util.log('Express err: ' + data);
+        return helpers.log('Express err: ' + data);
       });
     }
     return helpers.watchDirectory({
@@ -91,16 +91,16 @@
     coffeeParams = coffeeParams.concat(sourcePaths);
     executeCoffee = spawn('coffee', coffeeParams);
     executeCoffee.stdout.on('data', function(data) {
-      return util.log('Coffee:  ' + data);
+      return helpers.log('Coffee:  ' + data);
     });
     executeCoffee.stderr.on('data', function(data) {
-      return util.log('Coffee err: ' + data);
+      return helpers.log('Coffee err: ' + data);
     });
     return executeCoffee.on('exit', function(code) {
       if (code === 0) {
-        return util.log('Coffee: compiled .coffee to .js\n');
+        return helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n');
       } else {
-        return util.log('Coffee err: There was a problem during .coffee to .js compilation. see above');
+        return helpers.log('coffee err: There was a problem during .coffee to .js compilation. see above');
       }
     });
   };
@@ -108,30 +108,30 @@
     var executeDocco;
     executeDocco = spawn('docco', sourcePaths);
     executeDocco.stdout.on('data', function(data) {
-      return util.log('Docco:  ' + data);
+      return helpers.log(data);
     });
     return executeDocco.stderr.on('data', function(data) {
-      return util.log('Docco err:  ' + data);
+      return helpers.log('err:  ' + data);
     });
   };
   exports.spawnFusion = function() {
     var executeFusion;
     executeFusion = spawn('fusion', ['--config', 'brunch/config/fusion/options.yaml', 'brunch/src/app/templates']);
     executeFusion.stdout.on('data', function(data) {
-      return util.log('Fusion: ' + data);
+      return helpers.log('fusion: ' + data);
     });
     return executeFusion.stderr.on('data', function(data) {
-      return util.log('Fusion err: ' + data);
+      return helpers.log('fusion err: ' + data);
     });
   };
   exports.spawnStylus = function() {
     var executeStylus;
     executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl']);
     executeStylus.stdout.on('data', function(data) {
-      return util.log('Stylus: ' + data);
+      return helpers.log('stylus: ' + data);
     });
     return executeStylus.stderr.on('data', function(data) {
-      return util.log('Stylus err: ' + data);
+      return helpers.log('stylus err: ' + data);
     });
   };
   exports.copyJsFile = function(file) {
@@ -144,13 +144,13 @@
     return helpers.getFilesInTree('brunch/src', function(err, files) {
       var file, _i, _len;
       if (err) {
-        util.log(err);
+        helpers.log(err);
       }
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         file = files[_i];
         exports.copyJsFile(file);
       }
-      return util.log('Brunch: copied .js files to build folder\n');
+      return helpers.log('brunch:   \033[90mcopied\033[0m .js files to build folder\n');
     });
   };
 }).call(this);

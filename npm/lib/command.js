@@ -65,7 +65,7 @@
     if (opts.expressPort) {
       options.expressPort = opts.expressPort;
     }
-    util.log(options.expressPort);
+    helpers.log(options.expressPort);
     return options;
   };
   parseOptions = function() {
