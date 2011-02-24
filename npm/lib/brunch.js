@@ -35,6 +35,9 @@
     if (exports.options.projectTemplate === "express") {
       util.log(exports.options.expressPort);
       executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
+      executeServer.stderr.on('data', function(data) {
+        return util.log('Express err: ' + data);
+      });
     }
     return helpers.watchDirectory({
       path: 'brunch',
