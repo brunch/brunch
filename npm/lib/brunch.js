@@ -8,7 +8,7 @@
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
-  exports.VERSION = '0.5.3';
+  exports.VERSION = '0.5.4';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
@@ -92,21 +92,12 @@
     return sourcePaths;
   };
   exports.spawnCoffee = function(sourcePaths) {
-    var catParams, executeCat, executeCoffee;
-    catParams = sourcePaths;
-    executeCat = spawn('cat', catParams);
-    executeCoffee = spawn('coffee', ['-sc']);
-    executeCat.stdout.on('data', function(data) {
-      return executeCoffee.stdin.write(data);
-    });
-    executeCat.stderr.on('data', function(data) {
-      return helpers.log('coffee cat err: ' + data);
-    });
-    executeCat.on('exit', function(code) {
-      return executeCoffee.stdin.end();
-    });
+    var coffeeParams, executeCoffee;
+    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
+    coffeeParams = coffeeParams.concat(sourcePaths);
+    executeCoffee = spawn('coffee', coffeeParams);
     executeCoffee.stdout.on('data', function(data) {
-      return fs.writeFile('brunch/build/web/js/app.js', data);
+      return helpers.log('Coffee:  ' + data);
     });
     executeCoffee.stderr.on('data', function(data) {
       return helpers.log('coffee err: ' + data);

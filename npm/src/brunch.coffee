@@ -11,7 +11,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.5.3'
+exports.VERSION = '0.5.4'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -103,22 +103,17 @@ exports.generateSourcePaths = ->
 
 # spawns a new coffee process which merges all *.coffee files into one js file
 exports.spawnCoffee = (sourcePaths) ->
-  catParams = sourcePaths
+  coffeeParams = ['--output',
+    'brunch/build/web/js',
+    '--join',
+    '--lint',
+    '--compile']
+  coffeeParams = coffeeParams.concat(sourcePaths)
 
-  executeCat = spawn 'cat', catParams
-  executeCoffee = spawn 'coffee', ['-sc']
-
-  executeCat.stdout.on 'data', (data) ->
-    executeCoffee.stdin.write(data)
-
-  executeCat.stderr.on 'data', (data) ->
-    helpers.log 'coffee cat err: ' + data
-
-  executeCat.on 'exit', (code) ->
-    executeCoffee.stdin.end()
+  executeCoffee = spawn 'coffee', coffeeParams
 
   executeCoffee.stdout.on 'data', (data) ->
-    fs.writeFile('brunch/build/web/js/app.js', data)
+    helpers.log 'Coffee:  ' + data
 
   executeCoffee.stderr.on 'data', (data) ->
     helpers.log 'coffee err: ' + data
