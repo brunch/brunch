@@ -11,7 +11,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.4.5'
+exports.VERSION = '0.5.1'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -38,6 +38,7 @@ exports.new = (projectName, options, callback) ->
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
+  console.log options
 
   # run node server if projectTemplate is express
   if(exports.options.projectTemplate is "express")
@@ -52,24 +53,28 @@ exports.watch  = (options) ->
   )
 
 # building all files
-exports.build = ->
+exports.build = (options) ->
+  exports.options = options
+
   sourcePaths = exports.generateSourcePaths()
   exports.spawnCoffee(sourcePaths)
-  exports.spawnDocco(sourcePaths)
+  if exports.options.noDocco == false
+    exports.spawnDocco(sourcePaths)
   exports.spawnFusion()
   exports.spawnStylus()
   exports.copyJsFiles()
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
-exports.dispatch = (file) ->
+exports.dispatch = (file, options) ->
 
   # handle coffee changes
   if file.match(/coffee$/)
     sourcePaths = exports.generateSourcePaths()
 
     exports.spawnCoffee(sourcePaths)
-    exports.spawnDocco(sourcePaths)
+    if exports.options.noDocco == false
+      exports.spawnDocco(sourcePaths)
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
@@ -96,20 +101,28 @@ exports.generateSourcePaths = ->
   sourcePaths.unshift('brunch/src/app/main.coffee')
   sourcePaths
 
-# spawns a new coffee process which merges all *.coffee files into on js file
+# spawns a new coffee process which merges all *.coffee files into one js file
 exports.spawnCoffee = (sourcePaths) ->
-  coffeeParams = ['--output',
-    'brunch/build/web/js',
-    '--join',
-    '--lint',
-    '--compile']
-  coffeeParams = coffeeParams.concat(sourcePaths)
+  catParams = sourcePaths
 
-  executeCoffee = spawn 'coffee', coffeeParams
+  executeCat = spawn 'cat', catParams
+  executeCoffee = spawn 'coffee', ['-sc']
+
+  executeCat.stdout.on 'data', (data) ->
+    executeCoffee.stdin.write(data)
+
+  executeCat.stderr.on 'data', (data) ->
+    helpers.log 'coffee cat err: ' + data
+
+  executeCat.on 'exit', (code) ->
+    executeCoffee.stdin.end()
+
   executeCoffee.stdout.on 'data', (data) ->
-    helpers.log 'Coffee:  ' + data
+    fs.writeFile('brunch/build/web/js/app.js', data)
+
   executeCoffee.stderr.on 'data', (data) ->
-    helpers.log 'Coffee err: ' + data
+    helpers.log 'coffee err: ' + data
+
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')

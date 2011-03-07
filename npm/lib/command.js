@@ -23,6 +23,10 @@
       name: 'help',
       string: '-h, --help',
       help: 'display brunch help'
+    }, {
+      name: 'noDocco',
+      string: '-nd, --no-docco',
+      help: 'without docco'
     }
   ];
   BANNER = 'Usage: brunch [command] [options]\n\nPossible commands are:\n  new           create new brunch project\n  build         build project\n  watch         watch brunch directory and rebuild if something changed';
@@ -40,6 +44,11 @@
     options.templateExtension = "eco";
     options.projectTemplate = "express";
     options.expressPort = "8080";
+    if (opts.noDocco) {
+      options.noDocco = true;
+    } else {
+      options.noDocco = false;
+    }
     options = exports.loadOptionsFromArguments(opts, options);
     command = opts[0];
     if (command === "new") {

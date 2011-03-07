@@ -23,6 +23,10 @@ NOMNOM_CONFIG = [
     name  : 'help'
     string: '-h, --help'
     help  : 'display brunch help'
+  ,
+    name  : 'noDocco'
+    string: '-nd, --no-docco'
+    help  : 'without docco'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -49,6 +53,10 @@ exports.run = ->
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options.expressPort = "8080"
+  if opts.noDocco
+    options.noDocco = true
+  else
+    options.noDocco = false
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"

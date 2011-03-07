@@ -8,7 +8,7 @@
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
-  exports.VERSION = '0.4.5';
+  exports.VERSION = '0.5.1';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
@@ -32,6 +32,7 @@
   exports.watch = function(options) {
     var executeServer;
     exports.options = options;
+    console.log(options);
     if (exports.options.projectTemplate === "express") {
       helpers.log(exports.options.expressPort);
       executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
@@ -46,21 +47,26 @@
       return exports.dispatch(file);
     });
   };
-  exports.build = function() {
+  exports.build = function(options) {
     var sourcePaths;
+    exports.options = options;
     sourcePaths = exports.generateSourcePaths();
     exports.spawnCoffee(sourcePaths);
-    exports.spawnDocco(sourcePaths);
+    if (exports.options.noDocco === false) {
+      exports.spawnDocco(sourcePaths);
+    }
     exports.spawnFusion();
     exports.spawnStylus();
     return exports.copyJsFiles();
   };
-  exports.dispatch = function(file) {
+  exports.dispatch = function(file, options) {
     var sourcePaths, templateExtensionRegex;
     if (file.match(/coffee$/)) {
       sourcePaths = exports.generateSourcePaths();
       exports.spawnCoffee(sourcePaths);
-      exports.spawnDocco(sourcePaths);
+      if (exports.options.noDocco === false) {
+        exports.spawnDocco(sourcePaths);
+      }
     }
     templateExtensionRegex = new RegExp("" + exports.options.templateExtension + "$");
     if (file.match(templateExtensionRegex)) {
@@ -86,15 +92,24 @@
     return sourcePaths;
   };
   exports.spawnCoffee = function(sourcePaths) {
-    var coffeeParams, executeCoffee;
-    coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
-    coffeeParams = coffeeParams.concat(sourcePaths);
-    executeCoffee = spawn('coffee', coffeeParams);
+    var catParams, executeCat, executeCoffee;
+    catParams = sourcePaths;
+    executeCat = spawn('cat', catParams);
+    executeCoffee = spawn('coffee', ['-sc']);
+    executeCat.stdout.on('data', function(data) {
+      return executeCoffee.stdin.write(data);
+    });
+    executeCat.stderr.on('data', function(data) {
+      return helpers.log('coffee cat err: ' + data);
+    });
+    executeCat.on('exit', function(code) {
+      return executeCoffee.stdin.end();
+    });
     executeCoffee.stdout.on('data', function(data) {
-      return helpers.log('Coffee:  ' + data);
+      return fs.writeFile('brunch/build/web/js/app.js', data);
     });
     executeCoffee.stderr.on('data', function(data) {
-      return helpers.log('Coffee err: ' + data);
+      return helpers.log('coffee err: ' + data);
     });
     return executeCoffee.on('exit', function(code) {
       if (code === 0) {
