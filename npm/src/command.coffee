@@ -53,10 +53,7 @@ exports.run = ->
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options.expressPort = "8080"
-  if opts.noDocco
-    options.noDocco = true
-  else
-    options.noDocco = false
+  options.noDocco = false
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
@@ -75,6 +72,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
   options.expressPort = opts.expressPort if opts.expressPort
+  options.noDocco = opts.noDocco if opts.noDocco
   helpers.log(options.expressPort)
   options
 

@@ -44,11 +44,7 @@
     options.templateExtension = "eco";
     options.projectTemplate = "express";
     options.expressPort = "8080";
-    if (opts.noDocco) {
-      options.noDocco = true;
-    } else {
-      options.noDocco = false;
-    }
+    options.noDocco = false;
     options = exports.loadOptionsFromArguments(opts, options);
     command = opts[0];
     if (command === "new") {
@@ -73,6 +69,9 @@
     }
     if (opts.expressPort) {
       options.expressPort = opts.expressPort;
+    }
+    if (opts.noDocco) {
+      options.noDocco = opts.noDocco;
     }
     helpers.log(options.expressPort);
     return options;
