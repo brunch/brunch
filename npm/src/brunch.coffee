@@ -58,8 +58,7 @@ exports.build = (options) ->
 
   sourcePaths = exports.generateSourcePaths()
   exports.spawnCoffee(sourcePaths)
-  if exports.options.noDocco == false
-    exports.spawnDocco(sourcePaths)
+  exports.spawnDocco(sourcePaths) unless exports.options.noDocco
   exports.spawnFusion()
   exports.spawnStylus()
   exports.copyJsFiles()
@@ -71,10 +70,8 @@ exports.dispatch = (file, options) ->
   # handle coffee changes
   if file.match(/coffee$/)
     sourcePaths = exports.generateSourcePaths()
-
     exports.spawnCoffee(sourcePaths)
-    if exports.options.noDocco == false
-      exports.spawnDocco(sourcePaths)
+    exports.spawnDocco(sourcePaths) unless exports.options.noDocco
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
@@ -111,13 +108,10 @@ exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams
-
   executeCoffee.stdout.on 'data', (data) ->
     helpers.log 'Coffee:  ' + data
-
   executeCoffee.stderr.on 'data', (data) ->
     helpers.log 'coffee err: ' + data
-
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')

@@ -52,7 +52,7 @@
     exports.options = options;
     sourcePaths = exports.generateSourcePaths();
     exports.spawnCoffee(sourcePaths);
-    if (exports.options.noDocco === false) {
+    if (!exports.options.noDocco) {
       exports.spawnDocco(sourcePaths);
     }
     exports.spawnFusion();
@@ -64,7 +64,7 @@
     if (file.match(/coffee$/)) {
       sourcePaths = exports.generateSourcePaths();
       exports.spawnCoffee(sourcePaths);
-      if (exports.options.noDocco === false) {
+      if (!exports.options.noDocco) {
         exports.spawnDocco(sourcePaths);
       }
     }
