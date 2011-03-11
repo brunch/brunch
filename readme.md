@@ -72,10 +72,13 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 
 * more & improved documentation
 * tests
+* run express server only if server file exists
 * come up with a require solution
 * add support for subfolders - see issue #16
 * move concatination.js to app.js
 * directly call fusion, stylus and coffeescript instead of spawning child process
+* merge js files into app.js (call coffeescript compile manually)
+* copy css files to build
 
 ### other stuff
 
