@@ -11,7 +11,7 @@ brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.5.4'
+exports.VERSION = '0.5.5'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->

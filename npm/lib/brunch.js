@@ -8,7 +8,7 @@
   glob = require('glob');
   brunch = require('brunch');
   helpers = require('./helpers');
-  exports.VERSION = '0.5.4';
+  exports.VERSION = '0.5.5';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
