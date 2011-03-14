@@ -10,7 +10,7 @@ glob      = require 'glob'
 helpers   = require './helpers'
 
 # the current brunch version number
-exports.VERSION = '0.5.5'
+exports.VERSION = '0.5.6'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->

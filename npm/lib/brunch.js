@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   glob = require('glob');
   helpers = require('./helpers');
-  exports.VERSION = '0.5.5';
+  exports.VERSION = '0.5.6';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
     exports.options = options;
