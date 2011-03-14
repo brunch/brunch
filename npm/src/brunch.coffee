@@ -7,7 +7,6 @@ fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
 glob      = require 'glob'
-brunch    = require 'brunch'
 helpers   = require './helpers'
 
 # the current brunch version number

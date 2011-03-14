@@ -1,12 +1,11 @@
 (function() {
-  var brunch, fs, glob, helpers, path, root, spawn, util;
+  var fs, glob, helpers, path, root, spawn, util;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
   path = require('path');
   spawn = require('child_process').spawn;
   glob = require('glob');
-  brunch = require('brunch');
   helpers = require('./helpers');
   exports.VERSION = '0.5.5';
   exports["new"] = function(projectName, options, callback) {
