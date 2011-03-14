@@ -20,7 +20,7 @@ exports.new = (projectName, options, callback) ->
 
   path.exists 'brunch', (exists) ->
     if exists
-      helpers.log "Brunch: brunch directory already exists - can't create another project"
+      helpers.log "brunch:   brunch directory already exists - can't create another project\n"
       process.exit 0
     fs.mkdirSync 'brunch', 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
@@ -31,19 +31,20 @@ exports.new = (projectName, options, callback) ->
       helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
     # TODO inform user which template was used and give futher instructions how to use brunch
-    helpers.log "Brunch: created brunch directory layout\n"
+    helpers.log "brunch:   \033[90mcreated\033[0m brunch directory layout\n"
     callback()
 
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
 
-  # run node server if projectTemplate is express
-  if(exports.options.projectTemplate is "express")
-    helpers.log(exports.options.expressPort)
-    executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
-    executeServer.stderr.on 'data', (data) ->
-      helpers.log 'Express err: ' + data
+  # run node server if server file exists
+  path.exists 'brunch/server/main.js', (exists) ->
+    if exists
+      helpers.log "#{exports.options.expressPort}\n"
+      executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      executeServer.stderr.on 'data', (data) ->
+        helpers.log 'Express err: ' + data
 
   # let's watch
   helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->

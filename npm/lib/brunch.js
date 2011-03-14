@@ -14,7 +14,7 @@
     projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate);
     return path.exists('brunch', function(exists) {
       if (exists) {
-        helpers.log("Brunch: brunch directory already exists - can't create another project");
+        helpers.log("brunch:   brunch directory already exists - can't create another project\n");
         process.exit(0);
       }
       fs.mkdirSync('brunch', 0755);
@@ -24,20 +24,22 @@
       if (exports.options.projectTemplate === "express") {
         helpers.copy(path.join(projectTemplatePath, 'server/'), 'brunch/server');
       }
-      helpers.log("Brunch: created brunch directory layout\n");
+      helpers.log("brunch:   \033[90mcreated\033[0m brunch directory layout\n");
       return callback();
     });
   };
   exports.watch = function(options) {
-    var executeServer;
     exports.options = options;
-    if (exports.options.projectTemplate === "express") {
-      helpers.log(exports.options.expressPort);
-      executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
-      executeServer.stderr.on('data', function(data) {
-        return helpers.log('Express err: ' + data);
-      });
-    }
+    path.exists('brunch/server/main.js', function(exists) {
+      var executeServer;
+      if (exists) {
+        helpers.log("" + exports.options.expressPort + "\n");
+        executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
+        return executeServer.stderr.on('data', function(data) {
+          return helpers.log('Express err: ' + data);
+        });
+      }
+    });
     return helpers.watchDirectory({
       path: 'brunch',
       callOnAdd: true
