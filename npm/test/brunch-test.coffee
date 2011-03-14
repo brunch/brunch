@@ -34,6 +34,8 @@ vows.describe('brunch tool').addBatch(
   'when watching a project':
     'it should regcognize changes in brunch src files':
       'check if callback or dispatch is called'
+    'it should run expess server':
+      'check content via zombiejs or phnatomjs'
 
   'when dispatch is called':
     'with a coffee file':
