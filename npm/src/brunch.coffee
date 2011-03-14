@@ -37,7 +37,6 @@ exports.new = (projectName, options, callback) ->
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
-  console.log options
 
   # run node server if projectTemplate is express
   if(exports.options.projectTemplate is "express")

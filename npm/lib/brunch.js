@@ -31,7 +31,6 @@
   exports.watch = function(options) {
     var executeServer;
     exports.options = options;
-    console.log(options);
     if (exports.options.projectTemplate === "express") {
       helpers.log(exports.options.expressPort);
       executeServer = spawn('node', ['brunch/server/main.js', exports.options.expressPort]);
