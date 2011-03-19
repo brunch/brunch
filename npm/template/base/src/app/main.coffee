@@ -9,5 +9,5 @@ $(document).ready ->
   app.controllers.main = new MainController()
   app.views.home = new HomeView()
 
-  Backbone.history.saveLocation("home") if '' == Backbone.history.getFragment()
+  Backbone.history.saveLocation("home") if Backbone.history.getFragment() is ''
   Backbone.history.start()
