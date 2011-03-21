@@ -8,6 +8,8 @@ path      = require 'path'
 spawn     = require('child_process').spawn
 glob      = require 'glob'
 helpers   = require './helpers'
+colors    = require('../src/termcolors').colors
+sys         = require 'sys'
 
 # the current brunch version number
 exports.VERSION = '0.5.8'
@@ -62,22 +64,29 @@ exports.build = (options) ->
   exports.spawnStylus()
   exports.copyJsFiles()
 
+timeouts = {}
+
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
 exports.dispatch = (file, options) ->
 
+  queueCoffee = (func) ->
+    clearTimeout(timeouts.coffee)
+    timeouts.coffee = setTimeout(func, 100)
+    
   # handle coffee changes
-  if file.match(/coffee$/)
-    sourcePaths = exports.generateSourcePaths()
-    exports.spawnCoffee(sourcePaths)
-    exports.spawnDocco(sourcePaths) unless exports.options.noDocco
+  if file.match(/\.coffee$/)
+    queueCoffee ->
+      sourcePaths = exports.generateSourcePaths()
+      exports.spawnCoffee(sourcePaths)
+      exports.spawnDocco(sourcePaths) unless exports.options.noDocco
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
   if file.match(templateExtensionRegex)
     exports.spawnFusion()
 
-  if file.match(/styl$/)
+  if file.match(/\.styl$/)
     exports.spawnStylus()
 
   if file.match(/^brunch\/src\/.*js$/)
@@ -107,15 +116,25 @@ exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams
+  
+  output = {
+    stdout : ''
+    stderr : ''
+  }
+  
   executeCoffee.stdout.on 'data', (data) ->
-    helpers.log 'Coffee:  ' + data
+    output.stdout += data
+    # helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    helpers.log 'coffee err: ' + data
+    output.stderr += data
+    # helpers.log 'coffee err: ' + data
+    
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')
     else
-      helpers.log('coffee err: There was a problem during .coffee to .js compilation. see above')
+      helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true))
+      helpers.log(colors.lgray(output.stderr + '\n\n'))
 
 # spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->

@@ -1,5 +1,5 @@
 (function() {
-  var fs, glob, helpers, path, root, spawn, util;
+  var colors, fs, glob, helpers, path, root, spawn, sys, timeouts, util;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
@@ -7,6 +7,8 @@
   spawn = require('child_process').spawn;
   glob = require('glob');
   helpers = require('./helpers');
+  colors = require('../src/termcolors').colors;
+  sys = require('sys');
   exports.VERSION = '0.5.8';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
@@ -59,20 +61,28 @@
     exports.spawnStylus();
     return exports.copyJsFiles();
   };
+  timeouts = {};
   exports.dispatch = function(file, options) {
-    var sourcePaths, templateExtensionRegex;
-    if (file.match(/coffee$/)) {
-      sourcePaths = exports.generateSourcePaths();
-      exports.spawnCoffee(sourcePaths);
-      if (!exports.options.noDocco) {
-        exports.spawnDocco(sourcePaths);
-      }
+    var queueCoffee, templateExtensionRegex;
+    queueCoffee = function(func) {
+      clearTimeout(timeouts.coffee);
+      return timeouts.coffee = setTimeout(func, 100);
+    };
+    if (file.match(/\.coffee$/)) {
+      queueCoffee(function() {
+        var sourcePaths;
+        sourcePaths = exports.generateSourcePaths();
+        exports.spawnCoffee(sourcePaths);
+        if (!exports.options.noDocco) {
+          return exports.spawnDocco(sourcePaths);
+        }
+      });
     }
     templateExtensionRegex = new RegExp("" + exports.options.templateExtension + "$");
     if (file.match(templateExtensionRegex)) {
       exports.spawnFusion();
     }
-    if (file.match(/styl$/)) {
+    if (file.match(/\.styl$/)) {
       exports.spawnStylus();
     }
     if (file.match(/^brunch\/src\/.*js$/)) {
@@ -92,21 +102,26 @@
     return sourcePaths;
   };
   exports.spawnCoffee = function(sourcePaths) {
-    var coffeeParams, executeCoffee;
+    var coffeeParams, executeCoffee, output;
     coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
     coffeeParams = coffeeParams.concat(sourcePaths);
     executeCoffee = spawn('coffee', coffeeParams);
+    output = {
+      stdout: '',
+      stderr: ''
+    };
     executeCoffee.stdout.on('data', function(data) {
-      return helpers.log('Coffee:  ' + data);
+      return output.stdout += data;
     });
     executeCoffee.stderr.on('data', function(data) {
-      return helpers.log('coffee err: ' + data);
+      return output.stderr += data;
     });
     return executeCoffee.on('exit', function(code) {
       if (code === 0) {
         return helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n');
       } else {
-        return helpers.log('coffee err: There was a problem during .coffee to .js compilation. see above');
+        helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true));
+        return helpers.log(colors.lgray(output.stderr + '\n\n'));
       }
     });
   };
