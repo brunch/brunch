@@ -102,26 +102,23 @@
     return sourcePaths;
   };
   exports.spawnCoffee = function(sourcePaths) {
-    var coffeeParams, executeCoffee, output;
+    var coffeeParams, executeCoffee, stderr;
     coffeeParams = ['--output', 'brunch/build/web/js', '--join', '--lint', '--compile'];
     coffeeParams = coffeeParams.concat(sourcePaths);
     executeCoffee = spawn('coffee', coffeeParams);
-    output = {
-      stdout: '',
-      stderr: ''
-    };
+    stderr = '';
     executeCoffee.stdout.on('data', function(data) {
-      return output.stdout += data;
+      return helpers.log('Coffee:  ' + data);
     });
     executeCoffee.stderr.on('data', function(data) {
-      return output.stderr += data;
+      return stderr += data;
     });
     return executeCoffee.on('exit', function(code) {
       if (code === 0) {
         return helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n');
       } else {
         helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true));
-        return helpers.log(colors.lgray(output.stderr + '\n\n'));
+        return helpers.log(colors.lgray(stderr + '\n\n'));
       }
     });
   };

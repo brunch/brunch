@@ -117,24 +117,19 @@ exports.spawnCoffee = (sourcePaths) ->
 
   executeCoffee = spawn 'coffee', coffeeParams
 
-  output = {
-    stdout : ''
-    stderr : ''
-  }
+  stderr = ''
 
   executeCoffee.stdout.on 'data', (data) ->
-    output.stdout += data
-    # helpers.log 'Coffee:  ' + data
+    helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    output.stderr += data
-    # helpers.log 'coffee err: ' + data
+    stderr += data
 
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')
     else
       helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true))
-      helpers.log(colors.lgray(output.stderr + '\n\n'))
+      helpers.log(colors.lgray(stderr + '\n\n'))
 
 # spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->
