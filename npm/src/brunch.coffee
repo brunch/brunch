@@ -8,9 +8,11 @@ path      = require 'path'
 spawn     = require('child_process').spawn
 glob      = require 'glob'
 helpers   = require './helpers'
+colors    = require('../vendor/termcolors').colors
+sys         = require 'sys'
 
 # the current brunch version number
-exports.VERSION = '0.5.6'
+exports.VERSION = '0.5.8'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -20,7 +22,7 @@ exports.new = (projectName, options, callback) ->
 
   path.exists 'brunch', (exists) ->
     if exists
-      helpers.log "Brunch: brunch directory already exists - can't create another project"
+      helpers.log "brunch:   brunch directory already exists - can't create another project\n"
       process.exit 0
     fs.mkdirSync 'brunch', 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
@@ -31,23 +33,23 @@ exports.new = (projectName, options, callback) ->
       helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
     # TODO inform user which template was used and give futher instructions how to use brunch
-    helpers.log "Brunch: created brunch directory layout\n"
+    helpers.log "brunch:   \033[90mcreated\033[0m brunch directory layout\n"
     callback()
 
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
-  console.log options
 
-  # run node server if projectTemplate is express
-  if(exports.options.projectTemplate is "express")
-    helpers.log(exports.options.expressPort)
-    executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
-    executeServer.stderr.on 'data', (data) ->
-      helpers.log 'Express err: ' + data
+  # run node server if server file exists
+  path.exists 'brunch/server/main.js', (exists) ->
+    if exists
+      helpers.log "#{exports.options.expressPort}\n"
+      executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      executeServer.stderr.on 'data', (data) ->
+        helpers.log 'Express err: ' + data
 
   # let's watch
-  helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->
+  helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
 
@@ -62,25 +64,32 @@ exports.build = (options) ->
   exports.spawnStylus()
   exports.copyJsFiles()
 
+timeouts = {}
+
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
 exports.dispatch = (file, options) ->
 
+  queueCoffee = (func) ->
+    clearTimeout(timeouts.coffee)
+    timeouts.coffee = setTimeout(func, 100)
+
   # handle coffee changes
-  if file.match(/coffee$/)
-    sourcePaths = exports.generateSourcePaths()
-    exports.spawnCoffee(sourcePaths)
-    exports.spawnDocco(sourcePaths) unless exports.options.noDocco
+  if file.match(/\.coffee$/)
+    queueCoffee ->
+      sourcePaths = exports.generateSourcePaths()
+      exports.spawnCoffee(sourcePaths)
+      exports.spawnDocco(sourcePaths) unless exports.options.noDocco
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
   if file.match(templateExtensionRegex)
     exports.spawnFusion()
 
-  if file.match(/styl$/)
+  if file.match(/\.styl$/)
     exports.spawnStylus()
 
-  if file.match(/^brunch\/src\/.*js$/)
+  if file.match(/brunch\/src\/.*\.js$/)
     exports.copyJsFile(file)
 
 # generate a list of paths containing all coffee files
@@ -107,15 +116,20 @@ exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams
+
+  stderr = ''
+
   executeCoffee.stdout.on 'data', (data) ->
     helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    helpers.log 'coffee err: ' + data
+    stderr += data
+
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')
     else
-      helpers.log('coffee err: There was a problem during .coffee to .js compilation. see above')
+      helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true))
+      helpers.log(colors.lgray(stderr + '\n\n'))
 
 # spawns a new docco process which generates documentation
 exports.spawnDocco = (sourcePaths) ->

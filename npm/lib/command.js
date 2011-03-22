@@ -73,7 +73,6 @@
     if (opts.noDocco) {
       options.noDocco = opts.noDocco;
     }
-    helpers.log(options.expressPort);
     return options;
   };
   parseOptions = function() {
