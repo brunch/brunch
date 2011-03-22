@@ -6,4 +6,4 @@ class MainController extends Backbone.Controller
     super
 
   home: ->
-    app.views.home.render()
+    $('body').html app.views.home.render().el
