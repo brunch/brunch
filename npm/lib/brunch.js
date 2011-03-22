@@ -43,7 +43,7 @@
       }
     });
     return helpers.watchDirectory({
-      path: 'brunch',
+      path: 'brunch/src',
       callOnAdd: true
     }, function(file) {
       return exports.dispatch(file);

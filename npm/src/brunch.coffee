@@ -49,7 +49,7 @@ exports.watch  = (options) ->
         helpers.log 'Express err: ' + data
 
   # let's watch
-  helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->
+  helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
 
