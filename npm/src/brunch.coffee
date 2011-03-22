@@ -8,7 +8,7 @@ path      = require 'path'
 spawn     = require('child_process').spawn
 glob      = require 'glob'
 helpers   = require './helpers'
-colors    = require('../src/termcolors').colors
+colors    = require('../vendor/termcolors').colors
 sys         = require 'sys'
 
 # the current brunch version number
@@ -73,7 +73,7 @@ exports.dispatch = (file, options) ->
   queueCoffee = (func) ->
     clearTimeout(timeouts.coffee)
     timeouts.coffee = setTimeout(func, 100)
-    
+
   # handle coffee changes
   if file.match(/\.coffee$/)
     queueCoffee ->
@@ -116,19 +116,19 @@ exports.spawnCoffee = (sourcePaths) ->
   coffeeParams = coffeeParams.concat(sourcePaths)
 
   executeCoffee = spawn 'coffee', coffeeParams
-  
+
   output = {
     stdout : ''
     stderr : ''
   }
-  
+
   executeCoffee.stdout.on 'data', (data) ->
     output.stdout += data
     # helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
     output.stderr += data
     # helpers.log 'coffee err: ' + data
-    
+
   executeCoffee.on 'exit', (code) ->
     if code == 0
       helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')

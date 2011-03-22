@@ -7,7 +7,7 @@
   spawn = require('child_process').spawn;
   glob = require('glob');
   helpers = require('./helpers');
-  colors = require('../src/termcolors').colors;
+  colors = require('../vendor/termcolors').colors;
   sys = require('sys');
   exports.VERSION = '0.5.8';
   exports["new"] = function(projectName, options, callback) {
