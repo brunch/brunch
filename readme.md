@@ -70,7 +70,7 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 
 ## TODO
 
-* updated underscore
+* update underscore
 * more & improved documentation
 * tests
 * fancy welcome page
