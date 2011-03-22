@@ -89,7 +89,7 @@ exports.dispatch = (file, options) ->
   if file.match(/\.styl$/)
     exports.spawnStylus()
 
-  if file.match(/^brunch\/src\/.*js$/)
+  if file.match(/brunch\/src\/.*\.js$/)
     exports.copyJsFile(file)
 
 # generate a list of paths containing all coffee files

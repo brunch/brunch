@@ -85,7 +85,7 @@
     if (file.match(/\.styl$/)) {
       exports.spawnStylus();
     }
-    if (file.match(/^brunch\/src\/.*js$/)) {
+    if (file.match(/brunch\/src\/.*\.js$/)) {
       return exports.copyJsFile(file);
     }
   };
