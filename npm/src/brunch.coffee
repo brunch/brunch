@@ -9,7 +9,8 @@ spawn     = require('child_process').spawn
 glob      = require 'glob'
 helpers   = require './helpers'
 colors    = require('../src/termcolors').colors
-sys         = require 'sys'
+sys       = require 'sys'
+watcher   = require('watch-tree').watchTree('brunch/src', {'sample-rate': 10})
 
 # the current brunch version number
 exports.VERSION = '0.5.8'
@@ -49,8 +50,15 @@ exports.watch  = (options) ->
         helpers.log 'Express err: ' + data
 
   # let's watch
-  helpers.watchDirectory(path: 'brunch', callOnAdd: true, (file) ->
-    exports.dispatch(file)
+  watcher
+  watcher.on('fileModified', (path) ->
+    exports.dispatch(path)
+  )
+  watcher.on('fileCreated', (path) ->
+    exports.dispatch(path)
+  )
+  watcher.on('fileDeleted', (path) ->
+    exports.dispatch(path)
   )
 
 # building all files
@@ -70,16 +78,11 @@ timeouts = {}
 # according to the file that was changed/created/removed
 exports.dispatch = (file, options) ->
 
-  queueCoffee = (func) ->
-    clearTimeout(timeouts.coffee)
-    timeouts.coffee = setTimeout(func, 100)
-
   # handle coffee changes
   if file.match(/\.coffee$/)
-    queueCoffee ->
-      sourcePaths = exports.generateSourcePaths()
-      exports.spawnCoffee(sourcePaths)
-      exports.spawnDocco(sourcePaths) unless exports.options.noDocco
+    sourcePaths = exports.generateSourcePaths()
+    exports.spawnCoffee(sourcePaths)
+    exports.spawnDocco(sourcePaths) unless exports.options.noDocco
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
@@ -123,11 +126,11 @@ exports.spawnCoffee = (sourcePaths) ->
   }
 
   executeCoffee.stdout.on 'data', (data) ->
-    output.stdout += data
-    # helpers.log 'Coffee:  ' + data
+    # output.stdout += data
+    helpers.log 'Coffee:  ' + data
   executeCoffee.stderr.on 'data', (data) ->
-    output.stderr += data
-    # helpers.log 'coffee err: ' + data
+    # output.stderr += data
+    helpers.log 'coffee err: ' + data
 
   executeCoffee.on 'exit', (code) ->
     if code == 0

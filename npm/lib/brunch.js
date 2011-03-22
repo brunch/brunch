@@ -1,5 +1,5 @@
 (function() {
-  var colors, fs, glob, helpers, path, root, spawn, sys, timeouts, util;
+  var colors, fs, glob, helpers, path, root, spawn, sys, timeouts, util, watcher;
   root = __dirname + "/../";
   util = require('util');
   fs = require('fs');
@@ -9,6 +9,9 @@
   helpers = require('./helpers');
   colors = require('../src/termcolors').colors;
   sys = require('sys');
+  watcher = require('watch-tree').watchTree('brunch/src', {
+    'sample-rate': 10
+  });
   exports.VERSION = '0.5.8';
   exports["new"] = function(projectName, options, callback) {
     var projectTemplatePath;
@@ -42,11 +45,15 @@
         });
       }
     });
-    return helpers.watchDirectory({
-      path: 'brunch',
-      callOnAdd: true
-    }, function(file) {
-      return exports.dispatch(file);
+    watcher;
+    watcher.on('fileModified', function(path) {
+      return exports.dispatch(path);
+    });
+    watcher.on('fileCreated', function(path) {
+      return exports.dispatch(path);
+    });
+    return watcher.on('fileDeleted', function(path) {
+      return exports.dispatch(path);
     });
   };
   exports.build = function(options) {
@@ -63,20 +70,13 @@
   };
   timeouts = {};
   exports.dispatch = function(file, options) {
-    var queueCoffee, templateExtensionRegex;
-    queueCoffee = function(func) {
-      clearTimeout(timeouts.coffee);
-      return timeouts.coffee = setTimeout(func, 100);
-    };
+    var sourcePaths, templateExtensionRegex;
     if (file.match(/\.coffee$/)) {
-      queueCoffee(function() {
-        var sourcePaths;
-        sourcePaths = exports.generateSourcePaths();
-        exports.spawnCoffee(sourcePaths);
-        if (!exports.options.noDocco) {
-          return exports.spawnDocco(sourcePaths);
-        }
-      });
+      sourcePaths = exports.generateSourcePaths();
+      exports.spawnCoffee(sourcePaths);
+      if (!exports.options.noDocco) {
+        exports.spawnDocco(sourcePaths);
+      }
     }
     templateExtensionRegex = new RegExp("" + exports.options.templateExtension + "$");
     if (file.match(templateExtensionRegex)) {
@@ -111,10 +111,10 @@
       stderr: ''
     };
     executeCoffee.stdout.on('data', function(data) {
-      return output.stdout += data;
+      return helpers.log('Coffee:  ' + data);
     });
     executeCoffee.stderr.on('data', function(data) {
-      return output.stderr += data;
+      return helpers.log('coffee err: ' + data);
     });
     return executeCoffee.on('exit', function(code) {
       if (code === 0) {
