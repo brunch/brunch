@@ -12,7 +12,7 @@ colors    = require('../vendor/termcolors').colors
 sys         = require 'sys'
 
 # the current brunch version number
-exports.VERSION = '0.6.1'
+exports.VERSION = '0.6.2'
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
