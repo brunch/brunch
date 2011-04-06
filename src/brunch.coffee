@@ -21,7 +21,7 @@ package = stitch.createPackage(
   # TODO get all dependencies and apply to the list
   dependencies: [
     "#{vendorPath}ConsoleDummy.js",
-    "#{vendorPath}jquery-1.5.1.js",
+    "#{vendorPath}jquery-1.5.2.js",
     "#{vendorPath}underscore-1.1.5.js",
     "#{vendorPath}backbone-0.3.3.js"
   ]
