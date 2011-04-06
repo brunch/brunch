@@ -3,7 +3,9 @@ app.controllers = {}
 app.models = {}
 app.collections = {}
 app.views = {}
-app.templates = {}
+
+MainController = require('controllers/main_controller').MainController
+HomeView = require('views/home_view').HomeView
 
 # app bootstrapping on document ready
 $(document).ready ->
