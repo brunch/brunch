@@ -1,18 +1,12 @@
 require.paths.unshift __dirname + "/../src"
 
-vows = require('vows')
-assert = require('assert')
 command = require('command')
 
-vows.describe('command-line interface').addBatch(
-  'when load options from arguments including templateExtension and projectTemplate':
-    topic: ->
-      command.loadOptionsFromArguments {templateExtension: "a", projectTemplate: "b"}, {}
+module.exports =
+  'load options from arguments': (test) ->
+    test.expect 2
 
-    'it should return options':
-      'including a defined templateExtension': (topic) ->
-          assert.isString topic.templateExtension
-      ,
-      'including a defined projectTemplate': (topic) ->
-          assert.isString topic.projectTemplate
-).export module
+    options = command.loadOptionsFromArguments {templateExtension: 'a', projectTemplate: 'b'}, {}
+    test.strictEqual(options.projectTemplate, 'b', 'options should include given projectTemplate')
+    test.strictEqual(options.templateExtension, 'a', 'options should include given templateExtension')
+    test.done()
