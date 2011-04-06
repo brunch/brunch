@@ -69,10 +69,7 @@ exports.watch  = (options) ->
 exports.build = (options) ->
   exports.options = options
 
-  sourcePaths = exports.generateSourcePaths() # TODO need it for docco
-
   exports.compilePackage()
-  exports.spawnDocco(sourcePaths) unless exports.options.noDocco
   exports.spawnStylus()
 
 timeouts = {}
@@ -89,8 +86,6 @@ exports.dispatch = (file, options) ->
   if file.match(/\.coffee$/)
     queueCoffee ->
       exports.compilePackage()
-      sourcePaths = exports.generateSourcePaths()
-      exports.spawnDocco(sourcePaths) unless exports.options.noDocco
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
@@ -102,20 +97,6 @@ exports.dispatch = (file, options) ->
 
   if file.match(/\.styl$/)
     exports.spawnStylus()
-
-# generate a list of paths containing all coffee files
-exports.generateSourcePaths = ->
-  appSources = ['brunch/src/app/helpers/*.coffee',
-    'brunch/src/app/models/*.coffee',
-    'brunch/src/app/collections/*.coffee',
-    'brunch/src/app/controllers/*.coffee',
-    'brunch/src/app/views/*.coffee']
-  sourcePaths = []
-  for appSource in appSources
-    globbedPaths = glob.globSync(appSource, 0)
-    sourcePaths = sourcePaths.concat(globbedPaths)
-  sourcePaths.unshift('brunch/src/app/main.coffee')
-  sourcePaths
 
 # compile app files
 #
@@ -129,14 +110,6 @@ exports.compilePackage = ->
       helpers.log 'stitch:   \033[90mcompiled\033[0m application\n'
     )
   )
-
-# spawns a new docco process which generates documentation
-exports.spawnDocco = (sourcePaths) ->
-  executeDocco = spawn('docco', sourcePaths)
-  executeDocco.stdout.on 'data', (data) ->
-    helpers.log data
-  executeDocco.stderr.on 'data', (data) ->
-    helpers.log 'err:  ' + data
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
