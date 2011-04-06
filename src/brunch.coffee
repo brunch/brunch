@@ -2,7 +2,6 @@
 
 root = __dirname + "/../"
 # External dependencies.
-util      = require 'util'
 fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
@@ -10,7 +9,6 @@ glob      = require 'glob'
 helpers   = require './helpers'
 colors    = require('../vendor/termcolors').colors # TODO needed anymore?
 stitch    = require 'stitch'
-sys       = require 'sys'
 
 # the current brunch version number
 exports.VERSION = '0.6.2'
@@ -74,9 +72,7 @@ exports.build = (options) ->
   sourcePaths = exports.generateSourcePaths() # TODO need it for docco
 
   exports.compilePackage()
-  ## exports.spawnCoffee(sourcePaths)
   exports.spawnDocco(sourcePaths) unless exports.options.noDocco
-  ## exports.spawnFusion()
   exports.spawnStylus()
 
 timeouts = {}
