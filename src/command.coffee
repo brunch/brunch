@@ -1,7 +1,4 @@
 # External dependencies.
-fs          = require 'fs'
-util        = require 'util'
-yaml        = require 'yaml'
 nomnom      = require 'nomnom'
 brunch      = require './brunch'
 helpers     = require './helpers'
