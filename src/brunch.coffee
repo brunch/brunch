@@ -70,7 +70,7 @@ exports.watch  = (options) ->
 
 exports.stop = ->
   # TODO check out SIGHUP signal
-  expressProcess.kill 'SIGHUP'
+  expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # building all files
 exports.build = (options) ->
