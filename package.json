@@ -31,7 +31,8 @@
     "async": ">=0.1.8",
     "file": ">=0.1.1",
     "docco": ">=0.3.0",
-    "express": ">=2.0.0"
+    "express": ">=2.0.0",
+    "stitch": "0.3.1"
   },
   "devDependencies": {
     "coffee-script": ">= 1.0.0",
