@@ -7,7 +7,7 @@ path      = require 'path'
 spawn     = require('child_process').spawn
 glob      = require 'glob'
 helpers   = require './helpers'
-colors    = require('../vendor/termcolors').colors # TODO needed anymore?
+colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
 
 # the current brunch version number
@@ -37,7 +37,7 @@ exports.new = (projectName, options, callback) ->
 
   path.exists 'brunch', (exists) ->
     if exists
-      helpers.log "brunch:   brunch directory already exists - can't create another project\n"
+      helpers.log colors.lred("brunch:   brunch directory already exists - can't create another project\n", true)
       process.exit 0
     fs.mkdirSync 'brunch', 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
@@ -48,7 +48,7 @@ exports.new = (projectName, options, callback) ->
       helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
     # TODO inform user which template was used and give futher instructions how to use brunch
-    helpers.log "brunch:   \033[90mcreated\033[0m brunch directory layout\n"
+    helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
     callback()
 
 # file watcher
@@ -58,10 +58,10 @@ exports.watch  = (options) ->
   # run node server if server file exists
   path.exists 'brunch/server/main.js', (exists) ->
     if exists
-      helpers.log "express:  \033[90mrun\033[0m under port #{exports.options.expressPort}\n"
+      helpers.log "express:  application started on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
       expressProcess = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
       expressProcess.stderr.on 'data', (data) ->
-        helpers.log 'Express err: ' + data
+        helpers.log colors.lred('express err: ' + data)
 
   # let's watch
   helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
@@ -112,9 +112,10 @@ exports.dispatch = (file, options) ->
 # each file will be saved into a module
 exports.compilePackage = ->
   package.compile( (err, source) ->
+    console.log colors.lred(err, true) if err
     fs.writeFile('brunch/build/web/js/app.js', source, (err) ->
-      throw err if err
-      helpers.log 'stitch:   \033[90mcompiled\033[0m application\n'
+      console.log colors.lred(err, true) if err
+      helpers.log 'stitch:   ' + colors.green('compiled', true) + ' application\n'
     )
   )
 
@@ -124,4 +125,4 @@ exports.spawnStylus = ->
   executeStylus.stdout.on 'data', (data) ->
     helpers.log 'stylus: ' + data
   executeStylus.stderr.on 'data', (data) ->
-    helpers.log 'stylus err: ' + data
+    helpers.log colors.lred('stylus err: ' + data)
