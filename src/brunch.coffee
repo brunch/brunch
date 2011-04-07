@@ -13,6 +13,9 @@ stitch    = require 'stitch'
 # the current brunch version number
 exports.VERSION = '0.6.2'
 
+# server process storred as global for stop method
+expressProcess = {}
+
 # creates a stitch package for app directory and include vendor as dependencies
 vendorPath = 'brunch/src/vendor/'
 package = stitch.createPackage(
@@ -55,15 +58,19 @@ exports.watch  = (options) ->
   # run node server if server file exists
   path.exists 'brunch/server/main.js', (exists) ->
     if exists
-      helpers.log "#{exports.options.expressPort}\n"
-      executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
-      executeServer.stderr.on 'data', (data) ->
+      helpers.log "express:  \033[90mrun\033[0m under port #{exports.options.expressPort}\n"
+      expressProcess = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      expressProcess.stderr.on 'data', (data) ->
         helpers.log 'Express err: ' + data
 
   # let's watch
   helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
+
+exports.stop = ->
+  # TODO check out SIGHUP signal
+  expressProcess.kill 'SIGHUP'
 
 # building all files
 exports.build = (options) ->
