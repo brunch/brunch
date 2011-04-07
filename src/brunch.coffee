@@ -5,7 +5,6 @@ root = __dirname + "/../"
 fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
-glob      = require 'glob'
 helpers   = require './helpers'
 colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
@@ -115,7 +114,7 @@ exports.compilePackage = ->
     console.log colors.lred(err, true) if err
     fs.writeFile('brunch/build/web/js/app.js', source, (err) ->
       console.log colors.lred(err, true) if err
-      helpers.log 'stitch:   ' + colors.green('compiled', true) + ' application\n'
+      helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
     )
   )
 
