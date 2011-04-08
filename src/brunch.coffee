@@ -36,7 +36,7 @@ exports.new = (options, callback) ->
 
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src')
-    helpers.copy path.join(projectTemplatePath, 'build/'), path.join(exports.options.brunchPath, 'build')
+    helpers.copy path.join(projectTemplatePath, 'build/'), exports.options.buildPath
     helpers.copy path.join(projectTemplatePath, 'config/'), path.join(exports.options.brunchPath, 'config')
 
     if(exports.options.projectTemplate is "express")
@@ -127,7 +127,7 @@ exports.compilePackage = ->
   package.compile( (err, source) ->
     console.log colors.lred(err, true) if err
 
-    fs.writeFile(path.join(exports.options.brunchPath, 'build/web/js/app.js'), source, (err) ->
+    fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
       console.log colors.lred(err, true) if err
       helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
     )
@@ -140,7 +140,7 @@ exports.spawnStylus = ->
   executeStylus = spawn('stylus', [
     '--compress',
     '--out',
-    path.join(exports.options.brunchPath, 'build/web/css'),
+    path.join(exports.options.buildPath, 'web/css'),
     path.join(exports.options.brunchPath, 'src/app/styles/main.styl')
   ])
   executeStylus.stdout.on 'data', (data) ->

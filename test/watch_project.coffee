@@ -18,10 +18,10 @@ rmDirRecursive = (destination) ->
 # add check if dispatch is called when js, coffee, styl, template file change
 module.exports = testCase(
   setUp: (callback) ->
-    brunch.new {projectTemplate: 'express', templateExtension: 'eco', brunchPath: 'brunch'}, ->
+    brunch.new {projectTemplate: 'express', templateExtension: 'eco', brunchPath: 'brunch', buildPath: 'brunch/build'}, ->
       setTimeout(
         ->
-          brunch.watch {templateExtension: 'eco', expressPort: '8080', brunchPath: 'brunch'}
+          brunch.watch {templateExtension: 'eco', expressPort: '8080', brunchPath: 'brunch', buildPath: 'brunch/build'}
           setTimeout(
             ->
               callback()

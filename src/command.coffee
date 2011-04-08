@@ -1,5 +1,6 @@
 # External dependencies.
 nomnom      = require 'nomnom'
+path        = require 'path'
 brunch      = require './brunch'
 helpers     = require './helpers'
 
@@ -20,6 +21,10 @@ NOMNOM_CONFIG = [
     name  : 'help'
     string: '-h, --help'
     help  : 'display brunch help'
+  ,
+    name  : 'output'
+    string: '-o, --output'
+    help  : 'set build path'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -43,10 +48,11 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
-  options.templateExtension = "eco"
-  options.projectTemplate = "express"
-  options.expressPort = "8080"
-  options.brunchPath = "brunch"
+  options.templateExtension = 'eco'
+  options.projectTemplate = 'express'
+  options.expressPort = '8080'
+  options.brunchPath = 'brunch'
+  options.buildPath = path.join options.brunchPath, 'build'
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
@@ -65,6 +71,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
   options.expressPort = opts.expressPort if opts.expressPort?
   options.brunchPath = opts[1] if opts[1]?
+  options.buildPath = opts.buildPath if opts.buildPath?
   options
 
 # Run nomnom to parse the arguments
