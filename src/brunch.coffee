@@ -71,7 +71,6 @@ exports.build = (options) ->
   exports.spawnStylus()
 
 exports.stop = ->
-  # TODO check out SIGHUP signal
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # creates a stitch package for app directory and include vendor as dependencies
