@@ -29,7 +29,7 @@ package = stitch.createPackage(
 )
 
 # project skeleton generator
-exports.new = (projectName, options, callback) ->
+exports.new = (options, callback) ->
   exports.options = options
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)

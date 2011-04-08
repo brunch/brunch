@@ -13,7 +13,7 @@ rmDirRecursive = (destination) ->
 
 module.exports = testCase(
   setUp: (callback) ->
-    brunch.new 'app', {projectTemplate: "base", templateExtension: "eco"}, callback
+    brunch.new {projectTemplate: "base", templateExtension: "eco"}, callback
   tearDown: (callback) ->
     rmDirRecursive 'brunch'
     callback()

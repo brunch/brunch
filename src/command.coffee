@@ -49,8 +49,7 @@ exports.run = ->
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
-    name = opts[1] || "app"
-    brunch.new name, options, ->
+    brunch.new options, ->
       brunch.build options
   else if command is "watch"
     return brunch.watch options

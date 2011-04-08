@@ -14,7 +14,7 @@ rmDirRecursive = (destination) ->
 
 module.exports = testCase(
   setUp: (callback) ->
-    brunch.new 'app', {projectTemplate: 'express', templateExtension: 'eco'}, ->
+    brunch.new {projectTemplate: 'express', templateExtension: 'eco'}, ->
       setTimeout(
         ->
           brunch.watch {templateExtension: 'eco', expressPort: '8080'}
