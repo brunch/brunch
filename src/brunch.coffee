@@ -37,7 +37,6 @@ exports.new = (options, callback) ->
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src')
     helpers.copy path.join(projectTemplatePath, 'build/'), exports.options.buildPath
-    helpers.copy path.join(projectTemplatePath, 'config/'), path.join(exports.options.brunchPath, 'config')
 
     if(exports.options.projectTemplate is "express")
       helpers.copy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server')
