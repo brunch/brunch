@@ -12,11 +12,6 @@ exports.copy = (source, target) ->
     console.log(stderr) if stderr
     console.log(error) if error
 
-# create directory path for the given file
-exports.mkdirsForFile = (file, mode) ->
-  newPath = file.replace(/\/[^\/]*$/, '')
-  fileUtil.mkdirsSync newPath, mode
-
 ## copied source from watch_dir, because it did not work as package
 exports.watchDirectory = (_opts, callback) ->
   opts = _.extend(

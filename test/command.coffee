@@ -2,6 +2,8 @@ require.paths.unshift __dirname + "/../lib"
 
 command = require('command')
 
+# TODO add tests for run
+
 exports.commandLine =
   'load options from arguments': (test) ->
     test.expect 5

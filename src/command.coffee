@@ -48,7 +48,7 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
-  options = exports.loadDefaultArguments
+  options = exports.loadDefaultArguments()
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
