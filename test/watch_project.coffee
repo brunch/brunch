@@ -2,15 +2,18 @@ require.paths.unshift __dirname + "/../lib"
 
 brunch  = require 'brunch'
 fs      = require 'fs'
-exec    = require('child_process').exec
+spawn   = require('child_process').spawn
 testCase = require('nodeunit').testCase
 zombie = require 'zombie'
 
-rmDirRecursive = (destination) ->
-  exec 'rm -R ' + destination, (error, stdout, stderr) ->
-    console.log(stdout) if stdout
-    console.log(stderr) if stderr
-    console.log(error) if error
+rmDirRecursive = (destination, callback) ->
+  rm = spawn 'rm', ['-R', destination]
+
+  rm.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+
+  rm.on 'exit', (code) ->
+    callback() if typeof(callback) is 'function'
 
 # TODO split into smaller tests
 # watching in general (generate a valid brunch app)
@@ -19,20 +22,15 @@ rmDirRecursive = (destination) ->
 module.exports = testCase(
   setUp: (callback) ->
     brunch.new {projectTemplate: 'express', templateExtension: 'eco', brunchPath: 'brunch', buildPath: 'brunch/build'}, ->
+      brunch.watch {templateExtension: 'eco', expressPort: '8080', brunchPath: 'brunch', buildPath: 'brunch/build'}
       setTimeout(
         ->
-          brunch.watch {templateExtension: 'eco', expressPort: '8080', brunchPath: 'brunch', buildPath: 'brunch/build'}
-          setTimeout(
-            ->
-              callback()
-            2000
-          )
-        500
+          callback()
+        3000
       )
   tearDown: (callback) ->
-    rmDirRecursive 'brunch'
     brunch.stop()
-    callback()
+    rmDirRecursive 'brunch', callback
   'creates a valid brunch app': (test) ->
     test.expect 1
     zombie.visit('http://localhost:8080', (err, browser, status) ->
