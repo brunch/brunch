@@ -6,6 +6,7 @@ fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
 helpers   = require './helpers'
+fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
 
@@ -28,17 +29,18 @@ exports.new = (options, callback) ->
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
-  path.exists 'brunch', (exists) ->
+  path.exists exports.options.brunchPath, (exists) ->
     if exists
-      helpers.log colors.lred("brunch:   brunch directory already exists - can't create another project\n", true)
+      helpers.log colors.lred("brunch:   directory already exists - can't create a project in there\n", true)
       process.exit 0
-    fs.mkdirSync 'brunch', 0755
-    helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
-    helpers.copy path.join(projectTemplatePath, 'build/'), 'brunch/build'
-    helpers.copy path.join(projectTemplatePath, 'config/'), 'brunch/config'
+
+    fileUtil.mkdirsSync exports.options.brunchPath, 0755
+    helpers.copy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src')
+    helpers.copy path.join(projectTemplatePath, 'build/'), path.join(exports.options.brunchPath, 'build')
+    helpers.copy path.join(projectTemplatePath, 'config/'), path.join(exports.options.brunchPath, 'config')
 
     if(exports.options.projectTemplate is "express")
-      helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
+      helpers.copy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server')
 
     # TODO inform user which template was used and give futher instructions how to use brunch
     helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
