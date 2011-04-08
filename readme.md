@@ -10,9 +10,9 @@ you can get brunch using the node package manager
 
 ## How to Use
 
-create a new project using 'proj' as app namespace
+create a new project
 
-    brunch new <proj>
+    brunch new
 
 start the file watcher to process all .coffee, .sass or .html file changes automatically
 

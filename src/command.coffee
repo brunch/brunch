@@ -1,5 +1,6 @@
 # External dependencies.
 nomnom      = require 'nomnom'
+path        = require 'path'
 brunch      = require './brunch'
 helpers     = require './helpers'
 
@@ -20,6 +21,10 @@ NOMNOM_CONFIG = [
     name  : 'help'
     string: '-h, --help'
     help  : 'display brunch help'
+  ,
+    name  : 'output'
+    string: '-o, --output'
+    help  : 'set build path'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -43,14 +48,11 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
-  options.templateExtension = "eco"
-  options.projectTemplate = "express"
-  options.expressPort = "8080"
+  options = exports.loadDefaultArguments
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
-    name = opts[1] || "app"
-    brunch.new name, options, ->
+    brunch.new options, ->
       brunch.build options
   else if command is "watch"
     return brunch.watch options
@@ -59,11 +61,26 @@ exports.run = ->
   else
     usage()
 
-# Load settings from arguments.
+# Load default options
+exports.loadDefaultArguments = ->
+  options =
+    templateExtension: 'eco'
+    projectTemplate: 'express'
+    expressPort: '8080'
+    brunchPath: 'brunch'
+    buildPath: 'brunch/build'
+  options
+
+# Load settings from arguments
 exports.loadOptionsFromArguments = (opts, options) ->
-  options.templateExtension = opts.templateExtension if opts.templateExtension
-  options.projectTemplate = opts.projectTemplate if opts.projectTemplate
-  options.expressPort = opts.expressPort if opts.expressPort
+  options.templateExtension = opts.templateExtension if opts.templateExtension?
+  options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
+  options.expressPort = opts.expressPort if opts.expressPort?
+  options.brunchPath = opts[1] if opts[1]?
+  if opts.buildPath?
+    options.buildPath = opts.buildPath
+  else
+    options.buildPath = path.join options.brunchPath, 'build'
   options
 
 # Run nomnom to parse the arguments

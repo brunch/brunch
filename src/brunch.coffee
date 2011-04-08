@@ -6,6 +6,7 @@ fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
 helpers   = require './helpers'
+fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
 
@@ -15,36 +16,31 @@ exports.VERSION = '0.6.2'
 # server process storred as global for stop method
 expressProcess = {}
 
-# creates a stitch package for app directory and include vendor as dependencies
-vendorPath = 'brunch/src/vendor/'
-package = stitch.createPackage(
-  # TODO get all dependencies and apply to the list
-  dependencies: [
-    "#{vendorPath}ConsoleDummy.js",
-    "#{vendorPath}jquery-1.5.2.js",
-    "#{vendorPath}underscore-1.1.5.js",
-    "#{vendorPath}backbone-0.3.3.js"
-  ]
-  paths: ['brunch/src/app/']
-)
+# stitch package
+package = {}
+
+# are used as workaround to not call compile to often
+# TODO in future this issues should be handled by a clean dir/file watcher
+timeouts = {}
 
 # project skeleton generator
-exports.new = (projectName, options, callback) ->
+exports.new = (options, callback) ->
   exports.options = options
 
   projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
 
-  path.exists 'brunch', (exists) ->
+  path.exists exports.options.brunchPath, (exists) ->
     if exists
-      helpers.log colors.lred("brunch:   brunch directory already exists - can't create another project\n", true)
+      helpers.log colors.lred("brunch:   directory already exists - can't create a project in there\n", true)
       process.exit 0
-    fs.mkdirSync 'brunch', 0755
-    helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
-    helpers.copy path.join(projectTemplatePath, 'build/'), 'brunch/build'
-    helpers.copy path.join(projectTemplatePath, 'config/'), 'brunch/config'
+
+    fileUtil.mkdirsSync exports.options.brunchPath, 0755
+    helpers.copy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src')
+    helpers.copy path.join(projectTemplatePath, 'build/'), exports.options.buildPath
+    helpers.copy path.join(projectTemplatePath, 'config/'), path.join(exports.options.brunchPath, 'config')
 
     if(exports.options.projectTemplate is "express")
-      helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
+      helpers.copy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server')
 
     # TODO inform user which template was used and give futher instructions how to use brunch
     helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
@@ -53,32 +49,50 @@ exports.new = (projectName, options, callback) ->
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
+  exports.initializePackage(exports.options.brunchPath)
 
   # run node server if server file exists
-  path.exists 'brunch/server/main.js', (exists) ->
+  path.exists path.join(exports.options.brunchPath, 'server/main.js'), (exists) ->
     if exists
       helpers.log "express:  application started on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
-      expressProcess = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      expressProcess = spawn('node', [
+        path.join(exports.options.brunchPath, 'server/main.js'),
+        exports.options.expressPort,
+        exports.options.brunchPath
+      ])
       expressProcess.stderr.on 'data', (data) ->
         helpers.log colors.lred('express err: ' + data)
 
   # let's watch
-  helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
+  helpers.watchDirectory(path: path.join(exports.options.brunchPath, 'src'), callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
-
-exports.stop = ->
-  # TODO check out SIGHUP signal
-  expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # building all files
 exports.build = (options) ->
   exports.options = options
+  exports.initializePackage(exports.options.brunchPath)
 
   exports.compilePackage()
   exports.spawnStylus()
 
-timeouts = {}
+exports.stop = ->
+  expressProcess.kill 'SIGHUP' unless expressProcess is {}
+
+# creates a stitch package for app directory and include vendor as dependencies
+exports.initializePackage = (brunchPath) ->
+  vendorPath = path.join brunchPath, 'src/vendor'
+  package = stitch.createPackage(
+    # TODO get all dependencies and apply to the list
+    dependencies: [
+      path.join(vendorPath, 'ConsoleDummy.js'),
+      path.join(vendorPath, 'jquery-1.5.2.js'),
+      path.join(vendorPath, 'underscore-1.1.5.js'),
+      path.join(vendorPath, 'backbone-0.3.3.js')
+    ]
+    paths: [path.join(brunchPath, 'src/app/')]
+  )
+  package
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
@@ -98,7 +112,7 @@ exports.dispatch = (file, options) ->
   if file.match(templateExtensionRegex)
     exports.compilePackage()
 
-  if file.match(/brunch\/src\/.*\.js$/)
+  if file.match(/src\/.*\.js$/)
     exports.compilePackage()
 
   if file.match(/\.styl$/)
@@ -112,7 +126,8 @@ exports.dispatch = (file, options) ->
 exports.compilePackage = ->
   package.compile( (err, source) ->
     console.log colors.lred(err, true) if err
-    fs.writeFile('brunch/build/web/js/app.js', source, (err) ->
+
+    fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
       console.log colors.lred(err, true) if err
       helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
     )
@@ -120,7 +135,14 @@ exports.compilePackage = ->
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
-  executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
+
+  path.join(exports.options.brunchPath, 'src')
+  executeStylus = spawn('stylus', [
+    '--compress',
+    '--out',
+    path.join(exports.options.buildPath, 'web/css'),
+    path.join(exports.options.brunchPath, 'src/app/styles/main.styl')
+  ])
   executeStylus.stdout.on 'data', (data) ->
     helpers.log 'stylus: ' + data
   executeStylus.stderr.on 'data', (data) ->
