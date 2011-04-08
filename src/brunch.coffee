@@ -47,7 +47,7 @@ exports.new = (options, callback) ->
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
-  exports.initializePackage()
+  exports.initializePackage(exports.options.brunchPath)
 
   # run node server if server file exists
   path.exists 'brunch/server/main.js', (exists) ->
@@ -65,7 +65,7 @@ exports.watch  = (options) ->
 # building all files
 exports.build = (options) ->
   exports.options = options
-  exports.initializePackage()
+  exports.initializePackage(exports.options.brunchPath)
 
   exports.compilePackage()
   exports.spawnStylus()
@@ -74,18 +74,19 @@ exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # creates a stitch package for app directory and include vendor as dependencies
-exports.initializePackage = ->
-  vendorPath = 'brunch/src/vendor/'
+exports.initializePackage = (brunchPath) ->
+  vendorPath = path.join brunchPath, 'src/vendor'
   package = stitch.createPackage(
     # TODO get all dependencies and apply to the list
     dependencies: [
-      "#{vendorPath}ConsoleDummy.js",
-      "#{vendorPath}jquery-1.5.2.js",
-      "#{vendorPath}underscore-1.1.5.js",
-      "#{vendorPath}backbone-0.3.3.js"
+      path.join(vendorPath, 'ConsoleDummy.js'),
+      path.join(vendorPath, 'jquery-1.5.2.js'),
+      path.join(vendorPath, 'underscore-1.1.5.js'),
+      path.join(vendorPath, 'backbone-0.3.3.js')
     ]
     paths: ['brunch/src/app/']
   )
+  package
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
