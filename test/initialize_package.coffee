@@ -7,8 +7,8 @@ module.exports = testCase(
   'creates a valid stitch package': (test) ->
     test.expect 2
 
-    package = brunch.initializePackage('brunch')
-    test.deepEqual package.paths, ['brunch/src/app/']
-    test.strictEqual package.dependencies[0], 'brunch/src/vendor/ConsoleDummy.js'
+    package = brunch.initializePackage('js/client')
+    test.deepEqual package.paths, ['js/client/src/app/']
+    test.strictEqual package.dependencies[0], 'js/client/src/vendor/ConsoleDummy.js'
     test.done()
 )

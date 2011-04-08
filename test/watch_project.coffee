@@ -12,6 +12,10 @@ rmDirRecursive = (destination) ->
     console.log(stderr) if stderr
     console.log(error) if error
 
+# TODO split into smaller tests
+# watching in general (generate a valid brunch app)
+# watching with a nested brunch path
+# add check if dispatch is called when js, coffee, styl, template file change
 module.exports = testCase(
   setUp: (callback) ->
     brunch.new {projectTemplate: 'express', templateExtension: 'eco', brunchPath: 'brunch'}, ->

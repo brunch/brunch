@@ -52,15 +52,19 @@ exports.watch  = (options) ->
   exports.initializePackage(exports.options.brunchPath)
 
   # run node server if server file exists
-  path.exists 'brunch/server/main.js', (exists) ->
+  path.exists path.join(exports.options.brunchPath, 'server/main.js'), (exists) ->
     if exists
       helpers.log "express:  application started on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
-      expressProcess = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      expressProcess = spawn('node', [
+        path.join(exports.options.brunchPath, 'server/main.js'),
+        exports.options.expressPort,
+        exports.options.brunchPath
+      ])
       expressProcess.stderr.on 'data', (data) ->
         helpers.log colors.lred('express err: ' + data)
 
   # let's watch
-  helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
+  helpers.watchDirectory(path: path.join(exports.options.brunchPath, 'src'), callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
 
@@ -86,7 +90,7 @@ exports.initializePackage = (brunchPath) ->
       path.join(vendorPath, 'underscore-1.1.5.js'),
       path.join(vendorPath, 'backbone-0.3.3.js')
     ]
-    paths: ['brunch/src/app/']
+    paths: [path.join(brunchPath, 'src/app/')]
   )
   package
 
@@ -108,7 +112,7 @@ exports.dispatch = (file, options) ->
   if file.match(templateExtensionRegex)
     exports.compilePackage()
 
-  if file.match(/brunch\/src\/.*\.js$/)
+  if file.match(/src\/.*\.js$/)
     exports.compilePackage()
 
   if file.match(/\.styl$/)
@@ -122,7 +126,8 @@ exports.dispatch = (file, options) ->
 exports.compilePackage = ->
   package.compile( (err, source) ->
     console.log colors.lred(err, true) if err
-    fs.writeFile('brunch/build/web/js/app.js', source, (err) ->
+
+    fs.writeFile(path.join(exports.options.brunchPath, 'build/web/js/app.js'), source, (err) ->
       console.log colors.lred(err, true) if err
       helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
     )
@@ -130,7 +135,14 @@ exports.compilePackage = ->
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
-  executeStylus = spawn('stylus', ['--compress', '--out', 'brunch/build/web/css', 'brunch/src/app/styles/main.styl'])
+
+  path.join(exports.options.brunchPath, 'src')
+  executeStylus = spawn('stylus', [
+    '--compress',
+    '--out',
+    path.join(exports.options.brunchPath, 'build/web/css'),
+    path.join(exports.options.brunchPath, 'src/app/styles/main.styl')
+  ])
   executeStylus.stdout.on 'data', (data) ->
     helpers.log 'stylus: ' + data
   executeStylus.stderr.on 'data', (data) ->
