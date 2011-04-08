@@ -2,17 +2,31 @@
 
 root = __dirname + "/../"
 # External dependencies.
-util      = require 'util'
 fs        = require 'fs'
 path      = require 'path'
 spawn     = require('child_process').spawn
-glob      = require 'glob'
 helpers   = require './helpers'
 colors    = require('../vendor/termcolors').colors
-sys         = require 'sys'
+stitch    = require 'stitch'
 
 # the current brunch version number
 exports.VERSION = '0.6.2'
+
+# server process storred as global for stop method
+expressProcess = {}
+
+# creates a stitch package for app directory and include vendor as dependencies
+vendorPath = 'brunch/src/vendor/'
+package = stitch.createPackage(
+  # TODO get all dependencies and apply to the list
+  dependencies: [
+    "#{vendorPath}ConsoleDummy.js",
+    "#{vendorPath}jquery-1.5.2.js",
+    "#{vendorPath}underscore-1.1.5.js",
+    "#{vendorPath}backbone-0.3.3.js"
+  ]
+  paths: ['brunch/src/app/']
+)
 
 # project skeleton generator
 exports.new = (projectName, options, callback) ->
@@ -22,7 +36,7 @@ exports.new = (projectName, options, callback) ->
 
   path.exists 'brunch', (exists) ->
     if exists
-      helpers.log "brunch:   brunch directory already exists - can't create another project\n"
+      helpers.log colors.lred("brunch:   brunch directory already exists - can't create another project\n", true)
       process.exit 0
     fs.mkdirSync 'brunch', 0755
     helpers.copy path.join(projectTemplatePath, 'src/'), 'brunch/src'
@@ -33,7 +47,7 @@ exports.new = (projectName, options, callback) ->
       helpers.copy path.join(projectTemplatePath, 'server/'), 'brunch/server'
 
     # TODO inform user which template was used and give futher instructions how to use brunch
-    helpers.log "brunch:   \033[90mcreated\033[0m brunch directory layout\n"
+    helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
     callback()
 
 # file watcher
@@ -43,26 +57,26 @@ exports.watch  = (options) ->
   # run node server if server file exists
   path.exists 'brunch/server/main.js', (exists) ->
     if exists
-      helpers.log "#{exports.options.expressPort}\n"
-      executeServer = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
-      executeServer.stderr.on 'data', (data) ->
-        helpers.log 'Express err: ' + data
+      helpers.log "express:  application started on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
+      expressProcess = spawn 'node', ['brunch/server/main.js', exports.options.expressPort]
+      expressProcess.stderr.on 'data', (data) ->
+        helpers.log colors.lred('express err: ' + data)
 
   # let's watch
   helpers.watchDirectory(path: 'brunch/src', callOnAdd: true, (file) ->
     exports.dispatch(file)
   )
 
+exports.stop = ->
+  # TODO check out SIGHUP signal
+  expressProcess.kill 'SIGHUP' unless expressProcess is {}
+
 # building all files
 exports.build = (options) ->
   exports.options = options
 
-  sourcePaths = exports.generateSourcePaths()
-  exports.spawnCoffee(sourcePaths)
-  exports.spawnDocco(sourcePaths) unless exports.options.noDocco
-  exports.spawnFusion()
+  exports.compilePackage()
   exports.spawnStylus()
-  exports.copyJsFiles()
 
 timeouts = {}
 
@@ -77,75 +91,32 @@ exports.dispatch = (file, options) ->
   # handle coffee changes
   if file.match(/\.coffee$/)
     queueCoffee ->
-      sourcePaths = exports.generateSourcePaths()
-      exports.spawnCoffee(sourcePaths)
-      exports.spawnDocco(sourcePaths) unless exports.options.noDocco
+      exports.compilePackage()
 
   # handle template changes
   templateExtensionRegex = new RegExp("#{exports.options.templateExtension}$")
   if file.match(templateExtensionRegex)
-    exports.spawnFusion()
+    exports.compilePackage()
+
+  if file.match(/brunch\/src\/.*\.js$/)
+    exports.compilePackage()
 
   if file.match(/\.styl$/)
     exports.spawnStylus()
 
-  if file.match(/brunch\/src\/.*\.js$/)
-    exports.copyJsFile(file)
-
-# generate a list of paths containing all coffee files
-exports.generateSourcePaths = ->
-  appSources = ['brunch/src/app/helpers/*.coffee',
-    'brunch/src/app/models/*.coffee',
-    'brunch/src/app/collections/*.coffee',
-    'brunch/src/app/controllers/*.coffee',
-    'brunch/src/app/views/*.coffee']
-  sourcePaths = []
-  for appSource in appSources
-    globbedPaths = glob.globSync(appSource, 0)
-    sourcePaths = sourcePaths.concat(globbedPaths)
-  sourcePaths.unshift('brunch/src/app/main.coffee')
-  sourcePaths
-
-# spawns a new coffee process which merges all *.coffee files into one js file
-exports.spawnCoffee = (sourcePaths) ->
-  coffeeParams = ['--output',
-    'brunch/build/web/js',
-    '--join',
-    '--lint',
-    '--compile']
-  coffeeParams = coffeeParams.concat(sourcePaths)
-
-  executeCoffee = spawn 'coffee', coffeeParams
-
-  stderr = ''
-
-  executeCoffee.stdout.on 'data', (data) ->
-    helpers.log 'Coffee:  ' + data
-  executeCoffee.stderr.on 'data', (data) ->
-    stderr += data
-
-  executeCoffee.on 'exit', (code) ->
-    if code == 0
-      helpers.log('coffee:   \033[90mcompiled\033[0m .coffee to .js\n')
-    else
-      helpers.log(colors.lred('coffee err: There was a problem during .coffee to .js compilation.\n\n', true))
-      helpers.log(colors.lgray(stderr + '\n\n'))
-
-# spawns a new docco process which generates documentation
-exports.spawnDocco = (sourcePaths) ->
-  executeDocco = spawn('docco', sourcePaths)
-  executeDocco.stdout.on 'data', (data) ->
-    helpers.log data
-  executeDocco.stderr.on 'data', (data) ->
-    helpers.log 'err:  ' + data
-
-# spawns a new fusion compiling which merges all the templates into one namespace
-exports.spawnFusion = ->
-  executeFusion = spawn 'fusion', ['--config', 'brunch/config/fusion/options.yaml','brunch/src/app/templates']
-  executeFusion.stdout.on 'data', (data) ->
-    helpers.log 'fusion: ' + data
-  executeFusion.stderr.on 'data', (data) ->
-    helpers.log 'fusion err: ' + data
+# compile app files
+#
+# uses stitch compile method to merge all application files (including templates)
+# and the defined dependencies to one single file
+# each file will be saved into a module
+exports.compilePackage = ->
+  package.compile( (err, source) ->
+    console.log colors.lred(err, true) if err
+    fs.writeFile('brunch/build/web/js/app.js', source, (err) ->
+      console.log colors.lred(err, true) if err
+      helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
+    )
+  )
 
 # spawn a new stylus process which compiles main.styl
 exports.spawnStylus = ->
@@ -153,18 +124,4 @@ exports.spawnStylus = ->
   executeStylus.stdout.on 'data', (data) ->
     helpers.log 'stylus: ' + data
   executeStylus.stderr.on 'data', (data) ->
-    helpers.log 'stylus err: ' + data
-
-# copy one single js file to build directory
-exports.copyJsFile = (file) ->
-  newLocation = file.replace('brunch/src', 'brunch/build/web/js')
-  helpers.mkdirsForFile(newLocation, 0755)
-  helpers.copy file, newLocation
-
-# copy all js files from src to build
-exports.copyJsFiles = ->
-  helpers.getFilesInTree 'brunch/src', (err, files) ->
-    helpers.log err if err
-    for file in files
-      exports.copyJsFile file
-    helpers.log('brunch:   \033[90mcopied\033[0m .js files to build folder\n')
+    helpers.log colors.lred('stylus err: ' + data)

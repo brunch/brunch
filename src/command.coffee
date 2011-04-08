@@ -1,7 +1,4 @@
 # External dependencies.
-fs          = require 'fs'
-util        = require 'util'
-yaml        = require 'yaml'
 nomnom      = require 'nomnom'
 brunch      = require './brunch'
 helpers     = require './helpers'
@@ -23,10 +20,6 @@ NOMNOM_CONFIG = [
     name  : 'help'
     string: '-h, --help'
     help  : 'display brunch help'
-  ,
-    name  : 'noDocco'
-    string: '-nd, --no-docco'
-    help  : 'without docco'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -53,7 +46,6 @@ exports.run = ->
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options.expressPort = "8080"
-  options.noDocco = false
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
@@ -72,7 +64,6 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate
   options.expressPort = opts.expressPort if opts.expressPort
-  options.noDocco = opts.noDocco if opts.noDocco
   options
 
 # Run nomnom to parse the arguments

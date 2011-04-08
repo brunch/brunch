@@ -9,9 +9,6 @@ task 'watch', 'Watch src directory and build to lib', ->
     sys.print data.toString()
 
 task 'test', 'Run test suite', ->
-  #   vows = spawn 'vows', ['--spec', 'test/\*.coffee']
-  vows = spawn 'vows', ['--spec', 'test/command-test.coffee', 'test/brunch-test.coffee']
-  vows.stdout.on 'data', (data) ->
-    sys.print data.toString()
-  vows.stderr.on 'data', (data) ->
-    sys.print data.toString()
+  process.chdir __dirname
+  reporter = require('nodeunit').reporters.default
+  reporter.run ['test']

@@ -71,17 +71,10 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 ## TODO
 
 * more & improved documentation
-* tests
-* fancy welcome page
-* come up with a require solution
-* add support for subfolders - see issue #16
+* tests (use fixtures for build and test shutdown)
 * add collections folder
-* move concatination.js to app.js
-* provide option to set docs output path
 * fix bug (dispatch is called multiple times)
-* add information about source to reset.styl
-* directly call fusion, stylus and coffeescript instead of spawning child process
-* merge js files into app.js (call coffeescript compile manually)
+* directly call stylus instead of spawning child process
 * copy css files to build
 
 ### other stuff
