@@ -15,6 +15,10 @@ exports.VERSION = '0.6.2'
 # server process storred as global for stop method
 expressProcess = {}
 
+# are used as workaround to not call compile to often
+# TODO in future this issues should be handled by a clean dir/file watcher
+timeouts = {}
+
 # creates a stitch package for app directory and include vendor as dependencies
 vendorPath = 'brunch/src/vendor/'
 package = stitch.createPackage(
@@ -67,10 +71,6 @@ exports.watch  = (options) ->
     exports.dispatch(file)
   )
 
-exports.stop = ->
-  # TODO check out SIGHUP signal
-  expressProcess.kill 'SIGHUP' unless expressProcess is {}
-
 # building all files
 exports.build = (options) ->
   exports.options = options
@@ -78,7 +78,9 @@ exports.build = (options) ->
   exports.compilePackage()
   exports.spawnStylus()
 
-timeouts = {}
+exports.stop = ->
+  # TODO check out SIGHUP signal
+  expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # dispatcher for file watching which determines which action needs to be done
 # according to the file that was changed/created/removed
