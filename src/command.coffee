@@ -46,6 +46,7 @@ exports.run = ->
   options.templateExtension = "eco"
   options.projectTemplate = "express"
   options.expressPort = "8080"
+  options.brunchPath = "brunch"
   options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
   if command is "new"
@@ -60,9 +61,10 @@ exports.run = ->
 
 # Load settings from arguments.
 exports.loadOptionsFromArguments = (opts, options) ->
-  options.templateExtension = opts.templateExtension if opts.templateExtension
-  options.projectTemplate = opts.projectTemplate if opts.projectTemplate
-  options.expressPort = opts.expressPort if opts.expressPort
+  options.templateExtension = opts.templateExtension if opts.templateExtension?
+  options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
+  options.expressPort = opts.expressPort if opts.expressPort?
+  options.brunchPath = opts[1] if opts[1]?
   options
 
 # Run nomnom to parse the arguments
