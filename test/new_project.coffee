@@ -2,22 +2,24 @@ require.paths.unshift __dirname + "/../lib"
 
 brunch  = require 'brunch'
 fs      = require 'fs'
-exec    = require('child_process').exec
+spawn   = require('child_process').spawn
 testCase = require('nodeunit').testCase
 
-rmDirRecursive = (destination) ->
-  exec 'rm -R ' + destination, (error, stdout, stderr) ->
-    console.log(stdout) if stdout
-    console.log(stderr) if stderr
-    console.log(error) if error
+rmDirRecursive = (destination, callback) ->
+  rm = spawn 'rm', ['-R', destination]
+
+  rm.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+
+  rm.on 'exit', (code) ->
+    callback() if typeof(callback) is 'function'
 
 exports.newProject =
   default: testCase(
     setUp: (callback) ->
       brunch.new {projectTemplate: "base", templateExtension: "eco", brunchPath: 'brunch', buildPath: 'brunch/build'}, callback
     tearDown: (callback) ->
-      rmDirRecursive 'brunch'
-      callback()
+      rmDirRecursive 'brunch', callback
     'default': (test) ->
       test.expect 2
       brunchStat = fs.statSync 'brunch'
@@ -30,8 +32,7 @@ exports.newProject =
     setUp: (callback) ->
       brunch.new {projectTemplate: 'base', templateExtension: 'eco', brunchPath: 'js/client', buildPath: 'js/output'}, callback
     tearDown: (callback) ->
-      rmDirRecursive 'js'
-      callback()
+      rmDirRecursive 'js', callback
     'nested directory': (test) ->
       test.expect 2
       brunchStat = fs.statSync 'js/client/src'

@@ -1,16 +1,20 @@
 fs        = require 'fs'
 path      = require 'path'
-exec      = require('child_process').exec
+spawn     = require('child_process').spawn
 async     = require 'async'
 fileUtil  = require 'file'
 _         = require 'underscore'
 
 # copy source to destination recursively
-exports.copy = (source, target) ->
-  exec 'cp -R ' + source + ' ' + target, (error, stdout, stderr) ->
-    console.log(stdout) if stdout
-    console.log(stderr) if stderr
-    console.log(error) if error
+# TODO find or create a recursive copy function to get rid of the callback hell in brunch.new
+exports.copy = (source, target, callback) ->
+  cp = spawn 'cp', ['-R', source, target]
+
+  cp.stderr.on 'data', (data) ->
+    console.log data
+
+  cp.on 'exit', (code) ->
+    callback() if typeof(callback) is 'function'
 
 ## copied source from watch_dir, because it did not work as package
 exports.watchDirectory = (_opts, callback) ->
