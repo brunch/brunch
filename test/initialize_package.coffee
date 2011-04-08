@@ -1,4 +1,4 @@
-require.paths.unshift __dirname + "/../src"
+require.paths.unshift __dirname + "/../lib"
 
 brunch  = require 'brunch'
 testCase = require('nodeunit').testCase
