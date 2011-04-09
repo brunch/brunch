@@ -35,11 +35,11 @@ exports.new = (options, callback) ->
       process.exit 0
 
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
-    helpers.copy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src'), ->
-      helpers.copy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
+    helpers.recursiveCopy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src'), ->
+      helpers.recursiveCopy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
 
       if(exports.options.projectTemplate is "express")
-        helpers.copy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server'), ->
+        helpers.recursiveCopy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server'), ->
           callback()
       else
         callback()
