@@ -51,7 +51,6 @@ exports.recursiveCopy = (source, destination, callback) ->
     else if filename
       paths.push filename
     else
-      console.log paths
       callback err, paths.sort()
 
 

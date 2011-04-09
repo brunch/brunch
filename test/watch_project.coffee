@@ -2,18 +2,9 @@ require.paths.unshift __dirname + "/../lib"
 
 brunch  = require 'brunch'
 fs      = require 'fs'
-spawn   = require('child_process').spawn
 testCase = require('nodeunit').testCase
 zombie = require 'zombie'
-
-rmDirRecursive = (destination, callback) ->
-  rm = spawn 'rm', ['-R', destination]
-
-  rm.stderr.on 'data', (data) ->
-    console.log "stderr: #{data}"
-
-  rm.on 'exit', (code) ->
-    callback() if typeof(callback) is 'function'
+testHelpers = require './lib/testHelpers'
 
 # TODO split into smaller tests
 # watching in general (generate a valid brunch app)
@@ -30,7 +21,7 @@ module.exports = testCase(
       )
   tearDown: (callback) ->
     brunch.stop()
-    rmDirRecursive 'brunch', callback
+    testHelpers.removeDirectory 'brunch', callback
   'creates a valid brunch app': (test) ->
     test.expect 1
     zombie.visit('http://localhost:8080', (err, browser, status) ->

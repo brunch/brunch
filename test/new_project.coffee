@@ -2,24 +2,15 @@ require.paths.unshift __dirname + "/../lib"
 
 brunch  = require 'brunch'
 fs      = require 'fs'
-spawn   = require('child_process').spawn
 testCase = require('nodeunit').testCase
-
-rmDirRecursive = (destination, callback) ->
-  rm = spawn 'rm', ['-R', destination]
-
-  rm.stderr.on 'data', (data) ->
-    console.log "stderr: #{data}"
-
-  rm.on 'exit', (code) ->
-    callback() if typeof(callback) is 'function'
+testHelpers = require './lib/testHelpers'
 
 exports.newProject =
   default: testCase(
     setUp: (callback) ->
       brunch.new {projectTemplate: "base", templateExtension: "eco", brunchPath: 'brunch', buildPath: 'brunch/build'}, callback
     tearDown: (callback) ->
-      rmDirRecursive 'brunch', callback
+      testHelpers.removeDirectory 'brunch', callback
     'default': (test) ->
       test.expect 2
       brunchStat = fs.statSync 'brunch'
@@ -32,7 +23,7 @@ exports.newProject =
     setUp: (callback) ->
       brunch.new {projectTemplate: 'base', templateExtension: 'eco', brunchPath: 'js/client', buildPath: 'js/output'}, callback
     tearDown: (callback) ->
-      rmDirRecursive 'js', callback
+      testHelpers.removeDirectory 'js', callback
     'nested directory': (test) ->
       test.expect 2
       brunchStat = fs.statSync 'js/client/src'
