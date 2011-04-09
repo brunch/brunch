@@ -13,12 +13,12 @@ exports.copyFile = (source, destination, callback) ->
   sys.pump read, write, ->
     callback()
 
-# walk through tree and creates directories and copy files
+# walk through tree, creates directories and copy files
 exports.walkTreeAndCopyFiles = (source, destination, callback) ->
   fs.readdir source, (err, files) ->
     return callback err if err
 
-    # iterates over directory
+    # iterates over current directory
     async.forEach files, (file, next) ->
       return next() if file.match /^\./
 
@@ -54,7 +54,7 @@ exports.recursiveCopy = (source, destination, callback) ->
       callback err, paths.sort()
 
 
-## copied source from watch_dir, because it did not work as package
+# copied source from watch_dir, because it did not work as package
 exports.watchDirectory = (_opts, callback) ->
   opts = _.extend(
     { path: '.', persistent: true, interval: 500, callOnAdd: false },
