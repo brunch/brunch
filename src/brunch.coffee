@@ -9,6 +9,7 @@ helpers   = require './helpers'
 fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
+_         = require 'underscore'
 
 # the current brunch version number
 exports.VERSION = '0.6.2'
@@ -80,17 +81,32 @@ exports.build = (options) ->
 exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
+# generate list of dependencies and preserve order of brunch libaries
+# like defined inside the function
+exports.collectDependencies = (sourcePath) ->
+  brunchLibaries = [
+    'ConsoleDummy.js'
+    'jquery-1.5.2.js'
+    'underscore-1.1.5.js'
+    'backbone-0.3.3.js'
+  ]
+  filenames = fs.readdirSync sourcePath
+  filenames = helpers.filterFiles filenames, sourcePath
+
+  args = brunchLibaries.slice()
+  args.unshift filenames
+  additionalLibaries = _.without.apply @, args
+  dependencies = brunchLibaries.concat additionalLibaries
+  dependencyPaths = _.map dependencies, (filename) ->
+    path.join(sourcePath, filename)
+
 # creates a stitch package for app directory and include vendor as dependencies
 exports.initializePackage = (brunchPath) ->
   vendorPath = path.join brunchPath, 'src/vendor'
+  dependencyPaths = exports.collectDependencies(vendorPath)
+
   package = stitch.createPackage(
-    # TODO get all dependencies and apply to the list
-    dependencies: [
-      path.join(vendorPath, 'ConsoleDummy.js'),
-      path.join(vendorPath, 'jquery-1.5.2.js'),
-      path.join(vendorPath, 'underscore-1.1.5.js'),
-      path.join(vendorPath, 'backbone-0.3.3.js')
-    ]
+    dependencies: dependencyPaths
     paths: [path.join(brunchPath, 'src/app/')]
   )
   package

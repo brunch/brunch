@@ -1,6 +1,4 @@
-Early alpha, please use with caution!
-
-brunch is lightweight client side framework on top of backbone.js, eco and stylus using coffee-script
+brunch is lightweight client side framework on top of backbone, eco and stylus using coffee-script
 
 ## How to Install
 
@@ -8,9 +6,9 @@ you can get brunch using the node package manager
 
     npm install brunch
 
-## How to Use
+## Getting Started
 
-create a new project
+Create a new project by
 
     brunch new
 
@@ -18,30 +16,11 @@ start the file watcher to process all .coffee, .sass or .html file changes autom
 
     brunch watch
 
-build the project
+visit `localhost:8080` and see you first running brunch application
 
-    brunch build
+## Documentation
 
-brunch provides the possibility to choose between different project templates
-currently these are available
-
-* express (default)
-* base
-
-you can choose between them via option "--projectTemplate"
-
-    brunch new my_app --projectTemplate base
-
-## project templates
-
-### base
-
-Just the basic brunch layout including src, config and build.
-
-### express
-
-Includes build in express server which will be started with "brunch watch".
-You can take a look at the app at "localhost:8080".
+for more information ckeck out [brunchwithcoffee.com](http://brunchwithcoffee.com)
 
 ## Standing on the Shoulders of Giants
 
@@ -71,17 +50,12 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 ## TODO
 
 * more & improved documentation
-* tests (use fixtures for build and test shutdown)
 * add collections folder
 * fix bug (dispatch is called multiple times)
 * directly call stylus instead of spawning child process
 * copy css files to build
-
-### other stuff
-
-* add zepto to brunch cdn
+* add possibility to use zepto instead of jquery
 
 ## Future plans
 
-* add "build deploy" which generates index.html with script tags using cdn
 * add phonegap support
