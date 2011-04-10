@@ -18,13 +18,13 @@ module.exports = testCase(
   'collect brunch dependencies and backbone-localstorage - it should ignore dotfiles and directories': (test) ->
     test.expect 1
 
-    dependencyPaths = brunch.collectDependencies('test/fixtures/vendor')
+    dependencyPaths = brunch.collectDependencies('test/fixtures/alternate_vendor')
     test.deepEqual dependencyPaths, [
-      'test/fixtures/vendor/ConsoleDummy.js',
-      'test/fixtures/vendor/jquery-1.5.2.js',
-      'test/fixtures/vendor/underscore-1.1.5.js',
-      'test/fixtures/vendor/backbone-0.3.3.js',
-      'test/fixtures/vendor/backbone-localstorage.js'
+      'test/fixtures/alternate_vendor/ConsoleDummy.js',
+      'test/fixtures/alternate_vendor/jquery-1.5.2.js',
+      'test/fixtures/alternate_vendor/underscore-1.1.5.js',
+      'test/fixtures/alternate_vendor/backbone-0.3.3.js',
+      'test/fixtures/alternate_vendor/backbone-localstorage.js'
     ]
     test.done()
 )

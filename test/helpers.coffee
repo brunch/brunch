@@ -11,7 +11,7 @@ module.exports = testCase(
       'ConsoleDummy.js',
       '.to_be_ignored',
       'should_be_ignored',
-    ], 'test/fixtures/vendor'
+    ], 'test/fixtures/alternate_vendor'
     test.deepEqual dependencyPaths, [ 'ConsoleDummy.js' ]
     test.done()
 )
