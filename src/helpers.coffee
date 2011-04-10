@@ -87,6 +87,15 @@ exports.watchDirectory = (_opts, callback) ->
           callback filePath if callOnAdd
   addToWatch opts.path
 
+# filter out dotfiles and directories
+exports.filterFiles = (files, sourcePath) ->
+  _.select files, (filename) ->
+    return false if filename.match /^\./
+    filePath = path.join(sourcePath, filename)
+    stats = fs.statSync filePath
+    return false if stats?.isDirectory()
+    true
+
 # return a string of available options
 # originally taken from nomnom helpString
 exports.optionsInfo = (options) ->
