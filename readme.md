@@ -12,7 +12,7 @@ Create a new project by
 
     brunch new
 
-start the file watcher to process all .coffee, .sass or .html file changes automatically
+Then you can start the file watcher. It will compile your .coffee, .styl and .eco files on the fly after every change so you don't have to do it manually.
 
     brunch watch
 
