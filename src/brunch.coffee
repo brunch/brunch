@@ -38,15 +38,16 @@ exports.new = (options, callback) ->
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     helpers.recursiveCopy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src'), ->
       helpers.recursiveCopy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
+        helpers.copyFile path.join(projectTemplatePath, 'config.yaml'), path.join(exports.options.brunchPath, 'config.yaml'), ->
 
-        if(exports.options.projectTemplate is "express")
-          helpers.recursiveCopy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server'), ->
+          if(exports.options.projectTemplate is "express")
+            helpers.recursiveCopy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server'), ->
+              callback()
+          else
             callback()
-        else
-          callback()
 
-        # TODO inform user which template was used and give futher instructions how to use brunch
-        helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
+          # TODO inform user which template was used and give futher instructions how to use brunch
+          helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
 
 # file watcher
 exports.watch  = (options) ->
@@ -82,28 +83,22 @@ exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 # generate list of dependencies and preserve order of brunch libaries
-# like defined inside the function
-exports.collectDependencies = (sourcePath) ->
-  brunchLibaries = [
-    'ConsoleDummy.js'
-    'jquery-1.5.2.js'
-    'underscore-1.1.5.js'
-    'backbone-master.js'
-  ]
+# like defined in options.dependencies
+exports.collectDependencies = (sourcePath, orderedDependencies) ->
   filenames = fs.readdirSync sourcePath
   filenames = helpers.filterFiles filenames, sourcePath
 
-  args = brunchLibaries.slice()
+  args = orderedDependencies.slice()
   args.unshift filenames
   additionalLibaries = _.without.apply @, args
-  dependencies = brunchLibaries.concat additionalLibaries
+  dependencies = orderedDependencies.concat additionalLibaries
   dependencyPaths = _.map dependencies, (filename) ->
     path.join(sourcePath, filename)
 
 # creates a stitch package for app directory and include vendor as dependencies
 exports.initializePackage = (brunchPath) ->
   vendorPath = path.join brunchPath, 'src/vendor'
-  dependencyPaths = exports.collectDependencies(vendorPath)
+  dependencyPaths = exports.collectDependencies(vendorPath, exports.options.dependencies)
 
   package = stitch.createPackage(
     dependencies: dependencyPaths
