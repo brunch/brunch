@@ -88,7 +88,7 @@ exports.collectDependencies = (sourcePath) ->
     'ConsoleDummy.js'
     'jquery-1.5.2.js'
     'underscore-1.1.5.js'
-    'backbone-0.3.3.js'
+    'backbone-master.js'
   ]
   filenames = fs.readdirSync sourcePath
   filenames = helpers.filterFiles filenames, sourcePath
