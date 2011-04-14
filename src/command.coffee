@@ -95,8 +95,8 @@ exports.loadDefaultArguments = ->
 
 # Load options from config file
 exports.loadConfigFile = (configPath) ->
-  options = yaml.eval fs.readFileSync(configPath, 'utf8')
   try
+    options = yaml.eval fs.readFileSync(configPath, 'utf8')
     return options
   catch e
     helpers.log colors.lred("brunch:   Couldn't find config.yaml file\n", true)
