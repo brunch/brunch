@@ -47,7 +47,7 @@ exports.new = (options, callback) ->
             callback()
 
           # TODO inform user which template was used and give futher instructions how to use brunch
-          helpers.log colors.lgreen("brunch: created brunch directory layout\n", true)
+          helpers.log "brunch:   #{colors.green('created', true)} brunch directory layout\n"
 
 # file watcher
 exports.watch  = (options) ->

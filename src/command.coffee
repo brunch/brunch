@@ -52,6 +52,12 @@ exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
+
+  # migration information
+  helpers.log "brunch:   #{colors.lblue('Backwards Incompatible Changes since 0.7.0', true)}\n\n
+
+                     please visit http://brunchwithcoffee.com/#migrate-to-0-7-0-plus for more information \n\n"
+
   options = exports.loadDefaultArguments()
   command = opts[0]
   configPath = if opts[1]? then path.join(opts[1], 'config.yaml') else 'brunch/config.yaml'
