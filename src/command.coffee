@@ -32,9 +32,9 @@ BANNER = '''
   Usage: brunch [command] [options]
 
   Possible commands are:
-    new           create new brunch project
-    build         build project
-    watch         watch brunch directory and rebuild if something changed
+    new [<path>]    create new brunch project
+    build [<path>]  build project
+    watch [<path>]  watch brunch directory and rebuild if something changed
          '''
 
 options = {}
