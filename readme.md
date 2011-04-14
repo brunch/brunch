@@ -27,6 +27,7 @@ for more information ckeck out [brunchwithcoffee.com](http://brunchwithcoffee.co
 Instead of reinventing the wheel, brunch assembles awesome wheels.
 
 * [CoffeeScript](http://jashkenas.github.com/coffee-script/)
+* [Stitch](https://github.com/sstephenson/stitch)
 * [Backbone](http://documentcloud.github.com/backbone/)
 * [Underscore](http://documentcloud.github.com/underscore/)
 * [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
@@ -49,8 +50,6 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 
 ## TODO
 
-* more & improved documentation
-* add collections folder
 * fix bug (dispatch is called multiple times)
 * directly call stylus instead of spawning child process
 * copy css files to build
