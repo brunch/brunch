@@ -12,12 +12,25 @@ testHelpers = require './lib/testHelpers'
 # add check if dispatch is called when js, coffee, styl, template file change
 module.exports = testCase(
   setUp: (callback) ->
-    brunch.new {projectTemplate: 'express', templateExtension: 'eco', brunchPath: 'brunch', buildPath: 'brunch/build'}, ->
-      brunch.watch {templateExtension: 'eco', expressPort: '8080', brunchPath: 'brunch', buildPath: 'brunch/build'}
+    options =
+      projectTemplate: 'express'
+      templateExtension: 'eco'
+      brunchPath: 'brunch'
+      buildPath: 'brunch/build'
+
+    brunch.new options, ->
+      options.dependencies = [
+        'ConsoleDummy.js',
+        'jquery-1.5.2.js',
+        'underscore-1.1.5.js',
+        'backbone-master.js'
+      ]
+      options.expressPort = '8080'
+      brunch.watch options
       setTimeout(
         ->
           callback()
-        3000
+        2000
       )
   tearDown: (callback) ->
     brunch.stop()

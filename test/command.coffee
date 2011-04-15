@@ -41,3 +41,11 @@ exports.commandLine =
     test.strictEqual options.expressPort, '8080', 'default expressPort should be 8080'
     test.strictEqual options.buildPath, 'brunch/build', 'default buildPath should be brunch/build'
     test.done()
+
+  'load options from config file': (test) ->
+    test.expect 2
+
+    options = command.loadConfigFile('test/fixtures/base/config.yaml')
+    test.deepEqual options.dependencies, ['ConsoleDummy.js'], 'should load list of dependencies'
+    test.strictEqual options.buildPath, 'public/app', 'should load buildPath'
+    test.done()

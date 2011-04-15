@@ -3,6 +3,10 @@ nomnom      = require 'nomnom'
 path        = require 'path'
 brunch      = require './brunch'
 helpers     = require './helpers'
+colors      = require('../vendor/termcolors').colors
+yaml        = require 'yaml'
+fs          = require 'fs'
+_           = require 'underscore'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
 NOMNOM_CONFIG = [
@@ -32,32 +36,49 @@ BANNER = '''
   Usage: brunch [command] [options]
 
   Possible commands are:
-    new           create new brunch project
-    build         build project
-    watch         watch brunch directory and rebuild if something changed
+    new [<path>]    create new brunch project
+    build [<path>]  build project
+    watch [<path>]  watch brunch directory and rebuild if something changed
          '''
 
 options = {}
 argParser = {}
 
 # Run 'brunch' by parsing passed options and determining what action to take.
-# This also includes checking for a settings file. Settings in commandline arguments
-# overwrite settings from the settings file. In this case you are able to have
-# reasonable defaults and changed only the settings you need to change in this particular case.
+# This also includes checking for a config file. Options in commandline arguments
+# overwrite options from the config file. In this case you are able to have
+# reasonable defaults and changed only the options you need to change in this particular case.
 exports.run = ->
   opts = parseOptions()
   return usage() if opts.help
   return version() if opts.version
+
+  # migration information
+  helpers.log "brunch:   #{colors.lblue('Backwards Incompatible Changes since 0.7.0', true)}\n\n
+
+                     please visit http://brunchwithcoffee.com/#migrate-to-0-7-0-plus for more information \n\n"
+
   options = exports.loadDefaultArguments()
-  options = exports.loadOptionsFromArguments opts, options
   command = opts[0]
+  configPath = if opts[1]? then path.join(opts[1], 'config.yaml') else 'brunch/config.yaml'
+
+  # create new brunch app and build it after all files were copied
   if command is "new"
+    options = exports.loadOptionsFromArguments opts, options
     brunch.new options, ->
+      options = _.extend(options, exports.loadConfigFile(configPath) )
+      options = exports.loadOptionsFromArguments opts, options
       brunch.build options
-  else if command is "watch"
-    return brunch.watch options
-  else if command is "build"
-    return brunch.build options
+
+  else if command is 'watch' or command is 'build'
+    options = _.extend(options, exports.loadConfigFile(configPath) )
+    options = exports.loadOptionsFromArguments opts, options
+
+    if command is "watch"
+      return brunch.watch options
+    else if command is "build"
+      return brunch.build options
+
   else
     usage()
 
@@ -69,9 +90,19 @@ exports.loadDefaultArguments = ->
     expressPort: '8080'
     brunchPath: 'brunch'
     buildPath: 'brunch/build'
+    dependencies: []
   options
 
-# Load settings from arguments
+# Load options from config file
+exports.loadConfigFile = (configPath) ->
+  try
+    options = yaml.eval fs.readFileSync(configPath, 'utf8')
+    return options
+  catch e
+    helpers.log colors.lred("brunch:   Couldn't find config.yaml file\n", true)
+    process.exit 0
+
+# Load options from arguments
 exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension?
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
