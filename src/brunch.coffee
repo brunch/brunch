@@ -114,6 +114,10 @@ exports.dispatch = (file, options) ->
     clearTimeout(timeouts.coffee)
     timeouts.coffee = setTimeout(func, 100)
 
+  # update package dependencies in case a dependency was added or removed
+  vendorPath = path.join(exports.options.brunchPath, 'src/vendor')
+  package.dependencies = exports.collectDependencies vendorPath, exports.options.dependencies if file.match(/src\/vendor\//)
+
   # handle coffee changes
   if file.match(/\.coffee$/)
     queueCoffee ->
