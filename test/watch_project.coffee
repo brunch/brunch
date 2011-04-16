@@ -42,4 +42,28 @@ module.exports = testCase(
       test.strictEqual browser.html('h1'), '<h1>Welcome to Brunch</h1>'
       test.done()
     )
+  'update package dependencies when file has been added': (test) ->
+    test.expect 1
+
+    fs.writeFileSync('brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8')
+    setTimeout(
+      ->
+        app = fs.readFileSync('brunch/build/web/js/app.js', 'utf8')
+        test.ok app.match(/\/\/anotherLib/), 'app.js contains content of new created file anotherLib'
+        test.done()
+      400
+    )
+  'update package dependencies when file has been removed': (test) ->
+    test.expect 1
+
+    fs.writeFileSync('brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8')
+    fs.unlinkSync('brunch/src/vendor/anotherLib.js')
+    setTimeout(
+      ->
+        app = fs.readFileSync('brunch/build/web/js/app.js', 'utf8')
+        test.ok (not app.match(/\/\/anotherLib/)), 'app.js contains content of new created file anotherLib'
+        test.done()
+      400
+    )
+
 )
