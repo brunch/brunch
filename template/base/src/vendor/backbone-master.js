@@ -11,10 +11,10 @@
 
   // Save a reference to the global object.
   var root = this;
-  
+
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
-  
+
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
   var Backbone;
@@ -28,11 +28,11 @@
   Backbone.VERSION = '0.3.3';
 
   // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
+  var _ = root._ || root.$;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
-  // For Backbone's purposes, either jQuery or Zepto owns the `$` variable.
-  var $ = root.jQuery || root.Zepto;
+  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+  var $ = root.jQuery || root.Zepto || root.$;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -40,7 +40,7 @@
     root.Backbone = previousBackbone;
     return this;
   };
-  
+
   // Turn on `emulateHTTP` to use support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
   // `X-Http-Method-Override` header.
@@ -90,7 +90,7 @@
           if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
             if (callback === list[i]) {
-              list.splice(i, 1);
+              list[i] = null;
               break;
             }
           }
@@ -102,19 +102,21 @@
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
-    trigger : function(ev) {
-      var list, calls, i, l;
+    trigger : function(eventName) {
+      var list, calls, ev, callback, args, i, l;
+      var both = 2;
       if (!(calls = this._callbacks)) return this;
-      if (calls[ev]) {
-        list = calls[ev].slice(0);
-        for (i = 0, l = list.length; i < l; i++) {
-          list[i].apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-      }
-      if (calls['all']) {
-        list = calls['all'].slice(0);
-        for (i = 0, l = list.length; i < l; i++) {
-          list[i].apply(this, arguments);
+      while (both--) {
+        ev = both ? eventName : 'all';
+        if (list = calls[ev]) {
+          for (i = 0, l = list.length; i < l; i++) {
+            if (!(callback = list[i])) {
+              list.splice(i, 1); i--; l--;
+            } else {
+              args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
+              callback.apply(this, args);
+            }
+          }
         }
       }
       return this;
@@ -277,8 +279,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
     // Set a hash of model attributes, and sync the model to the server.
@@ -295,8 +296,7 @@
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      (this.sync || Backbone.sync).call(this, method, this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
     // Destroy this model on the server. Upon success, the model is removed
@@ -310,8 +310,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'delete', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'delete', this, options);
     },
 
     // Default URL for the model's representation on the server -- if you're
@@ -520,8 +519,7 @@
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
     // Create a new instance of a model in this collection. After the model
@@ -541,7 +539,8 @@
         coll.add(nextModel);
         if (success) success(nextModel, resp);
       };
-      return model.save(null, options);
+      model.save(null, options);
+      return model;
     },
 
     // **parse** converts a response into a list of models to be added to the
@@ -619,7 +618,7 @@
       if (ev == 'destroy') {
         this._remove(model, options);
       }
-      if (ev === 'change:' + model.idAttribute) {
+      if (model && ev === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         this._byId[model.id] = model;
       }
@@ -733,6 +732,9 @@
   // Cached regex for cleaning hashes.
   var hashStrip = /^#*/;
 
+  // Cached regex for detecting MSIE.
+  var isExplorer = /msie [\w.]+/;
+
   // Has the history handling already been started?
   var historyStarted = false;
 
@@ -753,7 +755,7 @@
     start : function() {
       if (historyStarted) throw new Error("Backbone.history has already been started");
       var docMode = document.documentMode;
-      var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
+      var oldIE = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
@@ -1019,7 +1021,7 @@
     }
 
     // Make the request.
-    $.ajax(params);
+    return $.ajax(params);
   };
 
   // Helpers
