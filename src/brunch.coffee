@@ -141,12 +141,17 @@ exports.dispatch = (file, options) ->
 # each file will be saved into a module
 exports.compilePackage = ->
   package.compile( (err, source) ->
-    console.log colors.lred(err, true) if err
-
-    fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
-      console.log colors.lred(err, true) if err
-      helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
-    )
+    if err?
+      helpers.log "brunch:   #{colors.lred('There was a problem during compilation.', true)}\n"
+      helpers.log "#{colors.lgray(err, true)}\n"
+    else
+      fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
+        if err?
+          helpers.log "brunch:   #{colors.lred('Couldn\'t write compiled file.', true)}\n"
+          helpers.log "#{colors.lgray(err, true)}\n"
+        else
+          helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
+      )
   )
 
 # spawn a new stylus process which compiles main.styl
