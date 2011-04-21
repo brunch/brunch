@@ -10,6 +10,8 @@ testHelpers = require './lib/testHelpers'
 # watching in general (generate a valid brunch app)
 # watching with a nested brunch path
 # add check if dispatch is called when js, coffee, styl, template file change
+# add check for different buildPath
+# add test for base template as well (obstacle: zombie currently doesn't support file://)
 module.exports = testCase(
   setUp: (callback) ->
     options =

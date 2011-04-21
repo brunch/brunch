@@ -1,0 +1,12 @@
+<!-- START you can remove this -->
+<img id="logo" src="http://brunchwithcoffee.com/static/img/logo.png" width="500" height="121">
+<div id="content">
+  <h1>Welcome to Brunch</h1>
+  <ul>
+    <li><a href="http://brunchwithcoffee.com/#documentation">Documentation</a></li>
+    <li><a href="https://github.com/brunch/brunch/issues">Github Issues</a></li>
+    <li><a href="https://github.com/brunch/example-todos">Todos Example App</a></li>
+    <li><a href="https://github.com/brunch/example-twitter">Twitter Example App</a></li>
+  </ul>
+</div>
+<!-- END you can remove this -->
