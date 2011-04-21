@@ -24,7 +24,7 @@ module.exports = testCase(
       options.dependencies = [
         'ConsoleDummy.js',
         'jquery-1.5.2.js',
-        'underscore-1.1.5.js',
+        'underscore-1.1.6.js',
         'backbone-master.js'
       ]
       options.expressPort = '8080'

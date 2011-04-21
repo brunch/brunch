@@ -8,7 +8,7 @@ module.exports = testCase(
     @orderedDependencies = [
       'ConsoleDummy.js',
       'jquery-1.5.2.js',
-      'underscore-1.1.5.js',
+      'underscore-1.1.6.js',
       'backbone-master.js'
     ]
     callback()
@@ -22,7 +22,7 @@ module.exports = testCase(
     test.deepEqual dependencyPaths, [
       'test/fixtures/base/src/vendor/ConsoleDummy.js',
       'test/fixtures/base/src/vendor/jquery-1.5.2.js',
-      'test/fixtures/base/src/vendor/underscore-1.1.5.js',
+      'test/fixtures/base/src/vendor/underscore-1.1.6.js',
       'test/fixtures/base/src/vendor/backbone-master.js'
     ]
     test.done()
@@ -33,7 +33,7 @@ module.exports = testCase(
     test.deepEqual dependencyPaths, [
       'test/fixtures/alternate_vendor/ConsoleDummy.js',
       'test/fixtures/alternate_vendor/jquery-1.5.2.js',
-      'test/fixtures/alternate_vendor/underscore-1.1.5.js',
+      'test/fixtures/alternate_vendor/underscore-1.1.6.js',
       'test/fixtures/alternate_vendor/backbone-master.js',
       'test/fixtures/alternate_vendor/backbone-localstorage.js'
     ]
