@@ -36,18 +36,12 @@ exports.new = (options, callback) ->
       process.exit 0
 
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
-    helpers.recursiveCopy path.join(projectTemplatePath, 'src/'), path.join(exports.options.brunchPath, 'src'), ->
+    fileUtil.mkdirsSync exports.options.buildPath, 0755
+
+    helpers.recursiveCopy projectTemplatePath, exports.options.brunchPath, ->
       helpers.recursiveCopy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
-        helpers.copyFile path.join(projectTemplatePath, 'config.yaml'), path.join(exports.options.brunchPath, 'config.yaml'), ->
-
-          if(exports.options.projectTemplate is "express")
-            helpers.recursiveCopy path.join(projectTemplatePath, 'server/'), path.join(exports.options.brunchPath, 'server'), ->
-              callback()
-          else
-            callback()
-
-          # TODO inform user which template was used and give futher instructions how to use brunch
-          helpers.log "brunch:   #{colors.green('created', true)} brunch directory layout\n"
+        callback()
+        helpers.log "brunch:   #{colors.green('created', true)} brunch directory layout\n"
 
 # file watcher
 exports.watch  = (options) ->
@@ -141,12 +135,17 @@ exports.dispatch = (file, options) ->
 # each file will be saved into a module
 exports.compilePackage = ->
   package.compile( (err, source) ->
-    console.log colors.lred(err, true) if err
-
-    fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
-      console.log colors.lred(err, true) if err
-      helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
-    )
+    if err?
+      helpers.log "brunch:   #{colors.lred('There was a problem during compilation.', true)}\n"
+      helpers.log "#{colors.lgray(err, true)}\n"
+    else
+      fs.writeFile(path.join(exports.options.buildPath, 'web/js/app.js'), source, (err) ->
+        if err?
+          helpers.log "brunch:   #{colors.lred('Couldn\'t write compiled file.', true)}\n"
+          helpers.log "#{colors.lgray(err, true)}\n"
+        else
+          helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
+      )
   )
 
 # spawn a new stylus process which compiles main.styl
