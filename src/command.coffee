@@ -108,10 +108,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
   options.expressPort = opts.expressPort if opts.expressPort?
   options.brunchPath = opts[1] if opts[1]?
-  if opts.buildPath?
-    options.buildPath = opts.buildPath
-  else
-    options.buildPath = path.join options.brunchPath, 'build'
+  options.buildPath = opts.buildPath if opts.buildPath?
   options
 
 # Run nomnom to parse the arguments
