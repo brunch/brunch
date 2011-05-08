@@ -22,15 +22,22 @@ exports.commandLine =
     test.strictEqual options.expressPort, '80', 'options should include given express port'
     test.strictEqual options.buildPath, 'app/build', 'options should include given build path'
     test.done()
+
   'generate correct build path': (test) ->
-    test.expect 1
+    test.expect 2
 
     opts =
       '1': 'client'
-
     options = command.loadOptionsFromArguments opts, {}
     test.strictEqual options.buildPath, 'client/build', 'options should contain brunch path + build if build path is not provided'
+
+    opts =
+      '1': 'client'
+    options = command.loadOptionsFromArguments opts, { buildPath: 'output' }
+    test.strictEqual options.buildPath, 'output', 'buildPath shouldn\'t be overwritten'
+
     test.done()
+
   'load default options': (test) ->
     test.expect 5
 
