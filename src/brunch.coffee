@@ -12,7 +12,7 @@ stitch    = require 'stitch'
 _         = require 'underscore'
 
 # the current brunch version number
-exports.VERSION = '0.7.0'
+exports.VERSION = '0.7.1'
 
 # server process storred as global for stop method
 expressProcess = {}
