@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "coffee-script": ">= 1.0.1",
-    "underscore": ">= 1.1.4",
+    "underscore": ">= 1.1.6",
     "eco": ">= 1.0.3",
     "nomnom": ">=0.1.2",
-    "stylus": ">=0.11.10",
+    "stylus": ">=0.12.3",
     "async": ">=0.1.8",
     "yaml": ">=0.1.2",
     "file": ">=0.1.1",
