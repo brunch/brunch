@@ -84,12 +84,12 @@ exports.run = ->
 
 # Load default options
 exports.loadDefaultArguments = ->
+  # buildPath is created in loadOptionsFromArguments
   options =
     templateExtension: 'eco'
     projectTemplate: 'express'
     expressPort: '8080'
     brunchPath: 'brunch'
-    buildPath: 'brunch/build'
     dependencies: []
   options
 

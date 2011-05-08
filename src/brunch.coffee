@@ -46,6 +46,7 @@ exports.new = (options, callback) ->
 # file watcher
 exports.watch  = (options) ->
   exports.options = options
+  exports.createBuildDirectories(exports.options.buildPath)
   exports.initializePackage(exports.options.brunchPath)
 
   # run node server if server file exists
@@ -68,6 +69,7 @@ exports.watch  = (options) ->
 # building all files
 exports.build = (options) ->
   exports.options = options
+  exports.createBuildDirectories(exports.options.buildPath)
   exports.initializePackage(exports.options.brunchPath)
 
   exports.compilePackage()
@@ -75,6 +77,10 @@ exports.build = (options) ->
 
 exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
+
+exports.createBuildDirectories = (buildPath) ->
+  fileUtil.mkdirsSync path.join(buildPath, 'web/js'), 0755
+  fileUtil.mkdirsSync path.join(buildPath, 'web/css'), 0755
 
 # generate list of dependencies and preserve order of brunch libaries
 # like defined in options.dependencies

@@ -39,14 +39,13 @@ exports.commandLine =
     test.done()
 
   'load default options': (test) ->
-    test.expect 5
+    test.expect 4
 
     options = command.loadDefaultArguments()
     test.strictEqual options.projectTemplate, 'express', 'default projectTemplate should be express'
     test.strictEqual options.templateExtension, 'eco', 'default templateExtension should be eco'
     test.strictEqual options.brunchPath, 'brunch', 'default brunchPath should be brunch'
     test.strictEqual options.expressPort, '8080', 'default expressPort should be 8080'
-    test.strictEqual options.buildPath, 'brunch/build', 'default buildPath should be brunch/build'
     test.done()
 
   'load options from config file': (test) ->
