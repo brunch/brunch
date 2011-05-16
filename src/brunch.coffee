@@ -9,6 +9,7 @@ helpers   = require './helpers'
 fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 stitch    = require 'stitch'
+stylus    = require 'stylus'
 _         = require 'underscore'
 
 # the current brunch version number
@@ -73,7 +74,7 @@ exports.build = (options) ->
   exports.initializePackage(exports.options.brunchPath)
 
   exports.compilePackage()
-  exports.spawnStylus()
+  exports.compileStylus()
 
 exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}
@@ -132,7 +133,7 @@ exports.dispatch = (file, options) ->
     exports.compilePackage()
 
   if file.match(/\.styl$/)
-    exports.spawnStylus()
+    exports.compileStylus()
 
 # compile app files
 #
@@ -154,17 +155,25 @@ exports.compilePackage = ->
       )
   )
 
-# spawn a new stylus process which compiles main.styl
-exports.spawnStylus = ->
-
-  path.join(exports.options.brunchPath, 'src')
-  executeStylus = spawn('stylus', [
-    '--compress',
-    '--out',
-    path.join(exports.options.buildPath, 'web/css'),
-    path.join(exports.options.brunchPath, 'src/app/styles/main.styl')
-  ])
-  executeStylus.stdout.on 'data', (data) ->
-    helpers.log 'stylus: ' + data
-  executeStylus.stderr.on 'data', (data) ->
-    helpers.log colors.lred('stylus err: ' + data)
+# compiles main.styl using stylus
+exports.compileStylus = ->
+  main_file_path  = path.join(exports.options.brunchPath, 'src/app/styles/main.styl')
+  fs.readFile(main_file_path, 'utf8', (err, data) ->
+    if err?
+      helpers.log colors.lred('stylus err: ' + err)
+    else
+      stylus(data)
+        .set('filename', main_file_path)
+        .set('compress', true)
+        .include(path.join(exports.options.brunchPath, 'src'))
+        .render (err, css) ->
+          if err?
+            helpers.log colors.lred('stylus err: ' + err)
+          else
+            fs.writeFile(path.join(exports.options.buildPath, 'web/css/main.css'), css, 'utf8', (err) ->
+              if err?
+                helpers.log colors.lred('stylus err: ' + err)
+              else
+                helpers.log "stylus:   #{colors.green('compiled', true)} main.css\n"
+            )
+  )
