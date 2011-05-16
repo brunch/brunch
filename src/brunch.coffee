@@ -25,6 +25,12 @@ package = {}
 # TODO in future this issues should be handled by a clean dir/file watcher
 timeouts = {}
 
+# cache if nib is available
+nibAvailable = try
+  true if require('nib')
+catch error
+  false
+
 # project skeleton generator
 exports.new = (options, callback) ->
   exports.options = options
@@ -166,6 +172,7 @@ exports.compileStylus = ->
         .set('filename', main_file_path)
         .set('compress', true)
         .include(path.join(exports.options.brunchPath, 'src'))
+        .include(if nibAvailable then require('nib').path else '')
         .render (err, css) ->
           if err?
             helpers.log colors.lred('stylus err: ' + err)
