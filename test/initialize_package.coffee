@@ -14,8 +14,12 @@ module.exports = testCase(
       'underscore-1.1.6.js',
       'backbone-master.js'
     ]
+    brunch.options.brunchPath = 'test/fixtures/base'
 
-    package = brunch.initializePackage('test/fixtures/base')
+    StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
+    compiler = new StitchCompiler()
+
+    package = compiler.package()
     test.deepEqual package.paths, ['test/fixtures/base/src/app/']
     test.strictEqual package.dependencies[0], 'test/fixtures/base/src/vendor/ConsoleDummy.js'
     test.done()
