@@ -1,24 +1,24 @@
 require.paths.unshift __dirname + "/../lib"
 
-brunch  = require 'brunch'
 testCase = require('nodeunit').testCase
+StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
 
 module.exports = testCase(
-  setUp: (callback) ->
-    @orderedDependencies = [
+  'collect brunch dependencies': (test) ->
+    test.expect 1
+
+    options = {}
+    options.dependencies = [
       'ConsoleDummy.js',
       'jquery-1.5.2.js',
       'underscore-1.1.6.js',
       'backbone-master.js'
     ]
-    callback()
-  tearDown: (callback) ->
-    @orderedDependencies = undefined
-    callback()
-  'collect brunch dependencies': (test) ->
-    test.expect 1
+    options.brunchPath = 'test/fixtures/base'
 
-    dependencyPaths = brunch.collectDependencies('test/fixtures/base/src/vendor', @orderedDependencies)
+    compiler = new StitchCompiler options
+
+    dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
       'test/fixtures/base/src/vendor/ConsoleDummy.js',
       'test/fixtures/base/src/vendor/jquery-1.5.2.js',
@@ -29,7 +29,19 @@ module.exports = testCase(
   'collect brunch dependencies and backbone-localstorage - it should ignore dotfiles and directories': (test) ->
     test.expect 1
 
-    dependencyPaths = brunch.collectDependencies('test/fixtures/alternate_vendor', @orderedDependencies)
+    options = {}
+    options.dependencies = [
+      'ConsoleDummy.js',
+      'jquery-1.5.2.js',
+      'underscore-1.1.6.js',
+      'backbone-master.js',
+      'backbone-localstorage.js'
+    ]
+
+    compiler = new StitchCompiler options
+    compiler.vendorPath = 'test/fixtures/alternate_vendor'
+
+    dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
       'test/fixtures/alternate_vendor/ConsoleDummy.js',
       'test/fixtures/alternate_vendor/jquery-1.5.2.js',
