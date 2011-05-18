@@ -9,6 +9,10 @@ Compiler = require('./base').Compiler
 
 class exports.StitchCompiler extends Compiler
 
+  constructor: (options) ->
+    super options
+    @vendorPath = path.join(options.brunchPath, 'src/vendor')
+
   filePattern: ->
     [/\.coffee$/, /src\/.*\.js$/, new RegExp("#{@options.templateExtension}$")]
 
@@ -39,14 +43,11 @@ class exports.StitchCompiler extends Compiler
   # generate list of dependencies and preserve order of brunch libaries
   # like defined in options.dependencies
   collectDependencies: ->
-    filenames = fs.readdirSync @vendorPath()
-    filenames = helpers.filterFiles filenames, @vendorPath()
+    filenames = fs.readdirSync @vendorPath
+    filenames = helpers.filterFiles filenames, @vendorPath
 
     args = @options.dependencies.slice()
     args.unshift filenames
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
-    _.map dependencies, (filename) => path.join(@vendorPath(), filename)
-
-  vendorPath: ->
-    @_vendor_path ||= path.join(@options.brunchPath, 'src/vendor')
+    _.map dependencies, (filename) => path.join(@vendorPath, filename)

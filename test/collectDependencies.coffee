@@ -39,7 +39,7 @@ module.exports = testCase(
     ]
 
     compiler = new StitchCompiler options
-    compiler._vendor_path = 'test/fixtures/alternate_vendor'
+    compiler.vendorPath = 'test/fixtures/alternate_vendor'
 
     dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
