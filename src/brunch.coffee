@@ -9,7 +9,7 @@ fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 
 # the current brunch version number
-exports.VERSION = '0.7.1'
+exports.VERSION = '0.7.2'
 
 # server process storred as global for stop method
 expressProcess = {}
