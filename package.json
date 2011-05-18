@@ -20,7 +20,7 @@
     "brunch": "./bin/brunch"
   },
   "dependencies": {
-    "coffee-script": ">= 1.0.1",
+    "coffee-script": ">= 1.1.1",
     "underscore": ">= 1.1.6",
     "eco": ">= 1.0.3",
     "nomnom": ">=0.1.2",
