@@ -12,13 +12,13 @@ class exports.StylusCompiler extends Compiler
     [/\.styl$/]
 
   compile: (files) ->
-    main_file_path = path.join(@options.brunchPath, 'src/app/styles/main.styl')
-    fs.readFile(main_file_path, 'utf8', (err, data) =>
+    mainFilePath = path.join(@options.brunchPath, 'src/app/styles/main.styl')
+    fs.readFile(mainFilePath, 'utf8', (err, data) =>
       if err?
         helpers.log colors.lred('stylus err: ' + err)
       else
         compiler = stylus(data)
-          .set('filename', main_file_path)
+          .set('filename', mainFilePath)
           .set('compress', true)
           .include(path.join(@options.brunchPath, 'src'))
 
