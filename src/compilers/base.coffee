@@ -17,10 +17,10 @@ class exports.Compiler
   # can be overwritten to change behavior on file changed events
   # by default waits 20ms for file events then calls compile with all changed files
   fileChanged: (file) ->
-    @changedFiles ||= []
+    @changedFiles ?= []
     @changedFiles.push(file)
     clearTimeout(@timeout)
     @timeout = setTimeout( =>
       _.bind(@compile, @, @changedFiles)()
-      @changedFiles = null
+      @changedFiles = undefined
     , 20)

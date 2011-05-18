@@ -6,6 +6,11 @@ stylus    = require 'stylus'
 
 Compiler = require('./base').Compiler
 
+try
+  nib = require('nib')()
+catch error
+  false
+
 class exports.StylusCompiler extends Compiler
 
   filePattern: ->
@@ -13,6 +18,7 @@ class exports.StylusCompiler extends Compiler
 
   compile: (files) ->
     mainFilePath = path.join(@options.brunchPath, 'src/app/styles/main.styl')
+
     fs.readFile(mainFilePath, 'utf8', (err, data) =>
       if err?
         helpers.log colors.lred('stylus err: ' + err)
@@ -22,8 +28,8 @@ class exports.StylusCompiler extends Compiler
           .set('compress', true)
           .include(path.join(@options.brunchPath, 'src'))
 
-        if @nib()
-          compiler.use(@nib())
+        if nib
+          compiler.use nib
 
         compiler.render (err, css) =>
           if err?
@@ -36,9 +42,3 @@ class exports.StylusCompiler extends Compiler
                 helpers.log "stylus:   #{colors.green('compiled', true)} main.css\n"
             )
     )
-
-  nib: ->
-    @_nib ||= try
-      if require('nib') then require('nib')() else false
-    catch error
-      false
