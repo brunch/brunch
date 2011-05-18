@@ -5,7 +5,7 @@ colors    = require('../../vendor/termcolors').colors
 stitch    = require 'stitch'
 _         = require 'underscore'
 
-Compiler = require('./index').Compiler
+Compiler = require('./base').Compiler
 
 class exports.StitchCompiler extends Compiler
 

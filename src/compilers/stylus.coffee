@@ -4,7 +4,7 @@ helpers   = require '../helpers'
 colors    = require('../../vendor/termcolors').colors
 stylus    = require 'stylus'
 
-Compiler = require('./index').Compiler
+Compiler = require('./base').Compiler
 
 class exports.StylusCompiler extends Compiler
 
