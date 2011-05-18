@@ -35,7 +35,7 @@ class exports.StitchCompiler extends Compiler
     )
 
   package: ->
-    @_package ||= stitch.createPackage (
+    @_package ?= stitch.createPackage (
       dependencies: @collectDependencies()
       paths: [path.join(@options.brunchPath, 'src/app/')]
     )
