@@ -1,23 +1,22 @@
 require.paths.unshift __dirname + "/../lib"
 
-brunch  = require 'brunch'
 testCase = require('nodeunit').testCase
+StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
 
 module.exports = testCase(
   'collect brunch dependencies': (test) ->
     test.expect 1
 
-    brunch.options = {}
-    brunch.options.dependencies = [
+    options = {}
+    options.dependencies = [
       'ConsoleDummy.js',
       'jquery-1.5.2.js',
       'underscore-1.1.6.js',
       'backbone-master.js'
     ]
-    brunch.options.brunchPath = 'test/fixtures/base'
+    options.brunchPath = 'test/fixtures/base'
 
-    StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
-    compiler = new StitchCompiler()
+    compiler = new StitchCompiler options
 
     dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
@@ -30,8 +29,8 @@ module.exports = testCase(
   'collect brunch dependencies and backbone-localstorage - it should ignore dotfiles and directories': (test) ->
     test.expect 1
 
-    brunch.options = {}
-    brunch.options.dependencies = [
+    options = {}
+    options.dependencies = [
       'ConsoleDummy.js',
       'jquery-1.5.2.js',
       'underscore-1.1.6.js',
@@ -39,8 +38,7 @@ module.exports = testCase(
       'backbone-localstorage.js'
     ]
 
-    StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
-    compiler = new StitchCompiler()
+    compiler = new StitchCompiler options
     compiler._vendor_path = 'test/fixtures/alternate_vendor'
 
     dependencyPaths = compiler.collectDependencies()

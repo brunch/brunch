@@ -70,7 +70,7 @@ exports.build = (options) ->
 
 # initializes all avaliable compilers
 exports.initializeCompilers = ->
-  compilers = (new compiler() for name, compiler of require('./compilers'))
+  compilers = (new compiler(exports.options) for name, compiler of require('./compilers'))
 
 exports.stop = ->
   expressProcess.kill 'SIGHUP' unless expressProcess is {}

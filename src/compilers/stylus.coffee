@@ -4,15 +4,15 @@ helpers   = require '../helpers'
 colors    = require('../../vendor/termcolors').colors
 stylus    = require 'stylus'
 
-options  = require('../brunch').options
 Compiler = require('./index').Compiler
 
 class exports.StylusCompiler extends Compiler
+
   filePattern: ->
     [/\.styl$/]
 
   compile: (files) ->
-    main_file_path = path.join(options.brunchPath, 'src/app/styles/main.styl')
+    main_file_path = path.join(@options.brunchPath, 'src/app/styles/main.styl')
     fs.readFile(main_file_path, 'utf8', (err, data) =>
       if err?
         helpers.log colors.lred('stylus err: ' + err)
@@ -20,16 +20,16 @@ class exports.StylusCompiler extends Compiler
         compiler = stylus(data)
           .set('filename', main_file_path)
           .set('compress', true)
-          .include(path.join(options.brunchPath, 'src'))
+          .include(path.join(@options.brunchPath, 'src'))
 
         if this.nib()
           compiler.use(this.nib())
 
-        compiler.render (err, css) ->
+        compiler.render (err, css) =>
           if err?
             helpers.log colors.lred('stylus err: ' + err)
           else
-            fs.writeFile(path.join(options.buildPath, 'web/css/main.css'), css, 'utf8', (err) =>
+            fs.writeFile(path.join(@options.buildPath, 'web/css/main.css'), css, 'utf8', (err) =>
               if err?
                 helpers.log colors.lred('stylus err: ' + err)
               else

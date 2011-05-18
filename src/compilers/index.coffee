@@ -2,6 +2,9 @@ _ = require 'underscore'
 helpers = require '../helpers'
 
 class exports.Compiler
+
+  constructor: (@options) ->
+
   # should be overwritten by every compiler subclass
   filePattern: -> []
 

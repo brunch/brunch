@@ -1,23 +1,22 @@
 require.paths.unshift __dirname + "/../lib"
 
-brunch  = require 'brunch'
 testCase = require('nodeunit').testCase
+StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
 
 module.exports = testCase(
   'creates a valid stitch package': (test) ->
     test.expect 2
 
-    brunch.options = {}
-    brunch.options.dependencies = [
+    options = {}
+    options.dependencies = [
       'ConsoleDummy.js',
       'jquery-1.5.2.js',
       'underscore-1.1.6.js',
       'backbone-master.js'
     ]
-    brunch.options.brunchPath = 'test/fixtures/base'
+    options.brunchPath = 'test/fixtures/base'
 
-    StitchCompiler = require(__dirname + "/../lib/compilers").StitchCompiler
-    compiler = new StitchCompiler()
+    compiler = new StitchCompiler options
 
     package = compiler.package()
     test.deepEqual package.paths, ['test/fixtures/base/src/app/']
