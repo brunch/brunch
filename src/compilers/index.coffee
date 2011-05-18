@@ -9,7 +9,7 @@ class exports.Compiler
   filePattern: -> []
 
   matchesFile: (file) ->
-    _.any(this.filePattern(), (pattern) -> file.match(pattern))
+    _.any(@filePattern(), (pattern) -> file.match(pattern))
 
   # should be overwritten by every compiler subclass
   compile: (files) -> #NOOP

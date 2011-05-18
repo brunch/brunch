@@ -14,9 +14,9 @@ class exports.StitchCompiler extends Compiler
 
   compile: (files) ->
     # update package dependencies in case a dependency was added or removed
-    this.package().dependencies = this.collectDependencies() if _.any(files, (file) -> file.match(/src\/vendor\//))
+    @package().dependencies = @collectDependencies() if _.any(files, (file) -> file.match(/src\/vendor\//))
 
-    this.package().compile( (err, source) =>
+    @package().compile( (err, source) =>
       if err?
         helpers.log "brunch:   #{colors.lred('There was a problem during compilation.', true)}\n"
         helpers.log "#{colors.lgray(err, true)}\n"
@@ -32,21 +32,21 @@ class exports.StitchCompiler extends Compiler
 
   package: ->
     @_package ||= stitch.createPackage (
-      dependencies: this.collectDependencies()
+      dependencies: @collectDependencies()
       paths: [path.join(@options.brunchPath, 'src/app/')]
     )
 
   # generate list of dependencies and preserve order of brunch libaries
   # like defined in options.dependencies
   collectDependencies: ->
-    filenames = fs.readdirSync this.vendorPath()
-    filenames = helpers.filterFiles filenames, this.vendorPath()
+    filenames = fs.readdirSync @vendorPath()
+    filenames = helpers.filterFiles filenames, @vendorPath()
 
     args = @options.dependencies.slice()
     args.unshift filenames
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
-    _.map dependencies, (filename) => path.join(this.vendorPath(), filename)
+    _.map dependencies, (filename) => path.join(@vendorPath(), filename)
 
   vendorPath: ->
     @_vendor_path ||= path.join(@options.brunchPath, 'src/vendor')

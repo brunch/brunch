@@ -22,8 +22,8 @@ class exports.StylusCompiler extends Compiler
           .set('compress', true)
           .include(path.join(@options.brunchPath, 'src'))
 
-        if this.nib()
-          compiler.use(this.nib())
+        if @nib()
+          compiler.use(@nib())
 
         compiler.render (err, css) =>
           if err?
