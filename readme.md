@@ -51,7 +51,6 @@ Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 ## TODO
 
 * fix bug (dispatch is called multiple times)
-* directly call stylus instead of spawning child process
 * copy css files to build
 * add possibility to use zepto instead of jquery
 
