@@ -1,3 +1,4 @@
-# version information
-exports.package = JSON.parse(require("fs").readFileSync(__dirname + "/../package.json"))
-exports.version = exports.package.version
+fs = require 'fs'
+
+# extract package information
+exports.packageInformation = JSON.parse fs.readFileSync(__dirname + "/../package.json")
