@@ -1,6 +1,6 @@
 require.paths.unshift __dirname + "/../lib"
 
-command = require('command')
+command = require('../lib/command')
 
 # TODO add tests for run
 

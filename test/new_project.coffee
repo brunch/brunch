@@ -1,6 +1,6 @@
 require.paths.unshift __dirname + "/../lib"
 
-brunch  = require 'brunch'
+brunch  = require '../lib/brunch'
 fs      = require 'fs'
 testCase = require('nodeunit').testCase
 testHelpers = require './lib/testHelpers'
