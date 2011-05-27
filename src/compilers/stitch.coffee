@@ -3,7 +3,11 @@ path      = require 'path'
 helpers   = require '../helpers'
 colors    = require('../../vendor/termcolors').colors
 stitch    = require 'stitch'
+uglify    = require 'uglify-js'
 _         = require 'underscore'
+
+jsp = uglify.parser
+pro = uglify.uglify
 
 Compiler = require('./base').Compiler
 
@@ -25,12 +29,12 @@ class exports.StitchCompiler extends Compiler
         helpers.log "brunch:   #{colors.lred('There was a problem during compilation.', true)}\n"
         helpers.log "#{colors.lgray(err, true)}\n"
       else
+        helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
+        source = @minify source
         fs.writeFile(path.join(@options.buildPath, 'web/js/app.js'), source, (err) =>
           if err?
             helpers.log "brunch:   #{colors.lred('Couldn\'t write compiled file.', true)}\n"
             helpers.log "#{colors.lgray(err, true)}\n"
-          else
-            helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
         )
     )
 
@@ -51,3 +55,10 @@ class exports.StitchCompiler extends Compiler
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
     _.map dependencies, (filename) => path.join(@vendorPath, filename)
+    
+  minify: (source) ->  
+      helpers.log "uglify:   #{colors.green('minified', true)} application\n"
+      ast = jsp.parse source
+      ast = pro.ast_mangle ast
+      ast = pro.ast_squeeze ast
+      source = pro.gen_code ast
