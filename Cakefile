@@ -70,7 +70,7 @@ task 'test', 'Running test suite ...', ->
 
 ## Publishing ##
 
-task "publish", "Publish new version (Github, NPM)", ->
+task "publish", "Publish new version to Git (push and add tag) and NPM", ->
   exec "git push origin master", (error, stdout, stderr) ->
     onExec error, stdout, stderr
     fs.readFile "package.json", "utf8", (err, package) ->
