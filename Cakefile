@@ -24,8 +24,8 @@ onerror = (err) ->
 
 # default handler for exec commands
 onExec = (error, stdout, stderr) ->
-  console.log stdout
-  console.log stderr
+  console.log stdout if stdout
+  console.log stderr if stderr
   # print the error message and kill the process
   if error
     process.stdout.write "#{red}#{err.stack}#{reset}\n"
@@ -57,8 +57,10 @@ task "install", "Install Brunch in your local repository", ->
 
 build = (callback) ->
   log "Compiling CoffeeScript to JavaScript ...", green
-  exec "rm -rf lib && coffee -c -l -o lib src", (err, stdout) ->
-    onerror err
+  exec "rm -rf lib && coffee -c -l -o lib src", (error, stdout, stderr) ->
+    onExec error, stdout, stderr
+    callback()
+
 task "build", "Compile CoffeeScript to JavaScript", -> build onerror
 
 task "watch", "Continously compile CoffeeScript to JavaScript", ->
