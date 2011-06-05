@@ -28,7 +28,7 @@ onExec = (error, stdout, stderr) ->
   console.log stderr if stderr
   # print the error message and kill the process
   if error
-    process.stdout.write "#{red}#{err.stack}#{reset}\n"
+    process.stdout.write "#{red}#{error.stack}#{reset}\n"
     process.exit -1
 
 ## Setup ##
