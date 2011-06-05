@@ -59,10 +59,12 @@ task "build", "Compile CoffeeScript to JavaScript", ->
   build()
 
 task "watch", "Continously compile CoffeeScript to JavaScript", ->
-  cmd = spawn("coffee", ["--compile", "--watch", "--lint", "--output", "lib", "src"])
-  cmd.stdout.on "data", (data) -> process.stdout.write green + data + reset
-  cmd.on "error", onerror
-
+  command = spawn "coffee", ["--compile", "--watch", "--lint", "--output", "lib", "src"]
+  command.stdout.on 'data', (data) ->
+    process.stdout.write "#{green}#{data}#{reset}"
+  command.stderr.on 'data', (data) ->
+    process.stdout.write "#{red}#{data}#{reset}"
+  command.on "error", onerror
 
 clean = (callback) ->
   exec "rm -rf lib", callback
