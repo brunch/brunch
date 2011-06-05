@@ -74,9 +74,6 @@ task 'test', 'Running test suite ...', ->
 
 ## Publishing ##
 
-clean = (callback) ->
-  exec "rm -rf lib", callback
-
 task "publish", "Publish new version (Github, NPM)", ->
   exec "git push origin master", (error, stdout, stderr) ->
     onExec error, stdout, stderr
