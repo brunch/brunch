@@ -66,11 +66,6 @@ task "watch", "Continously compile CoffeeScript to JavaScript", ->
     process.stdout.write "#{red}#{data}#{reset}"
   command.on "error", onerror
 
-clean = (callback) ->
-  exec "rm -rf lib", callback
-task "clean", "Remove temporary files and such", -> clean onerror
-
-
 ## Testing ##
 
 runTests = (callback) ->
@@ -85,6 +80,9 @@ task "test", "Run all tests", ->
 
 
 ## Publishing ##
+
+clean = (callback) ->
+  exec "rm -rf lib", callback
 
 task "publish", "Publish new version (Git, NPM, site)", ->
   # Run tests, don't publish unless tests pass.
