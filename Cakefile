@@ -17,12 +17,6 @@ reset = "\033[0m"
 log = (message, color, explanation) ->
   console.log "#{color}#{message}#{reset} #{(explanation or '')}"
 
-# Handle error and kill the process.
-onerror = (err) ->
-  if err
-    process.stdout.write "#{red}#{err.stack}#{reset}\n"
-    process.exit -1
-
 # default handler for exec commands
 onExec = (error, stdout, stderr) ->
   console.log stdout if stdout
@@ -65,7 +59,9 @@ task "watch", "Continously compile CoffeeScript to JavaScript", ->
     process.stdout.write "#{green}#{data}#{reset}"
   command.stderr.on 'data', (data) ->
     process.stdout.write "#{red}#{data}#{reset}"
-  command.on "error", onerror
+  command.on "error", (error) ->
+    process.stdout.write "#{red}#{error.stack}#{reset}\n"
+    process.exit -1
 
 ## Testing ##
 
