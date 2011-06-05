@@ -53,9 +53,10 @@ build = (callback) ->
   log "Compiling CoffeeScript to JavaScript ...", green
   exec "rm -rf lib && coffee -c -l -o lib src", (error, stdout, stderr) ->
     onExec error, stdout, stderr
-    callback()
+    callback() if callback?
 
-task "build", "Compile CoffeeScript to JavaScript", -> build onerror
+task "build", "Compile CoffeeScript to JavaScript", ->
+  build()
 
 task "watch", "Continously compile CoffeeScript to JavaScript", ->
   cmd = spawn("coffee", ["-c", "-w", "-l", "-o", "lib", "src"])
