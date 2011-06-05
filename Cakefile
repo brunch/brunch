@@ -43,14 +43,9 @@ task "setup", "Install development dependencies", ->
       exec "npm bundle install \"#{name}@#{version}\"", onExec
 
 task "install", "Install Brunch in your local repository", ->
-  build (err) ->
-    onerror err
-    generateMan (err) ->
-      onerror err
-      log "Installing Brunch ...", green
-      exec "npm install", (err, stdout, stderr) ->
-        process.stdout.write stderr
-        onerror err
+  build ->
+    log "Installing Brunch ...", green
+    exec "npm install", onExec
 
 ## Building ##
 
