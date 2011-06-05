@@ -14,7 +14,7 @@ reset = "\033[0m"
 
 # Log a message with a color.
 log = (message, color, explanation) ->
-  console.log color + message + reset + ' ' + (explanation or '')
+  console.log "#{color}#{message}#{reset} #{(explanation or '')}"
 
 # Handle error and kill the process.
 onerror = (err) ->
