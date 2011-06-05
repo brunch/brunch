@@ -77,29 +77,18 @@ task 'test', 'Running test suite ...', ->
 clean = (callback) ->
   exec "rm -rf lib", callback
 
-task "publish", "Publish new version (Git, NPM, site)", ->
-  # Run tests, don't publish unless tests pass.
-  runTests (err) ->
-    onerror err
-    # Clean up temporary files and such, want to create everything from
-    # scratch, don't want generated files we no longer use, etc.
-    clean (err) ->
-      onerror err
-      exec "git push", (err) ->
-        onerror err
-        fs.readFile "package.json", "utf8", (err, package) ->
-          package = JSON.parse(package)
+task "publish", "Publish new version (Github, NPM)", ->
+  exec "git push origin master", (error, stdout, stderr) ->
+    onExec error, stdout, stderr
+    fs.readFile "package.json", "utf8", (err, package) ->
+      package = JSON.parse(package)
 
-          log "Publishing to NPM ...", green
-          build (err) ->
-            onerror err
-            exec "npm publish", (err, stdout, stderr) ->
-              log stdout, green
-              onerror err
+      log "Publishing to NPM ...", green
+      exec "npm publish", (error, stdout, stderr) ->
+        onExec error, stdout, stderr
 
-              # Create a tag for this version and push changes to Github.
-              log "Tagging v#{package.version} ...", green
-              exec "git tag v#{package.version}", (err, stdout, stderr) ->
-                log stdout, green
-                exec "git push --tags origin master", (err, stdout, stderr) ->
-                  log stdout, green
+        # Create a tag for this version and push changes to Github.
+        log "Tagging version #{package.version} ...", green
+        exec "git tag #{package.version}", (error, stdout, stderr) ->
+          onExec error, stdout, stderr
+          exec "git push --tags origin master", onExec
