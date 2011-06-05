@@ -9,33 +9,32 @@
     "type":       "MIT",
     "url":        "http://github.com/brunch/brunch/raw/master/LICENSE"
   }],
-  "engines":      {
-    "node":       ">=0.4.6"
+  "engines": {
+    "node": ">= 0.4.8"
   },
-  "directories" : {
-    "lib" : "./lib"
+  "directories": {
+    "lib": "./lib"
   },
-  "main" : "./lib/brunch",
-  "bin":          {
+  "main": "./lib/brunch",
+  "bin": {
     "brunch": "./bin/brunch"
   },
   "dependencies": {
     "coffee-script": ">= 1.1.1",
-    "underscore": ">= 1.1.6",
-    "eco": ">= 1.0.3",
-    "nomnom": ">=0.1.2",
-    "stylus": ">=0.13.0",
-    "async": ">=0.1.8",
-    "yaml": ">=0.1.2",
-    "file": ">=0.1.1",
-    "express": ">=2.0.0",
-    "stitch": "0.3.1"
+    "underscore":    ">= 1.1.6",
+    "eco":           ">= 1.0.3",
+    "nomnom":        ">= 0.4.4",
+    "stylus":        ">= 0.13.3",
+    "async":         ">= 0.1.9",
+    "yaml":          ">= 0.2.1",
+    "file":          ">= 0.1.1",
+    "express":       ">= 2.3.10",
+    "stitch":        ">= 0.3.1"
   },
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
-    "nodeunit": ">= 0.5.1"
+    "nodeunit":      ">= 0.5.1"
   },
-  "engines": ["node"],
   "repository": {
     "type": "git",
     "url": "https://github.com/brunch/brunch.git"
