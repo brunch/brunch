@@ -51,7 +51,7 @@ task "install", "Install Brunch in your local repository", ->
 
 build = (callback) ->
   log "Compiling CoffeeScript to JavaScript ...", green
-  exec "rm -rf lib && coffee -c -l -o lib src", (error, stdout, stderr) ->
+  exec "rm -rf lib && coffee --compile --lint --output lib src", (error, stdout, stderr) ->
     onExec error, stdout, stderr
     callback() if callback?
 
@@ -59,7 +59,7 @@ task "build", "Compile CoffeeScript to JavaScript", ->
   build()
 
 task "watch", "Continously compile CoffeeScript to JavaScript", ->
-  cmd = spawn("coffee", ["-c", "-w", "-l", "-o", "lib", "src"])
+  cmd = spawn("coffee", ["--compile", "--watch", "--lint", "--output", "lib", "src"])
   cmd.stdout.on "data", (data) -> process.stdout.write green + data + reset
   cmd.on "error", onerror
 
