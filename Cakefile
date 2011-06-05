@@ -22,17 +22,25 @@ onerror = (err) ->
     process.stdout.write "#{red}#{err.stack}#{reset}\n"
     process.exit -1
 
+# default handler for exec commands
+onExec = (error, stdout, stderr) ->
+  console.log stdout
+  console.log stderr
+  # print the error message and kill the process
+  if error
+    process.stdout.write "#{red}#{err.stack}#{reset}\n"
+    process.exit -1
 
 ## Setup ##
 
 task "setup", "Install development dependencies", ->
   fs.readFile "package.json", "utf8", (err, package) ->
     log "Need runtime dependencies, installing into node_modules ...", green
-    exec "npm bundle", onerror
+    exec "npm bundle", onExec
 
     log "Need development dependencies, installing into node_modules ...", green
     for name, version of JSON.parse(package).devDependencies
-      exec "npm bundle install \"#{name}@#{version}\"", onerror
+      exec "npm bundle install \"#{name}@#{version}\"", onExec
 
 task "install", "Install Brunch in your local repository", ->
   build (err) ->
