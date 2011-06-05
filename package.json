@@ -20,15 +20,16 @@
     "brunch": "./bin/brunch"
   },
   "dependencies": {
-    "underscore": ">= 1.1.6",
-    "eco":        ">= 1.0.3",
-    "nomnom":     ">= 0.4.4",
-    "stylus":     ">= 0.13.3",
-    "async":      ">= 0.1.9",
-    "yaml":       ">= 0.2.1",
-    "file":       ">= 0.1.1",
-    "express":    ">= 2.3.10",
-    "stitch":     ">= 0.3.1"
+    "coffee-script": ">= 1.1.1",
+    "underscore":    ">= 1.1.6",
+    "eco":           ">= 1.0.3",
+    "nomnom":        ">= 0.4.4",
+    "stylus":        ">= 0.13.3",
+    "async":         ">= 0.1.9",
+    "yaml":          ">= 0.2.1",
+    "file":          ">= 0.1.1",
+    "express":       ">= 2.3.10",
+    "stitch":        ">= 0.3.1"
   },
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
