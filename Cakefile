@@ -35,10 +35,10 @@ onExec = (error, stdout, stderr) ->
 
 task "setup", "Install development dependencies", ->
   fs.readFile "package.json", "utf8", (err, package) ->
-    log "Need runtime dependencies, installing into node_modules ...", green
+    log "Installing runtime dependencies into node_modules ...", green
     exec "npm bundle", onExec
 
-    log "Need development dependencies, installing into node_modules ...", green
+    log "Installing development dependencies into node_modules ...", green
     for name, version of JSON.parse(package).devDependencies
       exec "npm bundle install \"#{name}@#{version}\"", onExec
 
@@ -51,7 +51,6 @@ task "install", "Install Brunch in your local repository", ->
       exec "npm install", (err, stdout, stderr) ->
         process.stdout.write stderr
         onerror err
-
 
 ## Building ##
 
