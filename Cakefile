@@ -37,7 +37,7 @@ task "setup", "Install development dependencies", ->
     for name, version of JSON.parse(package).devDependencies
       exec "npm bundle install \"#{name}@#{version}\"", onExec
 
-task "install", "Install Brunch in your local repository", ->
+task "install", "Install Brunch in your local npm repository", ->
   build ->
     log "Installing Brunch ...", green
     exec "npm install", onExec
@@ -65,7 +65,7 @@ task "watch", "Continously compile CoffeeScript to JavaScript", ->
 
 ## Testing ##
 
-task 'test', 'Running test suite ...', ->
+task 'test', 'Run test suite', ->
   reporter.run ['test']
 
 ## Publishing ##

@@ -36,11 +36,19 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 
 ## Development
 
-Watch coffeescript files and compile them via
+Install dependencies to `node_modules` directory
+
+    cake setup
+
+Install brunch in your local npm repository
+
+    cake install
+
+Watch coffeescript files and continously compile them via
 
     cake watch
 
-and run tests via
+and run test suite via
 
     cake test
 
