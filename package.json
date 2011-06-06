@@ -29,7 +29,7 @@
     "yaml":          ">= 0.2.1",
     "file":          ">= 0.1.1",
     "express":       ">= 2.3.10",
-    "stitch":        ">= 0.3.1",
+    "stitch":        ">= 0.3.2",
     "uglify-js":     ">= 1.0.2"
   },
   "devDependencies": {
