@@ -6,9 +6,6 @@ stitch    = require 'stitch'
 uglify    = require 'uglify-js'
 _         = require 'underscore'
 
-jsp = uglify.parser
-pro = uglify.uglify
-
 Compiler = require('./base').Compiler
 
 class exports.StitchCompiler extends Compiler
@@ -58,7 +55,7 @@ class exports.StitchCompiler extends Compiler
 
   minify: (source) ->
       helpers.log "uglify:   #{colors.green('minified', true)} application\n"
-      abstractSyntaxTree = jsp.parse source
-      abstractSyntaxTree = pro.ast_mangle abstractSyntaxTree
-      abstractSyntaxTree = pro.ast_squeeze abstractSyntaxTree
-      source = pro.gen_code abstractSyntaxTree
+      abstractSyntaxTree = uglify.parser.parse source
+      abstractSyntaxTree = uglify.uglify.ast_mangle abstractSyntaxTree
+      abstractSyntaxTree = uglify.uglify.ast_squeeze abstractSyntaxTree
+      source = uglify.uglify.gen_code abstractSyntaxTree
