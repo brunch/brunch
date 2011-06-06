@@ -55,10 +55,10 @@ class exports.StitchCompiler extends Compiler
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
     _.map dependencies, (filename) => path.join(@vendorPath, filename)
-    
-  minify: (source) ->  
+
+  minify: (source) ->
       helpers.log "uglify:   #{colors.green('minified', true)} application\n"
-      ast = jsp.parse source
-      ast = pro.ast_mangle ast
-      ast = pro.ast_squeeze ast
-      source = pro.gen_code ast
+      abstractSyntaxTree = jsp.parse source
+      abstractSyntaxTree = pro.ast_mangle abstractSyntaxTree
+      abstractSyntaxTree = pro.ast_squeeze abstractSyntaxTree
+      source = pro.gen_code abstractSyntaxTree
