@@ -29,6 +29,10 @@ NOMNOM_CONFIG = [
     name  : 'output'
     string: '-o, --output'
     help  : 'set build path'
+  ,
+    name  : 'minify'
+    string: '-m, --minify'
+    help  : 'minify the app.js output via UglifyJS'
 ]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
@@ -91,6 +95,7 @@ exports.loadDefaultArguments = ->
     expressPort: '8080'
     brunchPath: 'brunch'
     dependencies: []
+    minify: false
   options
 
 # Load options from config file
@@ -108,6 +113,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
   options.expressPort = opts.expressPort if opts.expressPort?
   options.brunchPath = opts[1] if opts[1]?
+  options.minify = opts.minify if opts.minify?
   if opts.buildPath?
     options.buildPath = opts.buildPath
   else unless options.buildPath?

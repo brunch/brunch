@@ -27,7 +27,7 @@ class exports.StitchCompiler extends Compiler
         helpers.log "#{colors.lgray(err, true)}\n"
       else
         helpers.log "stitch:   #{colors.green('compiled', true)} application\n"
-        source = @minify source
+        source = @minify source if @options.minify
         fs.writeFile(path.join(@options.buildPath, 'web/js/app.js'), source, (err) =>
           if err?
             helpers.log "brunch:   #{colors.lred('Couldn\'t write compiled file.', true)}\n"

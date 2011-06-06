@@ -6,6 +6,8 @@ testCase = require('nodeunit').testCase
 zombie = require 'zombie'
 testHelpers = require './lib/testHelpers'
 
+options = {}
+
 # TODO split into smaller tests
 # watching in general (generate a valid brunch app)
 # watching with a nested brunch path
@@ -19,6 +21,7 @@ module.exports = testCase(
       templateExtension: 'eco'
       brunchPath: 'brunch'
       buildPath: 'brunch/build'
+      minify: false
 
     brunch.new options, ->
       options.dependencies = [
@@ -67,5 +70,21 @@ module.exports = testCase(
         test.done()
       400
     )
+  'app should work properly when minified': (test) ->
+    test.expect 1
 
+    brunch.stop()
+
+    options.minify = true
+
+    brunch.watch options
+    setTimeout(
+      ->
+        zombie.visit('http://localhost:8080', (err, browser, status) ->
+          throw err.message if err
+          test.strictEqual browser.html('h1'), '<h1>Welcome to Brunch</h1>'
+          test.done()
+        )
+      2000
+    )
 )
