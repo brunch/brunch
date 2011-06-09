@@ -34,7 +34,7 @@ exports.new = (options, callback) ->
     helpers.recursiveCopy projectTemplatePath, exports.options.brunchPath, ->
       helpers.recursiveCopy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
         callback()
-        helpers.log "brunch:   #{colors.green('created', true)} brunch directory layout\n"
+        helpers.log "brunch:   #{colors.green('created ', true)} brunch directory layout\n"
 
 # file watcher
 exports.watch  = (options) ->
@@ -45,14 +45,16 @@ exports.watch  = (options) ->
   # run node server if server file exists
   path.exists path.join(exports.options.brunchPath, 'server/main.js'), (exists) ->
     if exists
-      helpers.log "express:  application started on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
+      helpers.log "express:  #{colors.green('started ', true)} application on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
       expressProcess = spawn('node', [
         path.join(exports.options.brunchPath, 'server/main.js'),
         exports.options.expressPort,
         exports.options.brunchPath
       ])
       expressProcess.stderr.on 'data', (data) ->
-        helpers.log colors.lred('express err: ' + data)
+        helpers.log "express:  #{colors.lred('stderr  ', true)} #{data}"
+      expressProcess.stdout.on 'data', (data) ->
+        helpers.log "express:  #{colors.green('stdout  ', true)} #{data}"
 
   # let's watch
   helpers.watchDirectory(path: path.join(exports.options.brunchPath, 'src'), callOnAdd: true, (file) ->
