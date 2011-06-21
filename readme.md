@@ -56,12 +56,6 @@ and run test suite via
 
 Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 
-## TODO
-
-* fix bug (dispatch is called multiple times)
-* copy css files to build
-* add possibility to use zepto instead of jquery
-
 ## Future plans
 
 * add phonegap support
