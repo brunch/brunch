@@ -4,7 +4,7 @@ brunch is lightweight client side framework on top of backbone, eco and stylus u
 
 you can get brunch using the node package manager
 
-    npm install brunch
+    npm install brunch -g
 
 ## Getting Started
 
