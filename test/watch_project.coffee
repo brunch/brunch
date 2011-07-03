@@ -26,7 +26,7 @@ module.exports = testCase(
     brunch.new options, ->
       options.dependencies = [
         'ConsoleDummy.js',
-        'jquery-1.5.2.js',
+        'jquery-1.6.1.js',
         'underscore-1.1.6.js',
         'backbone-master.js'
       ]
