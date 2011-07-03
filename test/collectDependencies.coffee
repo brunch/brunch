@@ -10,7 +10,7 @@ module.exports = testCase(
     options = {}
     options.dependencies = [
       'ConsoleDummy.js',
-      'jquery-1.5.2.js',
+      'jquery-1.6.1.js',
       'underscore-1.1.6.js',
       'backbone-master.js'
     ]
@@ -21,7 +21,7 @@ module.exports = testCase(
     dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
       'test/fixtures/base/src/vendor/ConsoleDummy.js',
-      'test/fixtures/base/src/vendor/jquery-1.5.2.js',
+      'test/fixtures/base/src/vendor/jquery-1.6.1.js',
       'test/fixtures/base/src/vendor/underscore-1.1.6.js',
       'test/fixtures/base/src/vendor/backbone-master.js'
     ]
@@ -32,7 +32,7 @@ module.exports = testCase(
     options = {}
     options.dependencies = [
       'ConsoleDummy.js',
-      'jquery-1.5.2.js',
+      'jquery-1.6.1.js',
       'underscore-1.1.6.js',
       'backbone-master.js',
       'backbone-localstorage.js'
@@ -44,7 +44,7 @@ module.exports = testCase(
     dependencyPaths = compiler.collectDependencies()
     test.deepEqual dependencyPaths, [
       'test/fixtures/alternate_vendor/ConsoleDummy.js',
-      'test/fixtures/alternate_vendor/jquery-1.5.2.js',
+      'test/fixtures/alternate_vendor/jquery-1.6.1.js',
       'test/fixtures/alternate_vendor/underscore-1.1.6.js',
       'test/fixtures/alternate_vendor/backbone-master.js',
       'test/fixtures/alternate_vendor/backbone-localstorage.js'
