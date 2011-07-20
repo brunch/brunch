@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "coffee-script": ">= 1.1.1",
-    "underscore":    ">= 1.1.6",
+    "underscore":    ">= 1.1.7",
     "eco":           ">= 1.0.3",
     "nomnom":        ">= 0.4.8",
     "stylus":        ">= 0.13.3",
