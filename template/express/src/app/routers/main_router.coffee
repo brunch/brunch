@@ -1,4 +1,4 @@
-class exports.MainRouter extends Backbone.Controller
+class exports.MainRouter extends Backbone.Router
   routes :
     "home": "home"
 
