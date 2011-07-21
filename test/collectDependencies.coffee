@@ -12,7 +12,7 @@ module.exports = testCase(
       'ConsoleDummy.js',
       'jquery-1.6.2.js',
       'underscore-1.1.7.js',
-      'backbone-master.js'
+      'backbone-0.5.1.js'
     ]
     options.brunchPath = 'test/fixtures/base'
 
@@ -23,7 +23,7 @@ module.exports = testCase(
       'test/fixtures/base/src/vendor/ConsoleDummy.js',
       'test/fixtures/base/src/vendor/jquery-1.6.2.js',
       'test/fixtures/base/src/vendor/underscore-1.1.7.js',
-      'test/fixtures/base/src/vendor/backbone-master.js'
+      'test/fixtures/base/src/vendor/backbone-0.5.1.js'
     ]
     test.done()
   'collect brunch dependencies and backbone-localstorage - it should ignore dotfiles and directories': (test) ->
@@ -34,7 +34,7 @@ module.exports = testCase(
       'ConsoleDummy.js',
       'jquery-1.6.2.js',
       'underscore-1.1.7.js',
-      'backbone-master.js',
+      'backbone-0.5.1.js',
       'backbone-localstorage.js'
     ]
 
@@ -46,7 +46,7 @@ module.exports = testCase(
       'test/fixtures/alternate_vendor/ConsoleDummy.js',
       'test/fixtures/alternate_vendor/jquery-1.6.2.js',
       'test/fixtures/alternate_vendor/underscore-1.1.7.js',
-      'test/fixtures/alternate_vendor/backbone-master.js',
+      'test/fixtures/alternate_vendor/backbone-0.5.1.js',
       'test/fixtures/alternate_vendor/backbone-localstorage.js'
     ]
     test.done()
