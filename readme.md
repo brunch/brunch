@@ -2,7 +2,7 @@ brunch is lightweight client side framework on top of backbone, eco and stylus u
 
 ## How to Install
 
-you can get brunch using the node package manager
+you can get brunch using the node package manager (npm 1.0+)
 
     npm install brunch -g
 
@@ -11,6 +11,10 @@ you can get brunch using the node package manager
 Create a new project by
 
     brunch new
+
+To get started easily, brunch ships with a small express app. To install express into your local directory use
+
+    npm install express
 
 Then you can start the file watcher. It will compile your .coffee, .styl and .eco files on the fly after every change so you don't have to do it manually.
 
