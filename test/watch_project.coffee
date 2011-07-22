@@ -44,7 +44,7 @@ module.exports = testCase(
     test.expect 1
     zombie.visit('http://localhost:8080', (err, browser, status) ->
       throw err.message if err
-      test.strictEqual browser.html('h1'), '<h1>Welcome to Brunch</h1>'
+      test.strictEqual browser.html('h1'), '<h1>brunch</h1>'
       test.done()
     )
   'update package dependencies when file has been added': (test) ->
@@ -82,7 +82,7 @@ module.exports = testCase(
       ->
         zombie.visit('http://localhost:8080', (err, browser, status) ->
           throw err.message if err
-          test.strictEqual browser.html('h1'), '<h1>Welcome to Brunch</h1>'
+          test.strictEqual browser.html('h1'), '<h1>brunch</h1>'
           test.done()
         )
       2000
