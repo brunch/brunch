@@ -10,14 +10,6 @@ _           = require 'underscore'
 
 # The list of all the valid option flags that 'brunch' knows how to handle.
 NOMNOM_CONFIG = [
-    name  : 'expressPort'
-    string: '-ep <port>, --expressPort=<port>'
-    help  : 'set the express server port'
-  ,
-    name  : 'projectTemplate'
-    string: '-p <template>, --projectTemplate=<template>'
-    help  : 'set which kind of project template should be used'
-  ,
     name  : 'version'
     string: '-v, --version'
     help  : 'display brunch version'
@@ -91,8 +83,6 @@ exports.loadDefaultArguments = ->
   # buildPath is created in loadOptionsFromArguments
   options =
     templateExtension: 'eco'
-    projectTemplate: 'express'
-    expressPort: '8080'
     brunchPath: 'brunch'
     dependencies: []
     minify: false
@@ -110,8 +100,6 @@ exports.loadConfigFile = (configPath) ->
 # Load options from arguments
 exports.loadOptionsFromArguments = (opts, options) ->
   options.templateExtension = opts.templateExtension if opts.templateExtension?
-  options.projectTemplate = opts.projectTemplate if opts.projectTemplate?
-  options.expressPort = opts.expressPort if opts.expressPort?
   options.brunchPath = opts[1] if opts[1]?
   options.minify = opts.minify if opts.minify?
   if opts.buildPath?
