@@ -16,5 +16,4 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-util.log("starting server on port " + port);
 app.listen(parseInt(port, 10));
