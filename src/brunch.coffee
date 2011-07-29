@@ -3,7 +3,6 @@
 root = __dirname + "/../"
 # External dependencies.
 path      = require 'path'
-spawn     = require('child_process').spawn
 helpers   = require './helpers'
 fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
