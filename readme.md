@@ -12,15 +12,11 @@ Create a new project by
 
     brunch new
 
-To get started easily, brunch ships with a small express app. To install express into your local directory use
-
-    npm install express
-
 Then you can start the file watcher. It will compile your .coffee, .styl and .eco files on the fly after every change so you don't have to do it manually.
 
     brunch watch
 
-visit `localhost:8080` and see you first running brunch application
+Open `brunch/index.html` and see you first running brunch application
 
 ## Documentation
 
