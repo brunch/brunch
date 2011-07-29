@@ -11,7 +11,7 @@ exports.commandLine =
     opts =
       '1': 'client'
       templateExtension: 'haml'
-      buildPath: 'app/build'
+      output: 'app/build'
       minify: true
 
     options = command.loadOptionsFromArguments opts, {}
