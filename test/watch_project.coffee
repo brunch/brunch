@@ -30,7 +30,7 @@ module.exports = testCase(
         'ConsoleDummy.js',
         'jquery-1.6.2.js',
         'underscore-1.1.7.js',
-        'backbone-0.5.1.js'
+        'backbone-0.5.2.js'
       ]
       brunch.watch options
       setTimeout(
