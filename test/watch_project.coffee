@@ -33,15 +33,16 @@ module.exports = testCase(
         'backbone-0.5.2.js'
       ]
       brunch.watch options
+
+      expressProcess = spawn('node', [ path.join(__dirname, 'server', 'server.js'), '8080',
+         path.join(__dirname, '..', 'brunch')
+      ])
+
       setTimeout(
         ->
           callback()
         2000
       )
-
-    expressProcess = spawn('node', [ path.join(__dirname, 'server', 'server.js'), '8080',
-       path.join(__dirname, '..', 'brunch')
-    ])
 
   tearDown: (callback) ->
     expressProcess.kill 'SIGHUP' unless expressProcess is {}
