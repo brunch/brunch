@@ -1,5 +1,5 @@
 # External dependencies.
-nomnom      = require 'nomnom'
+parser      = require 'nomnom'
 path        = require 'path'
 brunch      = require './brunch'
 helpers     = require './helpers'
@@ -8,27 +8,26 @@ yaml        = require 'yaml'
 fs          = require 'fs'
 _           = require 'underscore'
 
-# The list of all the valid option flags that 'brunch' knows how to handle.
-NOMNOM_CONFIG = [
-    name  : 'version'
-    string: '-v, --version'
-    help  : 'display brunch version'
-  ,
-    name  : 'help'
-    string: '-h, --help'
-    help  : 'display brunch help'
-  ,
-    name  : 'output'
-    string: '-o, --output'
-    help  : 'set build path'
-  ,
-    name  : 'minify'
-    string: '-m, --minify'
+# The list of all the valid option flags
+globalOpts =
+  version:
+    abbr: 'v'
+    help: 'display brunch version'
+    callback: ->
+      return version()
+  output:
+    abbr: 'o'
+    help: 'set build path'
+    expectsValue: true
+    metavar: "DIRECTORY"
+  minify:
+    abbr: 'm'
     help  : 'minify the app.js output via UglifyJS'
-]
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
-BANNER = '''
+banner = '''
+  http://brunchwithcoffee.com
+
   Usage: brunch [command] [options]
 
   Possible commands are:
@@ -38,43 +37,48 @@ BANNER = '''
          '''
 
 options = {}
-argParser = {}
+configPath = {}
+opts = {}
 
 # Run 'brunch' by parsing passed options and determining what action to take.
 # This also includes checking for a config file. Options in commandline arguments
 # overwrite options from the config file. In this case you are able to have
 # reasonable defaults and changed only the options you need to change in this particular case.
 exports.run = ->
-  opts = parseOptions()
-  return usage() if opts.help
-  return version() if opts.version
-
-  # migration information
-  helpers.log "brunch:   #{colors.lblue('http://brunchwithcoffee.com', true)}\n\n"
-
   options = exports.loadDefaultArguments()
-  command = opts[0]
-  configPath = if opts[1]? then path.join(opts[1], 'config.yaml') else 'brunch/config.yaml'
+
+  parser.globalOpts globalOpts
+  parser.scriptName 'brunch <command> [<path>]'
+  parser.printFunc usage
 
   # create new brunch app and build it after all files were copied
-  if command is "new"
+  parser.command('new').callback( (opts) ->
     options = exports.loadOptionsFromArguments opts, options
     brunch.new options, ->
+      configPath = exports.generateConfigPath opts[1]
       options = _.extend(options, exports.loadConfigFile(configPath) )
       options = exports.loadOptionsFromArguments opts, options
       brunch.build options
+  ).help('Create new brunch project')
 
-  else if command is 'watch' or command is 'build'
+  parser.command('build').callback( (opts) ->
+    configPath = exports.generateConfigPath opts[1]
     options = _.extend(options, exports.loadConfigFile(configPath) )
     options = exports.loadOptionsFromArguments opts, options
+    brunch.build options
+  ).help('Build a brunch project')
 
-    if command is "watch"
-      return brunch.watch options
-    else if command is "build"
-      return brunch.build options
+  parser.command('watch').callback( (opts) ->
+    configPath = exports.generateConfigPath opts[1]
+    options = _.extend(options, exports.loadConfigFile(configPath) )
+    options = exports.loadOptionsFromArguments opts, options
+    brunch.watch options
+  ).help('Watch brunch directory and rebuild if something changed')
 
-  else
-    usage()
+  parser.parseArgs()
+
+exports.generateConfigPath = (appPath) ->
+  if appPath? then path.join(appPath, 'config.yaml') else 'brunch/config.yaml'
 
 # Load default options
 exports.loadDefaultArguments = ->
@@ -106,14 +110,10 @@ exports.loadOptionsFromArguments = (opts, options) ->
     options.buildPath = path.join options.brunchPath, 'build'
   options
 
-# Run nomnom to parse the arguments
-parseOptions = ->
-  nomnom.parseArgs NOMNOM_CONFIG, { printHelp: false }
-
 # Print the '--help' usage message and exit.
 usage = ->
-  process.stdout.write BANNER
-  process.stdout.write helpers.optionsInfo(NOMNOM_CONFIG)
+  process.stdout.write banner
+  process.stdout.write helpers.optionsInfo(globalOpts)
   process.exit 0
 
 # Print the '--version' message and exit.
