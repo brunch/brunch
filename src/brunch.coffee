@@ -2,6 +2,7 @@
 
 root = __dirname + "/../"
 # External dependencies.
+fs        = require 'fs'
 path      = require 'path'
 helpers   = require './helpers'
 fileUtil  = require 'file'
@@ -28,9 +29,9 @@ exports.new = (options, callback) ->
     fileUtil.mkdirsSync exports.options.buildPath, 0755
 
     helpers.recursiveCopy templatePath, exports.options.brunchPath, ->
-      helpers.recursiveCopy path.join(templatePath, 'build/'), exports.options.buildPath, ->
-        callback()
-        helpers.log "brunch:   #{colors.green('created ', true)} brunch directory layout\n"
+      exports.createExampleIndex path.join(exports.options.brunchPath, 'index.html'), exports.options.buildPath
+      callback()
+      helpers.log "brunch:   #{colors.green('created ', true)} brunch directory layout\n"
 
 # file watcher
 exports.watch  = (options) ->
@@ -51,6 +52,30 @@ exports.build = (options) ->
 
   for compiler in compilers
     compiler.compile(['.'])
+
+# creates an example index.html for brunch with the correct relative path to the build directory
+exports.createExampleIndex = (filePath, buildPath) ->
+
+  # fixing relativ path
+  brunchPath = path.join exports.options.brunchPath, '/'
+  if buildPath.indexOf(brunchPath) == 0
+    relativePath = buildPath.substr brunchPath.length
+  else
+    relativePath = path.join '..', buildPath
+
+  index = "<!doctype html>\n
+<html lang=\"en\">\n
+<head>\n
+  <meta charset=\"utf-8\">\n
+  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n
+  <link rel=\"stylesheet\" href=\"#{ path.join(relativePath, 'web/css/main.css') }\" type=\"text/css\" media=\"screen\">\n
+  <script src=\"#{ path.join(relativePath, 'web/js/app.js') }\"></script>\n
+  <script>require('main');</script>\n
+</head>\n
+<body>\n
+</body>\n
+</html>"
+  fs.writeFileSync(filePath, index)
 
 # initializes all avaliable compilers
 exports.initializeCompilers = ->
