@@ -37,8 +37,6 @@ banner = '''
          '''
 
 options = {}
-configPath = {}
-opts = {}
 
 # Run 'brunch' by parsing passed options and determining what action to take.
 # This also includes checking for a config file. Options in commandline arguments
