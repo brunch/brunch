@@ -21,20 +21,20 @@
   },
   "dependencies": {
     "coffee-script": ">= 1.1.1",
-    "underscore":    ">= 1.1.6",
+    "underscore":    ">= 1.1.7",
     "eco":           ">= 1.0.3",
-    "nomnom":        ">= 0.4.8",
-    "stylus":        ">= 0.13.3",
+    "nomnom":        ">= 0.6.1",
+    "stylus":        ">= 0.13.7",
     "async":         ">= 0.1.9",
     "yaml":          ">= 0.2.1",
     "file":          ">= 0.1.1",
-    "express":       ">= 2.3.10",
     "stitch":        ">= 0.3.2",
-    "uglify-js":     ">= 1.0.2"
+    "uglify-js":     ">= 1.0.6"
   },
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
-    "nodeunit":      ">= 0.5.1"
+    "express":       ">= 2.4.3",
+    "nodeunit":      ">= 0.5.3"
   },
   "repository": {
     "type": "git",

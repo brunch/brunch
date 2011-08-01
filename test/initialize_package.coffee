@@ -10,9 +10,9 @@ module.exports = testCase(
     options = {}
     options.dependencies = [
       'ConsoleDummy.js',
-      'jquery-1.5.2.js',
-      'underscore-1.1.6.js',
-      'backbone-master.js'
+      'jquery-1.6.2.js',
+      'underscore-1.1.7.js',
+      'backbone-0.5.2.js'
     ]
     options.brunchPath = 'test/fixtures/base'
 

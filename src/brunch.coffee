@@ -3,16 +3,12 @@
 root = __dirname + "/../"
 # External dependencies.
 path      = require 'path'
-spawn     = require('child_process').spawn
 helpers   = require './helpers'
 fileUtil  = require 'file'
 colors    = require('../vendor/termcolors').colors
 
 # the current brunch version number
 exports.VERSION = require('./package').version
-
-# server process storred as global for stop method
-expressProcess = {}
 
 # available compilers
 compilers = []
@@ -21,7 +17,7 @@ compilers = []
 exports.new = (options, callback) ->
   exports.options = options
 
-  projectTemplatePath = path.join(module.id, "/../../template", exports.options.projectTemplate)
+  templatePath = path.join(module.id, "/../../template/base")
 
   path.exists exports.options.brunchPath, (exists) ->
     if exists
@@ -31,8 +27,8 @@ exports.new = (options, callback) ->
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     fileUtil.mkdirsSync exports.options.buildPath, 0755
 
-    helpers.recursiveCopy projectTemplatePath, exports.options.brunchPath, ->
-      helpers.recursiveCopy path.join(projectTemplatePath, 'build/'), exports.options.buildPath, ->
+    helpers.recursiveCopy templatePath, exports.options.brunchPath, ->
+      helpers.recursiveCopy path.join(templatePath, 'build/'), exports.options.buildPath, ->
         callback()
         helpers.log "brunch:   #{colors.green('created ', true)} brunch directory layout\n"
 
@@ -41,20 +37,6 @@ exports.watch  = (options) ->
   exports.options = options
   exports.createBuildDirectories(exports.options.buildPath)
   exports.initializeCompilers()
-
-  # run node server if server file exists
-  path.exists path.join(exports.options.brunchPath, 'server/main.js'), (exists) ->
-    if exists
-      helpers.log "express:  #{colors.green('started ', true)} application on port #{colors.blue(exports.options.expressPort, true)}: http://0.0.0.0:#{exports.options.expressPort}\n"
-      expressProcess = spawn('node', [
-        path.join(exports.options.brunchPath, 'server/main.js'),
-        exports.options.expressPort,
-        exports.options.brunchPath
-      ])
-      expressProcess.stderr.on 'data', (data) ->
-        helpers.log "express:  #{colors.lred('stderr  ', true)} #{data}"
-      expressProcess.stdout.on 'data', (data) ->
-        helpers.log "express:  #{colors.green('stdout  ', true)} #{data}"
 
   # let's watch
   helpers.watchDirectory(path: path.join(exports.options.brunchPath, 'src'), callOnAdd: true, (file) ->
@@ -73,9 +55,6 @@ exports.build = (options) ->
 # initializes all avaliable compilers
 exports.initializeCompilers = ->
   compilers = (new compiler(exports.options) for name, compiler of require('./compilers'))
-
-exports.stop = ->
-  expressProcess.kill 'SIGHUP' unless expressProcess is {}
 
 exports.createBuildDirectories = (buildPath) ->
   fileUtil.mkdirsSync path.join(buildPath, 'web/js'), 0755

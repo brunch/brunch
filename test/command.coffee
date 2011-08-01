@@ -6,21 +6,17 @@ command = require('../lib/command')
 
 exports.commandLine =
   'load options from arguments': (test) ->
-    test.expect 6
+    test.expect 4
 
     opts =
       '1': 'client'
       templateExtension: 'haml'
-      projectTemplate: 'base'
-      expressPort: '80'
-      buildPath: 'app/build'
+      output: 'app/build'
       minify: true
 
     options = command.loadOptionsFromArguments opts, {}
-    test.strictEqual options.projectTemplate, 'base', 'options should include given projectTemplate'
     test.strictEqual options.templateExtension, 'haml', 'options should include given templateExtension'
     test.strictEqual options.brunchPath, 'client', 'options should include given brunch path'
-    test.strictEqual options.expressPort, '80', 'options should include given express port'
     test.strictEqual options.buildPath, 'app/build', 'options should include given build path'
     test.strictEqual options.minify, true, 'options should include true minify'
     test.done()
@@ -41,13 +37,11 @@ exports.commandLine =
     test.done()
 
   'load default options': (test) ->
-    test.expect 5
+    test.expect 3
 
     options = command.loadDefaultArguments()
-    test.strictEqual options.projectTemplate, 'express', 'default projectTemplate should be express'
     test.strictEqual options.templateExtension, 'eco', 'default templateExtension should be eco'
     test.strictEqual options.brunchPath, 'brunch', 'default brunchPath should be brunch'
-    test.strictEqual options.expressPort, '8080', 'default expressPort should be 8080'
     test.strictEqual options.minify, false, 'default minify option should be false'
     test.done()
 
