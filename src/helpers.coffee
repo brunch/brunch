@@ -100,9 +100,8 @@ exports.filterFiles = (files, sourcePath) ->
 # originally taken from nomnom helpString
 exports.optionsInfo = (options) ->
   output = "\n\nAvailable options:\n"
-  for option in options
-    if option.position == undefined
-      output += "  #{option.string}\t#{option.help}\n"
+  for option of options
+    output += "  #{ options[option].string }    #{options[option].help}\n"
   output
 
 exports.log = (info, options) ->
