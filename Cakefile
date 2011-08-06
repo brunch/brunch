@@ -29,12 +29,27 @@ onExec = (error, stdout, stderr) ->
 
 task "setup", "Install development dependencies", ->
   fs.readFile "package.json", "utf8", (err, package) ->
-    log "Installing runtime dependencies into node_modules ...", green
-    exec "npm bundle", onExec
+    install = (dependencies, callback) ->
+      if dep = dependencies.shift()
+        [name, version] = dep
+        log "Installing #{name} #{version}", green
+        exec "npm install \"#{name}@#{version}\"", (err) ->
+          if err
+            onerror err
+          else
+            install dependencies, callback
+      else if callback
+        callback()
 
-    log "Installing development dependencies into node_modules ...", green
-    for name, version of JSON.parse(package).devDependencies
-      exec "npm bundle install \"#{name}@#{version}\"", onExec
+    json = JSON.parse(package)
+    log "Need runtime dependencies, installing into node_modules ...", green
+    dependencies = []
+    dependencies.push [name, version] for name, version of json.dependencies
+    install dependencies, ->
+      log "Need development dependencies, installing ...", green
+      dependencies = []
+      dependencies.push [name, version] for name, version of json.devDependencies
+      install dependencies
 
 task "install", "Install Brunch in your local npm repository", ->
   build ->
