@@ -91,4 +91,3 @@ exports.dispatch = (file) ->
   for compiler in compilers
     if compiler.matchesFile(file)
       compiler.fileChanged(file)
-      break
