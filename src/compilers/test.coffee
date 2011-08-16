@@ -16,7 +16,8 @@ class exports.TestCompiler extends Compiler
       else
         console.log('Testing...')
         exec 'jasmine-node --coffee test', (error, stdout, stderr) ->
-          if error
+          if error?
             console.log(stdout.toString().trim())
+            console.log(stderr.toString().trim())
           else
             console.log(stdout.toString().trim())
