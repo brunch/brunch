@@ -26,6 +26,7 @@ class exports.StylusCompiler extends Compiler
         compiler = stylus(data)
           .set('filename', mainFilePath)
           .set('compress', true)
+          .set('firebug', @options.stylus?.firebug)
           .include(path.join(@options.brunchPath, 'src'))
 
         if nib
