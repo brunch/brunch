@@ -2,7 +2,6 @@ fs            = require("fs")
 path          = require("path")
 {spawn, exec} = require("child_process")
 stdout        = process.stdout
-reporter      = require('nodeunit').reporters.default
 
 # Use executables installed with npm bundle.
 process.env["PATH"] = "node_modules/.bin:#{process.env["PATH"]}"
@@ -66,6 +65,7 @@ task "watch", "Continously compile CoffeeScript to JavaScript", ->
 ## Testing ##
 
 task 'test', 'Run test suite', ->
+  reporter = require('nodeunit').reporters.default
   reporter.run ['test']
 
 ## Publishing ##
