@@ -2,7 +2,7 @@
   "name":         "brunch",
   "description":  "~ with coffee … is a lightweight client side framework on top of backbone.js, eco and stylus using coffee-script",
   "version":      "0.8.0",
-  "keywords":     ["jst", "templates", "backbone", "fusion", "jquery", "zepto", "json2", "framework", "brunch", "coffeescript", "stylus", "eco", "underscore"],
+  "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
   "licenses":     [{
@@ -23,7 +23,7 @@
     "coffee-script": ">= 1.1.1",
     "underscore":    ">= 1.1.7",
     "eco":           ">= 1.0.3",
-    "nomnom":        ">= 0.6.1",
+    "nomnom":        "0.6.1",
     "stylus":        ">= 0.13.7",
     "async":         ">= 0.1.9",
     "yaml":          ">= 0.2.1",
@@ -34,7 +34,8 @@
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
     "express":       ">= 2.4.3",
-    "nodeunit":      ">= 0.5.3"
+    "nodeunit":      ">= 0.5.3",
+    "zombie":        ">= 0.9.7"
   },
   "repository": {
     "type": "git",
