@@ -1,7 +1,7 @@
 {
   "name":         "brunch",
   "description":  "~ with coffee … is a lightweight client side framework on top of backbone.js, eco and stylus using coffee-script",
-  "version":      "0.8.0",
+  "version":      "0.8.1",
   "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunchwithcoffee.com/",
   "author":       "brunch <brunch@blossom.io>, twitter: @brunch_coffee",
