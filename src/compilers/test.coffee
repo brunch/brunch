@@ -11,12 +11,13 @@ class exports.TestCompiler extends Compiler
     [/\.coffee$/, /src\/.*\.js$/, new RegExp("#{@options.templateExtension}$")]
 
   compile: (files) ->
-    exec 'coffee -c -o test src', (error, stdout, stderr) =>
+    srcdir  = path.resolve(@options.brunchPath, 'src')
+    testdir = path.resolve(@options.brunchPath, 'test')
+    exec "coffee -c -o #{testdir} #{srcdir}", (error, stdout, stderr) =>
       if error
         console.log('Error: TestCompiler could not compile source')
         console.log(stdout.toString().trim())
         console.log(stderr.toString().trim())
       else
-        testdir = path.resolve(@options.brunchPath, 'test')
         console.log('Running tests in ' + testdir)
         jasmine.executeSpecsInFolder(testdir, undefined, false, true, /.spec\.(js|coffee)$/i)
