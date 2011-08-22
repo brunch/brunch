@@ -23,7 +23,7 @@
     "coffee-script": ">= 1.1.1",
     "underscore":    ">= 1.1.7",
     "eco":           ">= 1.0.3",
-    "nomnom":        "0.6.1",
+    "nomnom":        "1.0.0",
     "stylus":        ">= 0.13.7",
     "async":         ">= 0.1.9",
     "yaml":          ">= 0.2.1",

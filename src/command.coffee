@@ -12,16 +12,17 @@ _           = require 'underscore'
 globalOpts =
   version:
     abbr: 'v'
+    flag: true
     help: 'display brunch version'
     callback: ->
       return version()
   output:
     abbr: 'o'
     help: 'set build path'
-    expectsValue: true
     metavar: "DIRECTORY"
   minify:
     abbr: 'm'
+    flag: true
     help  : 'minify the app.js output via UglifyJS'
 
 # The help banner which is printed if brunch command-line tool is called with '--help' option.
