@@ -29,7 +29,8 @@
     "yaml":          ">= 0.2.1",
     "file":          ">= 0.1.1",
     "stitch":        ">= 0.3.2",
-    "uglify-js":     ">= 1.0.6"
+    "uglify-js":     ">= 1.0.6",
+    "jasmine-node":  ">= 1.0.6"
   },
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
