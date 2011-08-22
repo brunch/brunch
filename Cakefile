@@ -28,18 +28,12 @@ onExec = (error, stdout, stderr) ->
 ## Setup ##
 
 task "setup", "Install development dependencies", ->
-  fs.readFile "package.json", "utf8", (err, package) ->
-    log "Installing runtime dependencies into node_modules ...", green
-    exec "npm bundle", onExec
+  log "Installing dependencies into node_modules ...", green
+  exec "npm install", onExec
 
-    log "Installing development dependencies into node_modules ...", green
-    for name, version of JSON.parse(package).devDependencies
-      exec "npm bundle install \"#{name}@#{version}\"", onExec
-
-task "install", "Install Brunch in your local npm repository", ->
-  build ->
-    log "Installing Brunch ...", green
-    exec "npm install", onExec
+task "link", "Link local brunch as your global npm module", ->
+  log "Installing Brunch ...", green
+  exec "npm link", onExec
 
 ## Building ##
 
