@@ -18,8 +18,8 @@ class exports.CompassCompiler extends Compiler
       "--css-dir #{path.join(@options.brunchPath, 'build/web/css')}"
       "--images-dir #{path.join(@options.brunchPath, 'build/web/img')}"
       "--javascripts-dir #{path.join(@options.brunchPath, 'build/web/js')}"
+      "--relative-assets"
     ].join(" ")
-
     exec "compass compile #{compassOpts}", (err, stdout) ->
       if err?
         helpers.log colors.lred('compass err: ' + stdout)
