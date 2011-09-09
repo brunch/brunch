@@ -13,6 +13,8 @@ class exports.TestCompiler extends Compiler
   compile: (files) ->
     srcdir  = path.resolve(@options.brunchPath, 'src')
     testdir = path.resolve(@options.brunchPath, 'test')
+    junitreport =
+      report: false
     exec "coffee -c -o #{testdir} #{srcdir}", (error, stdout, stderr) =>
       if error
         console.log('Error: TestCompiler could not compile source')
@@ -20,4 +22,4 @@ class exports.TestCompiler extends Compiler
         console.log(stderr.toString().trim())
       else
         console.log('Running tests in ' + testdir)
-        jasmine.executeSpecsInFolder(testdir, undefined, false, true, /.spec\.(js|coffee)$/i)
+        jasmine.executeSpecsInFolder(testdir, undefined, false, true, /.spec\.(js|coffee)$/i, junitreport)
