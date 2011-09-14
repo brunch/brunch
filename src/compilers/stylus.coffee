@@ -1,44 +1,39 @@
-fs        = require 'fs'
-path      = require 'path'
-helpers   = require '../helpers'
-colors    = require('../../vendor/termcolors').colors
-stylus    = require 'stylus'
+fs = require "fs"
+stylus = require "stylus"
 
-Compiler = require('./base').Compiler
+helpers = require "../helpers"
+{Compiler} = require "./base"
+
 
 try
-  nib = require('nib')()
+  nib = require("nib")()
 catch error
-  false
+  null
+
 
 class exports.StylusCompiler extends Compiler
-
-  filePattern: ->
-    [/\.styl$/]
+  filePattern: -> [/\.styl$/]
 
   compile: (files) ->
-    mainFilePath = path.join(@options.brunchPath, 'src/app/styles/main.styl')
+    mainFilePath = @getPath "src/app/styles/main.styl"
 
-    fs.readFile(mainFilePath, 'utf8', (err, data) =>
-      if err?
-        helpers.log colors.lred('stylus err: ' + err)
+    fs.readFile mainFilePath, "utf8", (error, data) =>
+      if error?
+        helpers.logError "[Stylus]: error. #{error}"
       else
         compiler = stylus(data)
-          .set('filename', mainFilePath)
-          .set('compress', true)
-          .include(path.join(@options.brunchPath, 'src'))
+          .set("filename", mainFilePath)
+          .set("compress", true)
+          .include(@getPath "src")
 
-        if nib
-          compiler.use nib
-
-        compiler.render (err, css) =>
-          if err?
-            helpers.log colors.lred('stylus err: ' + err)
+        compiler.use nib if nib
+        compiler.render (error, css) =>
+          if error?
+            helpers.logError "[Stylus]: error. #{error}"
           else
-            fs.writeFile(path.join(@options.buildPath, 'web/css/main.css'), css, 'utf8', (err) =>
-              if err?
-                helpers.log colors.lred('stylus err: ' + err)
+            main = @getBuildPath("web/css/main.css")
+            fs.writeFile main, css, "utf8", (error) =>
+              if error?
+                helpers.logError "[Stylus]: error. #{error}"
               else
-                helpers.log "stylus:   #{colors.green('compiled', true)} main.css\n"
-            )
-    )
+                helpers.logSuccess "[Stylus]: compiled main.css"

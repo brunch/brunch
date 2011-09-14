@@ -1,26 +1,28 @@
-_ = require 'underscore'
-helpers = require '../helpers'
+path = require "path"
+_ = require "underscore"
+
+helpers = require "../helpers"
+
 
 class exports.Compiler
+  constructor: (@options) -> null
+  getPath: (subPath) -> path.join @options.brunchPath, subPath
+  getBuildPath: (subPath) -> path.join @options.buildPath, subPath
 
-  constructor: (@options) ->
+  # These should be overwritten by every compiler subclass.
+  patterns: -> []
+  compile: (files) -> null
 
-  # should be overwritten by every compiler subclass
-  filePattern: -> []
-
-  matchesFile: (file) ->
-    _.any(@filePattern(), (pattern) -> file.match(pattern))
-
-  # should be overwritten by every compiler subclass
-  compile: (files) -> #NOOP
-
-  # can be overwritten to change behavior on file changed events
-  # by default waits 20ms for file events then calls compile with all changed files
+  # Can be overwritten to change behavior on file changed events.
+  # By default waits 20ms for file events then calls compile with
+  # all changed files.
   fileChanged: (file) ->
     @changedFiles ?= []
-    @changedFiles.push(file)
-    clearTimeout(@timeout)
-    @timeout = setTimeout( =>
+    @changedFiles.push file
+    clearTimeout @timeout
+    @timeout = setTimeout =>
       _.bind(@compile, @, @changedFiles)()
       @changedFiles = undefined
-    , 20)
+    , 20
+
+  matchesFile: (file) -> _.any @patterns(), (pt) -> file.match pt
