@@ -120,23 +120,10 @@ colors =
     none: ''
     reset: 0
 
-  background:
-    darkgray: 40
-    red: 41
-    green: 42
-    yellow: 43
-    lblue: 44
-    purple: 45
-    lcyan: 46
-    lgray: 47
-
-
 getColor = (color) ->
-  fg = colors.foreground
   color = color.toString()
-  light = yes if color.charAt(0) is "l"
-  code = if not light then fg[color] else "1;" + fg[color[1..]]
-  code or fg.none
+  code = colors.foreground[color]
+  code or colors.foreground.none
 
 
 colorize = (text, color) ->
@@ -160,5 +147,5 @@ format = (text, color) ->
   "#{date}: #{colorize(text, color)}\n"
 
 
-exports.logSuccess = (text) -> process.stdout.write format text, "lgreen"
-exports.logError = (text) -> process.stderr.write format text, "lred"
+exports.logSuccess = (text) -> process.stdout.write format text, "green"
+exports.logError = (text) -> process.stderr.write format text, "red"
