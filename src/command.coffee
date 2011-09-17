@@ -113,7 +113,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   if opts.output?
     options.buildPath = opts.output
   else unless options.buildPath?
-    options.buildPath = path.join options.brunchPath, 'build'
+    options.buildPath = path.join options.brunchPath, "build"
   options
 
 
