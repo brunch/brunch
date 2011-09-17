@@ -1,94 +1,99 @@
-# brunch can be used via command-line tool or manually by calling run(options).
+# Brunch can be used via command-line tool or manually by calling run(options).
 
 root = __dirname + "/../"
-# External dependencies.
-fs        = require 'fs'
-path      = require 'path'
-helpers   = require './helpers'
-fileUtil  = require 'file'
-colors    = require('../vendor/termcolors').colors
 
-# the current brunch version number
-exports.VERSION = require('./package').version
+fs = require "fs"
+path = require "path"
+fileUtil = require "file"
 
-# available compilers
-compilers = []
+helpers = require "./helpers"
 
-# project skeleton generator
+
+exports.VERSION = require("./package").version
+compilers = [] # Available compilers.
+
+
+# Project skeleton generator.
 exports.new = (options, callback) ->
   exports.options = options
-
   templatePath = path.join(module.id, "/../../template/base")
-
   path.exists exports.options.brunchPath, (exists) ->
     if exists
-      helpers.log colors.lred("brunch:   directory already exists - can't create a project in there\n", true)
+      helpers.logError "[Brunch]: can't create project;
+      directory already exists"
       process.exit 0
 
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     fileUtil.mkdirsSync exports.options.buildPath, 0755
 
     helpers.recursiveCopy templatePath, exports.options.brunchPath, ->
-      exports.createExampleIndex path.join(exports.options.brunchPath, 'index.html'), exports.options.buildPath
+      index = path.join exports.options.brunchPath, "index.html"
+      createExampleIndex index, exports.options.buildPath
       callback()
-      helpers.log "brunch:   #{colors.green('created ', true)} brunch directory layout\n"
+      helpers.logSuccess "[Brunch]: created brunch directory layout"
 
-# file watcher
+
 exports.watch  = (options) ->
   exports.options = options
-  exports.createBuildDirectories(exports.options.buildPath)
+  exports.createBuildDirectories exports.options.buildPath
   exports.initializeCompilers()
+  opts =
+    path: path.join(exports.options.brunchPath, "src")
+    callOnAdd: true
 
-  # let's watch
-  helpers.watchDirectory(path: path.join(exports.options.brunchPath, 'src'), callOnAdd: true, (file) ->
-    exports.dispatch(file)
-  )
+  helpers.watchDirectory opts, exports.dispatch
 
-# building all files
+
 exports.build = (options) ->
   exports.options = options
-  exports.createBuildDirectories(exports.options.buildPath)
+  exports.createBuildDirectories exports.options.buildPath
   exports.initializeCompilers()
+  compiler.compile ["."] for compiler in compilers
 
-  for compiler in compilers
-    compiler.compile(['.'])
 
-# creates an example index.html for brunch with the correct relative path to the build directory
-exports.createExampleIndex = (filePath, buildPath) ->
-
-  # fixing relativ path
-  brunchPath = path.join exports.options.brunchPath, '/'
-  if buildPath.indexOf(brunchPath) == 0
+# Creates an example index.html for brunch with the correct relative
+# path to the build directory.
+exports.createExampleIndex = createExampleIndex = (filePath, buildPath) ->
+  # Fixing relative path.
+  brunchPath = path.join exports.options.brunchPath, "/"
+  if buildPath.indexOf(brunchPath) is 0
     relativePath = buildPath.substr brunchPath.length
   else
-    relativePath = path.join '..', buildPath
+    relativePath = path.join "..", buildPath
 
-  index = "<!doctype html>\n
-<html lang=\"en\">\n
-<head>\n
-  <meta charset=\"utf-8\">\n
-  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n
-  <link rel=\"stylesheet\" href=\"#{ path.join(relativePath, 'web/css/main.css') }\" type=\"text/css\" media=\"screen\">\n
-  <script src=\"#{ path.join(relativePath, 'web/js/app.js') }\"></script>\n
-  <script>require('main');</script>\n
-</head>\n
-<body>\n
-</body>\n
-</html>"
-  fs.writeFileSync(filePath, index)
+  cssPath = path.join relativePath, "web/css/main.css"
+  jsPath = path.join relativePath, "web/js/app.js"
+  index = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="stylesheet" href="#{cssPath}" type="text/css" media="screen">
+  <script src="#{jsPath}"></script>
+  <script>require("main");</script>
+</head>
+<body>
+</body>
+</html>
+  """
+  fs.writeFileSync filePath, index
 
-# initializes all avaliable compilers
+
 exports.initializeCompilers = ->
-  compilers = (new compiler(exports.options) for name, compiler of require('./compilers'))
+  compilers = for name, compiler of require "./compilers"
+    new compiler(exports.options)
+
 
 exports.createBuildDirectories = (buildPath) ->
-  fileUtil.mkdirsSync path.join(buildPath, 'web/js'), 0755
-  fileUtil.mkdirsSync path.join(buildPath, 'web/css'), 0755
+  createDir = (dirPath) ->
+    fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
+  createDir "web/js"
+  createDir "web/css"
 
-# dispatcher for file watching which determines which action needs to be done
-# according to the file that was changed/created/removed
+
+# Dispatcher for file watching which determines which action needs to be done
+# according to the file that was changed/created/removed.
 exports.dispatch = (file) ->
-  for compiler in compilers
-    if compiler.matchesFile(file)
-      compiler.fileChanged(file)
-      break
+  for compiler in compilers when compiler.matchesFile file
+    return compiler.fileChanged file
