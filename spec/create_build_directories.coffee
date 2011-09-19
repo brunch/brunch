@@ -1,4 +1,4 @@
-require.paths.unshift __dirname + "/../lib"
+require.paths.unshift __dirname + "/../src"
 
 fs = require "fs"
 path = require "path"
