@@ -34,7 +34,7 @@
   "devDependencies": {
     "coffee-script": ">= 1.1.1",
     "express":       ">= 2.4.3",
-    "nodeunit":      ">= 0.5.3",
+    "jasmine-node":  ">= 1.0.9",
     "zombie":        ">= 0.9.7"
   },
   "repository": {
