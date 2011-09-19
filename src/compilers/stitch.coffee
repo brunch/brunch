@@ -5,7 +5,7 @@ uglify = require "uglify-js"
 _ = require "underscore"
 
 helpers = require "../helpers"
-Compiler = require("./base").Compiler
+{Compiler} = require("./base")
 
 
 class exports.StitchCompiler extends Compiler
@@ -35,7 +35,7 @@ class exports.StitchCompiler extends Compiler
   minify: (source) ->
     {parse} = uglify.parser
     {ast_mangle, ast_squeeze, gen_code} = uglify.uglify
-    helpers.logSuccess "[Uglify]: minified"
+    @log "minified"
     gen_code ast_squeeze ast_mangle parse source
 
   compile: (files) ->
@@ -43,13 +43,10 @@ class exports.StitchCompiler extends Compiler
     if _.any files, ((file) -> file.match /src\/vendor\//)
       @package().dependencies = @collectDependencies()
 
-    @package().compile (err, source) =>
-      if err?
-        helpers.logError "[Brunch]: Error during compilation: #{err}"
-      else
-        helpers.logSuccess "[Stitch]: compiled"
-        source = @minify source if @options.minify
-        outPath = @getBuildPath "web/js/app.js"
-        fs.writeFile outPath, source, (err) =>
-          if err?
-            helpers.logError "[Brunch]: Couldn't write compiled file #{err}"
+    @package().compile (error, source) =>
+      return @logError error if error?
+      @log "compiled"
+      source = @minify source if @options.minify
+      outPath = @getBuildPath "web/js/app.js"
+      fs.writeFile outPath, source, (error) =>
+        return @logError "couldn't write compiled file. #{error}" if error?

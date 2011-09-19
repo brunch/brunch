@@ -21,7 +21,7 @@ exports.new = (options, callback) ->
     if exists
       helpers.logError "[Brunch]: can't create project;
       directory already exists"
-      process.exit 0
+      helpers.exit()
 
     fileUtil.mkdirsSync exports.options.brunchPath, 0755
     fileUtil.mkdirsSync exports.options.buildPath, 0755
@@ -41,6 +41,7 @@ exports.watch  = (options) ->
     path: path.join(exports.options.brunchPath, "src")
     callOnAdd: true
 
+  # TODO: add callback "on first build".
   helpers.watchDirectory opts, exports.dispatch
 
 
@@ -96,4 +97,4 @@ exports.createBuildDirectories = (buildPath) ->
 # according to the file that was changed/created/removed.
 exports.dispatch = (file) ->
   for compiler in compilers when compiler.matchesFile file
-    return compiler.fileChanged file
+    return compiler.onFileChanged file

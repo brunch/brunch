@@ -101,7 +101,7 @@ exports.loadConfigFile = (configPath) ->
     options = yaml.eval fs.readFileSync configPath, "utf8"
   catch error
     helpers.logError "[Brunch]: couldn't find config.yaml file"
-    process.exit 0
+    helpers.exit()
   options
 
 
@@ -121,10 +121,10 @@ exports.loadOptionsFromArguments = (opts, options) ->
 usage = ->
   process.stdout.write banner
   process.stdout.write helpers.optionsInfo globalOpts
-  process.exit 0
+  helpers.exit()
 
 
 # Print the "--version" message and exit.
 version = ->
   process.stdout.write "brunch version #{brunch.VERSION}\n"
-  process.exit 0
+  helpers.exit()

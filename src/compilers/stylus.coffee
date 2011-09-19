@@ -1,7 +1,6 @@
 fs = require "fs"
 stylus = require "stylus"
 
-helpers = require "../helpers"
 {Compiler} = require "./base"
 
 
@@ -12,28 +11,22 @@ catch error
 
 
 class exports.StylusCompiler extends Compiler
-  filePattern: -> [/\.styl$/]
+  patterns: -> [/\.styl$/]
 
   compile: (files) ->
     mainFilePath = @getPath "src/app/styles/main.styl"
 
     fs.readFile mainFilePath, "utf8", (error, data) =>
-      if error?
-        helpers.logError "[Stylus]: error. #{error}"
-      else
-        compiler = stylus(data)
-          .set("filename", mainFilePath)
-          .set("compress", true)
-          .include(@getPath "src")
+      return @logError error if error?
+      compiler = stylus(data)
+        .set("filename", mainFilePath)
+        .set("compress", true)
+        .include(@getPath "src")
 
-        compiler.use nib if nib
-        compiler.render (error, css) =>
-          if error?
-            helpers.logError "[Stylus]: error. #{error}"
-          else
-            main = @getBuildPath("web/css/main.css")
-            fs.writeFile main, css, "utf8", (error) =>
-              if error?
-                helpers.logError "[Stylus]: error. #{error}"
-              else
-                helpers.logSuccess "[Stylus]: compiled main.css"
+      compiler.use nib if nib
+      compiler.render (error, css) =>
+        return @logError error if error?
+        main = @getBuildPath "web/css/main.css"
+        fs.writeFile main, css, "utf8", (error) =>
+          return @logError error if error?
+          @log()

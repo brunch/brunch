@@ -1,6 +1,6 @@
 fs = require "fs"
 path = require "path"
-{spawn} = require "child_process"
+{exec, spawn} = require "child_process"
 async = require "async"
 fileUtil = require "file"
 _ = require "underscore"
@@ -147,5 +147,33 @@ format = (text, color) ->
   "#{date}: #{colorize(text, color)}\n"
 
 
-exports.logSuccess = (text) -> process.stdout.write format text, "green"
-exports.logError = (text) -> process.stderr.write format text, "red"
+exports.isTesting = ->
+  yes if global.describe and global.it
+
+
+hasGrowl = false
+exec "which growlnotify", (error) -> hasGrowl = true unless error?
+
+
+exports.growl = (title, text) ->
+  spawn "growlnotify", [title, "-m", text] if hasGrowl
+
+
+exports.log = (text, color, isError = false) ->
+  stream = if isError then process.stderr else process.stdout
+  # TODO: log stdout on testing output end.
+  stream.write (format text, color), "utf8" unless exports.isTesting()
+  exports.growl "Brunch error", text if isError
+ 
+
+exports.logSuccess = (text) -> exports.log text, "green"
+
+
+exports.logError = (text) -> exports.log text, "red", true
+
+
+exports.exit = ->
+  if exports.isTesting()
+    exports.logError "Terminated process"
+  else
+    process.exit 0
