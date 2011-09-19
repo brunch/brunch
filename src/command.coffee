@@ -78,6 +78,7 @@ exports.run = ->
   ).help("Watch brunch directory and rebuild if something changed")
 
   parser.parseArgs()
+  return usage() unless process.argv[2]
 
 
 exports.generateConfigPath = (appPath) ->
