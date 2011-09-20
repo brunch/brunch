@@ -8,7 +8,6 @@ zombie = require "zombie"
 
 brunch  = require "../src/brunch"
 
-
 # TODO split into smaller tests
 # watching in general (generate a valid brunch app)
 # watching with a nested brunch path
@@ -20,20 +19,22 @@ describe "project watching", ->
   expressProcess = {}
 
   beforeEach ->
-    options =
-      brunchPath: "brunch"
-      buildPath: "brunch/build"
-      minify: false
-      templateExtension: "eco"
-
-    brunch.new options, ->
-      options.dependencies = [
+    stitch =
+      filePattern: [/\.coffee$/, /src\/.*\.js$/, /\.eco$/]
+      dependencies: [
         "ConsoleDummy.js"
         "jquery-1.6.2.js"
         "underscore-1.1.7.js"
         "backbone-0.5.3.js"
       ]
-      brunch.watch options
+      minify: false
+      output: 'build/web/js/app.js'
+
+    options =
+      stitch: stitch
+
+    brunch.new "brunch", ->
+      brunch.watch "brunch", options
 
       expressProcess = spawn "coffee", [
         path.join(__dirname, "server", "server.coffee"),
@@ -68,16 +69,17 @@ describe "project watching", ->
       waitsFor (-> !!app), "", 400
       runs -> expect("").toMatch /\/\/anotherLib/
     ###
-      
+
     it "when file has been removed", ->
       fs.writeFileSync "brunch/src/vendor/anotherLib.js", "//anotherLib", "utf8"
       fs.unlinkSync "brunch/src/vendor/anotherLib.js"
       app = fs.readFileSync "brunch/build/web/js/app.js", "utf8"
       waitsFor (-> !!app), "", 400
       runs -> expect(app).not.toMatch /\/\/anotherLib/
-  
+
   it "should work properly when minified", ->
-    brunch.watch _.extend options, minify: true
+    options.stitch = _.extend options.stitch, minify: true
+    brunch.watch options
     visited = no
     result = ""
     zombie.visit "http://localhost:8080", (error, browser, status) ->

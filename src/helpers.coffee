@@ -6,13 +6,11 @@ fileUtil = require "file"
 _ = require "underscore"
 sys = require "sys"
 
-
 # copy single file and executes callback when done
 exports.copyFile = (source, destination, callback) ->
   read = fs.createReadStream source
   write = fs.createWriteStream destination
   sys.pump read, write, -> callback()
-
 
 # walk through tree, creates directories and copy files
 exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
@@ -40,7 +38,6 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
             next()
     , callback
 
-
 # recursive copy file tree from source to destination and fires
 # callback with error and a list of created files
 exports.recursiveCopy = (source, destination, callback) ->
@@ -54,7 +51,6 @@ exports.recursiveCopy = (source, destination, callback) ->
       paths.push filename
     else
       callback err, paths.sort()
-
 
 # copied source from watch_dir, because it did not work as package
 exports.watchDirectory = (_opts, callback) ->
@@ -105,6 +101,8 @@ exports.optionsInfo = (options) ->
     output += "-#{option.abbr}\t--#{name}\t#{option.help}\n"
   output
 
+# converts the first character to uppercase and the remainder to lowercase
+exports.capitalize = (word) -> (word[0] || '').toUpperCase() + (word[1..-1] || '').toLowerCase()
 
 # Shell color manipulation tools.
 colors =
@@ -125,52 +123,41 @@ getColor = (color) ->
   code = colors.foreground[color]
   code or colors.foreground.none
 
-
 colorize = (text, color) ->
   "\033[#{getColor(color)}m#{text}
   \033[#{getColor('reset')}m"
 
-
 pad = (number) ->
   num = "#{number}"
   if num.length < 2 then "0#{num}" else num
-
 
 formatDate = (date = new Date) ->
   time = for item in ["Hours", "Minutes", "Seconds"]
     pad date["get#{item}"]()
   time.join ":"
 
-
 format = (text, color) ->
   date = formatDate new Date
   "#{date}: #{colorize(text, color)}\n"
 
-
 exports.isTesting = ->
   yes if global.describe and global.it
-
 
 hasGrowl = false
 exec "which growlnotify", (error) -> hasGrowl = true unless error?
 
-
 exports.growl = (title, text) ->
   spawn "growlnotify", [title, "-m", text] if hasGrowl
-
 
 exports.log = (text, color, isError = false) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
   stream.write (format text, color), "utf8" unless exports.isTesting()
   exports.growl "Brunch error", text if isError
- 
 
 exports.logSuccess = (text) -> exports.log text, "green"
 
-
 exports.logError = (text) -> exports.log text, "red", true
-
 
 exports.exit = ->
   if exports.isTesting()

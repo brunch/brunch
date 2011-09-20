@@ -4,33 +4,31 @@ stitch = require "stitch"
 uglify = require "uglify-js"
 _ = require "underscore"
 
+brunch = require "../brunch"
 helpers = require "../helpers"
-{Compiler} = require("./base")
+{Compiler} = require "./base"
 
 
 class exports.StitchCompiler extends Compiler
-  constructor: (options) ->
+  constructor: (rootPath, options) ->
     super
-    @vendorPath = @getPath "src/vendor"
-
-  patterns: ->
-    [/\.coffee$/, /src\/.*\.js$/, new RegExp "#{@options.templateExtension}$"]
+    @vendorPath = "src/vendor/"
 
   package: ->
     @_package ?= stitch.createPackage
       dependencies: @collectDependencies()
-      paths: [@getPath "src/app/"]
+      paths: [@generatePath('src/app/')]
 
   # Generate list of dependencies and preserve order of brunch libaries,
-  # like defined in options.dependencies.
+  # like defined in options.stitch.dependencies.
   collectDependencies: ->
-    filenames = helpers.filterFiles (fs.readdirSync @vendorPath), @vendorPath
-  
+    filenames = helpers.filterFiles (fs.readdirSync @generatePath(@vendorPath)), @generatePath(@vendorPath)
+
     args = @options.dependencies.slice()
     args.unshift filenames
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
-    dependencies.map (filename) => path.join @vendorPath, filename
+    _.map dependencies, (filename) => @generatePath path.join(@vendorPath, filename)
 
   minify: (source) ->
     {parse} = uglify.parser
@@ -47,6 +45,4 @@ class exports.StitchCompiler extends Compiler
       return @logError error if error?
       @log "compiled"
       source = @minify source if @options.minify
-      outPath = @getBuildPath "web/js/app.js"
-      fs.writeFile outPath, source, (error) =>
-        return @logError "couldn't write compiled file. #{error}" if error?
+      @writeToFile @options.output, source

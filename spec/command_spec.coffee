@@ -16,7 +16,7 @@ exports.commandLine =
 
     options = command.loadOptionsFromArguments opts, {}
     test.strictEqual options.templateExtension, 'haml', 'options should include given templateExtension'
-    test.strictEqual options.brunchPath, 'client', 'options should include given brunch path'
+    test.strictEqual options.rootPath, 'client', 'options should include given brunch path'
     test.strictEqual options.buildPath, 'app/build', 'options should include given build path'
     test.strictEqual options.minify, true, 'options should include true minify'
     test.done()
@@ -41,7 +41,7 @@ exports.commandLine =
 
     options = command.loadDefaultArguments()
     test.strictEqual options.templateExtension, 'eco', 'default templateExtension should be eco'
-    test.strictEqual options.brunchPath, 'brunch', 'default brunchPath should be brunch'
+    test.strictEqual options.rootPath, 'brunch', 'default brunchPath should be brunch'
     test.strictEqual options.minify, false, 'default minify option should be false'
     test.done()
 
@@ -49,7 +49,7 @@ exports.commandLine =
     test.expect 2
 
     options = command.loadConfigFile('spec/fixtures/base/config.yaml')
-    test.deepEqual options.dependencies, ['ConsoleDummy.js'], 'should load list of dependencies'
+    test.deepEqual options.stitch.dependencies, ['ConsoleDummy.js'], 'should load list of dependencies'
     test.strictEqual options.buildPath, 'public/app', 'should load buildPath'
     test.done()
 ###
