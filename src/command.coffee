@@ -75,13 +75,13 @@ exports.generateRootPath = (appPath) ->
 
 # Load options from config file
 exports.loadConfigFile = (rootPath) ->
-  options = {}
+  options = null
   coffee_config = path.join(rootPath, 'config.coffee')
   yaml_config = path.join(rootPath, 'config.yaml')
   if path.existsSync coffee_config
-    options = dsl.loadConfigFile coffee_config, options
+    options = dsl.loadConfigFile coffee_config
   else if path.existsSync yaml_config
-    options = dsl.loadYamlConfigFile yaml_config, options
+    options = dsl.loadYamlConfigFile yaml_config
   else
     helpers.logError "[Brunch]: couldn't find config file"
     helpers.exit()

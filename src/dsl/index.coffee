@@ -40,7 +40,7 @@ exports.matchers = dsl.matchers
 exports.run = -> dsl.run.apply dsl, arguments
 exports.loadConfigFile = -> dsl.runFile.apply dsl, arguments
 
-exports.loadYamlConfigFile = (path, options) ->
+exports.loadYamlConfigFile = (path) ->
   helpers.logError "Old yaml based config file found! Please switch to new coffee-script based configuration!"
-  yaml = new YamlConfig(path, options)
+  yaml = new YamlConfig(path)
   yaml.toOptions()

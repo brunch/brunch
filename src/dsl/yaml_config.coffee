@@ -7,13 +7,11 @@ util = require "util"
 dsl = require "./index"
 
 class exports.YamlConfig
-  constructor: (path, options) ->
+  constructor: (path) ->
     @path = path
-    @options = options
     @data = yaml.eval fs.readFileSync(path, "utf8")
 
   toOptions: ->
-    _.defaults(@data, @options.stitch)
     @data.buildPath ?= 'build'
 
     config_string = """
