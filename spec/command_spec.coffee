@@ -1,9 +1,9 @@
-require.paths.unshift __dirname + "/../lib"
+require.paths.unshift __dirname + "/../src"
 
-command = require('../lib/command')
+command = require "../src/command"
 
 # TODO add tests for run
-
+###
 exports.commandLine =
   'load options from arguments': (test) ->
     test.expect 4
@@ -48,7 +48,8 @@ exports.commandLine =
   'load options from config file': (test) ->
     test.expect 2
 
-    options = command.loadConfigFile('test/fixtures/base/config.yaml')
+    options = command.loadConfigFile('spec/fixtures/base/config.yaml')
     test.deepEqual options.dependencies, ['ConsoleDummy.js'], 'should load list of dependencies'
     test.strictEqual options.buildPath, 'public/app', 'should load buildPath'
     test.done()
+###

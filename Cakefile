@@ -1,7 +1,9 @@
-fs            = require("fs")
-path          = require("path")
-{spawn, exec} = require("child_process")
-stdout        = process.stdout
+fs = require "fs"
+path = require "path"
+{spawn, exec} = require "child_process"
+
+
+stdout = process.stdout
 
 # Use executables installed with npm bundle.
 process.env["PATH"] = "node_modules/.bin:#{process.env["PATH"]}"
@@ -35,32 +37,21 @@ task "link", "Link local brunch as your global npm module", ->
   log "Installing Brunch ...", green
   exec "npm link", onExec
 
-## Building ##
-
-build = (callback) ->
-  log "Compiling CoffeeScript to JavaScript ...", green
-  exec "rm -rf lib && coffee --compile --lint --output lib src", (error, stdout, stderr) ->
-    onExec error, stdout, stderr
-    callback() if callback?
-
-task "build", "Compile CoffeeScript to JavaScript", ->
-  build()
-
-task "watch", "Continously compile CoffeeScript to JavaScript", ->
-  command = spawn "coffee", ["--compile", "--watch", "--lint", "--output", "lib", "src"]
-  command.stdout.on 'data', (data) ->
-    process.stdout.write "#{green}#{data}#{reset}"
-  command.stderr.on 'data', (data) ->
-    process.stdout.write "#{red}#{data}#{reset}"
-  command.on "error", (error) ->
-    process.stdout.write "#{red}#{error.stack}#{reset}\n"
-    process.exit -1
-
 ## Testing ##
 
-task 'test', 'Run test suite', ->
-  reporter = require('nodeunit').reporters.default
-  reporter.run ['test']
+task "test", "Run test (spec) suite", ->
+  sys = require "sys"
+  {loadHelpersInFolder, executeSpecsInFolder} = require "jasmine-node"
+
+  re =
+    helper: /[-_]helper\.coffee$/
+    spec: /spec\.coffee$/i
+  specFolder = path.join __dirname, "spec"
+  callback = (runner, log) -> sys.print "\n"
+
+  loadHelpersInFolder specFolder, re.helper
+  executeSpecsInFolder specFolder, callback, false, true, re.spec, false
+
 
 ## Publishing ##
 
