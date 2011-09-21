@@ -71,7 +71,7 @@ exports.run = ->
   return usage() unless process.argv[2]
 
 exports.generateRootPath = (appPath) ->
-  if appPath? then appPath else 'brunch/' # shouldn't we use the current dir as default root path?
+  if appPath? then appPath else './'
 
 # Load options from config file
 exports.loadConfigFile = (rootPath) ->
