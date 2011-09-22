@@ -13,11 +13,12 @@ class exports.YamlConfig
 
   toOptions: ->
     @data.buildPath ?= 'build'
+    additionalRegexp = new RegExp("#{@data.templateExtension}$") if @data.templateExtension?
 
     config_string = """
       buildPath('#{@data.buildPath}')
       files([/\\.styl$/]).use('stylus').output('web/css/main.css')
-      files([/\\.coffee$/, /src\\/.*\\.js$/, new RegExp("#{@data.templateExtension}$")])
+      files([/\\.coffee$/, /src\\/.*\\.js$/#{if additionalRegexp then (', ' + additionalRegexp) else ''}])
         .use('stitch', { minify: #{@data.minify}, dependencies: #{util.inspect @data.dependencies} })
         .output('web/js/app.js')
     """
