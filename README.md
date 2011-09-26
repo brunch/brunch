@@ -9,14 +9,14 @@ you can get brunch using the node package manager (npm 1.0+)
 ## Getting Started
 
 Create a new project by
-
+ 
     brunch new
-
+ 
 Then you can start the file watcher. It will compile your .coffee, .styl and .eco files on the fly after every change so you don't have to do it manually.
-
+ 
     brunch watch
-
-Open `brunch/index.html` and see you first running brunch application
+ 
+Open `brunch/index.html` and see you first running brunch application.
 
 ## Documentation
 
@@ -44,10 +44,6 @@ Install brunch in your local npm repository
 
     cake install
 
-Watch coffeescript files and continously compile them via
-
-    cake watch
-
 and run test suite via
 
     cake test
@@ -55,7 +51,3 @@ and run test suite via
 ## Contact
 
 Feel free to contact us at Freenode #brunch in the IRC client of your choice.
-
-## Future plans
-
-* add phonegap support

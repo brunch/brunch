@@ -89,10 +89,10 @@ exports.watchDirectory = (_opts, callback) ->
           callback filePath if callOnAdd
   addToWatch opts.path
 
-# filter out dotfiles and directories
+# Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
   files.filter (filename) ->
-    return false if filename.match /^\./
+    return false if filename.match /^(\.|#)/
     stats = fs.statSync path.join sourcePath, filename
     return false if stats?.isDirectory()
     true
