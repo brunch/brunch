@@ -78,7 +78,7 @@ exports.run = ->
   ).help("Watch brunch directory and rebuild if something changed")
 
   parser.parseArgs()
-  return usage() unless process.argv[2]
+  usage() unless process.argv[2]
 
 
 exports.generateConfigPath = (appPath) ->
@@ -113,7 +113,7 @@ exports.loadOptionsFromArguments = (opts, options) ->
   options.minify = opts.minify if opts.minify?
   if opts.output?
     options.buildPath = opts.output
-  else unless options.buildPath?
+  else if not options.buildPath?
     options.buildPath = path.join options.brunchPath, "build"
   options
 
