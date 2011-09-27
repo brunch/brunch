@@ -7,7 +7,7 @@ path = require "path"
 fileUtil = require "file"
 
 helpers = require "./helpers"
-
+testrunner = require "./testrunner"
 
 exports.VERSION = require("./package").version
 compilers = [] # Available compilers.
@@ -50,6 +50,7 @@ exports.build = (options) ->
   exports.createBuildDirectories exports.options.buildPath
   exports.initializeCompilers()
   compiler.compile ["."] for compiler in compilers
+  testrunner.run(options)
 
 
 # Creates an example index.html for brunch with the correct relative

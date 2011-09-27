@@ -1,3 +1,7 @@
-require(__dirname + '/setupenv')
+browser = require(__dirname + '/setupenv')
 
-# Add your jasmine specs here.
+browser.ready ->
+
+    # Add your jasmine specs here.
+
+
