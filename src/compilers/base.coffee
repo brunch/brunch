@@ -24,7 +24,7 @@ class exports.Compiler
 
   # These should be overwritten by every compiler subclass.
   patterns: -> []
-  compile: (files) -> null
+  compile: (files, callback) -> callback(@constructor.name)
 
   clearQueue: ->
     _.bind(@compile, @, @changedFiles)()

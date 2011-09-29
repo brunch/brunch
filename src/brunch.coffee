@@ -49,8 +49,15 @@ exports.build = (options) ->
   exports.options = options
   exports.createBuildDirectories exports.options.buildPath
   exports.initializeCompilers()
-  compiler.compile ["."] for compiler in compilers
-  testrunner.run(options)
+  compilerNames = (compiler.constructor.name for compiler in compilers)
+  for compiler in compilers
+    compiler.compile ["."], (compilerName) ->
+      for name, idx in compilerNames
+        if name == compilerName
+          compilerNames.splice(idx, 1)
+          # When all compilers have run, run the tests
+          if compilerNames.length == 0
+            testrunner.run(options)
 
 
 # Creates an example index.html for brunch with the correct relative
