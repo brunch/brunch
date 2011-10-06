@@ -65,7 +65,7 @@ exports.createExampleIndex = createExampleIndex = (filePath, buildPath) ->
   cssPath = path.join relativePath, "web/css/main.css"
   jsPath = path.join relativePath, "web/js/app.js"
   index = """
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
