@@ -5,7 +5,7 @@ uglify = require "uglify-js"
 _ = require "underscore"
 
 helpers = require "../helpers"
-{Compiler} = require("./base")
+{Compiler} = require "./base"
 
 
 class exports.StitchCompiler extends Compiler

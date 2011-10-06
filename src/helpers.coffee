@@ -148,7 +148,7 @@ format = (text, color) ->
 
 
 exports.isTesting = ->
-  yes if global.describe and global.it
+  "describe" in global and "it" in global
 
 
 hasGrowl = false
