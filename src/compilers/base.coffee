@@ -1,5 +1,4 @@
 path = require "path"
-_ = require "underscore"
 
 helpers = require "../helpers"
 
@@ -24,10 +23,11 @@ class exports.Compiler
 
   # These should be overwritten by every compiler subclass.
   patterns: -> []
-  compile: (files) -> null
 
-  clearQueue: ->
-    _.bind(@compile, @, @changedFiles)()
+  compile: (files, callback) -> callback @constructor.name
+
+  clearQueue: (callback) ->
+    @compile @changedFiles, callback
     @changedFiles = []
   
   addToQueue: (file) ->
@@ -37,9 +37,9 @@ class exports.Compiler
   # Can be overwritten to change behavior on file changed events.
   # By default waits 20ms for file events then calls compile with
   # all changed files.
-  onFileChanged: (file) ->
+  onFileChanged: (file, callback) ->
     @addToQueue file
     clearTimeout @timeout if @timeout?
-    @timeout = setTimeout (=> @clearQueue()), 20
+    @timeout = setTimeout (=> @clearQueue callback), 20
 
   matchesFile: (file) -> _.any @patterns(), (pt) -> file.match pt

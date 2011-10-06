@@ -16,8 +16,8 @@ exports.copyFile = (source, destination, callback) ->
 
 # walk through tree, creates directories and copy files
 exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
-  fs.readdir source, (err, files) ->
-    return callback err if err
+  fs.readdir source, (error, files) ->
+    return callback error if error
 
     # iterates over current directory
     async.forEach files, (file, next) ->
@@ -26,17 +26,17 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
       sourcePath = path.join source, file
       destinationPath = path.join destination, file
 
-      fs.stat sourcePath, (err, stats) ->
-        if not err and stats.isDirectory()
+      fs.stat sourcePath, (error, stats) ->
+        if not error and stats.isDirectory()
           fs.mkdir destinationPath, 0755, ->
-            walkTree sourcePath, destinationPath, (err, destinationPath) ->
+            walkTree sourcePath, destinationPath, (error, destinationPath) ->
               if destinationPath
-                callback err, destinationPath
+                callback error, destinationPath
               else
                 next()
         else
           exports.copyFile sourcePath, destinationPath, ->
-            callback err, destinationPath
+            callback error, destinationPath
             next()
     , callback
 
@@ -59,7 +59,7 @@ exports.recursiveCopy = (source, destination, callback) ->
 # copied source from watch_dir, because it did not work as package
 exports.watchDirectory = (_opts, callback) ->
   opts = _.extend(
-    { path: ".", persistent: true, interval: 500, callOnAdd: false },
+    {path: ".", persistent: yes, interval: 500, callOnAdd: no},
     _opts
   )
   watched = []
@@ -67,9 +67,9 @@ exports.watchDirectory = (_opts, callback) ->
     fs.realpath file, (err, filePath) ->
       callOnAdd = opts.callOnAdd
       if _.include watched, filePath
-        callOnAdd = false
+        callOnAdd = yes
       else
-        isDir = false
+        isDir = no
         watched.push filePath
         data = {persistent, interval} = opts
         fs.watchFile filePath, data, (curr, prev) ->
@@ -79,10 +79,10 @@ exports.watchDirectory = (_opts, callback) ->
           else
             callback filePath
 
-      fs.stat filePath, (err, stats) ->
+      fs.stat filePath, (error, stats) ->
         if stats.isDirectory()
-          isDir = true
-          fs.readdir filePath, (err, files) ->
+          isDir = yes
+          fs.readdir filePath, (error, files) ->
             process.nextTick () ->
               addToWatch "#{filePath}/#{file}" for file in files
         else
@@ -92,10 +92,10 @@ exports.watchDirectory = (_opts, callback) ->
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
   files.filter (filename) ->
-    return false if filename.match /^(\.|#)/
+    return no if filename.match /^(\.|#)/
     stats = fs.statSync path.join sourcePath, filename
-    return false if stats?.isDirectory()
-    true
+    return no if stats?.isDirectory()
+    yes
 
 # return a string of available options
 # originally taken from nomnom helpString
@@ -151,15 +151,15 @@ exports.isTesting = ->
   "describe" in global and "it" in global
 
 
-hasGrowl = false
-exec "which growlnotify", (error) -> hasGrowl = true unless error?
+hasGrowl = no
+exec "which growlnotify", (error) -> hasGrowl = yes unless error?
 
 
 exports.growl = (title, text) ->
   spawn "growlnotify", [title, "-m", text] if hasGrowl
 
 
-exports.log = (text, color, isError = false) ->
+exports.log = (text, color, isError = no) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
   stream.write (format text, color), "utf8" unless exports.isTesting()
@@ -169,7 +169,7 @@ exports.log = (text, color, isError = false) ->
 exports.logSuccess = (text) -> exports.log text, "green"
 
 
-exports.logError = (text) -> exports.log text, "red", true
+exports.logError = (text) -> exports.log text, "red", yes
 
 
 exports.exit = ->
