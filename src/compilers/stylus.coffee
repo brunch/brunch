@@ -13,7 +13,7 @@ catch error
 class exports.StylusCompiler extends Compiler
   patterns: -> [/\.styl$/]
 
-  compile: (files) ->
+  compile: (files, callback) ->
     mainFilePath = @getPath "src/app/styles/main.styl"
 
     fs.readFile mainFilePath, "utf8", (error, data) =>
@@ -31,3 +31,4 @@ class exports.StylusCompiler extends Compiler
         fs.writeFile main, css, "utf8", (error) =>
           return @logError error if error?
           @log()
+          callback(@constructor.name)

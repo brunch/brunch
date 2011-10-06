@@ -38,7 +38,7 @@ class exports.StitchCompiler extends Compiler
     @log "minified"
     gen_code ast_squeeze ast_mangle parse source
 
-  compile: (files) ->
+  compile: (files, callback) ->
     # update package dependencies in case a dependency was added or removed
     if _.any files, ((file) -> file.match /src\/vendor\//)
       @package().dependencies = @collectDependencies()
@@ -50,3 +50,4 @@ class exports.StitchCompiler extends Compiler
       outPath = @getBuildPath "web/js/app.js"
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
+        callback(@constructor.name)

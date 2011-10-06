@@ -7,7 +7,7 @@ path = require "path"
 fileUtil = require "file"
 
 helpers = require "./helpers"
-
+testrunner = require "./testrunner"
 
 exports.VERSION = require("./package").version
 compilers = [] # Available compilers.
@@ -49,7 +49,15 @@ exports.build = (options) ->
   exports.options = options
   exports.createBuildDirectories exports.options.buildPath
   exports.initializeCompilers()
-  compiler.compile ["."] for compiler in compilers
+  compilerNames = (compiler.constructor.name for compiler in compilers)
+  for compiler in compilers
+    compiler.compile ["."], (compilerName) ->
+      for name, idx in compilerNames
+        if name == compilerName
+          compilerNames.splice(idx, 1)
+          # When all compilers have run, run the tests
+          if compilerNames.length == 0
+            testrunner.run(options)
 
 
 # Creates an example index.html for brunch with the correct relative
@@ -97,4 +105,5 @@ exports.createBuildDirectories = (buildPath) ->
 # according to the file that was changed/created/removed.
 exports.dispatch = (file) ->
   for compiler in compilers when compiler.matchesFile file
-    return compiler.onFileChanged file
+    return compiler.onFileChanged file, ->
+      testrunner.run(exports.options)
