@@ -21,7 +21,7 @@ describe "project watching", ->
 
   beforeEach ->
     options =
-      brunchPath: "brunch"
+      appPath: "brunch"
       buildPath: "brunch/build"
       minify: false
       templateExtension: "eco"

@@ -10,7 +10,7 @@ describe "new project", ->
     beforeEach ->
       created = no
       brunch.new
-        brunchPath: "brunch"
+        appPath: "brunch"
         buildPath: "brunch/build"
         projectTemplate: "base"
         templateExtension: "eco"
@@ -30,7 +30,7 @@ describe "new project", ->
     beforeEach ->
       created = no
       brunch.new
-        brunchPath: "js/client"
+        appPath: "js/client"
         buildPath: "js/output"
         projectTemplate: "base"
         templateExtension: "eco"

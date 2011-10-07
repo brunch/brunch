@@ -12,7 +12,7 @@ describe "brunch dependencies", ->
         "underscore-1.1.7.js"
         "backbone-0.5.3.js"
       ]
-      brunchPath: "spec/fixtures/base"
+      appPath: "spec/fixtures/base"
     compiler = new StitchCompiler options
     dependencyPaths = compiler.collectDependencies()
     expect(dependencyPaths).toEqual [

@@ -6,7 +6,7 @@ require.paths.unshift __dirname + "/../src"
 describe "package initializing", ->
   it "should create a valid stitch package", ->
     options =
-      brunchPath: "spec/fixtures/base"
+      appPath: "spec/fixtures/base"
       dependencies: [
         "ConsoleDummy.js",
         "jquery-1.6.2.js",
