@@ -42,4 +42,5 @@ class exports.Compiler
     clearTimeout @timeout if @timeout?
     @timeout = setTimeout (=> @clearQueue callback), 20
 
-  matchesFile: (file) -> _.any @patterns(), (pt) -> file.match pt
+  matchesFile: (file) ->
+    @patterns().some (pattern) -> file.match pattern
