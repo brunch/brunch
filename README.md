@@ -20,7 +20,7 @@ Open `brunch/index.html` and see you first running brunch application.
 
 ## Documentation
 
-for more information ckeck out [brunchwithcoffee.com](http://brunchwithcoffee.com)
+For more information check out [brunchwithcoffee.com](http://brunchwithcoffee.com)
 
 ## Standing on the Shoulders of Giants
 
@@ -33,6 +33,7 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
 * [Stylus](https://github.com/LearnBoost/stylus)
 * [Eco](https://github.com/sstephenson/eco)
+* [Jasmine](http://pivotal.github.com/jasmine/)
 
 ## Development
 
