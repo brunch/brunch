@@ -14,7 +14,7 @@ class exports.StylusCompiler extends Compiler
   patterns: -> [/\.styl$/]
 
   compile: (files, callback) ->
-    mainFilePath = @getPath "src/app/styles/main.styl"
+    mainFilePath = @appPath "src/app/styles/main.styl"
 
     fs.readFile mainFilePath, "utf8", (error, data) =>
       return @logError error if error?
@@ -22,12 +22,12 @@ class exports.StylusCompiler extends Compiler
         .set("filename", mainFilePath)
         .set("compress", true)
         .set("firebug", @options.stylus?.firebug)
-        .include(@getPath "src")
+        .include(@appPath "src")
 
       compiler.use nib if nib
       compiler.render (error, css) =>
         return @logError error if error?
-        main = @getBuildPath "web/css/main.css"
+        main = @buildPath "web/css/main.css"
         fs.writeFile main, css, "utf8", (error) =>
           return @logError error if error?
           @log()

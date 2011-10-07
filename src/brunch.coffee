@@ -13,7 +13,7 @@ testrunner = require "./testrunner"
 exports.VERSION = require("./package").version
 
 
-class Compilers
+exports.Brunch = class Brunch
   _createDirectories: (buildPath, directories...) ->
     for dirPath in directories
       fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
@@ -22,9 +22,9 @@ class Compilers
   # path to the build directory.
   _createExampleIndex: (filePath, buildPath) ->
     # Fixing relative path.
-    brunchPath = path.join @options.brunchPath, "/"
-    if buildPath.indexOf(brunchPath) is 0
-      relativePath = buildPath.substr brunchPath.length
+    appPath = path.join @options.appPath, "/"
+    if appPath in buildPath
+      relativePath = buildPath.substr appPath.length
     else
       relativePath = path.join "..", buildPath
 
@@ -46,42 +46,42 @@ class Compilers
     """
     fs.writeFileSync filePath, index
 
-  compile: (compilers, callback) ->
+  _compile: (compilers, callback) ->
     total = @compilers.length
     for compiler in compilers
       do => compiler.compile ["."], =>
         # Pop current compiler from queue.
         total -= 1
         # Execute callbacks if compiler queue is empty.
-        unless total
+        if total <= 0
           testrunner.run @options
-          callback?() 
+          callback?()
 
-  create: (callback) ->
+  new: (callback) ->
     templatePath = path.join module.id, "/../../template/base"
-    path.exists @options.brunchPath, (exists) =>
+    path.exists @options.appPath, (exists) =>
       if exists
         helpers.logError "[Brunch]: can't create project;
         directory already exists"
         return
 
-      fileUtil.mkdirsSync @options.brunchPath, 0755
+      fileUtil.mkdirsSync @options.appPath, 0755
       fileUtil.mkdirsSync @options.buildPath, 0755
 
-      helpers.recursiveCopy templatePath, @options.brunchPath, =>
-        index = path.join @options.brunchPath, "index.html"
+      helpers.recursiveCopy templatePath, @options.appPath, =>
+        index = path.join @options.appPath, "index.html"
         @_createExampleIndex index, @options.buildPath
         helpers.logSuccess "[Brunch]: created brunch directory layout"
         callback?()
 
   build: (callback) ->
     @_createDirectories @options.buildPath, "web/css", "web/js"
-    @compile @compilers, callback
+    @_compile @compilers, callback
 
   watch: (callback) ->
     @_createDirectories @options.buildPath, "web/css", "web/js"
     opts =
-      path: path.join @options.brunchPath, "src"
+      path: path.join @options.appPath, "src"
       callOnAdd: yes
     helpers.watchDirectory opts, (file) =>
       for compiler in @compilers when compiler.matchesFile file
@@ -90,16 +90,11 @@ class Compilers
           callback?()
 
   constructor: (@options) ->
+    @options.buildPath ?= path.join @options.appPath, "build/"
     all = require "./compilers"
     @compilers = (new compiler @options for name, compiler of all)
 
-
-# Project skeleton generator.
-exports.new = (options, callback) ->
-  (new Compilers options).create callback
-
-exports.watch = (options) ->
-  (new Compilers options).watch()
-
-exports.build = (options) ->
-  (new Compilers options).build()
+for method in ["new", "build", "watch"]
+  do (method) ->
+    exports[method] = (options, callback) ->
+      (new Brunch options)[method] callback

@@ -4,7 +4,7 @@ path = require "path"
 coffee = require "coffee-script"
 jsdom = require "jsdom"
 
-
+helpers = require "./helpers"
 {TerminalReporter} = require __dirname + "/../vendor/reporter"
 
 
@@ -14,9 +14,9 @@ TEMP = "/tmp/brunchtest"
 
 
 exports.run = (options) ->
-  brunchdir = path.resolve options.brunchPath
+  brunchdir = path.resolve options.appPath
   testdir = path.join brunchdir, "test"
-  console.log "Running tests in " + testdir
+  helpers.log "Running tests in #{testdir}"
 
   # Compiles specs in `dir` and appends the result to `list`
   getSpecFiles = (dir, list) ->

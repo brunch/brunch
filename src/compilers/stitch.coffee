@@ -11,7 +11,7 @@ helpers = require "../helpers"
 class exports.StitchCompiler extends Compiler
   constructor: (options) ->
     super
-    @vendorPath = @getPath "src/vendor"
+    @vendorPath = @appPath "src/vendor"
 
   patterns: ->
     [/\.coffee$/, /src\/.*\.js$/, new RegExp "#{@options.templateExtension}$"]
@@ -19,7 +19,7 @@ class exports.StitchCompiler extends Compiler
   package: ->
     @_package ?= stitch.createPackage
       dependencies: @collectDependencies()
-      paths: [@getPath "src/app/"]
+      paths: [@appPath "src/app/"]
 
   # Generate list of dependencies and preserve order of brunch libaries,
   # like defined in options.dependencies.
@@ -47,7 +47,7 @@ class exports.StitchCompiler extends Compiler
       return @logError error if error?
       @log "compiled"
       source = @minify source if @options.minify
-      outPath = @getBuildPath "web/js/app.js"
+      outPath = @buildPath "web/js/app.js"
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
         callback @constructor.name

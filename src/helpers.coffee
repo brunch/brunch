@@ -3,8 +3,14 @@ path = require "path"
 {exec, spawn} = require "child_process"
 async = require "async"
 fileUtil = require "file"
-_ = require "underscore"
 sys = require "sys"
+_ = require "underscore"
+
+
+exports.extend = extend = (object, properties) ->
+  for key, val of properties
+    object[key] = val
+  object
 
 
 # copy single file and executes callback when done
@@ -57,21 +63,20 @@ exports.recursiveCopy = (source, destination, callback) ->
 
 
 # copied source from watch_dir, because it did not work as package
-exports.watchDirectory = (_opts, callback) ->
-  opts = _.extend(
-    {path: ".", persistent: yes, interval: 500, callOnAdd: no},
-    _opts
-  )
+exports.watchDirectory = (options, callback) ->
+  options = extend {path: ".", persistent: yes, interval: 500, callOnAdd: no},
+    options
   watched = []
   addToWatch = (file) ->
-    fs.realpath file, (err, filePath) ->
-      callOnAdd = opts.callOnAdd
-      if _.include watched, filePath
+    fs.realpath file, (error, filePath) ->
+      exports.logError error if error?
+      callOnAdd = options.callOnAdd
+      if filePath in watched
         callOnAdd = yes
       else
         isDir = no
         watched.push filePath
-        data = {persistent, interval} = opts
+        data = {persistent, interval} = options
         fs.watchFile filePath, data, (curr, prev) ->
           return if curr.mtime.getTime() is prev.mtime.getTime()
           if isDir
@@ -80,14 +85,15 @@ exports.watchDirectory = (_opts, callback) ->
             callback filePath
 
       fs.stat filePath, (error, stats) ->
+        exports.logError error if error?
         if stats.isDirectory()
           isDir = yes
           fs.readdir filePath, (error, files) ->
-            process.nextTick () ->
+            process.nextTick ->
               addToWatch "#{filePath}/#{file}" for file in files
         else
           callback filePath if callOnAdd
-  addToWatch opts.path
+  addToWatch options.path
 
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
@@ -97,33 +103,23 @@ exports.filterFiles = (files, sourcePath) ->
     return no if stats?.isDirectory()
     yes
 
-# return a string of available options
-# originally taken from nomnom helpString
-exports.optionsInfo = (options) ->
-  output = "\n\nAvailable options:\n"
-  for name, option of options
-    output += "-#{option.abbr}\t--#{name}\t#{option.help}\n"
-  output
-
 
 # Shell color manipulation tools.
 colors =
-  foreground:
-    black: 30
-    red: 31
-    green: 32
-    brown: 33
-    blue: 34
-    purple: 35
-    cyan: 36
-    lgray: 37
-    none: ''
-    reset: 0
+  black: 30
+  red: 31
+  green: 32
+  brown: 33
+  blue: 34
+  purple: 35
+  cyan: 36
+  gray: 37
+  none: ''
+  reset: 0
+
 
 getColor = (color) ->
-  color = color.toString()
-  code = colors.foreground[color]
-  code or colors.foreground.none
+  colors[color.toString()] or colors.none
 
 
 colorize = (text, color) ->
@@ -137,14 +133,8 @@ pad = (number) ->
 
 
 formatDate = (date = new Date) ->
-  time = for item in ["Hours", "Minutes", "Seconds"]
-    pad date["get#{item}"]()
+  time = (pad date["get" + item]() for item in ["Hours", "Minutes", "Seconds"])
   time.join ":"
-
-
-format = (text, color) ->
-  date = formatDate new Date
-  "#{date}: #{colorize(text, color)}\n"
 
 
 exports.isTesting = ->
@@ -152,17 +142,20 @@ exports.isTesting = ->
 
 
 hasGrowl = no
-exec "which growlnotify", (error) -> hasGrowl = yes unless error?
+exec "which growlnotify", (error) ->
+  hasGrowl = yes unless error?
 
 
 exports.growl = (title, text) ->
   spawn "growlnotify", [title, "-m", text] if hasGrowl
 
 
-exports.log = (text, color, isError = no) ->
+exports.log = (text, color = "none", isError = no) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
-  stream.write (format text, color), "utf8" unless exports.isTesting()
+  date = formatDate new Date
+  output = "#{date}: #{colorize(text, color)}\n"
+  stream.write output, "utf8" unless exports.isTesting()
   exports.growl "Brunch error", text if isError
  
 

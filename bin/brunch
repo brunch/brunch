@@ -3,8 +3,7 @@
 path = require "path"
 fs = require "fs"
 
-lib = path.join path.dirname(fs.realpathSync(__filename)), "../src"
+src = path.join path.dirname(fs.realpathSync(__filename)), "../src"
 
 
-command = require lib + "/command"
-command.run()
+(require src + "/command").run()

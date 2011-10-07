@@ -1,103 +1,16 @@
-# External dependencies.
-parser = require "nomnom"
 path = require "path"
 yaml = require "yaml"
 fs = require "fs"
-_  = require "underscore"
 
 brunch = require "./brunch"
 helpers = require "./helpers"
 
 
-# The list of all the valid option flags
-globalOpts =
-  version:
-    abbr: "v"
-    flag: true
-    help: "display brunch version"
-    callback: -> version()
-  output:
-    abbr: "o"
-    help: "set build path"
-    metavar: "DIRECTORY"
-  minify:
-    abbr: "m"
-    flag: true
-    help: "minify the app.js output via UglifyJS"
-
-
-# The help banner which is printed if brunch command-line tool is called with "--help" option.
-banner = """
-  http://brunchwithcoffee.com
-
-  Usage: brunch [command] [options]
-
-  Possible commands are:
-    new [<path>]    create new brunch project
-    build [<path>]  build project
-    watch [<path>]  watch brunch directory and rebuild if something changed
-         """
-
-
-options = {}
-
-
-# Run "brunch" by parsing passed options and determining what action to take.
-# This also includes checking for a config file. Options in commandline arguments
-# overwrite options from the config file. In this case you are able to have
-# reasonable defaults and changed only the options you need to change in this particular case.
-exports.run = ->
-  options = exports.loadDefaultArguments()
-
-  parser.globalOpts globalOpts
-  parser.scriptName "brunch <command> [<path>]"
-  parser.printFunc usage
-
-  # create new brunch app and build it after all files were copied
-  parser.command("new").callback((opts) ->
-    options = exports.loadOptionsFromArguments opts, options
-    brunch.new options, ->
-      configPath = exports.generateConfigPath opts[1]
-      options = _.extend options, exports.loadConfigFile(configPath)
-      options = exports.loadOptionsFromArguments opts, options
-      brunch.build options
-  ).help("Create new brunch project")
-
-  parser.command("build").callback((opts) ->
-    configPath = exports.generateConfigPath opts[1]
-    options = _.extend(options, exports.loadConfigFile(configPath))
-    options = exports.loadOptionsFromArguments opts, options
-    brunch.build options
-  ).help("Build a brunch project")
-
-  parser.command("watch").callback((opts) ->
-    configPath = exports.generateConfigPath opts[1]
-    options = _.extend(options, exports.loadConfigFile(configPath))
-    options = exports.loadOptionsFromArguments opts, options
-    brunch.watch options
-  ).help("Watch brunch directory and rebuild if something changed")
-
-  parser.parseArgs()
-  usage() unless process.argv[2]
-
-
-exports.generateConfigPath = (appPath) ->
+generateConfigPath = (appPath) ->
   if appPath? then path.join(appPath, "config.yaml") else "brunch/config.yaml"
 
 
-# Load default options
-exports.loadDefaultArguments = ->
-  # buildPath is created in loadOptionsFromArguments
-  options =
-    templateExtension: "eco"
-    brunchPath: "brunch"
-    dependencies: []
-    minify: false
-  options
-
-
-# Load options from config file
-exports.loadConfigFile = (configPath) ->
+loadConfig = (configPath) ->
   try
     options = yaml.eval fs.readFileSync configPath, "utf8"
   catch error
@@ -106,26 +19,138 @@ exports.loadConfigFile = (configPath) ->
   options
 
 
-# Load options from arguments
-exports.loadOptionsFromArguments = (opts, options) ->
-  options.templateExtension = opts.templateExtension if opts.templateExtension?
-  options.brunchPath = opts[1] if opts[1]?
-  options.minify = opts.minify if opts.minify?
-  if opts.output?
-    options.buildPath = opts.output
-  else if not options.buildPath?
-    options.buildPath = path.join options.brunchPath, "build"
-  options
+parseOpts = (options, loadFile = yes) ->
+  if loadFile
+    config = loadConfig generateConfigPath options.appPath
+    options = helpers.extend options, config
+  defaults =
+    templateExtension: "eco"
+    path: "brunch"
+    dependencies: []
+    minify: no
+  helpers.extend defaults, options
 
 
-# Print the "--help" usage message and exit.
-usage = ->
-  process.stdout.write banner
-  process.stdout.write helpers.optionsInfo globalOpts
-  helpers.exit()
+log = (text) ->
+  process.stdout.write text + "\n"
 
 
-# Print the "--version" message and exit.
-version = ->
-  process.stdout.write "brunch version #{brunch.VERSION}\n"
-  helpers.exit()
+config =
+  commands:
+    new:
+      help: "Create new brunch project"
+      opts:
+        appPath:
+          position: 1
+          help: "application path"
+          metavar: "APP_PATH"
+          full: "app_path"
+        buildPath:
+          abbr: "o"
+          help: "build path"
+          metavar: "DIRECTORY"
+          full: "output"
+        mvc:
+          help: "Set application framework"
+          default: "backbone"
+          choices: ["backbone", "batman"]
+        templates:
+          help: "Set templates engine"
+          default: "eco"
+          choices: ["eco", "jade", "haml"]
+        styles:
+          help: "Set style engine"
+          default: "css"
+          choices: ["css", "sass", "compass", "stylus"]  # "sass" == "compass"
+        tests:
+          help: "Set testing framework"
+          default: "jasmine"
+          choices: ["jasmine", "nodeunit"]
+      callback: (options) ->
+        brunch.new (parseOpts options, no), -> brunch.build parseOpts options
+
+    build:
+      help: "Build a brunch project"
+      opts:
+        appPath:
+          position: 1
+          help: "application path"
+          metavar: "APP_PATH"
+          full: "app_path"
+        buildPath:
+          abbr: "o"
+          help: "build path"
+          metavar: "DIRECTORY"
+          full: "output"
+        minify:
+          abbr: "m"
+          flag: yes
+          help: "minify the app.js output via UglifyJS"
+      callback: (options) ->
+        brunch.build parseOpts options
+
+    watch:
+      help: "Watch brunch directory and rebuild if something changed"
+      opts:
+        appPath:
+          position: 1
+          help: "application path"
+          metavar: "APP_PATH"
+          full: "app_path"
+        buildPath:
+          abbr: "o"
+          help: "build path"
+          metavar: "DIRECTORY"
+          full: "output"
+        minify:
+          abbr: "m"
+          flag: yes
+          help: "minify the app.js output via UglifyJS"
+      callback: (options) ->
+        brunch.watch parseOpts options
+  
+  globalOpts:
+    version:
+      abbr: "v"
+      help: "display brunch version"
+      callback: (options) -> log brunch.VERSION
+
+  scriptName: "brunch"
+
+  help: (parser) ->
+    str = ""
+    str += "commands:\n"
+    {commands, script} = parser.usage()
+    for name, command of commands
+      str += "   #{script} #{command.name}: #{command.help}\n"
+    str += """\n
+      To get help on individual command, execute `brunch <command> --help`
+    """
+    str
+
+
+class CommandParser
+  _setUpParser: ->
+    parser = require "nomnom"
+    for name, data of @config
+      switch name
+        when "commands"
+          for cmdName, cmdData of data
+            command = parser.command cmdName
+            for attrName, value of cmdData
+              command[attrName] value
+        else
+          data = data parser if typeof data is "function"
+          parser[name] data
+    parser
+
+  parse: ->
+    @_parser.parseArgs()
+    log @_parser.getUsage() unless process.argv[2]
+
+  constructor: (@config) ->
+    @_parser = @_setUpParser()
+
+exports.run = ->
+  (new CommandParser config).parse()
+

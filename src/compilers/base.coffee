@@ -5,10 +5,10 @@ helpers = require "../helpers"
 
 class exports.Compiler
   constructor: (@options) -> null
-  getPath: (subPath) ->
-    path.join @options.brunchPath, subPath
+  appPath: (subPath) ->
+    path.join @options.appPath, subPath
 
-  getBuildPath: (subPath) ->
+  buildPath: (subPath) ->
     path.join @options.buildPath, subPath
 
   getClassName: ->
