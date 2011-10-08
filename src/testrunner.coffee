@@ -16,22 +16,21 @@ TEMP = "/tmp/brunchtest"
 exports.run = (options) ->
   brunchdir = path.resolve options.appPath
   testdir = path.join brunchdir, "test"
+  specs = []
   helpers.log "Running tests in #{testdir}"
-
-  # Compiles specs in `dir` and appends the result to `list`
-  getSpecFiles = (dir, list) ->
-    for f in fs.readdirSync(dir)
-      filepath = path.join(dir, f)
-      ext = path.extname(filepath)
+  # Compiles specs in `dir` and appends the result to `specs`.
+  getSpecFiles = (dir) ->
+    for f in fs.readdirSync dir
+      filepath = path.join dir, f
+      ext = path.extname filepath
       if ext in [".coffee", ".js"]
         spec = fs.readFileSync filepath, "utf-8"
-        spec = coffee.compile(spec) if ext is ".coffee"
-        list.push spec
+        spec = coffee.compile spec if ext is ".coffee"
+        specs.push spec
       else if fs.statSync(filepath).isDirectory()
-        getSpecFiles filepath, list
-
-  specs = []
-  getSpecFiles testdir, specs
+        getSpecFiles filepath
+  
+  getSpecFiles testdir
 
   # Remove temporary folder if it already exists
   try
@@ -52,7 +51,8 @@ exports.run = (options) ->
         path.resolve __dirname, "../vendor/jasmine.js"
         "/tmp/brunchtest/specs.js"
       ]
-      done: (errors, window) ->
+      done: (error, window) ->
+        helpers.logError error if error?
         jasmineEnv = window.jasmine.getEnv()
         jasmineEnv.reporter = new TerminalReporter
           print: sys.print
@@ -61,4 +61,3 @@ exports.run = (options) ->
           onComplete: null
           stackFilter: null
         jasmineEnv.execute()
-
