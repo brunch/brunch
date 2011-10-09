@@ -4,27 +4,33 @@ helpers = require "../helpers"
 
 
 class exports.Compiler
-  constructor: (@options) -> null
-  appPath: (subPath) ->
+  constructor: (@options) ->
+    null
+
+  getAppPath: (subPath) ->
     path.join @options.appPath, subPath
 
-  buildPath: (subPath) ->
+  getBuildPath: (subPath) ->
     path.join @options.buildPath, subPath
 
   getClassName: ->
-    name = @constructor.name.replace "Compiler", ""
+    @constructor.name
+
+  getFormattedClassName: ->
+    name = @getClassName().replace "Compiler", ""
     "[#{name}]:"
 
   log: (text = "OK") ->
-    helpers.logSuccess "#{@getClassName()} #{text}."
+    helpers.log "#{@getFormattedClassName()} #{text}."
 
   logError: (text) ->
-    helpers.logError "#{@getClassName()} error. #{text}"
+    helpers.logError "#{@getFormattedClassName()} error. #{text}"
 
   # These should be overwritten by every compiler subclass.
   patterns: -> []
 
-  compile: (files, callback) -> callback @constructor.name
+  compile: (files, callback) ->
+    callback @getClassName()
 
   clearQueue: (callback) ->
     @compile @changedFiles, callback

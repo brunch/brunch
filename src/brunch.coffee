@@ -14,6 +14,16 @@ exports.VERSION = require("./package").version
 
 
 exports.Brunch = class Brunch
+  defaultConfig:
+    appPath: "brunch"
+    dependencies: []
+    minify: no
+    mvc: "backbone"
+    templates: "eco"
+    styles: "css"
+    tests: "jasmine"
+    templateExtension: "eco"  # Temporary.
+
   _createDirectories: (buildPath, directories...) ->
     for dirPath in directories
       fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
@@ -49,13 +59,13 @@ exports.Brunch = class Brunch
   _compile: (compilers, callback) ->
     total = @compilers.length
     for compiler in compilers
-      do => compiler.compile ["."], =>
-        # Pop current compiler from queue.
-        total -= 1
-        # Execute callbacks if compiler queue is empty.
-        if total <= 0
-          testrunner.run @options
-          callback?()
+      do (compiler) =>
+        compiler.compile ["."], =>
+          # Pop current compiler from queue.
+          total -= 1
+          # Execute callbacks if compiler queue is empty.
+          if total <= 0
+            testrunner.run @options, callback
 
   new: (callback) ->
     templatePath = path.join module.id, "/../../template/base"
@@ -71,7 +81,7 @@ exports.Brunch = class Brunch
       helpers.recursiveCopy templatePath, @options.appPath, =>
         index = path.join @options.appPath, "index.html"
         @_createExampleIndex index, @options.buildPath
-        helpers.logSuccess "[Brunch]: created brunch directory layout"
+        helpers.log "[Brunch]: created brunch directory layout"
         callback?()
 
   build: (callback) ->
@@ -86,13 +96,20 @@ exports.Brunch = class Brunch
     helpers.watchDirectory opts, (file) =>
       for compiler in @compilers when compiler.matchesFile file
         return compiler.onFileChanged file, =>
-          testrunner.run @options
-          callback?()
+          testrunner.run @options, callback
 
-  constructor: (@options) ->
-    @options.buildPath ?= path.join @options.appPath, "build/"
+  constructor: (options) ->
+    helpers.extend @defaultConfig, options
+    options.buildPath ?= path.join options.appPath, "build/"
+    # Nomnom arg parser creates properties in options for internal use
+    # We don't need them.
+    for prop in ["_"].concat [0..10] when prop of options
+      delete options[prop]
+    @options = options
+
     all = require "./compilers"
     @compilers = (new compiler @options for name, compiler of all)
+
 
 for method in ["new", "build", "watch"]
   do (method) ->

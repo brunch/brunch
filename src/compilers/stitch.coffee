@@ -11,26 +11,25 @@ helpers = require "../helpers"
 class exports.StitchCompiler extends Compiler
   constructor: (options) ->
     super
-    @vendorPath = @appPath "src/vendor"
+    @vendorPath = @getAppPath "src/vendor"
 
   patterns: ->
     [/\.coffee$/, /src\/.*\.js$/, new RegExp "#{@options.templateExtension}$"]
-
-  package: ->
-    @_package ?= stitch.createPackage
-      dependencies: @collectDependencies()
-      paths: [@appPath "src/app/"]
 
   # Generate list of dependencies and preserve order of brunch libaries,
   # like defined in options.dependencies.
   collectDependencies: ->
     filenames = helpers.filterFiles (fs.readdirSync @vendorPath), @vendorPath
-  
     args = @options.dependencies.slice()
     args.unshift filenames
     additionalLibaries = _.without.apply @, args
     dependencies = @options.dependencies.concat additionalLibaries
     dependencies.map (filename) => path.join @vendorPath, filename
+
+  package: ->
+    @_package ?= stitch.createPackage
+      dependencies: @collectDependencies()
+      paths: [@getAppPath "src/app/"]
 
   minify: (source) ->
     {parse} = uglify.parser
@@ -47,7 +46,7 @@ class exports.StitchCompiler extends Compiler
       return @logError error if error?
       @log "compiled"
       source = @minify source if @options.minify
-      outPath = @buildPath "web/js/app.js"
+      outPath = @getBuildPath "web/js/app.js"
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
-        callback @constructor.name
+        callback @getClassName()

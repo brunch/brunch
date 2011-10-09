@@ -12,8 +12,6 @@ describe "new project", ->
       brunch.new
         appPath: "brunch"
         buildPath: "brunch/build"
-        projectTemplate: "base"
-        templateExtension: "eco"
       , -> created = yes
       waitsFor (-> created), 400
 
@@ -32,8 +30,6 @@ describe "new project", ->
       brunch.new
         appPath: "js/client"
         buildPath: "js/output"
-        projectTemplate: "base"
-        templateExtension: "eco"
       , -> created = yes
       waitsFor (-> created), 400
 

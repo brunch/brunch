@@ -6,11 +6,11 @@ brunch = require "./brunch"
 helpers = require "./helpers"
 
 
-generateConfigPath = (appPath) ->
-  if appPath? then path.join(appPath, "config.yaml") else "brunch/config.yaml"
+exports.generateConfigPath = generateConfigPath = (appPath) ->
+  if appPath? then path.join appPath, "config.yaml" else "brunch/config.yaml"
 
 
-loadConfig = (configPath) ->
+exports.loadConfig = loadConfig = (configPath) ->
   try
     options = yaml.eval fs.readFileSync configPath, "utf8"
   catch error
@@ -19,20 +19,9 @@ loadConfig = (configPath) ->
   options
 
 
-parseOpts = (options, loadFile = yes) ->
-  if loadFile
-    config = loadConfig generateConfigPath options.appPath
-    options = helpers.extend options, config
-  defaults =
-    templateExtension: "eco"
-    path: "brunch"
-    dependencies: []
-    minify: no
-  helpers.extend defaults, options
-
-
-log = (text) ->
-  process.stdout.write text + "\n"
+exports.parseOpts = parseOpts = (options) ->
+  config = loadConfig generateConfigPath options.appPath
+  helpers.extend options, config
 
 
 config =
@@ -44,7 +33,7 @@ config =
           position: 1
           help: "application path"
           metavar: "APP_PATH"
-          full: "app_path"
+          required: yes
         buildPath:
           abbr: "o"
           help: "build path"
@@ -52,22 +41,27 @@ config =
           full: "output"
         mvc:
           help: "Set application framework"
+          metavar: "FRAMEWORK"
           default: "backbone"
           choices: ["backbone", "batman"]
         templates:
           help: "Set templates engine"
+          metavar: "ENGINE"
           default: "eco"
           choices: ["eco", "jade", "haml"]
         styles:
           help: "Set style engine"
+          metavar: "ENGINE"
           default: "css"
           choices: ["css", "sass", "compass", "stylus"]  # "sass" == "compass"
         tests:
           help: "Set testing framework"
+          metavar: "FRAMEWORK"
           default: "jasmine"
           choices: ["jasmine", "nodeunit"]
       callback: (options) ->
-        brunch.new (parseOpts options, no), -> brunch.build parseOpts options
+        brunch.new options, ->
+          brunch.build parseOpts options
 
     build:
       help: "Build a brunch project"
@@ -113,7 +107,8 @@ config =
     version:
       abbr: "v"
       help: "display brunch version"
-      callback: (options) -> log brunch.VERSION
+      flag: yes
+      callback: -> brunch.VERSION
 
   scriptName: "brunch"
 
@@ -146,7 +141,7 @@ class CommandParser
 
   parse: ->
     @_parser.parseArgs()
-    log @_parser.getUsage() unless process.argv[2]
+    process.stdout.write @_parser.getUsage() unless process.argv[2]
 
   constructor: (@config) ->
     @_parser = @_setUpParser()

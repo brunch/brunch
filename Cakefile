@@ -50,7 +50,7 @@ task "test", "Run test (spec) suite", ->
   callback = (runner, log) -> sys.print "\n"
 
   loadHelpersInFolder specFolder, re.helper
-  executeSpecsInFolder specFolder, callback, no, yes, no, re.spec, {}
+  executeSpecsInFolder specFolder, callback, false, true, re.spec, false
 
 
 ## Publishing ##

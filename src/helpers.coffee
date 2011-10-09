@@ -123,8 +123,7 @@ getColor = (color) ->
 
 
 colorize = (text, color) ->
-  "\033[#{getColor(color)}m#{text}
-  \033[#{getColor('reset')}m"
+  "\033[#{getColor(color)}m#{text}\033[#{getColor('reset')}m"
 
 
 pad = (number) ->
@@ -132,13 +131,15 @@ pad = (number) ->
   if num.length < 2 then "0#{num}" else num
 
 
-formatDate = (date = new Date) ->
-  time = (pad date["get" + item]() for item in ["Hours", "Minutes", "Seconds"])
-  time.join ":"
+formatDate = (color = "none") ->
+  date = new Date
+  timeArr = (pad date["get" + item]() for item in ["Hours", "Minutes", "Seconds"])
+  time = timeArr.join ":"
+  colorize "[#{time}]:", color
 
 
 exports.isTesting = ->
-  "describe" in global and "it" in global
+  "jasmine" of global
 
 
 hasGrowl = no
@@ -150,19 +151,18 @@ exports.growl = (title, text) ->
   spawn "growlnotify", [title, "-m", text] if hasGrowl
 
 
-exports.log = (text, color = "none", isError = no) ->
+exports.log = (text, color = "green", isError = no) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
-  date = formatDate new Date
-  output = "#{date}: #{colorize(text, color)}\n"
+  output = "#{formatDate(color)} #{text}\n"
   stream.write output, "utf8" unless exports.isTesting()
   exports.growl "Brunch error", text if isError
- 
-
-exports.logSuccess = (text) -> exports.log text, "green"
 
 
 exports.logError = (text) -> exports.log text, "red", yes
+
+
+exports.logDebug = (args...) -> console.log formatDate("green"), args...
 
 
 exports.exit = ->
