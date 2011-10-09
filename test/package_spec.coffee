@@ -1,5 +1,3 @@
-require.paths.unshift __dirname + "/../src"
-
 package = require "../src/package"
 
 

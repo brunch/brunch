@@ -1,5 +1,3 @@
-require.paths.unshift __dirname + "/../src"
-
 fs = require "fs"
 path = require "path"
 _ = require "underscore"

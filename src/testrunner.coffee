@@ -13,7 +13,7 @@ helpers = require "./helpers"
 TEMP = "/tmp/brunchtest"
 
 
-exports.run = (options) ->
+exports.run = (options, callback) ->
   brunchdir = path.resolve options.appPath
   testdir = path.join brunchdir, "test"
   specs = []
@@ -31,7 +31,7 @@ exports.run = (options) ->
         getSpecFiles filepath
   
   getSpecFiles testdir
-
+  console.log "1sadasdasdasdasd23"
   # Remove temporary folder if it already exists
   try
     if fs.statSync("/tmp/brunchtest").isDirectory()
@@ -40,10 +40,10 @@ exports.run = (options) ->
       fs.rmdirSync TEMP
 
   fs.mkdir TEMP, 0755, ->
-    # Write specs to temporary folder
+    console.log "1sadasdasdasdasd23"
+    # Write specs to temporary folder.
     fs.writeFileSync TEMP + "/specs.js", specs.join "\n"
-
-    # Run specs in fake browser
+    # Run specs in fake browser.
     jsdom.env
       html: path.join brunchdir, "index.html"
       scripts: [
@@ -53,6 +53,7 @@ exports.run = (options) ->
       ]
       done: (error, window) ->
         helpers.logError error if error?
+        console.log "1sadasdasdasdasd23"
         jasmineEnv = window.jasmine.getEnv()
         jasmineEnv.reporter = new TerminalReporter
           print: sys.print
@@ -61,3 +62,4 @@ exports.run = (options) ->
           onComplete: null
           stackFilter: null
         jasmineEnv.execute()
+        callback?()

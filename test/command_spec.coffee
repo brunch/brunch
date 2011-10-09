@@ -1,5 +1,3 @@
-require.paths.unshift __dirname + "/../src"
-
 command = require "../src/command"
 
 # TODO add tests for run

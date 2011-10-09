@@ -1,5 +1,3 @@
-require.paths.unshift __dirname + "/../src"
-
 fs = require "fs"
 
 brunch  = require "../src/brunch"

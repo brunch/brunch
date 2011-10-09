@@ -1,6 +1,4 @@
-require.paths.unshift __dirname + "/../src"
-
-{StitchCompiler} = require(__dirname + "/../src/compilers")
+{StitchCompiler} = require __dirname + "/../src/compilers"
 
 
 describe "package initializing", ->
