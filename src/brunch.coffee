@@ -33,7 +33,7 @@ exports.Brunch = class Brunch
   _createExampleIndex: (filePath, buildPath) ->
     # Fixing relative path.
     appPath = path.join @options.appPath, "/"
-    if appPath in buildPath
+    if buildPath.indexOf(appPath) isnt -1
       relativePath = buildPath.substr appPath.length
     else
       relativePath = path.join "..", buildPath

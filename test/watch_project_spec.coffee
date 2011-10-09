@@ -47,7 +47,6 @@ describe "project watching", ->
     removeDirectory "brunch", -> removed = yes
     waitsFor (-> removed), "Cannot remove", 200
 
-  ###
   it "should create a valid brunch app", ->
     visited = no
     result = ""
@@ -58,7 +57,7 @@ describe "project watching", ->
     waitsFor (-> visited), "Cannot visit the localhost", 2000
     runs -> expect(result).toEqual "<h1>brunch</h1>"
   
-
+  ###
   describe "should update package dependencies", ->
     # This test was broken from version 0.8.0. TODO: Fix this.
     it "when file has been added", ->
