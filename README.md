@@ -20,7 +20,7 @@ Open `brunch/index.html` and see you first running brunch application.
 
 ## Documentation
 
-For more information check out [brunchwithcoffee.com](http://brunchwithcoffee.com)
+For more information check out [brunch.io](http://brunch.io)
 
 ## Standing on the Shoulders of Giants
 
