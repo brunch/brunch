@@ -1,6 +1,7 @@
 fs = require "fs"
 path = require "path"
 {exec, spawn} = require "child_process"
+{EventEmitter} = require "events"
 async = require "async"
 fileUtil = require "file"
 sys = require "sys"
@@ -62,38 +63,54 @@ exports.recursiveCopy = (source, destination, callback) ->
       callback err, paths.sort()
 
 
-# copied source from watch_dir, because it did not work as package
-exports.watchDirectory = (options, callback) ->
-  options = extend {path: ".", persistent: yes, interval: 500, callOnAdd: no},
-    options
-  watched = []
-  addToWatch = (file) ->
-    fs.realpath file, (error, filePath) ->
-      exports.logError error if error?
-      callOnAdd = options.callOnAdd
-      if filePath in watched
-        callOnAdd = yes
-      else
-        isDir = no
-        watched.push filePath
-        data = {persistent, interval} = options
-        fs.watchFile filePath, data, (curr, prev) ->
-          return if curr.mtime.getTime() is prev.mtime.getTime()
-          if isDir
-            addToWatch filePath
-          else
-            callback filePath
+class exports.Watcher extends EventEmitter
+  constructor: ->
+    @watched = []
 
-      fs.stat filePath, (error, stats) ->
-        exports.logError error if error?
-        if stats.isDirectory()
-          isDir = yes
-          fs.readdir filePath, (error, files) ->
-            process.nextTick ->
-              addToWatch "#{filePath}/#{file}" for file in files
-        else
-          callback filePath if callOnAdd
-  addToWatch options.path
+  _justAdded: ->
+    setTimeout (=> @emit "change")
+
+  _handleFile: (file, add) ->
+    if add
+      unless file in @watched
+        @emit "change", file
+        @watched.push file
+      fs.watchFile file, {persistent: yes, interval: 500}, (curr, prev) =>
+        unless curr.mtime.getTime() is prev.mtime.getTime()
+          @emit "change", file
+    else
+      fs.unwatchFile file
+
+  _handleDir: (dir, add) ->
+    fs.readdir dir, (error, files) =>
+      for file in files
+        @_handle (path.join dir, file), add
+
+  _handle: (file, add) ->
+    fs.realpath file, (error, filePath) =>
+      return exports.logError error if error?
+      fs.stat file, (error, stats) =>
+        return exports.logError error if error?
+        @_handleFile file, add if stats.isFile()
+        @_handleDir file, add if stats.isDirectory()
+
+  add: (file) ->
+    @_handle file, yes
+    @
+
+  remove: (file) ->
+    @_handle file, no
+    @
+
+  onChange: (callback) ->
+    @on "change", callback
+    @
+  
+  clear: ->
+    @removeAllListeners "change"
+    @watched = []
+    @
+
 
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->

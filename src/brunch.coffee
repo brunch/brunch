@@ -4,7 +4,7 @@ root = __dirname + "/../"
 
 fs = require "fs"
 path = require "path"
-fileUtil = require "file"
+fileUtil = require "file" 
 
 helpers = require "./helpers"
 testrunner = require "./testrunner"
@@ -83,32 +83,42 @@ exports.Brunch = class Brunch
         @_createExampleIndex index, @options.buildPath
         helpers.log "[Brunch]: created brunch directory layout"
         callback?()
+    @
 
   build: (callback) ->
     @_createDirectories @options.buildPath, "web/css", "web/js"
     @_compile @compilers, callback
+    @
 
   watch: (callback) ->
     @_createDirectories @options.buildPath, "web/css", "web/js"
-    opts =
-      path: path.join @options.appPath, "src"
-      callOnAdd: yes
-    helpers.watchDirectory opts, (file) =>
+    sourcePath = path.join @options.appPath, "src"
+    timer = null
+
+    @watcher.add(sourcePath).onChange (file) =>
       for compiler in @compilers when compiler.matchesFile file
         return compiler.onFileChanged file, =>
-          testrunner.run @options, callback
+          clearTimeout timer if timer
+          # TODO: go full async & get rid of timers.
+          timer = setTimeout (=> testrunner.run @options, callback), 20
+    @
+
+  stopWatching: (callback) ->
+    @watcher.clear()
 
   constructor: (options) ->
     helpers.extend @defaultConfig, options
     options.buildPath ?= path.join options.appPath, "build/"
     # Nomnom arg parser creates properties in options for internal use
     # We don't need them.
-    for prop in ["_"].concat [0..10] when prop of options
+    ignored = ["_"].concat [0..10]
+    for prop in ignored when prop of options
       delete options[prop]
     @options = options
 
     all = require "./compilers"
     @compilers = (new compiler @options for name, compiler of all)
+    @watcher = new helpers.Watcher
 
 
 for method in ["new", "build", "watch"]

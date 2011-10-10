@@ -31,7 +31,6 @@ exports.run = (options, callback) ->
         getSpecFiles filepath
   
   getSpecFiles testdir
-  console.log "1sadasdasdasdasd23"
   # Remove temporary folder if it already exists
   try
     if fs.statSync("/tmp/brunchtest").isDirectory()
@@ -40,7 +39,6 @@ exports.run = (options, callback) ->
       fs.rmdirSync TEMP
 
   fs.mkdir TEMP, 0755, ->
-    console.log "1sadasdasdasdasd23"
     # Write specs to temporary folder.
     fs.writeFileSync TEMP + "/specs.js", specs.join "\n"
     # Run specs in fake browser.
@@ -53,10 +51,13 @@ exports.run = (options, callback) ->
       ]
       done: (error, window) ->
         helpers.logError error if error?
-        console.log "1sadasdasdasdasd23"
+        # If we're testing brunch itself, we don't need to view the output.
+        # TODO: move this to TerminalReporter.
+        stream = if global.jasmine then (->) else sys.print
+
         jasmineEnv = window.jasmine.getEnv()
         jasmineEnv.reporter = new TerminalReporter
-          print: sys.print
+          print: stream
           verbose: yes
           color: yes
           onComplete: null

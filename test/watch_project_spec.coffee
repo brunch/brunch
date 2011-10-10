@@ -16,6 +16,7 @@ brunch  = require "../src/brunch"
 describe "project watching", ->
   options = {}
   expressProcess = {}
+  brunchApp = null
 
   beforeEach ->
     options =
@@ -31,18 +32,17 @@ describe "project watching", ->
         "underscore-1.1.7.js"
         "backbone-0.5.3.js"
       ]
-      brunch.watch options
-
-      expressProcess = spawn "coffee", [
-        path.join(__dirname, "server", "server.coffee"),
-        "8080",
-        path.join(__dirname, "..", "brunch")
-      ]
-    # TODO: use waitsFor(3)
+      brunchApp = brunch.watch options, ->
+        expressProcess = spawn "coffee", [
+          path.join(__dirname, "server", "server.coffee"),
+          "8080",
+          path.join(__dirname, "..", "brunch")
+        ]
     waits 2000
 
   afterEach ->
     removed = no
+    brunchApp.stopWatching()
     expressProcess.kill "SIGHUP" unless expressProcess is {}
     removeDirectory "brunch", -> removed = yes
     waitsFor (-> removed), "Cannot remove", 200
@@ -57,14 +57,15 @@ describe "project watching", ->
     waitsFor (-> visited), "Cannot visit the localhost", 2000
     runs -> expect(result).toEqual "<h1>brunch</h1>"
   
-  ###
   describe "should update package dependencies", ->
     # This test was broken from version 0.8.0. TODO: Fix this.
+    ###
     it "when file has been added", ->
       fs.writeFileSync "brunch/src/vendor/anotherLib.js", "//anotherLib", "utf8"
       app = fs.readFileSync "brunch/build/web/js/app.js", "utf8"
       waitsFor (-> !!app), "", 400
-      runs -> expect("").toMatch /\/\/anotherLib/
+      runs -> expect(app).toMatch /\/\/anotherLib/
+    ###
       
     it "when file has been removed", ->
       fs.writeFileSync "brunch/src/vendor/anotherLib.js", "//anotherLib", "utf8"
@@ -83,4 +84,3 @@ describe "project watching", ->
       visited = yes
     waitsFor (-> visited), "Cannot visit the localhost", 2000
     runs -> expect(result).toEqual "<h1>brunch</h1>"
-  ###
