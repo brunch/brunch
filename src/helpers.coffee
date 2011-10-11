@@ -159,18 +159,24 @@ exports.isTesting = ->
   "jasmine" of global
 
 
-hasGrowl = no
-exec "which growlnotify", (error) ->
-  hasGrowl = yes unless error?
 
-hasNotifySend = no
-exec "which notify-send", (error) ->
-  hasNotifySend = yes unless error?
+exports.notify = (title, text) -> null
 
 
-exports.growl = (title, text) ->
-  if hasGrowl then spawn "growlnotify", [title, "-m", text]
-  else if hasNotifySend then spawn "notify-send", [title, text]
+# Map of possible system notifiers in format
+# Key - "name of system command that would be executed".
+# Value - args, with which the command would be spawned.
+# E.g. spawn growlnotify, [title, "-m", text]
+exports.notifiers = notifiers =
+  growlnotify: (title, text) -> [title, "-m", text]
+  "notify-send": (title, text) -> [title, text]
+
+
+# Try to determine right system notifier.
+for name, transform of notifiers
+  do (name, transform) ->
+    exec "which #{name}", (error) ->
+      exports.notify = ((args...) -> spawn name, transform args...) unless error?
 
 
 exports.log = (text, color = "green", isError = no) ->
@@ -178,7 +184,7 @@ exports.log = (text, color = "green", isError = no) ->
   # TODO: log stdout on testing output end.
   output = "#{formatDate(color)} #{text}\n"
   stream.write output, "utf8" unless exports.isTesting()
-  exports.growl "Brunch error", text if isError
+  exports.notify "Brunch error", text if isError
 
 
 exports.logError = (text) -> exports.log text, "red", yes
