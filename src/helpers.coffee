@@ -163,9 +163,14 @@ hasGrowl = no
 exec "which growlnotify", (error) ->
   hasGrowl = yes unless error?
 
+hasNotifySend = no
+exec "which notify-send", (error) ->
+  hasNotifySend = yes unless error?
+
 
 exports.growl = (title, text) ->
-  spawn "growlnotify", [title, "-m", text] if hasGrowl
+  if hasGrowl then spawn "growlnotify", [title, "-m", text]
+  else if hasNotifySend then spawn "notify-send", [title, text]
 
 
 exports.log = (text, color = "green", isError = no) ->
