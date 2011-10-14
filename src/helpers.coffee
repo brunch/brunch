@@ -67,9 +67,6 @@ class exports.Watcher extends EventEmitter
   constructor: ->
     @watched = []
 
-  _justAdded: ->
-    setTimeout (=> @emit "change")
-
   _watch: (item, callback) ->
     fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
       callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
@@ -80,15 +77,15 @@ class exports.Watcher extends EventEmitter
       @emit "change", file
     @watched.push file
     @_watch file, emit
-    emit()
+    emit file
 
-  _handleDir: (dir) ->
-    read = (dir) =>
-      fs.readdir dir, (error, files) =>
+  _handleDir: (directory) ->
+    read = (directory) =>
+      fs.readdir directory, (error, files) =>
         for file in files
-          @_handle (path.join dir, file)
-    read()
-    @_watch dir, read
+          @_handle (path.join directory, file)
+    read directory
+    @_watch directory, read
 
   _handle: (file) ->
     fs.realpath file, (error, filePath) =>
