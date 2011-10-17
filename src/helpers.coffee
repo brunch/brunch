@@ -64,6 +64,9 @@ exports.recursiveCopy = (source, destination, callback) ->
 
 
 class exports.Watcher extends EventEmitter
+  # RegExp that would filter invalid files (dotfiles, emacs caches etc).
+  invalid: /^(\.|#)/
+
   constructor: ->
     #console.log "Created"
     @watched = {}
@@ -102,6 +105,7 @@ class exports.Watcher extends EventEmitter
     @_watch directory, read
 
   _handle: (file) ->
+    return if @invalid.test path.basename file
     fs.realpath file, (error, filePath) =>
       return exports.logError error if error?
       fs.stat file, (error, stats) =>
@@ -132,9 +136,8 @@ class exports.Watcher extends EventEmitter
 
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
-  re = /^(\.|#)/
   files.filter (filename) ->
-    return no if re.test filename
+    return no if (exports.Watcher::invalid).test filename
     stats = fs.statSync path.join sourcePath, filename
     return no if stats?.isDirectory()
     yes
