@@ -65,24 +65,38 @@ exports.recursiveCopy = (source, destination, callback) ->
 
 class exports.Watcher extends EventEmitter
   constructor: ->
-    @watched = []
+    #console.log "Created"
+    @watched = {}
+
+  _getWatchedDir: (directory) ->
+    @watched[directory] ?= []
 
   _watch: (item, callback) ->
+    parent = @_getWatchedDir path.dirname item
+    basename = path.basename item
+    # Prevent memory leaks.
+    return if basename in parent
+    #console.log "Watching", item
+    parent.push basename
     fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
       callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
 
   _handleFile: (file) ->
-    return if file in @watched
     emit = (file) =>
       @emit "change", file
-    @watched.push file
-    @_watch file, emit
     emit file
+    @_watch file, emit
 
   _handleDir: (directory) ->
     read = (directory) =>
-      fs.readdir directory, (error, files) =>
-        for file in files
+      fs.readdir directory, (error, current) =>
+        return exports.logError error if error?
+        return unless current
+        previous = @_getWatchedDir directory
+        for file in previous when file not in current
+          console.log "Deleting file", (path.join directory, file)
+          @emit "delete", file
+        for file in current when file not in previous
           @_handle (path.join directory, file)
     read directory
     @_watch directory, read
@@ -102,17 +116,25 @@ class exports.Watcher extends EventEmitter
   onChange: (callback) ->
     @on "change", callback
     @
-  
+
+  onDelete: (callback) ->
+    @on "delete", callback
+    @
+
   clear: ->
     @removeAllListeners "change"
-    @watched = []
+    for directory, files of @watched
+      for file in files
+        fs.unwatchFile path.join directory, file
+    @watched = {}
     @
 
 
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
+  re = /^(\.|#)/
   files.filter (filename) ->
-    return no if filename.match /^(\.|#)/
+    return no if re.test filename
     stats = fs.statSync path.join sourcePath, filename
     return no if stats?.isDirectory()
     yes
