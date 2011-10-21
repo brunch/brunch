@@ -45,7 +45,7 @@ exports.run = (options, callback) ->
     jsdom.env
       html: path.join brunchdir, "index.html"
       scripts: [
-        path.join brunchdir, "build/web/js/app.js"
+        path.resolve options.buildPath, "web/js/app.js"
         path.resolve __dirname, "../vendor/jasmine.js"
         "/tmp/brunchtest/specs.js"
       ]
