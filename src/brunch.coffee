@@ -23,6 +23,7 @@ exports.Brunch = class Brunch
     styles: "css"
     tests: "jasmine"
     templateExtension: "eco"  # Temporary.
+    teamcity: no
 
   _createDirectories: (buildPath, directories...) ->
     for dirPath in directories

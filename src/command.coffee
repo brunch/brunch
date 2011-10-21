@@ -80,6 +80,9 @@ config =
           abbr: "m"
           flag: yes
           help: "minify the app.js output via UglifyJS"
+        teamcity:
+          flag: yes
+          help: "TeamCity compatible output for Jasmine test runner"
       callback: (options) ->
         brunch.build parseOpts options
 

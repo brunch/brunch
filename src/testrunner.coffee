@@ -62,5 +62,6 @@ exports.run = (options, callback) ->
           color: yes
           onComplete: null
           stackFilter: null
+          teamcity: options.teamcity
         jasmineEnv.execute()
         callback?()
