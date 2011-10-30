@@ -71,6 +71,7 @@ config =
           help: "application path"
           metavar: "APP_PATH"
           full: "app_path"
+          default: "."
         buildPath:
           abbr: "o"
           help: "build path"
@@ -91,6 +92,7 @@ config =
           help: "application path"
           metavar: "APP_PATH"
           full: "app_path"
+          default: "."
         buildPath:
           abbr: "o"
           help: "build path"

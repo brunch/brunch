@@ -64,58 +64,80 @@ exports.recursiveCopy = (source, destination, callback) ->
 
 
 class exports.Watcher extends EventEmitter
+  # RegExp that would filter invalid files (dotfiles, emacs caches etc).
+  invalid: /^(\.|#)/
+
   constructor: ->
-    @watched = []
+    #console.log "Created"
+    @watched = {}
 
-  _justAdded: ->
-    setTimeout (=> @emit "change")
+  _getWatchedDir: (directory) ->
+    @watched[directory] ?= []
 
-  _handleFile: (file, add) ->
-    if add
-      unless file in @watched
-        @emit "change", file
-        @watched.push file
-      fs.watchFile file, {persistent: yes, interval: 500}, (curr, prev) =>
-        unless curr.mtime.getTime() is prev.mtime.getTime()
-          @emit "change", file
-    else
-      fs.unwatchFile file
+  _watch: (item, callback) ->
+    parent = @_getWatchedDir path.dirname item
+    basename = path.basename item
+    # Prevent memory leaks.
+    return if basename in parent
+    #console.log "Watching", item
+    parent.push basename
+    fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
+      callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
 
-  _handleDir: (dir, add) ->
-    fs.readdir dir, (error, files) =>
-      for file in files
-        @_handle (path.join dir, file), add
+  _handleFile: (file) ->
+    emit = (file) =>
+      @emit "change", file
+    emit file
+    @_watch file, emit
 
-  _handle: (file, add) ->
+  _handleDir: (directory) ->
+    read = (directory) =>
+      fs.readdir directory, (error, current) =>
+        return exports.logError error if error?
+        return unless current
+        previous = @_getWatchedDir directory
+        for file in previous when file not in current
+          console.log "Deleting file", (path.join directory, file)
+          @emit "delete", file
+        for file in current when file not in previous
+          @_handle (path.join directory, file)
+    read directory
+    @_watch directory, read
+
+  _handle: (file) ->
+    return if @invalid.test path.basename file
     fs.realpath file, (error, filePath) =>
       return exports.logError error if error?
       fs.stat file, (error, stats) =>
         return exports.logError error if error?
-        @_handleFile file, add if stats.isFile()
-        @_handleDir file, add if stats.isDirectory()
+        @_handleFile file if stats.isFile()
+        @_handleDir file if stats.isDirectory()
 
   add: (file) ->
-    @_handle file, yes
-    @
-
-  remove: (file) ->
-    @_handle file, no
+    @_handle file
     @
 
   onChange: (callback) ->
     @on "change", callback
     @
-  
+
+  onDelete: (callback) ->
+    @on "delete", callback
+    @
+
   clear: ->
     @removeAllListeners "change"
-    @watched = []
+    for directory, files of @watched
+      for file in files
+        fs.unwatchFile path.join directory, file
+    @watched = {}
     @
 
 
 # Filter out dotfiles, emacs swap files and directories.
 exports.filterFiles = (files, sourcePath) ->
   files.filter (filename) ->
-    return no if filename.match /^(\.|#)/
+    return no if (exports.Watcher::invalid).test filename
     stats = fs.statSync path.join sourcePath, filename
     return no if stats?.isDirectory()
     yes
@@ -159,18 +181,24 @@ exports.isTesting = ->
   "jasmine" of global
 
 
-hasGrowl = no
-exec "which growlnotify", (error) ->
-  hasGrowl = yes unless error?
 
-hasNotifySend = no
-exec "which notify-send", (error) ->
-  hasNotifySend = yes unless error?
+exports.notify = (title, text) -> null
 
 
-exports.growl = (title, text) ->
-  if hasGrowl then spawn "growlnotify", [title, "-m", text]
-  else if hasNotifySend then spawn "notify-send", [title, text]
+# Map of possible system notifiers in format
+# Key - "name of system command that would be executed".
+# Value - args, with which the command would be spawned.
+# E.g. spawn growlnotify, [title, "-m", text]
+exports.notifiers = notifiers =
+  growlnotify: (title, text) -> [title, "-m", text]
+  "notify-send": (title, text) -> [title, text]
+
+
+# Try to determine right system notifier.
+for name, transform of notifiers
+  do (name, transform) ->
+    exec "which #{name}", (error) ->
+      exports.notify = ((args...) -> spawn name, transform args...) unless error?
 
 
 exports.log = (text, color = "green", isError = no) ->
@@ -178,7 +206,7 @@ exports.log = (text, color = "green", isError = no) ->
   # TODO: log stdout on testing output end.
   output = "#{formatDate(color)} #{text}\n"
   stream.write output, "utf8" unless exports.isTesting()
-  exports.growl "Brunch error", text if isError
+  exports.notify "Brunch error", text if isError
 
 
 exports.logError = (text) -> exports.log text, "red", yes

@@ -51,4 +51,5 @@ and run test suite via
 
 ## Contact
 
+Project twitter: [@brunch_coffee](http://twitter.com/brunch_coffee).
 Feel free to contact us at Freenode #brunch in the IRC client of your choice.

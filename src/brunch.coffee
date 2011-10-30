@@ -57,7 +57,7 @@ exports.Brunch = class Brunch
     fs.writeFileSync filePath, index
 
   _compile: (compilers, callback) ->
-    total = @compilers.length
+    total = compilers.length
     for compiler in compilers
       do (compiler) =>
         compiler.compile ["."], =>
@@ -68,6 +68,7 @@ exports.Brunch = class Brunch
             testrunner.run @options, callback
 
   new: (callback) ->
+    cb = (=> callback? @)
     templatePath = path.join module.id, "/../../template/base"
     path.exists @options.appPath, (exists) =>
       if exists
@@ -82,15 +83,17 @@ exports.Brunch = class Brunch
         index = path.join @options.appPath, "index.html"
         @_createExampleIndex index, @options.buildPath
         helpers.log "[Brunch]: created brunch directory layout"
-        callback?()
+        cb()
     @
 
   build: (callback) ->
+    cb = (=> callback? @)
     @_createDirectories @options.buildPath, "web/css", "web/js"
-    @_compile @compilers, callback
+    @_compile @compilers, cb
     @
 
   watch: (callback) ->
+    cb = (=> callback? @)
     @_createDirectories @options.buildPath, "web/css", "web/js"
     sourcePath = path.join @options.appPath, "src"
     timer = null
@@ -100,7 +103,7 @@ exports.Brunch = class Brunch
         return compiler.onFileChanged file, =>
           clearTimeout timer if timer
           # TODO: go full async & get rid of timers.
-          timer = setTimeout (=> testrunner.run @options, callback), 20
+          timer = setTimeout (=> testrunner.run @options, cb), 20
     @
 
   stopWatching: (callback) ->
