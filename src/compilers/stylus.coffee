@@ -28,6 +28,7 @@ class exports.StylusCompiler extends Compiler
         .set("compress", true)
         .set("paths", [imagePath])
         .set("firebug", @options.stylus?.firebug)
+        .define("image-url", stylus.url({ limit: 0 }))
         .include(@getAppPath "src")
 
       compiler.use nib if nib
