@@ -15,17 +15,19 @@ class exports.StylusCompiler extends Compiler
 
   compile: (files, callback) ->
     mainFilePath = @getAppPath "src/app/styles/main.styl"
-    imagePath = @getAppPath (@options.stylus?.imagePath or "build/web/images")
 
     fs.readFile mainFilePath, "utf8", (error, data) =>
       return @logError error if error?
       compiler = stylus(data)
         .set("filename", mainFilePath)
         .set("compress", true)
-        .set("paths", [imagePath])
         .set("firebug", @options.stylus?.firebug)
-        .define("image-url", stylus.url({ limit: 0 }))
         .include(@getAppPath "src")
+      
+      if typeof @options.stylus.paths is 'object'
+        paths = for path in @options.stylus.paths
+          @getAppPath path
+        compiler.set("paths", paths)
 
       compiler.use nib if nib
       compiler.render (error, css) =>
