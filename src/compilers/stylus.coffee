@@ -24,6 +24,10 @@ class exports.StylusCompiler extends Compiler
         .set("firebug", @options.stylus?.firebug)
         .include(@getAppPath "src")
 
+      if typeof @options.stylus?.paths is "object"
+        paths = (@getAppPath path for path in @options.stylus.paths)
+        compiler.set("paths", paths)
+
       compiler.use nib if nib
       compiler.render (error, css) =>
         return @logError error if error?
