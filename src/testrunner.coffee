@@ -29,7 +29,7 @@ exports.run = (options, callback) ->
         specs.push spec
       else if fs.statSync(filepath).isDirectory()
         getSpecFiles filepath
-  
+
   getSpecFiles testdir
   # Remove temporary folder if it already exists
   try

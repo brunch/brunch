@@ -7,7 +7,7 @@ describe "package initializing", ->
       appPath: "test/fixtures/base"
       dependencies: [
         "ConsoleDummy.js",
-        "jquery-1.6.2.js",
+        "jquery-1.7.js",
         "underscore-1.1.7.js",
         "backbone-0.5.3.js"
       ]
