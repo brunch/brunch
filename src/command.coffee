@@ -112,6 +112,11 @@ config =
 
     test:
       help: "Run tests for a brunch project"
+      opts:
+        verbose:
+          abbr: "v"
+          flag: yes
+          help: "set verbose option for test runner"
       callback: (options) ->
         brunch.test parseOpts options
 
