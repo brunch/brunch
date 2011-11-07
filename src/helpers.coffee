@@ -177,6 +177,14 @@ formatDate = (color = "none") ->
   colorize "[#{time}]:", color
 
 
+exports.capitalize = capitalize = (string) ->
+  string[0].toUpperCase() + string[1..]
+
+
+exports.formatClassName = (filename) ->
+  filename.split("_").map(capitalize).join("")
+
+
 exports.isTesting = ->
   "jasmine" of global
 

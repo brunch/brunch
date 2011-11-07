@@ -128,13 +128,19 @@ exports.Brunch = class Brunch
 
   generate: (callback) ->
     callback = @_makeCallback callback
-    filename = "#{@options.name}." + switch @options.name
+    extension = switch @options.generator
       when "style" then "styl"
       when "template" then "eco"
       else "coffee"
+    filename = "#{@options.name}." + extension
     filePath = path.join @options.appPath, "src", "app",
       "#{@options.generator}s", filename
-    data = ""  # Temporary.
+    data = switch extension
+      when "coffee"
+        className = helpers.formatClassName @options.name
+        genName = helpers.capitalize @options.generator
+        "class exports.#{className} extends Backbone.#{genName}\n"
+      else ""
 
     fs.writeFile filePath, data, (error) ->
       return helpers.logError error if error?
