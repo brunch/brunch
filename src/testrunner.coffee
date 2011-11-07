@@ -11,6 +11,7 @@ helpers = require "./helpers"
 # TODO: find a better way to do this.
 # https://github.com/brunch/brunch/pull/111#issuecomment-2244266
 TEMP = "/tmp/brunchtest"
+SPECFILE = path.join TEMP, "specs.js"
 
 
 exports.run = (options, callback) ->
@@ -40,14 +41,14 @@ exports.run = (options, callback) ->
 
   fs.mkdir TEMP, 0755, ->
     # Write specs to temporary folder.
-    fs.writeFileSync TEMP + "/specs.js", specs.join "\n"
+    fs.writeFileSync SPECFILE, specs.join "\n"
     # Run specs in fake browser.
     jsdom.env
       html: path.join brunchdir, "index.html"
       scripts: [
         path.resolve options.buildPath, "web/js/app.js"
         path.resolve __dirname, "../vendor/jasmine.js"
-        "/tmp/brunchtest/specs.js"
+        SPECFILE
       ]
       done: (error, window) ->
         helpers.logError error if error?
