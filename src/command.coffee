@@ -39,26 +39,26 @@ config =
           help: "build path"
           metavar: "DIRECTORY"
           full: "output"
-        mvc:
-          help: "Set application framework"
-          metavar: "FRAMEWORK"
-          default: "backbone"
-          choices: ["backbone", "batman"]
-        templates:
-          help: "Set templates engine"
-          metavar: "ENGINE"
-          default: "eco"
-          choices: ["eco", "jade", "haml"]
-        styles:
-          help: "Set style engine"
-          metavar: "ENGINE"
-          default: "css"
-          choices: ["css", "sass", "compass", "stylus"]  # "sass" == "compass"
-        tests:
-          help: "Set testing framework"
-          metavar: "FRAMEWORK"
-          default: "jasmine"
-          choices: ["jasmine", "nodeunit"]
+        #mvc:
+        #  help: "Set application framework"
+        #  metavar: "FRAMEWORK"
+        #  default: "backbone"
+        #  choices: ["backbone", "batman"]
+        #templates:
+        #  help: "Set templates engine"
+        #  metavar: "ENGINE"
+        #  default: "eco"
+        #  choices: ["eco", "jade", "haml"]
+        #styles:
+        #  help: "Set style engine"
+        #  metavar: "ENGINE"
+        #  default: "css"
+        #  choices: ["css", "sass", "compass", "stylus"]  # "sass" == "compass"
+        #tests:
+        #  help: "Set testing framework"
+        #  metavar: "FRAMEWORK"
+        #  default: "jasmine"
+        #  choices: ["jasmine", "nodeunit"]
       callback: (options) ->
         brunch.new options, ->
           brunch.build parseOpts options
