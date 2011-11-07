@@ -59,7 +59,7 @@ exports.run = (options, callback) ->
         jasmineEnv = window.jasmine.getEnv()
         jasmineEnv.reporter = new TerminalReporter
           print: stream
-          verbose: yes
+          verbose: options.verbose
           color: yes
           onComplete: null
           stackFilter: null
