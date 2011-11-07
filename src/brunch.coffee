@@ -6,16 +6,16 @@ fs = require "fs"
 path = require "path"
 fileUtil = require "file" 
 
+compilers = require "./compilers"
 helpers = require "./helpers"
 testrunner = require "./testrunner"
-
 
 exports.VERSION = require("./package").version
 
 
 exports.Brunch = class Brunch
   defaultConfig:
-    appPath: "brunch"
+    appPath: "./"
     dependencies: []
     minify: no
     mvc: "backbone"
@@ -23,6 +23,21 @@ exports.Brunch = class Brunch
     styles: "css"
     tests: "jasmine"
     templateExtension: "eco"  # Temporary.
+
+  constructor: (options) ->
+    helpers.extend @defaultConfig, options
+    options.buildPath ?= path.join options.appPath, "build/"
+    # Nomnom arg parser creates properties in options for internal use
+    # We don't need them.
+    ignored = ["_"].concat [0..10]
+    for prop in ignored when prop of options
+      delete options[prop]
+    @options = options
+    @compilers = (new compiler @options for name, compiler of compilers)
+    @watcher = new helpers.Watcher
+
+  _makeCallback: (fn) ->
+    => fn? @
 
   _createDirectories: (buildPath, directories...) ->
     for dirPath in directories
@@ -64,11 +79,10 @@ exports.Brunch = class Brunch
           # Pop current compiler from queue.
           total -= 1
           # Execute callbacks if compiler queue is empty.
-          if total <= 0
-            testrunner.run @options, callback
+          callback() unless total
 
   new: (callback) ->
-    cb = (=> callback? @)
+    callback = @_makeCallback callback
     templatePath = path.join module.id, "/../../template/base"
     path.exists @options.appPath, (exists) =>
       if exists
@@ -83,17 +97,17 @@ exports.Brunch = class Brunch
         index = path.join @options.appPath, "index.html"
         @_createExampleIndex index, @options.buildPath
         helpers.log "[Brunch]: created brunch directory layout"
-        cb()
+        callback()
     @
 
   build: (callback) ->
-    cb = (=> callback? @)
+    callback = @_makeCallback callback
     @_createDirectories @options.buildPath, "web/css", "web/js"
-    @_compile @compilers, cb
+    @_compile @compilers, callback
     @
 
   watch: (callback) ->
-    cb = (=> callback? @)
+    callback = @_makeCallback callback
     @_createDirectories @options.buildPath, "web/css", "web/js"
     sourcePath = path.join @options.appPath, "src"
     timer = null
@@ -102,29 +116,33 @@ exports.Brunch = class Brunch
       for compiler in @compilers when compiler.matchesFile file
         return compiler.onFileChanged file, =>
           clearTimeout timer if timer
-          # TODO: go full async & get rid of timers.
-          timer = setTimeout (=> testrunner.run @options, cb), 20
+          timer = setTimeout callback, 20
     @
 
   stopWatching: (callback) ->
     @watcher.clear()
 
-  constructor: (options) ->
-    helpers.extend @defaultConfig, options
-    options.buildPath ?= path.join options.appPath, "build/"
-    # Nomnom arg parser creates properties in options for internal use
-    # We don't need them.
-    ignored = ["_"].concat [0..10]
-    for prop in ignored when prop of options
-      delete options[prop]
-    @options = options
+  test: (callback) ->
+    callback = @_makeCallback callback
+    testrunner.run @options, callback
 
-    all = require "./compilers"
-    @compilers = (new compiler @options for name, compiler of all)
-    @watcher = new helpers.Watcher
+  generate: (callback) ->
+    callback = @_makeCallback callback
+    filename = "#{@options.name}." + switch @options.name
+      when "style" then "styl"
+      when "template" then "eco"
+      else "coffee"
+    filePath = path.join @options.appPath, "src", "app",
+      "#{@options.generator}s", filename
+    data = ""  # Temporary.
+
+    fs.writeFile filePath, data, (error) ->
+      return helpers.logError error if error?
+      helpers.log "Generated #{filePath}"
+    @
 
 
-for method in ["new", "build", "watch"]
+for method in ["new", "build", "watch", "test", "generate"]
   do (method) ->
     exports[method] = (options, callback) ->
       (new Brunch options)[method] callback

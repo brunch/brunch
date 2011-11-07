@@ -7,7 +7,7 @@ helpers = require "./helpers"
 
 
 exports.generateConfigPath = generateConfigPath = (appPath) ->
-  if appPath? then path.join appPath, "config.yaml" else "brunch/config.yaml"
+  if appPath? then path.join appPath, "config.yaml" else "./config.yaml"
 
 
 exports.loadConfig = loadConfig = (configPath) ->
@@ -66,12 +66,6 @@ config =
     build:
       help: "Build a brunch project"
       opts:
-        appPath:
-          position: 1
-          help: "application path"
-          metavar: "APP_PATH"
-          full: "app_path"
-          default: "."
         buildPath:
           abbr: "o"
           help: "build path"
@@ -87,12 +81,6 @@ config =
     watch:
       help: "Watch brunch directory and rebuild if something changed"
       opts:
-        appPath:
-          position: 1
-          help: "application path"
-          metavar: "APP_PATH"
-          full: "app_path"
-          default: "."
         buildPath:
           abbr: "o"
           help: "build path"
@@ -104,7 +92,29 @@ config =
           help: "minify the app.js output via UglifyJS"
       callback: (options) ->
         brunch.watch parseOpts options
-  
+
+    generate:
+      help: "Generate model, view or route for current project"
+      opts:
+        generator:
+          position: 1
+          help: "generator type"
+          metavar: "GENERATOR"
+          choices: ["collection", "model", "router", "style", "template", "view"]
+          required: yes
+        name:
+          position: 2
+          help: "generator class name / filename"
+          metavar: "NAME"
+          required: yes
+      callback: (options) ->
+        brunch.generate parseOpts options
+
+    test:
+      help: "Run tests for a brunch project"
+      callback: (options) ->
+        brunch.test parseOpts options
+
   globalOpts:
     version:
       abbr: "v"
