@@ -9,26 +9,22 @@ helpers = require "../helpers"
 
 
 class exports.StitchCompiler extends Compiler
-  constructor: (options) ->
-    super
-    @vendorPath = @getAppPath "src/vendor"
-
   patterns: ->
     [/\.coffee$/, /src\/.*\.js$/, new RegExp "#{@options.templateExtension}$"]
 
-  # Generate list of dependencies and preserve order of brunch libaries,
-  # like defined in options.dependencies.
-  collectDependencies: ->
-    filenames = helpers.filterFiles (fs.readdirSync @vendorPath), @vendorPath
-    args = @options.dependencies.slice()
-    args.unshift filenames
-    additionalLibaries = _.without.apply @, args
-    dependencies = @options.dependencies.concat additionalLibaries
-    dependencies.map (filename) => path.join @vendorPath, filename
+  collect: (type) ->
+    directory = @getAppPath "src/#{type}"
+    filenames = helpers.filterFiles (fs.readdirSync directory), directory
+    if type is "vendor"
+      # Generate list of dependencies and preserve order of brunch libaries,
+      # like defined in options.dependencies.
+      dependencies = @options.dependencies
+      filenames = dependencies.concat _.without(filenames, dependencies...)
+    filenames.map (filename) => path.join directory, filename
 
   package: ->
     @_package ?= stitch.createPackage
-      dependencies: @collectDependencies()
+      dependencies: @collect "vendor"
       paths: [@getAppPath "src/app/"]
 
   minify: (source) ->
@@ -40,7 +36,7 @@ class exports.StitchCompiler extends Compiler
   compile: (files, callback) ->
     # update package dependencies in case a dependency was added or removed
     if files.some((file) -> file.match /src\/vendor\//)
-      @package().dependencies = @collectDependencies()
+      @package().dependencies = @collect "vendor"
 
     @package().compile (error, source) =>
       return @logError error if error?

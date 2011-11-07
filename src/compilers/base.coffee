@@ -23,7 +23,7 @@ class exports.Compiler
   log: (text = "OK") ->
     helpers.log "#{@getFormattedClassName()} #{text}."
 
-  logError: (text) ->
+  logError: (text = "") ->
     helpers.logError "#{@getFormattedClassName()} error. #{text}"
 
   # These should be overwritten by every compiler subclass.
