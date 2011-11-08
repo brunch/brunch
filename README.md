@@ -55,7 +55,8 @@ cake test
 ```
 
 ## Contact
-Project twitter: [@brunch](http://twitter.com/brunch).
+Project twitter: [@brunch](http://twitter.com/brunch), google+ page:
+[Brunch](https://plus.google.com/103222632910810384455).
 Feel free to contact us at Freenode #brunch in the IRC client of your choice.
 
 
