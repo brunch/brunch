@@ -1,0 +1,4 @@
+dependencies:
+  - ConsoleDummy.js
+
+buildPath: 'public/app'

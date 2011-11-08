@@ -10,5 +10,5 @@ describe "helpers", ->
       ".to_be_ignored"
       "should_be_ignored"
       "#to_be_ignored#"
-    ], "test/fixtures/alternate_vendor"
+    ], "test/fixtures/alternate_base/src/vendor"
     expect(dependencyPaths).toEqual ["ConsoleDummy.js"]
