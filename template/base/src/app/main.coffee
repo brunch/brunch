@@ -1,17 +1,14 @@
-window.app = {}
-app.routers = {}
-app.models = {}
-app.collections = {}
-app.views = {}
+{BrunchApplication} = require "helpers"
 
-MainRouter = require('routers/main_router').MainRouter
-HomeView = require('views/home_view').HomeView
 
-# app bootstrapping on document ready
-$(document).ready ->
-  app.initialize = ->
-    app.routers.main = new MainRouter()
-    app.views.home = new HomeView()
-    app.routers.main.navigate 'home', true if Backbone.history.getFragment() is ''
-  app.initialize()
-  Backbone.history.start()
+class exports.Application extends BrunchApplication
+  # This callback would be executed on document ready event.
+  onReady: ->
+    @routers.main = new (require("routers/main_router").MainRouter)
+    @views.home = new (require("views/home_view").HomeView)
+    # http://documentcloud.github.com/backbone/#Router-navigate
+    if Backbone.history.getFragment() is ""
+      Backbone.history.navigate("home", yes)
+
+
+window.app = new exports.Application
