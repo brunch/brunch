@@ -23,6 +23,7 @@ exports.Brunch = class Brunch
     styles: "css"
     tests: "jasmine"
     templateExtension: "eco"  # Temporary.
+    teamcity: no
 
   constructor: (options) ->
     helpers.extend @defaultConfig, options

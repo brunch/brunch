@@ -83,41 +83,36 @@ TerminalReporter.prototype = {
       this.log_.push('Spec ' + description);
 
     if (this.teamcity_)
-      this.log_.push("##teamcity[testSuiteStarted name='" + escapeTeamcityString(description) + "]");
+      this.log_.push("##teamcity[testSuiteStarted name='" + escapeTeamcityString(description) + "']");
 
     outerThis = this;
     specResults.items_.forEach(function(spec){
-      if (spec.failedCount > 0 && spec.description) {
-        if (!outerThis.isVerbose_ && !outerThis.teamcity_)
-          outerThis.log_.push(description);
+      if (!outerThis.isVerbose_ && !outerThis.teamcity_)
+        outerThis.log_.push(description);
 
-        if (outerThis.teamcity_) {
-          outerThis.log_.push("##teamcity[testStarted name='" +  escapeTeamcityString(spec.description) + "' captureStandardOutput='true']");
-        } else {
-          outerThis.log_.push('  it ' + spec.description);
-        }
-
-        spec.items_.forEach(function(result){
-          if (!result.passed_) {
-            if(outerThis.teamcity_) {
-              outerThis.log_.push("##teamcity[testFailed name='" +  escapeTeamcityString(spec.description) + "' message='[FAILED]' details='" + escapeTeamcityString(outerThis.stackFilter(outerThis.stackFilter(result.trace.stack))) + "']");
-            } else {
-              outerThis.log_.push('  ' +  outerThis.stackFilter(result.trace.stack) + '\n');
-            }
-          }
-        });
-
-        if (outerThis.teamcity_)
-          outerThis.log_.push("##teamcity[testFinished name='" +  escapeTeamcityString(spec.description) + "']");
-
+      if (outerThis.teamcity_) {
+        outerThis.log_.push("##teamcity[testStarted name='" +  escapeTeamcityString(spec.description) + "' captureStandardOutput='true']");
       } else {
-        if (outerThis.isVerbose_ && !outerThis.teamcity_)
-          outerThis.log_.push('  it ' + spec.description);
+        outerThis.log_.push('  it ' + spec.description);
       }
+
+      spec.items_.forEach(function(result){
+        if (!result.passed_) {
+          if(outerThis.teamcity_) {
+            outerThis.log_.push("##teamcity[testFailed name='" +  escapeTeamcityString(spec.description) + "' message='[FAILED]' details='" + escapeTeamcityString(outerThis.stackFilter(outerThis.stackFilter(result.trace.stack))) + "']");
+          } else {
+            outerThis.log_.push('  ' +  outerThis.stackFilter(result.trace.stack) + '\n');
+          }
+        }
+      });
+
+      if (outerThis.teamcity_)
+        outerThis.log_.push("##teamcity[testFinished name='" +  escapeTeamcityString(spec.description) + "']");
+
     });
 
     if (this.teamcity_)
-      this.log_.push("##teamcity[testSuiteFinished name='" +  escapeTeamcityString(description) + "]");
+      this.log_.push("##teamcity[testSuiteFinished name='" +  escapeTeamcityString(description) + "']");
   },
 
   reportSpecResults: function(spec) {
