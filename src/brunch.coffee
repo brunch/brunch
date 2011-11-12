@@ -63,7 +63,7 @@ exports.Brunch = class Brunch
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="stylesheet" href="#{cssPath}" type="text/css" media="screen">
     <script src="#{jsPath}"></script>
-    <script>require("main");</script>
+    <script>require("initialize");</script>
   </head>
   <body>
   </body>
