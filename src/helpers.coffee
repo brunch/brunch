@@ -9,8 +9,7 @@ _ = require 'underscore'
 
 
 exports.extend = extend = (object, properties) ->
-  for key, val of properties
-    object[key] = val
+  object[key] = val for own key, val of properties
   object
 
 
