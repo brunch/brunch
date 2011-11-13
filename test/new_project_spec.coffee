@@ -1,41 +1,41 @@
-fs = require "fs"
+fs = require 'fs'
 
-brunch  = require "../src/brunch"
+brunch  = require '../src/brunch'
 
 
-describe "new project", ->
-  describe "default", ->
+describe 'new project', ->
+  describe 'default', ->
     beforeEach ->
       created = no
       brunch.new
-        appPath: "brunch"
-        buildPath: "brunch/build"
+        appPath: 'brunch'
+        buildPath: 'brunch/build'
       , -> created = yes
       waitsFor (-> created), 400
 
     afterEach ->
       removed = no
-      removeDirectory "brunch", -> removed = yes
-      waitsFor (-> removed), "Cannot remove directory", 200
+      removeDirectory 'brunch', -> removed = yes
+      waitsFor (-> removed), 'Cannot remove directory', 200
     
-    it "should be created", ->
-      #expect(typeof fs.statSync "brunch").toEqual "object"
-      #expect(typeof fs.statSync "brunch/build").toEqual "object"
+    it 'should be created', ->
+      #expect(typeof fs.statSync 'brunch').toEqual 'object'
+      #expect(typeof fs.statSync 'brunch/build').toEqual 'object'
 
-  describe "with nested directories", ->
+  describe 'with nested directories', ->
     beforeEach ->
       created = no
       brunch.new
-        appPath: "js/client"
-        buildPath: "js/output"
+        appPath: 'js/client'
+        buildPath: 'js/output'
       , -> created = yes
       waitsFor (-> created), 400
 
     afterEach ->
       removed = no
-      removeDirectory "js", -> removed = yes
-      waitsFor (-> removed), "Cannot remove directory", 200
+      removeDirectory 'js', -> removed = yes
+      waitsFor (-> removed), 'Cannot remove directory', 200
     
-    it "should be created", ->
-      expect(typeof fs.statSync "js/client/src").toEqual "object"
-      expect(typeof fs.statSync "js/output").toEqual "object"
+    it 'should be created', ->
+      expect(typeof fs.statSync 'js/client/src').toEqual 'object'
+      expect(typeof fs.statSync 'js/output').toEqual 'object'

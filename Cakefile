@@ -1,18 +1,18 @@
-fs = require "fs"
-path = require "path"
-{spawn, exec} = require "child_process"
+fs = require 'fs'
+path = require 'path'
+{spawn, exec} = require 'child_process'
 
 
 stdout = process.stdout
 
 # Use executables installed with npm bundle.
-process.env["PATH"] = "node_modules/.bin:#{process.env["PATH"]}"
+process.env['PATH'] = "node_modules/.bin:#{process.env['PATH']}"
 
 # ANSI Terminal Colors.
-bold  = "\033[0;1m"
-red   = "\033[0;31m"
-green = "\033[0;32m"
-reset = "\033[0m"
+bold  = '\033[0;1m'
+red   = '\033[0;31m'
+green = '\033[0;32m'
+reset = '\033[0m'
 
 # Log a message with a color.
 log = (message, color, explanation) ->
@@ -29,24 +29,24 @@ onExec = (error, stdout, stderr) ->
 
 ## Setup ##
 
-task "setup", "Install development dependencies", ->
-  log "Installing dependencies into node_modules ...", green
-  exec "npm install", onExec
+task 'setup', 'Install development dependencies', ->
+  log 'Installing dependencies into node_modules ...', green
+  exec 'npm install', onExec
 
-task "link", "Link local brunch as your global npm module", ->
-  log "Installing Brunch ...", green
-  exec "npm link", onExec
+task 'link', 'Link local brunch as your global npm module', ->
+  log 'Installing Brunch ...', green
+  exec 'npm link', onExec
 
 ## Testing ##
 
-task "test", "Run test (spec) suite", ->
-  sys = require "sys"
-  {loadHelpersInFolder, executeSpecsInFolder} = require "jasmine-node"
+task 'test', 'Run test (spec) suite', ->
+  sys = require 'sys'
+  {loadHelpersInFolder, executeSpecsInFolder} = require 'jasmine-node'
 
   re =
     helper: /[-_]helper\.coffee$/
     spec: /spec\.coffee$/i
-  specFolder = path.join __dirname, "test"
+  specFolder = path.join __dirname, 'test'
   callback = (runner, log) -> process.kill 0
 
   loadHelpersInFolder specFolder, re.helper
@@ -56,18 +56,18 @@ task "test", "Run test (spec) suite", ->
 
 ## Publishing ##
 
-task "publish", "Publish new version to Git (push and add tag) and NPM", ->
-  exec "git push origin master", (error, stdout, stderr) ->
+task 'publish', 'Publish new version to Git (push and add tag) and NPM', ->
+  exec 'git push origin master', (error, stdout, stderr) ->
     onExec error, stdout, stderr
-    fs.readFile "package.json", "utf8", (err, package) ->
+    fs.readFile 'package.json', (err, package) ->
       package = JSON.parse(package)
 
-      log "Publishing to NPM ...", green
-      exec "npm publish", (error, stdout, stderr) ->
+      log 'Publishing to NPM ...', green
+      exec 'npm publish', (error, stdout, stderr) ->
         onExec error, stdout, stderr
 
         # Create a tag for this version and push changes to Github.
         log "Tagging version #{package.version} ...", green
         exec "git tag #{package.version}", (error, stdout, stderr) ->
           onExec error, stdout, stderr
-          exec "git push --tags origin master", onExec
+          exec 'git push --tags origin master', onExec

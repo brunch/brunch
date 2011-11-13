@@ -1,11 +1,11 @@
-fs = require "fs"
-path = require "path"
-stitch = require "stitch"
-uglify = require "uglify-js"
-_ = require "underscore"
+fs = require 'fs'
+path = require 'path'
+stitch = require 'stitch'
+uglify = require 'uglify-js'
+_ = require 'underscore'
 
-helpers = require "../helpers"
-{Compiler} = require "./base"
+helpers = require '../helpers'
+{Compiler} = require './base'
 
 
 class exports.StitchCompiler extends Compiler
@@ -15,7 +15,7 @@ class exports.StitchCompiler extends Compiler
   collect: (type) ->
     directory = @getAppPath "src/#{type}"
     filenames = helpers.filterFiles (fs.readdirSync directory), directory
-    if type is "vendor"
+    if type is 'vendor'
       # Generate list of dependencies and preserve order of brunch libaries,
       # like defined in options.dependencies.
       dependencies = @options.dependencies
@@ -24,25 +24,25 @@ class exports.StitchCompiler extends Compiler
 
   package: ->
     @_package ?= stitch.createPackage
-      dependencies: @collect "vendor"
-      paths: [@getAppPath "src/app/"]
+      dependencies: @collect 'vendor'
+      paths: [@getAppPath 'src/app/']
 
   minify: (source) ->
     {parse} = uglify.parser
     {ast_mangle, ast_squeeze, gen_code} = uglify.uglify
-    @log "minified"
+    @log 'minified'
     gen_code ast_squeeze ast_mangle parse source
 
   compile: (files, callback) ->
     # update package dependencies in case a dependency was added or removed
     if files.some((file) -> file.match /src\/vendor\//)
-      @package().dependencies = @collect "vendor"
+      @package().dependencies = @collect 'vendor'
 
     @package().compile (error, source) =>
       return @logError error if error?
-      @log "compiled"
+      @log 'compiled'
       source = @minify source if @options.minify
-      outPath = @getBuildPath "web/js/app.js"
+      outPath = @getBuildPath 'web/js/app.js'
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
         callback @getClassName()

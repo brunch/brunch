@@ -1,9 +1,9 @@
 #!/usr/bin/env coffee
 
-path = require "path"
-fs = require "fs"
+path = require 'path'
+fs = require 'fs'
 
-src = path.join path.dirname(fs.realpathSync(__filename)), "../src"
+src = path.join path.dirname(fs.realpathSync(__filename)), '../src'
 
 
-(require src + "/command").run()
+(require src + '/command').run()

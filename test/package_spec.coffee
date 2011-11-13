@@ -1,6 +1,6 @@
-package = require "../src/package"
+package = require '../src/package'
 
 
-describe "brunch", ->
-  it "version number should be a string", ->
-    expect(typeof package.version).toEqual "string"
+describe 'brunch', ->
+  it 'version number should be a string', ->
+    expect(typeof package.version).toEqual 'string'

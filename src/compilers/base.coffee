@@ -1,6 +1,6 @@
-path = require "path"
+path = require 'path'
 
-helpers = require "../helpers"
+helpers = require '../helpers'
 
 
 class exports.Compiler
@@ -17,13 +17,13 @@ class exports.Compiler
     @constructor.name
 
   getFormattedClassName: ->
-    name = @getClassName().replace "Compiler", ""
+    name = @getClassName().replace 'Compiler', ''
     "[#{name}]:"
 
-  log: (text = "OK") ->
+  log: (text = 'OK') ->
     helpers.log "#{@getFormattedClassName()} #{text}."
 
-  logError: (text = "") ->
+  logError: (text = '') ->
     helpers.logError "#{@getFormattedClassName()} error. #{text}"
 
   # These should be overwritten by every compiler subclass.

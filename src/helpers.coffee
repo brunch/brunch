@@ -1,11 +1,11 @@
-fs = require "fs"
-path = require "path"
-{exec, spawn} = require "child_process"
-{EventEmitter} = require "events"
-async = require "async"
-fileUtil = require "file"
-sys = require "sys"
-_ = require "underscore"
+fs  = require 'fs'
+path = require 'path'
+fileUtil = require 'file'
+sys = require 'sys'
+{exec, spawn} = require 'child_process'
+{EventEmitter} = require 'events'
+async = require 'async'
+_ = require 'underscore'
 
 
 exports.extend = extend = (object, properties) ->
@@ -68,7 +68,7 @@ class exports.Watcher extends EventEmitter
   invalid: /^(\.|#)/
 
   constructor: ->
-    #console.log "Created"
+    #console.log 'Created'
     @watched = {}
 
   _getWatchedDir: (directory) ->
@@ -79,14 +79,14 @@ class exports.Watcher extends EventEmitter
     basename = path.basename item
     # Prevent memory leaks.
     return if basename in parent
-    #console.log "Watching", item
+    #console.log 'Watching', item
     parent.push basename
     fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
       callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
 
   _handleFile: (file) ->
     emit = (file) =>
-      @emit "change", file
+      @emit 'change', file
     emit file
     @_watch file, emit
 
@@ -97,8 +97,8 @@ class exports.Watcher extends EventEmitter
         return unless current
         previous = @_getWatchedDir directory
         for file in previous when file not in current
-          console.log "Deleting file", (path.join directory, file)
-          @emit "delete", file
+          console.log 'Deleting file', (path.join directory, file)
+          @emit 'delete', file
         for file in current when file not in previous
           @_handle (path.join directory, file)
     read directory
@@ -115,23 +115,23 @@ class exports.Watcher extends EventEmitter
 
   add: (file) ->
     @_handle file
-    @
+    this
 
   onChange: (callback) ->
-    @on "change", callback
-    @
+    @on 'change', callback
+    this
 
   onDelete: (callback) ->
-    @on "delete", callback
-    @
+    @on 'delete', callback
+    this
 
   clear: ->
-    @removeAllListeners "change"
+    @removeAllListeners 'change'
     for directory, files of @watched
       for file in files
         fs.unwatchFile path.join directory, file
     @watched = {}
-    @
+    this
 
 
 # Filter out dotfiles, emacs swap files and directories.
@@ -170,10 +170,10 @@ pad = (number) ->
   if num.length < 2 then "0#{num}" else num
 
 
-formatDate = (color = "none") ->
+formatDate = (color = 'none') ->
   date = new Date
-  timeArr = (pad date["get" + item]() for item in ["Hours", "Minutes", "Seconds"])
-  time = timeArr.join ":"
+  timeArr = (pad date['get' + item]() for item in ['Hours', 'Minutes', 'Seconds'])
+  time = timeArr.join ':'
   colorize "[#{time}]:", color
 
 
@@ -182,11 +182,11 @@ exports.capitalize = capitalize = (string) ->
 
 
 exports.formatClassName = (filename) ->
-  filename.split("_").map(capitalize).join("")
+  filename.split('_').map(capitalize).join('')
 
 
 exports.isTesting = ->
-  "jasmine" of global
+  'jasmine' of global
 
 
 
@@ -196,10 +196,10 @@ exports.notify = (title, text) -> null
 # Map of possible system notifiers in format
 # Key - "name of system command that would be executed".
 # Value - args, with which the command would be spawned.
-# E.g. spawn growlnotify, [title, "-m", text]
+# E.g. spawn growlnotify, [title, '-m', text]
 exports.notifiers = notifiers =
-  growlnotify: (title, text) -> [title, "-m", text]
-  "notify-send": (title, text) -> [title, text]
+  growlnotify: (title, text) -> [title, '-m', text]
+  'notify-send': (title, text) -> [title, text]
 
 
 # Try to determine right system notifier.
@@ -209,22 +209,22 @@ for name, transform of notifiers
       exports.notify = ((args...) -> spawn name, transform args...) unless error?
 
 
-exports.log = (text, color = "green", isError = no) ->
+exports.log = (text, color = 'green', isError = no) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
   output = "#{formatDate(color)} #{text}\n"
-  stream.write output, "utf8" unless exports.isTesting()
-  exports.notify "Brunch error", text if isError
+  stream.write output, 'utf8' unless exports.isTesting()
+  exports.notify 'Brunch error', text if isError
 
 
-exports.logError = (text) -> exports.log text, "red", yes
+exports.logError = (text) -> exports.log text, 'red', yes
 
 
-exports.logDebug = (args...) -> console.log formatDate("green"), args...
+exports.logDebug = (args...) -> console.log formatDate('green'), args...
 
 
 exports.exit = ->
   if exports.isTesting()
-    exports.logError "Terminated process"
+    exports.logError 'Terminated process'
   else
     process.exit 0

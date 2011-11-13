@@ -1,6 +1,6 @@
-fs = require "fs"
+fs = require 'fs'
+path = require 'path'
 
 
-# extract package information
-package = JSON.parse fs.readFileSync __dirname + "/../package.json"
+package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
 exports.version = package.version
