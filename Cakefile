@@ -27,6 +27,9 @@ onExec = (error, stdout, stderr) ->
     process.stdout.write "#{red}#{error.stack}#{reset}\n"
     process.exit -1
 
+writeData = (data) ->
+  process.stdout.write data.toString()
+
 ## Setup ##
 
 task 'setup', 'Install development dependencies', ->
@@ -40,18 +43,9 @@ task 'link', 'Link local brunch as your global npm module', ->
 ## Testing ##
 
 task 'test', 'Run test (spec) suite', ->
-  sys = require 'sys'
-  {loadHelpersInFolder, executeSpecsInFolder} = require 'jasmine-node'
-
-  re =
-    helper: /[-_]helper\.coffee$/
-    spec: /spec\.coffee$/i
-  specFolder = path.join __dirname, 'test'
-  callback = (runner, log) -> process.kill 0
-
-  loadHelpersInFolder specFolder, re.helper
-  # Magic.
-  executeSpecsInFolder specFolder, callback, no, yes, no, re.spec, {}
+  tester = spawn './node_modules/jasmine-node/bin/jasmine-node', ['--coffee', 'test']
+  tester.stdout.on 'data', writeData
+  tester.on 'exit', process.exit
 
 
 ## Publishing ##

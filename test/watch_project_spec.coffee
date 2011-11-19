@@ -15,7 +15,7 @@ brunch  = require '../src/brunch'
 # add test for base template as well (obstacle: zombie currently doesn't support file://)
 describe 'project watcher', ->
   options = {}
-  expressProcess = {}
+  expressProcess = null
   application = null
 
   beforeEach ->
@@ -45,7 +45,7 @@ describe 'project watcher', ->
     removed = no
     application.stopWatching()
     application = null
-    expressProcess.kill 'SIGHUP' unless expressProcess is {}
+    expressProcess?.kill? 'SIGHUP'
     removeDirectory 'brunch', -> removed = yes
     waitsFor (-> removed), 'Cannot remove', 200
 
