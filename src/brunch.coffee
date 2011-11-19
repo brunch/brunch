@@ -35,10 +35,6 @@ exports.Brunch = class Brunch
   _makeCallback: (fn) ->
     => fn? this
 
-  _createDirectories: (buildPath, directories...) ->
-    for dirPath in directories
-      fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
-
   # Creates an example index.html for brunch with the correct relative
   # path to the build directory.
   _createExampleIndex: (filePath, buildPath) ->
@@ -98,13 +94,13 @@ exports.Brunch = class Brunch
 
   build: (callback) ->
     callback = @_makeCallback callback
-    @_createDirectories @options.buildPath, 'web/css', 'web/js'
+    helpers.createBuildDirectories @options.buildPath, 'web/css', 'web/js'
     @_compile @compilers, callback
     this
 
   watch: (callback) ->
     callback = @_makeCallback callback
-    @_createDirectories @options.buildPath, 'web/css', 'web/js'
+    helpers.createBuildDirectories @options.buildPath, 'web/css', 'web/js'
     sourcePath = path.join @options.appPath, 'src'
     timer = null
 

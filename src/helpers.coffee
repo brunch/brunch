@@ -46,6 +46,9 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
             next()
     , callback
 
+exports.createBuildDirectories = (buildPath, directories...) ->
+  for dirPath in directories
+    fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
 
 # recursive copy file tree from source to destination and fires
 # callback with error and a list of created files
