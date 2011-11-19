@@ -20,21 +20,20 @@
     "test": "node_modules/coffee-script/bin/cake test"
   },
   "dependencies": {
-    "coffee-script": ">= 1.1.1",
-    "underscore":    ">= 1.1.7",
-    "eco":           ">= 1.0.3",
+    "coffee-script": "1.1.1",
+    "underscore":    "1.1.7",
+    "eco":           "1.0.3",
     "nomnom":        "1.0.0",
-    "stylus":        ">= 0.13.7",
-    "async":         ">= 0.1.9",
-    "yaml":          ">= 0.2.1",
-    "file":          ">= 0.1.1",
-    "stitch":        ">= 0.3.2",
-    "uglify-js":     ">= 1.0.6",
-    "jsdom":         ">= 0.2.5"
+    "stylus":        "0.13.7",
+    "async":         "0.1.9",
+    "yaml":          "0.2.1",
+    "file":          "0.1.1",
+    "stitch":        "0.3.2",
+    "uglify-js":     "1.0.6",
+    "jsdom":         "0.2.5"
   },
   "devDependencies": {
-    "coffee-script": ">= 1.1.1",
-    "express":       ">= 2.4.3",
+    "express":       "2.4.3",
     "jasmine-node":  "1.0.13",
     "zombie":        "0.9.7"
   },
