@@ -12,9 +12,14 @@ exports.generateConfigPath = generateConfigPath = (appPath) ->
 
 exports.loadConfig = loadConfig = (configPath) ->
   try
-    options = yaml.eval fs.readFileSync configPath, 'utf8'
+    config = (fs.readFileSync configPath).toString()
   catch error
     helpers.logError '[Brunch]: couldn\'t find config.yaml file'
+    helpers.exit()
+  try
+    options = yaml.eval config
+  catch error
+    helpers.logError "[Brunch]: couldn't load config.yaml file. #{error}"
     helpers.exit()
   options
 
@@ -129,8 +134,7 @@ config =
   scriptName: 'brunch'
 
   help: (parser) ->
-    str = ''
-    str += 'commands:\n'
+    str = 'commands:\n'
     {commands, script} = parser.usage()
     for name, command of commands
       str += "   #{script} #{command.name}: #{command.help}\n"
