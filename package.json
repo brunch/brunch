@@ -21,21 +21,21 @@
   },
   "dependencies": {
     "coffee-script": "1.1.1",
-    "underscore":    "1.1.7",
+    "underscore":    "1.2.2",
     "eco":           "1.0.3",
     "nomnom":        "1.0.0",
-    "stylus":        "0.13.7",
-    "async":         "0.1.9",
-    "yaml":          "0.2.1",
+    "stylus":        "0.19.3",
+    "async":         "0.1.15",
+    "yaml":          "0.2.2",
     "file":          "0.1.1",
     "stitch":        "0.3.2",
-    "uglify-js":     "1.0.6",
-    "jsdom":         "0.2.5"
+    "uglify-js":     "1.1.1",
+    "jsdom":         "0.2.9"
   },
   "devDependencies": {
-    "express":       "2.4.3",
+    "express":       "2.5.1",
     "jasmine-node":  "1.0.13",
-    "zombie":        "0.9.7"
+    "zombie":        "0.10.3"
   },
   "repository": {
     "type": "git",
