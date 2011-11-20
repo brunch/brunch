@@ -33,6 +33,8 @@ describe 'project watcher', ->
         'backbone-0.5.3.js'
       ]
       application.watch ->
+        return if expressProcess?
+        console.log 'Spawning process'
         expressProcess = spawn 'coffee', [
           path.join(__dirname, 'server', 'server.coffee'),
           '8080',
@@ -46,6 +48,7 @@ describe 'project watcher', ->
     application.stopWatching()
     application = null
     expressProcess?.kill? 'SIGHUP'
+    expressProcess = null
     removeDirectory 'brunch', -> removed = yes
     waitsFor (-> removed), 'Cannot remove', 200
 
