@@ -35,7 +35,7 @@ Instead of reinventing the wheel, brunch assembles awesome wheels.
 * [Eco](https://github.com/sstephenson/eco)
 * [Jasmine](http://pivotal.github.com/jasmine/)
 
-## Contributing
+## Contributing ![build status](https://secure.travis-ci.org/brunch/brunch.png?branch=master)
 Install dependencies to `node_modules` directory
 
 ```bash
