@@ -34,7 +34,6 @@ describe 'project watcher', ->
       ]
       application.watch ->
         return if expressProcess?
-        console.log 'Spawning process'
         expressProcess = spawn 'coffee', [
           path.join(__dirname, 'server', 'server.coffee'),
           '8080',
