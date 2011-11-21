@@ -1,4 +1,4 @@
-sys = require 'sys'
+util = require 'util'
 fs = require 'fs'
 path = require 'path'
 coffee = require 'coffee-script'
@@ -39,7 +39,7 @@ exports.run = (options, callback) ->
       helpers.logError error if error?
       # If we're testing brunch itself, we don't need to view the output.
       # TODO: move this to TerminalReporter.
-      stream = if global.jasmine then (->) else sys.print
+      stream = if global.jasmine then (->) else util.print
 
       jasmineEnv = window.jasmine.getEnv()
       jasmineEnv.reporter = new TerminalReporter
