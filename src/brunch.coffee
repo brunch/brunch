@@ -94,13 +94,13 @@ exports.Brunch = class Brunch
 
   build: (callback) ->
     callback = @_makeCallback callback
-    helpers.createBuildDirectories @options.buildPath, 'web/css', 'web/js'
+    helpers.createBuildDirectories @options.buildPath, ['web/css', 'web/js']
     @_compile @compilers, callback
     this
 
   watch: (callback) ->
     callback = @_makeCallback callback
-    helpers.createBuildDirectories @options.buildPath, 'web/css', 'web/js'
+    helpers.createBuildDirectories @options.buildPath, ['web/css', 'web/js']
     sourcePath = path.join @options.appPath, 'src'
     timer = null
 
