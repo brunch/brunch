@@ -8,12 +8,6 @@ helpers = require './helpers'
 {TerminalReporter} = require '../vendor/reporter'
 
 
-# TODO: find a better way to do this.
-# https://github.com/brunch/brunch/pull/111#issuecomment-2244266
-TEMP = '/tmp/brunchtest'
-SPECFILE = path.join TEMP, 'specs.js'
-
-
 exports.run = (options, callback) ->
   brunchdir = path.resolve options.appPath
   testdir = path.join brunchdir, 'test'
@@ -32,36 +26,27 @@ exports.run = (options, callback) ->
         getSpecFiles filepath
 
   getSpecFiles testdir
-  # Remove temporary folder if it already exists
-  try
-    if fs.statSync('/tmp/brunchtest').isDirectory()
-      for f in fs.readdirSync TEMP
-        fs.unlinkSync path.join TEMP, f
-      fs.rmdirSync TEMP
 
-  fs.mkdir TEMP, 0755, ->
-    # Write specs to temporary folder.
-    fs.writeFileSync SPECFILE, specs.join '\n'
-    # Run specs in fake browser.
-    jsdom.env
-      html: path.join brunchdir, 'index.html'
-      scripts: [
-        path.resolve options.buildPath, 'web/js/app.js'
-        path.resolve __dirname, '../vendor/jasmine.js'
-        SPECFILE
-      ]
-      done: (error, window) ->
-        helpers.logError error if error?
-        # If we're testing brunch itself, we don't need to view the output.
-        # TODO: move this to TerminalReporter.
-        stream = if global.jasmine then (->) else sys.print
+  # Run specs in fake browser.
+  jsdom.env
+    html: path.join brunchdir, 'index.html'
+    scripts: [
+      path.resolve options.buildPath, 'web/js/app.js'
+      path.resolve __dirname, '../vendor/jasmine.js'
+    ]
+    src: specs
+    done: (error, window) ->
+      helpers.logError error if error?
+      # If we're testing brunch itself, we don't need to view the output.
+      # TODO: move this to TerminalReporter.
+      stream = if global.jasmine then (->) else sys.print
 
-        jasmineEnv = window.jasmine.getEnv()
-        jasmineEnv.reporter = new TerminalReporter
-          print: stream
-          verbose: options.verbose
-          color: yes
-          onComplete: null
-          stackFilter: null
-        jasmineEnv.execute()
-        callback?()
+      jasmineEnv = window.jasmine.getEnv()
+      jasmineEnv.reporter = new TerminalReporter
+        print: stream
+        verbose: options.verbose
+        color: yes
+        onComplete: null
+        stackFilter: null
+      jasmineEnv.execute()
+      callback?()
