@@ -46,7 +46,7 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
             next()
     , callback
 
-exports.createBuildDirectories = (buildPath, directories) ->
+exports.createBuildDirectories = (buildPath, directories = ['web/css', 'web/js']) ->
   for dirPath in directories
     fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
 
