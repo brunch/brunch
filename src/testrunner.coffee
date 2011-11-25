@@ -7,26 +7,28 @@ jsdom = require 'jsdom'
 helpers = require './helpers'
 {TerminalReporter} = require '../vendor/reporter'
 
+compileSpecFile = (filepath) ->
+  extension = path.extname filepath
+  content = fs.readFileSync filepath, 'utf-8'
+  if extension is '.coffee'
+    coffee.compile content
+  else
+    content
+
+getSpecFiles = (specs, file) ->
+  filepath = path.join dir, file
+  if fs.statSync(filepath).isDirectory()
+    fs.readdirSync(filepath).reduce getSpecFiles, specs
+  else
+    specs.push compileSpecFile filepath
+  specs
 
 exports.run = (options, callback) ->
   brunchdir = path.resolve options.appPath
   testdir = path.join brunchdir, 'test'
-  specs = []
   helpers.log "Running tests in #{testdir}"
   # Compiles specs in `dir` and appends the result to `specs`.
-  getSpecFiles = (dir) ->
-    for f in fs.readdirSync dir
-      filepath = path.join dir, f
-      ext = path.extname filepath
-      if ext in ['.coffee', '.js']
-        spec = fs.readFileSync filepath, 'utf-8'
-        spec = coffee.compile spec if ext is '.coffee'
-        specs.push spec
-      else if fs.statSync(filepath).isDirectory()
-        getSpecFiles filepath
-
-  getSpecFiles testdir
-
+  specs = fs.readdirSync(testdir).reduce getSpecFiles, []
   # Run specs in fake browser.
   jsdom.env
     html: path.join brunchdir, 'index.html'
