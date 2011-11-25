@@ -12,7 +12,7 @@ compileSpecFile = (filepath) ->
   content = fs.readFileSync filepath, 'utf-8'
   if extension is '.coffee'
     coffee.compile content
-  else
+  else if extension is '.js'
     content
 
 getSpecFiles = (specs, file) ->
