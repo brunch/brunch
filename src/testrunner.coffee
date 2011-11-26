@@ -15,14 +15,6 @@ compileSpecFile = (filePath) ->
   else if extension is '.js'
     content
 
-let directorySpecs directory specs file =
-  let filePath = path.join directory file
-  if fs.statSync(filePath).isDirectory()
-    fs.readdirSync(filePath).reduce getDirectorySpecs(filePath), specs
-  else
-    specs.push compileSpecFile filePath
-  specs
-
 getDirectorySpecs = (directory) -> (specs, file) ->
   filePath = path.join directory, file
   if fs.statSync(filePath).isDirectory()
