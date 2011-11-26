@@ -25,7 +25,6 @@ let directorySpecs directory specs file =
 
 getDirectorySpecs = (directory) -> (specs, file) ->
   filePath = path.join directory, file
-  console.log 'Got directory spec', filePath
   if fs.statSync(filePath).isDirectory()
     fs.readdirSync(filePath).reduce getDirectorySpecs(filePath), specs
   else
