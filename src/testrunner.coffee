@@ -9,18 +9,20 @@ helpers = require './helpers'
 
 compileSpecFile = (filePath) ->
   extension = path.extname filePath
-  content = fs.readFileSync filePath, 'utf-8'
+  return unless extension in ['.coffee', '.js']
+  source = fs.readFileSync filePath, 'utf-8'
   if extension is '.coffee'
-    coffee.compile content
+    coffee.compile source
   else if extension is '.js'
-    content
+    source
 
 getDirectorySpecs = (directory) -> (specs, file) ->
   filePath = path.join directory, file
   if fs.statSync(filePath).isDirectory()
     fs.readdirSync(filePath).reduce getDirectorySpecs(filePath), specs
   else
-    specs.push compileSpecFile filePath
+    spec = compileSpecFile filePath
+    specs.push spec if spec?
   specs
 
 getSpecFiles = (testPath) ->
@@ -30,7 +32,6 @@ exports.run = (options, callback) ->
   brunchPath = path.resolve options.appPath
   testPath = path.join brunchPath, 'test'
   helpers.log "Running tests in #{testPath}"
-  # Compiles specs in `dir` and appends the result to `specs`.
   specs = getSpecFiles testPath
   # Run specs in fake browser.
   jsdom.env
