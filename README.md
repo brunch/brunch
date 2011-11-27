@@ -20,20 +20,17 @@ Then you can start the file watcher. It will compile your .coffee, .styl and
  
 Open `brunch/index.html` and see you first running brunch application.
 
-## Documentation
-For more information check out [brunch.io](http://brunch.io).
-
 ## Standing on the Shoulders of Giants
 Instead of reinventing the wheel, brunch assembles awesome wheels.
 
-* [CoffeeScript](http://jashkenas.github.com/coffee-script/)
-* [Stitch](https://github.com/sstephenson/stitch)
-* [Backbone](http://documentcloud.github.com/backbone/)
-* [Underscore](http://documentcloud.github.com/underscore/)
-* [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
-* [Stylus](https://github.com/LearnBoost/stylus)
-* [Eco](https://github.com/sstephenson/eco)
-* [Jasmine](http://pivotal.github.com/jasmine/)
+- [CoffeeScript](http://jashkenas.github.com/coffee-script/)
+- [Stitch](https://github.com/sstephenson/stitch)
+- [Backbone](http://documentcloud.github.com/backbone/)
+- [Underscore](http://documentcloud.github.com/underscore/)
+- [jQuery](http://jquery.com/) or [Zepto](http://zeptojs.com/)
+- [Stylus](https://github.com/LearnBoost/stylus)
+- [Eco](https://github.com/sstephenson/eco)
+- [Jasmine](http://pivotal.github.com/jasmine/)
 
 ## Contributing ![build status](https://secure.travis-ci.org/brunch/brunch.png?branch=master)
 Install dependencies to `node_modules` directory
@@ -55,10 +52,10 @@ cake test
 ```
 
 ## Contact
-Project twitter: [@brunch](http://twitter.com/brunch), google+ page:
-[Brunch](https://plus.google.com/103222632910810384455).
-Feel free to contact us at Freenode #brunch in the IRC client of your choice.
-
+- Website: [brunch.io](http://brunch.io).
+- Project twitter: [@brunch](http://twitter.com/brunch)
+- Google+ page: [Brunch](https://plus.google.com/103222632910810384455).
+- IRC: #brunch @ Freenode
 
 ## License
 Brunch is released under the MIT License (see LICENSE for details).
