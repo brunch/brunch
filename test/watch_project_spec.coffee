@@ -61,7 +61,7 @@ describe 'project watcher', ->
     waitsFor (-> visited), 'Cannot visit the localhost', 2000
     runs -> expect(result).toEqual '<h1>brunch</h1>'
   
-  describe 'should update package dependencies', ->
+  describe 'should update app.js', ->
     it 'when file has been added', ->
       fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
       app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
@@ -72,7 +72,16 @@ describe 'project watcher', ->
       fs.unlinkSync 'brunch/src/vendor/anotherLib.js'
       app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
       waitsFor (-> !!app), '', 400
-      runs -> expect(app).not.toMatch /\/\/anotherLib/
+      runs ->
+        expect(app).not.toMatch /\/\/anotherLib/
+
+    it 'when template has been changed', ->
+      text = 'some_random_text10'
+      fs.writeFileSync 'brunch/src/app/templates/home.eco', text, 'utf8'
+      waits 200
+      runs ->
+        app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
+        expect(app).toMatch ///#{text}///
 
   it 'should work properly when minified', ->
     application.options.minify = yes
