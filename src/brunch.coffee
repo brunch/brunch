@@ -21,7 +21,7 @@ exports.Brunch = class Brunch
     templateExtension: 'eco'  # Temporary.
 
   constructor: (options) ->
-    helpers.extend @defaultConfig, options
+    options = helpers.extend @defaultConfig, options
     options.buildPath ?= path.join options.appPath, 'build/'
     # Nomnom arg parser creates properties in options for internal use
     # We don't need them.
