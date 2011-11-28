@@ -35,34 +35,6 @@ exports.Brunch = class Brunch
   _makeCallback: (fn) ->
     => fn? this
 
-  # Creates an example index.html for brunch with the correct relative
-  # path to the build directory.
-  _createExampleIndex: (filePath, buildPath) ->
-    # Fixing relative path.
-    appPath = path.join @options.appPath, '/'
-    if buildPath.indexOf(appPath) isnt -1
-      relativePath = buildPath.substr appPath.length
-    else
-      relativePath = path.join '..', buildPath
-
-    cssPath = path.join relativePath, 'web/css/main.css'
-    jsPath = path.join relativePath, 'web/js/app.js'
-    index = """
-  <!doctype html>
-  <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <link rel="stylesheet" href="#{cssPath}" type="text/css" media="screen">
-    <script src="#{jsPath}"></script>
-    <script>require("initialize");</script>
-  </head>
-  <body>
-  </body>
-  </html>
-    """
-    fs.writeFileSync filePath, index
-
   _compile: (compilers, callback) ->
     total = compilers.length
     for compiler in compilers
@@ -86,8 +58,6 @@ exports.Brunch = class Brunch
       fileUtil.mkdirsSync @options.buildPath, 0755
 
       helpers.recursiveCopy templatePath, @options.appPath, =>
-        index = path.join @options.appPath, 'index.html'
-        @_createExampleIndex index, @options.buildPath
         helpers.log '[Brunch]: created brunch directory layout'
         callback()
     this
@@ -96,6 +66,9 @@ exports.Brunch = class Brunch
     callback = @_makeCallback callback
     helpers.createBuildDirectories @options.buildPath
     @_compile @compilers, callback
+    from = path.join @options.appPath, 'src', 'app', 'assets', 'index.html'
+    to = path.join @options.buildPath, 'index.html'
+    helpers.copyFile from, to
     this
 
   watch: (callback) ->

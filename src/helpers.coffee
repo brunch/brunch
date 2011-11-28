@@ -17,7 +17,7 @@ exports.extend = extend = (object, properties) ->
 exports.copyFile = (source, destination, callback) ->
   read = fs.createReadStream source
   write = fs.createWriteStream destination
-  util.pump read, write, -> callback()
+  util.pump read, write, -> callback?()
 
 
 # walk through tree, creates directories and copy files
