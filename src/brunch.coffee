@@ -66,9 +66,6 @@ exports.Brunch = class Brunch
     callback = @_makeCallback callback
     helpers.createBuildDirectories @options.buildPath
     @_compile @compilers, callback
-    from = path.join @options.appPath, 'src', 'app', 'assets', 'index.html'
-    to = path.join @options.buildPath, 'index.html'
-    helpers.copyFile from, to
     this
 
   watch: (callback) ->
