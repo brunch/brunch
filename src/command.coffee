@@ -7,7 +7,10 @@ helpers = require './helpers'
 
 
 exports.generateConfigPath = generateConfigPath = (appPath) ->
-  if appPath? then path.join appPath, 'config.yaml' else './config.yaml'
+  if appPath?
+    path.join appPath, 'config.yaml'
+  else
+    './config.yaml'
 
 
 exports.loadConfig = loadConfig = (configPath) ->
