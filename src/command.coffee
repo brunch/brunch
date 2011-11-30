@@ -1,6 +1,7 @@
 path = require 'path'
 yaml = require 'yaml'
 fs = require 'fs'
+args = require 'args'
 
 brunch = require './brunch'
 helpers = require './helpers'
@@ -33,10 +34,11 @@ exports.parseOpts = parseOpts = (options) ->
 
 
 config =
+  script: 'brunch'
   commands:
     new:
       help: 'Create new brunch project'
-      opts:
+      options:
         appPath:
           position: 1
           help: 'application path'
@@ -47,33 +49,13 @@ config =
           help: 'build path'
           metavar: 'DIRECTORY'
           full: 'output'
-        #mvc:
-        #  help: 'Set application framework'
-        #  metavar: 'FRAMEWORK'
-        #  default: 'backbone'
-        #  choices: ['backbone', 'batman']
-        #templates:
-        #  help: 'Set templates engine'
-        #  metavar: 'ENGINE'
-        #  default: 'eco'
-        #  choices: ['eco', 'jade', 'haml']
-        #styles:
-        #  help: 'Set style engine'
-        #  metavar: 'ENGINE'
-        #  default: 'css'
-        #  choices: ['css', 'sass', 'compass', 'stylus']  # 'sass' == 'compass'
-        #tests:
-        #  help: 'Set testing framework'
-        #  metavar: 'FRAMEWORK'
-        #  default: 'jasmine'
-        #  choices: ['jasmine', 'nodeunit']
       callback: (options) ->
         brunch.new options, ->
           brunch.build parseOpts options
 
     build:
       help: 'Build a brunch project'
-      opts:
+      options:
         buildPath:
           abbr: 'o'
           help: 'build path'
@@ -88,7 +70,7 @@ config =
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
-      opts:
+      options:
         buildPath:
           abbr: 'o'
           help: 'build path'
@@ -103,7 +85,7 @@ config =
 
     generate:
       help: 'Generate model, view or route for current project'
-      opts:
+      options:
         generator:
           position: 1
           help: 'generator type'
@@ -120,55 +102,20 @@ config =
 
     test:
       help: 'Run tests for a brunch project'
-      opts:
+      options:
         verbose:
           flag: yes
           help: 'set verbose option for test runner'
       callback: (options) ->
         brunch.test parseOpts options
 
-  globalOpts:
+  options:
     version:
       abbr: 'v'
       help: 'display brunch version'
       flag: yes
       callback: -> brunch.VERSION
 
-  scriptName: 'brunch'
-
-  help: (parser) ->
-    str = 'commands:\n'
-    {commands, script} = parser.usage()
-    for name, command of commands
-      str += "   #{script} #{command.name}: #{command.help}\n"
-    str += '''\n
-      To get help on individual command, execute `brunch <command> --help`
-    '''
-    str
-
-
-class CommandParser
-  _setUpParser: ->
-    parser = require 'nomnom'
-    for name, data of @config
-      switch name
-        when 'commands'
-          for cmdName, cmdData of data
-            command = parser.command cmdName
-            for attrName, value of cmdData
-              command[attrName] value
-        else
-          data = data parser if typeof data is 'function'
-          parser[name] data
-    parser
-
-  parse: ->
-    @_parser.parseArgs()
-    process.stdout.write @_parser.getUsage() unless process.argv[2]
-
-  constructor: (@config) ->
-    @_parser = @_setUpParser()
 
 exports.run = ->
-  (new CommandParser config).parse()
-
+  args.parse config
