@@ -37,7 +37,7 @@ describe 'project watcher', ->
         expressProcess = spawn 'coffee', [
           path.join(__dirname, 'server', 'server.coffee'),
           '8080',
-          path.join(__dirname, '..', 'brunch')
+          path.join(__dirname, '..', 'brunch', 'build')
         ]
     #waitsFor (-> 'killed' of expressProcess), 'Cannot run express', 2000
     waits 1500
