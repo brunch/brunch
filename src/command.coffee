@@ -1,7 +1,7 @@
 path = require 'path'
 yaml = require 'yaml'
 fs = require 'fs'
-args = require 'args'
+argumentum = require 'argumentum'
 
 brunch = require './brunch'
 helpers = require './helpers'
@@ -33,8 +33,9 @@ exports.parseOpts = parseOpts = (options) ->
   helpers.extend options, config
 
 
-config =
+commandLineConfig =
   script: 'brunch'
+  commandRequired: yes
   commands:
     new:
       help: 'Create new brunch project'
@@ -118,4 +119,4 @@ config =
 
 
 exports.run = ->
-  args.parse config
+  argumentum.load(commandLineConfig).parse()
