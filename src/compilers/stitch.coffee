@@ -40,7 +40,7 @@ class exports.StitchCompiler extends Compiler
 
     @package().compile (error, source) =>
       return @logError error if error?
-      @log 'compiled'
+      @log()
       source = @minify source if @options.minify
       outPath = @getBuildPath 'web/js/app.js'
       fs.writeFile outPath, source, (error) =>

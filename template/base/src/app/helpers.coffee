@@ -6,6 +6,6 @@ class exports.BrunchApplication
     @views = {}
     @utils = {}
     jQuery =>
-      @onReady @
+      @onReady this
 
   onReady: -> null
