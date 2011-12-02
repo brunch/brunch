@@ -22,36 +22,26 @@ exports.Brunch = class Brunch
 
   constructor: (options) ->
     options = helpers.extend @defaultConfig, options
-    options.buildPath ?= path.join options.appPath, 'build/'
     # Nomnom arg parser creates properties in options for internal use
     # We don't need them.
     ignored = ['_'].concat [0..10]
     for prop in ignored when prop of options
       delete options[prop]
     @options = options
-    @compilers = (new compiler @options for name, compiler of compilers)
+    @options.buildPath ?= path.join options.appPath, 'build/'
+    @options.compilers = (new compiler @options for name, compiler of compilers)
     @watcher = new helpers.Watcher
 
   _makeCallback: (fn) ->
     => fn? this
-
-  _compile: (compilers, callback) ->
-    total = compilers.length
-    for compiler in compilers
-      do (compiler) =>
-        compiler.compile ['.'], =>
-          # Pop current compiler from queue.
-          total -= 1
-          # Execute callbacks if compiler queue is empty.
-          callback() unless total
 
   new: (callback) ->
     callback = @_makeCallback callback
     templatePath = path.join module.id, '/../../template/base'
     path.exists @options.appPath, (exists) =>
       if exists
-        helpers.logError '[Brunch]: can\'t create project;
-        directory already exists'
+        helpers.logError "[Brunch]: can\'t create project: 
+directory \"#{@options.appPath}\" already exists"
         return
 
       fileUtil.mkdirsSync @options.appPath, 0755
@@ -64,8 +54,9 @@ exports.Brunch = class Brunch
 
   build: (callback) ->
     callback = @_makeCallback callback
-    helpers.createBuildDirectories @options.buildPath
-    @_compile @compilers, callback
+    @watch =>
+      @watcher.clear()
+      callback()
     this
 
   watch: (callback) ->
@@ -75,10 +66,12 @@ exports.Brunch = class Brunch
     timer = null
 
     @watcher.add(sourcePath).onChange (file) =>
-      for compiler in @compilers when compiler.matchesFile file
+      for compiler in @options.compilers when compiler.matchesFile file
         return compiler.onFileChanged file, =>
+          # If there would be no another `onFileChanged` in 30s,
+          # it would execute callback.
           clearTimeout timer if timer
-          timer = setTimeout callback, 20
+          timer = setTimeout callback, 30
     this
 
   stopWatching: (callback) ->
