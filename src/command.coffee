@@ -7,14 +7,14 @@ brunch = require './brunch'
 helpers = require './helpers'
 
 
-exports.generateConfigPath = generateConfigPath = (appPath) ->
+generateConfigPath = (appPath) ->
   if appPath?
     path.join appPath, 'config.yaml'
   else
-    './config.yaml'
+    'config.yaml'
 
 
-exports.loadConfig = loadConfig = (configPath) ->
+loadConfig = (configPath) ->
   try
     config = (fs.readFileSync configPath).toString()
   catch error
@@ -28,7 +28,7 @@ exports.loadConfig = loadConfig = (configPath) ->
   options
 
 
-exports.parseOpts = parseOpts = (options) ->
+parseOptions = (options) ->
   config = loadConfig generateConfigPath options.appPath
   helpers.extend options, config
 
@@ -52,7 +52,7 @@ commandLineConfig =
           full: 'output'
       callback: (options) ->
         brunch.new options, ->
-          brunch.build parseOpts options
+          brunch.build parseOptions options
 
     build:
       help: 'Build a brunch project'
@@ -67,7 +67,7 @@ commandLineConfig =
           flag: yes
           help: 'minify the app.js output via UglifyJS'
       callback: (options) ->
-        brunch.build parseOpts options
+        brunch.build parseOptions options
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -82,7 +82,7 @@ commandLineConfig =
           flag: yes
           help: 'minify the app.js output via UglifyJS'
       callback: (options) ->
-        brunch.watch parseOpts options
+        brunch.watch parseOptions options
 
     generate:
       help: 'Generate model, view or route for current project'
@@ -99,7 +99,7 @@ commandLineConfig =
           metavar: 'NAME'
           required: yes
       callback: (options) ->
-        brunch.generate parseOpts options
+        brunch.generate parseOptions options
 
     test:
       help: 'Run tests for a brunch project'
@@ -108,7 +108,7 @@ commandLineConfig =
           flag: yes
           help: 'set verbose option for test runner'
       callback: (options) ->
-        brunch.test parseOpts options
+        brunch.test parseOptions options
 
   options:
     version:
