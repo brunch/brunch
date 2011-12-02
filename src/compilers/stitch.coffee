@@ -13,7 +13,7 @@ class exports.StitchCompiler extends Compiler
     [/\.coffee$/, /src\/.*\.js$/, ///#{@options.templateExtension}$///]
 
   collect: (type) ->
-    directory = @getAppPath "src/#{type}"
+    directory = @getAppPath path.join 'src', type
     filenames = helpers.filterFiles (fs.readdirSync directory), directory
     if type is 'vendor'
       # Generate list of dependencies and preserve order of brunch libaries,
@@ -25,7 +25,7 @@ class exports.StitchCompiler extends Compiler
   package: ->
     @_package ?= stitch.createPackage
       dependencies: @collect 'vendor'
-      paths: [@getAppPath 'src/app/']
+      paths: [@getAppPath path.join 'src', 'app', '']
 
   minify: (source) ->
     {parse} = uglify.parser
@@ -42,7 +42,7 @@ class exports.StitchCompiler extends Compiler
       return @logError error if error?
       @log()
       source = @minify source if @options.minify
-      outPath = @getBuildPath 'web/js/app.js'
+      outPath = @getBuildPath path.join 'web', 'js', 'app.js'
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
         callback @getClassName()
