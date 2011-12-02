@@ -16,7 +16,7 @@ class exports.StylusCompiler extends Compiler
 
   compile: (files, callback) ->
     resultFile = @getBuildPath path.join 'styles', 'main.css'
-    mainFilePath = @getAppPath path.join 'src', 'app', 'styles', 'main.styl'
+    mainFilePath = @getRootPath path.join 'app', 'styles', 'main.styl'
 
     fs.readFile mainFilePath, 'utf8', (error, data) =>
       return @logError error if error?
@@ -24,10 +24,10 @@ class exports.StylusCompiler extends Compiler
         .set('filename', mainFilePath)
         .set('compress', yes)
         .set('firebug', @options.stylus?.firebug)
-        .include(@getAppPath 'src')
+        .include(@getRootPath 'src')
 
       if typeof @options.stylus?.paths is 'object'
-        paths = (@getAppPath stylusPath for stylusPath in @options.stylus.paths)
+        paths = (@getRootPath stylusPath for stylusPath in @options.stylus.paths)
         compiler.set('paths', paths)
 
       compiler.use nib if nib

@@ -9,10 +9,10 @@ helpers = require '../helpers'
 
 
 class exports.AssetsCompiler extends Compiler
-  patterns: -> [/src\/app\/assets\//]
+  patterns: -> [/app\/assets\//]
 
   compile: (files, callback) ->
-    [from, to] = [(@getAppPath path.join 'src', 'app', 'assets'), @getBuildPath()]
+    [from, to] = [(@getRootPath path.join 'app', 'assets'), @getBuildPath()]
     helpers.recursiveCopy from, to, (error, files) =>
       return @logError error if error?
       @log()

@@ -7,9 +7,9 @@ brunch = require './brunch'
 helpers = require './helpers'
 
 
-generateConfigPath = (appPath) ->
-  if appPath?
-    path.join appPath, 'config.yaml'
+generateConfigPath = (rootPath) ->
+  if rootPath?
+    path.join rootPath, 'config.yaml'
   else
     'config.yaml'
 
@@ -29,7 +29,7 @@ loadConfig = (configPath) ->
 
 
 parseOptions = (options) ->
-  config = loadConfig generateConfigPath options.appPath
+  config = loadConfig generateConfigPath options.rootPath
   helpers.extend options, config
 
 
@@ -40,11 +40,12 @@ commandLineConfig =
     new:
       help: 'Create new brunch project'
       options:
-        appPath:
+        rootPath:
           position: 1
           help: 'application path'
           metavar: 'APP_PATH'
           required: yes
+          full: 'appPath'
         buildPath:
           abbr: 'o'
           help: 'build path'

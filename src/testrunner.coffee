@@ -30,13 +30,13 @@ getSpecFiles = (testPath) ->
   getDirectorySpecs(testPath) [], ''
 
 exports.run = (options, callback) ->
-  brunchPath = path.resolve options.appPath
-  testPath = path.join brunchPath, 'test'
+  rootPath = path.resolve options.rootPath
+  testPath = path.join rootPath, 'test'
   helpers.log "Running tests in #{testPath}"
   specs = getSpecFiles testPath
   # Run specs in fake browser.
   jsdom.env
-    html: path.join brunchPath, 'index.html'
+    html: path.join rootPath, 'index.html'
     scripts: [
       path.resolve options.buildPath, path.join 'scripts', 'app.js'
       path.resolve __dirname, path.join '..', 'vendor', 'jasmine.js'

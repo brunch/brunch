@@ -8,7 +8,7 @@ describe 'new project', ->
     beforeEach ->
       created = no
       brunch.new
-        appPath: 'brunch'
+        rootPath: 'brunch'
         buildPath: 'brunch/build'
       , -> created = yes
       waitsFor (-> created), 400
@@ -26,7 +26,7 @@ describe 'new project', ->
     beforeEach ->
       created = no
       brunch.new
-        appPath: 'js/client'
+        rootPath: 'js/client'
         buildPath: 'js/output'
       , -> created = yes
       waitsFor (-> created), 400
@@ -37,5 +37,5 @@ describe 'new project', ->
       waitsFor (-> removed), 'Cannot remove directory', 200
     
     it 'should be created', ->
-      expect(typeof fs.statSync 'js/client/src').toEqual 'object'
+      expect(typeof fs.statSync 'js/client/app').toEqual 'object'
       expect(typeof fs.statSync 'js/output').toEqual 'object'

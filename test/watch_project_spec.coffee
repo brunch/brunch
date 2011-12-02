@@ -20,7 +20,7 @@ describe 'project watcher', ->
 
   beforeEach ->
     options =
-      appPath: 'brunch'
+      rootPath: 'brunch'
       buildPath: 'brunch/build'
       minify: no
       templateExtension: 'eco'
@@ -63,13 +63,13 @@ describe 'project watcher', ->
   
   describe 'should update app.js', ->
     it 'when file has been added', ->
-      fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
+      fs.writeFileSync 'brunch/vendor/anotherLib.js', '//anotherLib', 'utf8'
       app = fs.readFileSync 'brunch/build/scripts/app.js', 'utf8'
       waitsFor (-> !!app), '', 400
       
     it 'when file has been removed', ->
-      fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
-      fs.unlinkSync 'brunch/src/vendor/anotherLib.js'
+      fs.writeFileSync 'brunch/vendor/anotherLib.js', '//anotherLib', 'utf8'
+      fs.unlinkSync 'brunch/vendor/anotherLib.js'
       app = fs.readFileSync 'brunch/build/scripts/app.js', 'utf8'
       waitsFor (-> !!app), '', 400
       runs ->
@@ -77,7 +77,7 @@ describe 'project watcher', ->
 
     it 'when template has been changed', ->
       text = 'some_random_text10'
-      fs.writeFileSync 'brunch/src/app/templates/home.eco', text, 'utf8'
+      fs.writeFileSync 'brunch/app/templates/home.eco', text, 'utf8'
       waits 200
       runs ->
         app = fs.readFileSync 'brunch/build/scripts/app.js', 'utf8'

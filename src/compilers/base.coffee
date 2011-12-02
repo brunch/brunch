@@ -7,8 +7,8 @@ class exports.Compiler
   constructor: (@options) ->
     null
 
-  getAppPath: (subPath) ->
-    path.join @options.appPath, subPath
+  getRootPath: (subPath) ->
+    path.join @options.rootPath, subPath
 
   getBuildPath: (subPath) ->
     path.join @options.buildPath, subPath

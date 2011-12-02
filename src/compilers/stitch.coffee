@@ -10,10 +10,10 @@ helpers = require '../helpers'
 
 class exports.StitchCompiler extends Compiler
   patterns: ->
-    [/\.coffee$/, /src\/.*\.js$/, ///#{@options.templateExtension}$///]
+    [/(app|vendor)\/.*\.(js|coffee)$/, ///#{@options.templateExtension}$///]
 
   collect: (type) ->
-    directory = @getAppPath path.join 'src', type
+    directory = @getRootPath type
     filenames = helpers.filterFiles (fs.readdirSync directory), directory
     if type is 'vendor'
       # Generate list of dependencies and preserve order of brunch libaries,
@@ -25,7 +25,7 @@ class exports.StitchCompiler extends Compiler
   package: ->
     @_package ?= stitch.createPackage
       dependencies: @collect 'vendor'
-      paths: [@getAppPath path.join 'src', 'app', '']
+      paths: [@getRootPath 'app']
 
   minify: (source) ->
     {parse} = uglify.parser
@@ -35,7 +35,7 @@ class exports.StitchCompiler extends Compiler
 
   compile: (files, callback) ->
     # update package dependencies in case a dependency was added or removed
-    if files.some((file) -> file.match /src\/vendor\//)
+    if files.some((file) -> file.match /vendor\//)
       @package().dependencies = @collect 'vendor'
 
     @package().compile (error, source) =>

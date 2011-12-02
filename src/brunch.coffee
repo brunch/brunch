@@ -11,7 +11,7 @@ exports.VERSION = require('./package').version
 
 exports.Brunch = class Brunch
   defaultConfig:
-    appPath: './'
+    rootPath: './'
     dependencies: []
     minify: no
     mvc: 'backbone'
@@ -28,7 +28,7 @@ exports.Brunch = class Brunch
     for prop in ignored when prop of options
       delete options[prop]
     @options = options
-    @options.buildPath ?= path.join options.appPath, 'build', ''
+    @options.buildPath ?= path.join options.rootPath, 'build', ''
     @options.compilers = (new compiler @options for name, compiler of compilers)
     @watcher = new helpers.Watcher
 
@@ -38,16 +38,16 @@ exports.Brunch = class Brunch
   new: (callback) ->
     callback = @_makeCallback callback
     templatePath = path.join __dirname, '..', 'template', 'base'
-    path.exists @options.appPath, (exists) =>
+    path.exists @options.rootPath, (exists) =>
       if exists
         helpers.logError "[Brunch]: can\'t create project: 
-directory \"#{@options.appPath}\" already exists"
+directory \"#{@options.rootPath}\" already exists"
         return
 
-      fileUtil.mkdirsSync @options.appPath, 0755
+      fileUtil.mkdirsSync @options.rootPath, 0755
       fileUtil.mkdirsSync @options.buildPath, 0755
 
-      helpers.recursiveCopy templatePath, @options.appPath, =>
+      helpers.recursiveCopy templatePath, @options.rootPath, =>
         helpers.log '[Brunch]: created brunch directory layout'
         callback()
     this
@@ -62,16 +62,18 @@ directory \"#{@options.appPath}\" already exists"
   watch: (callback) ->
     callback = @_makeCallback callback
     helpers.createBuildDirectories @options.buildPath
-    sourcePath = path.join @options.appPath, 'src'
     timer = null
 
-    @watcher.add(sourcePath).onChange (file) =>
-      for compiler in @options.compilers when compiler.matchesFile file
-        return compiler.onFileChanged file, =>
-          # If there would be no another `onFileChanged` in 30s,
-          # it would execute callback.
-          clearTimeout timer if timer
-          timer = setTimeout callback, 30
+    @watcher
+      .add(path.join @options.rootPath, 'app')
+      .add(path.join @options.rootPath, 'vendor')
+      .onChange (file) =>
+        for compiler in @options.compilers when compiler.matchesFile file
+          return compiler.onFileChanged file, =>
+            # If there would be no another `onFileChanged` in 30s,
+            # it would execute callback.
+            clearTimeout timer if timer
+            timer = setTimeout callback, 30
     this
 
   stopWatching: (callback) ->
@@ -88,8 +90,7 @@ directory \"#{@options.appPath}\" already exists"
       when 'template' then 'eco'
       else 'coffee'
     filename = "#{@options.name}.#{extension}"
-    filePath = path.join @options.appPath, 'src', 'app',
-      "#{@options.generator}s", filename
+    filePath = path.join @options.rootPath, 'app', "#{@options.generator}s", filename
     data = switch extension
       when 'coffee'
         className = helpers.formatClassName @options.name
