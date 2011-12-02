@@ -5,7 +5,6 @@ util = require 'util'
 {exec, spawn} = require 'child_process'
 {EventEmitter} = require 'events'
 async = require 'async'
-_ = require 'underscore'
 
 
 exports.extend = extend = (object, properties) ->

@@ -1,8 +1,5 @@
 fs = require 'fs'
 path = require 'path'
-stitch = require 'stitch'
-uglify = require 'uglify-js'
-_ = require 'underscore'
 
 helpers = require '../helpers'
 {Compiler} = require './base'

@@ -1,6 +1,5 @@
 fs = require 'fs'
 path = require 'path'
-_ = require 'underscore'
 zombie = require 'zombie'
 {spawn} = require 'child_process'
 

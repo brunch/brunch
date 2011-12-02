@@ -2,7 +2,6 @@ fs = require 'fs'
 path = require 'path'
 stitch = require 'stitch'
 uglify = require 'uglify-js'
-_ = require 'underscore'
 
 helpers = require '../helpers'
 {Compiler} = require './base'
@@ -14,13 +13,13 @@ class exports.StitchCompiler extends Compiler
 
   collect: (type) ->
     directory = @getRootPath type
-    filenames = helpers.filterFiles (fs.readdirSync directory), directory
+    fileNames = helpers.filterFiles (fs.readdirSync directory), directory
     if type is 'vendor'
       # Generate list of dependencies and preserve order of brunch libaries,
       # like defined in options.dependencies.
-      dependencies = @options.dependencies
-      filenames = dependencies.concat _.without(filenames, dependencies...)
-    filenames.map (filename) => path.join directory, filename
+      fileNames = @options.dependencies.concat fileNames.filter (fileName) =>
+        fileName not in @options.dependencies
+    fileNames.map (fileName) => path.join directory, fileName
 
   package: ->
     @_package ?= stitch.createPackage
