@@ -20,7 +20,6 @@ class exports.CSSCompiler extends Compiler
       ), (error, data) =>
         return @logError error if error?
         fs.readFile resultFile, (error, previousData) =>
-          return @logError error if error?
           fs.writeFile resultFile, (previousData + data), (error) =>
             return @logError error if error?
             @log()

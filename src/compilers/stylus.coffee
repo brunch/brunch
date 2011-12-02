@@ -34,8 +34,7 @@ class exports.StylusCompiler extends Compiler
       compiler.render (error, css) =>
         return @logError error if error?
         fs.readFile resultFile, (error, previousData) =>
-          return @logError error if error?
-          fs.writeFile main, (previousData + css), 'utf8', (error) =>
+          fs.writeFile resultFile, (previousData + css), (error) =>
             return @logError error if error?
             @log()
             callback @getClassName()
