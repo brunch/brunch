@@ -26,7 +26,7 @@ class exports.StylusCompiler extends Compiler
         .include(@getAppPath 'src')
 
       if typeof @options.stylus?.paths is 'object'
-        paths = (@getAppPath path for path in @options.stylus.paths)
+        paths = (@getAppPath stylusPath for stylusPath in @options.stylus.paths)
         compiler.set('paths', paths)
 
       compiler.use nib if nib
