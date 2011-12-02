@@ -8,5 +8,5 @@ describe 'create build directories', ->
   afterEach -> removeDirectory 'output'
 
   it 'should create directory structure for build path', ->
-    expect(path.existsSync 'output/web/js').toBeTruthy()
-    expect(path.existsSync 'output/web/css').toBeTruthy()
+    expect(path.existsSync 'output/scripts').toBeTruthy()
+    expect(path.existsSync 'output/styles').toBeTruthy()

@@ -10,7 +10,7 @@ class exports.CSSCompiler extends Compiler
   patterns: -> [/\.css$/]
 
   compile: (files, callback) ->
-    resultFile = @getBuildPath path.join 'web', 'css', 'main.css'
+    resultFile = @getBuildPath path.join 'styles', 'main.css'
 
     async.map files, fs.readFile, (error, data) =>
       return @logError error if error?

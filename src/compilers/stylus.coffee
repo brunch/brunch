@@ -15,7 +15,7 @@ class exports.StylusCompiler extends Compiler
   patterns: -> [/\.styl$/]
 
   compile: (files, callback) ->
-    resultFile = @getBuildPath path.join 'web', 'css', 'main.css'
+    resultFile = @getBuildPath path.join 'styles', 'main.css'
     mainFilePath = @getAppPath path.join 'src', 'app', 'styles', 'main.styl'
 
     fs.readFile mainFilePath, 'utf8', (error, data) =>

@@ -38,7 +38,7 @@ exports.run = (options, callback) ->
   jsdom.env
     html: path.join brunchPath, 'index.html'
     scripts: [
-      path.resolve options.buildPath, path.join 'web', 'js', 'app.js'
+      path.resolve options.buildPath, path.join 'scripts', 'app.js'
       path.resolve __dirname, path.join '..', 'vendor', 'jasmine.js'
     ]
     src: specs

@@ -46,8 +46,8 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
             next()
     , callback
 
-exports.createBuildDirectories = (buildPath, directories = ['web/css', 'web/js']) ->
-  for dirPath in directories
+exports.createBuildDirectories = (buildPath) ->
+  for dirPath in ['styles', 'scripts']
     fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
 
 # recursive copy file tree from source to destination and fires

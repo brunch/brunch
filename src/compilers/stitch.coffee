@@ -42,7 +42,7 @@ class exports.StitchCompiler extends Compiler
       return @logError error if error?
       @log()
       source = @minify source if @options.minify
-      outPath = @getBuildPath path.join 'web', 'js', 'app.js'
+      outPath = @getBuildPath path.join 'scripts', 'app.js'
       fs.writeFile outPath, source, (error) =>
         return @logError "couldn't write compiled file. #{error}" if error?
         callback @getClassName()
