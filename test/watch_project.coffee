@@ -16,10 +16,10 @@ specHelpers = require './spec_helpers'
 # add test for base template as well (obstacle: zombie currently doesn't support file://)
 describe 'project watcher', ->
   options = {}
-  expressProcess = null
+  server = null
   application = null
 
-  beforeEach ->
+  beforeEach (done) ->
     options =
       appPath: 'brunch'
       buildPath: 'brunch/build'
@@ -34,19 +34,15 @@ describe 'project watcher', ->
         'backbone-0.5.3.js'
       ]
       application.watch ->
-        return if expressProcess?
-        expressProcess = spawn 'coffee', [
-          path.join(__dirname, 'server', 'server.coffee'),
-          '8080',
-          path.join(__dirname, '..', 'brunch', 'build')
-        ]
-        setTimeout done, 1300
+        return if server?
+        buildPath = path.join __dirname, '..', 'brunch', 'build'
+        server = specHelpers.runServer buildPath, done
 
   afterEach (done) ->
     application.stopWatching()
     application = null
-    expressProcess?.kill? 'SIGHUP'
-    expressProcess = null
+    server.close()
+    server = null
     specHelpers.removeDirectory 'brunch', done
 
   it 'should create a valid brunch app', (done) ->

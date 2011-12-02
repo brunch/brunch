@@ -11,7 +11,7 @@ exports.removeDirectory = (destination, callback) ->
   rm.on 'exit', (-> callback?())
 
 
-exports.runServer = (appPath, callback) ->
+exports.runServer = (appPath, callback = (->)) ->
   app = express.createServer()
   app.configure ->
     app.use express.static appPath
@@ -21,7 +21,8 @@ exports.runServer = (appPath, callback) ->
 
   app.get '/', (req, res) -> res.render 'index.html'
   app.listen 8080
-  setTimeout callback, 1500
+  app.on 'listening', ->
+    callback()
   app
 
 exports.runServer 'brunch/build'
