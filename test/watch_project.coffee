@@ -5,6 +5,7 @@ zombie = require 'zombie'
 {spawn} = require 'child_process'
 
 brunch  = require '../src/brunch'
+specHelpers = require './spec_helpers'
 
 
 # TODO split into smaller tests
@@ -39,57 +40,45 @@ describe 'project watcher', ->
           '8080',
           path.join(__dirname, '..', 'brunch', 'build')
         ]
-    #waitsFor (-> 'killed' of expressProcess), 'Cannot run express', 2000
-    waits 1500
+        setTimeout done, 1300
 
-  afterEach ->
-    removed = no
+  afterEach (done) ->
     application.stopWatching()
     application = null
     expressProcess?.kill? 'SIGHUP'
     expressProcess = null
-    removeDirectory 'brunch', -> removed = yes
-    waitsFor (-> removed), 'Cannot remove', 200
+    specHelpers.removeDirectory 'brunch', done
 
-  it 'should create a valid brunch app', ->
+  it 'should create a valid brunch app', (done) ->
     visited = no
     result = ''
     zombie.visit 'http://localhost:8080', (error, browser, status) ->
-      return error.message if error
-      result = browser.html 'h1'
-      visited = yes
-    waitsFor (-> visited), 'Cannot visit the localhost', 2000
-    runs -> expect(result).toEqual '<h1>brunch</h1>'
-  
+      throw error if error?
+      (browser.html 'body').should.eql '<h1>brunch</h1>'
+      done()
+
   describe 'should update app.js', ->
-    it 'when file has been added', ->
-      fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
-      app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
-      waitsFor (-> !!app), '', 400
+    #it 'when file has been added', ->
+    #  fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
+    #  app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
+    #  waitsFor (-> !!app), '', 400
       
     it 'when file has been removed', ->
       fs.writeFileSync 'brunch/src/vendor/anotherLib.js', '//anotherLib', 'utf8'
       fs.unlinkSync 'brunch/src/vendor/anotherLib.js'
       app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
-      waitsFor (-> !!app), '', 400
-      runs ->
-        expect(app).not.toMatch /\/\/anotherLib/
+      app.should.not.match /\/\/anotherLib/
 
     it 'when template has been changed', ->
       text = 'some_random_text10'
       fs.writeFileSync 'brunch/src/app/templates/home.eco', text, 'utf8'
-      waits 200
-      runs ->
-        app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
-        expect(app).toMatch ///#{text}///
+      app = fs.readFileSync 'brunch/build/web/js/app.js', 'utf8'
+      app.should.match ///#{text}///
 
-  it 'should work properly when minified', ->
+  it 'should work properly when minified', (done) ->
     application.options.minify = yes
-    visited = no
-    result = ''
     zombie.visit 'http://localhost:8080', (error, browser, status) ->
-      return error.message if error
+      throw error if error?
       result = browser.html 'h1'
-      visited = yes
-    waitsFor (-> visited), 'Cannot visit the localhost', 2000
-    runs -> expect(result).toEqual '<h1>brunch</h1>'
+      result.should.eql '<h1>brunch</h1>'
+      done()

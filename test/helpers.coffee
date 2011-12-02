@@ -9,4 +9,4 @@ describe 'helpers', ->
       'should_be_ignored'
       '#to_be_ignored#'
     ], 'test/fixtures/alternate_base/src/vendor'
-    expect(dependencyPaths).toEqual ['ConsoleDummy.js']
+    dependencyPaths.should.eql ['ConsoleDummy.js']

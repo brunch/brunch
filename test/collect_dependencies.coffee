@@ -13,7 +13,7 @@ describe 'brunch dependencies', ->
       appPath: 'test/fixtures/base'
     compiler = new StitchCompiler options
     dependencyPaths = compiler.collect 'vendor'
-    expect(dependencyPaths).toEqual [
+    dependencyPaths.should.eql [
       'test/fixtures/base/src/vendor/ConsoleDummy.js',
       'test/fixtures/base/src/vendor/jquery-1.7.js',
       'test/fixtures/base/src/vendor/underscore-1.1.7.js',
@@ -32,7 +32,7 @@ describe 'brunch dependencies', ->
       appPath: 'test/fixtures/alternate_base'
     compiler = new StitchCompiler options
     dependencyPaths = compiler.collect 'vendor'
-    expect(dependencyPaths).toEqual [
+    dependencyPaths.should.eql [
       'test/fixtures/alternate_base/src/vendor/ConsoleDummy.js'
       'test/fixtures/alternate_base/src/vendor/jquery-1.7.js'
       'test/fixtures/alternate_base/src/vendor/underscore-1.1.7.js'
