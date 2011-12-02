@@ -1,4 +1,5 @@
 fs = require 'fs'
+path = require 'path'
 async = require 'async'
 
 {Compiler} = require './base'
@@ -9,9 +10,7 @@ class exports.CSSCompiler extends Compiler
   patterns: -> [/\.css$/]
 
   compile: (files, callback) ->
-    resultFile = @getBuildPath 'web/css/main.css'
-    return if '.' in files  # Temporary spike.
-    console.log 'Compiling', files
+    resultFile = @getBuildPath path.join 'web', 'css', 'main.css'
 
     async.map files, fs.readFile, (error, data) =>
       return @logError error if error?
@@ -20,7 +19,9 @@ class exports.CSSCompiler extends Compiler
         cb null, memo + item
       ), (error, data) =>
         return @logError error if error?
-        fs.writeFile resultFile, data, (error) =>
+        fs.readFile resultFile, (error, previousData) =>
           return @logError error if error?
-          @log()
-          callback @getClassName()
+          fs.writeFile resultFile, (previousData + data), (error) =>
+            return @logError error if error?
+            @log()
+            callback @getClassName()
