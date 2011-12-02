@@ -24,5 +24,3 @@ exports.runServer = (appPath, callback = (->)) ->
   app.on 'listening', ->
     callback()
   app
-
-exports.runServer 'brunch/build'
