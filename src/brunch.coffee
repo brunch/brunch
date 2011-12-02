@@ -28,7 +28,7 @@ exports.Brunch = class Brunch
     for prop in ignored when prop of options
       delete options[prop]
     @options = options
-    @options.buildPath ?= path.join options.appPath, 'build/'
+    @options.buildPath ?= path.join options.appPath, 'build', ''
     @options.compilers = (new compiler @options for name, compiler of compilers)
     @watcher = new helpers.Watcher
 
@@ -37,7 +37,7 @@ exports.Brunch = class Brunch
 
   new: (callback) ->
     callback = @_makeCallback callback
-    templatePath = path.join module.id, '/../../template/base'
+    templatePath = path.join __dirname, '..', 'template', 'base'
     path.exists @options.appPath, (exists) =>
       if exists
         helpers.logError "[Brunch]: can\'t create project: 
@@ -95,7 +95,8 @@ directory \"#{@options.appPath}\" already exists"
         className = helpers.formatClassName @options.name
         genName = helpers.capitalize @options.generator
         "class exports.#{className} extends Backbone.#{genName}\n"
-      else ''
+      else
+        ''
 
     fs.writeFile filePath, data, (error) ->
       return helpers.logError error if error?
