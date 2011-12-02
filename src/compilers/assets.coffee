@@ -12,7 +12,8 @@ class exports.AssetsCompiler extends Compiler
   patterns: -> [/src\/app\/assets\//]
 
   compile: (files, callback) ->
-    console.log 'Compiling assets', files
-    return
-    files.forEach (file) ->
-      helpers.copyFile file, @getBuildPath 
+    [from, to] = [(@getAppPath path.join 'src', 'app', 'assets'), @getBuildPath()]
+    helpers.recursiveCopy from, to, (error, files) =>
+      return @logError error if error?
+      @log()
+      callback @getClassName()

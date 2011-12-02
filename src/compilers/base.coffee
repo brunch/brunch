@@ -20,7 +20,7 @@ class exports.Compiler
     name = @getClassName().replace 'Compiler', ''
     "[#{name}]:"
 
-  log: (text = 'OK') ->
+  log: (text = 'compiled') ->
     helpers.log "#{@getFormattedClassName()} #{text}."
 
   logError: (text = '') ->

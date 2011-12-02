@@ -7,6 +7,7 @@ jsdom = require 'jsdom'
 helpers = require './helpers'
 {TerminalReporter} = require '../vendor/reporter'
 
+
 compileSpecFile = (filePath) ->
   extension = path.extname filePath
   return unless extension in ['.coffee', '.js']
@@ -37,8 +38,8 @@ exports.run = (options, callback) ->
   jsdom.env
     html: path.join brunchPath, 'index.html'
     scripts: [
-      path.resolve options.buildPath, 'web/js/app.js'
-      path.resolve __dirname, '../vendor/jasmine.js'
+      path.resolve options.buildPath, path.join 'web', 'js', 'app.js'
+      path.resolve __dirname, path.join '..', 'vendor', 'jasmine.js'
     ]
     src: specs
     done: (error, window) ->
