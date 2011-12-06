@@ -6,11 +6,16 @@ helpers = require '../helpers'
 
 
 class exports.AssetsCompiler extends Compiler
-  patterns: -> [/app\/assets\//]
+  patterns: [/app\/assets\//]
 
-  compile: (files, callback) ->
-    [from, to] = [(@getRootPath path.join 'app', 'assets'), @getBuildPath()]
-    helpers.recursiveCopy from, to, (error, files) =>
-      return @logError error if error?
-      @log()
-      callback @getClassName()
+  map: (file, callback) ->
+    callback null, file
+
+  reduce: (memo, file, callback) ->
+    (memo ?= []).push file
+    callback null, memo
+
+  write: (files, callback) ->
+    for file in files
+      console.log 'Asset', file
+    callback null

@@ -1,9 +1,14 @@
+fs = require 'fs'
 path = require 'path'
 
 helpers = require '../helpers'
 
+read = (file) =>
+  fs.readFile(file).toString()
 
 class exports.Compiler
+  patterns: []
+
   constructor: (@options) ->
     null
 
@@ -26,11 +31,34 @@ class exports.Compiler
   logError: (text = '') ->
     helpers.logError "#{@getFormattedClassName()} error. #{text}"
 
-  # These should be overwritten by every compiler subclass.
-  patterns: -> []
+  sort: (files, callback) ->
+    callback null, files
+
+  map: (file, callback) ->
+    fs.readFile file, callback
+
+  reduce: (memo, file, callback) ->
+    callback null, memo + file
+
+  write: (data, callback) ->
+    callback null, data
+    #fs.writeFile fileName, data, callback
 
   compile: (files, callback) ->
-    callback @getClassName()
+    console.log 'Sorting', files
+    async.sortBy files, @sort, (error, sorted) =>
+      return @logError error if error?
+      console.log 'Mapping', sorted
+      async.map sorted, @map, (error, mapped) =>
+        return @logError error if error?
+        console.log 'Reducing', mapped
+        async.reduce mapped, null, @reduce, (error, reduced) =>
+          return @logError error if error?
+          console.log 'Writing', reduced
+          @write reduced, (error) =>
+            return @logError error if error?
+            @log()
+            callback()
 
   clearQueue: (callback) ->
     @compile @changedFiles, callback
@@ -49,4 +77,5 @@ class exports.Compiler
     @timeout = setTimeout (=> @clearQueue callback), 20
 
   matchesFile: (file) ->
-    @patterns().some (pattern) -> file.match pattern
+    @patterns.some (pattern) ->
+      file.match pattern

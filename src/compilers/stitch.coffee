@@ -8,8 +8,7 @@ helpers = require '../helpers'
 
 
 class exports.StitchCompiler extends Compiler
-  patterns: ->
-    [/(app|vendor)\/.*\.(js|coffee)$/, ///#{@options.templateExtension}$///]
+  patterns: [/(app|vendor)\/.*\.(js|coffee)$/]
 
   collect: (type) ->
     directory = @getRootPath type
@@ -29,7 +28,6 @@ class exports.StitchCompiler extends Compiler
   minify: (source) ->
     {parse} = uglify.parser
     {ast_mangle, ast_squeeze, gen_code} = uglify.uglify
-    @log 'minified'
     gen_code ast_squeeze ast_mangle parse source
 
   compile: (files, callback) ->
@@ -39,9 +37,7 @@ class exports.StitchCompiler extends Compiler
 
     @package().compile (error, source) =>
       return @logError error if error?
-      @log()
-      source = @minify source if @options.minify
-      outPath = @getBuildPath path.join 'scripts', 'app.js'
-      fs.writeFile outPath, source, (error) =>
-        return @logError "couldn't write compiled file. #{error}" if error?
-        callback @getClassName()
+      if @options.minify
+        callback @minify source
+      else
+        callback source
