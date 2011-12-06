@@ -1,4 +1,5 @@
 stylus = require 'stylus'
+fs = require 'fs'
 
 {Compiler} = require './base'
 
@@ -13,13 +14,15 @@ class exports.StylusCompiler extends Compiler
   patterns: [/\.styl$/]
 
   map: (file, callback) ->
-    compiler = stylus(file)
-      .set('compress', yes)
-      .set('firebug', @options.stylus?.firebug)
+    @options ?= {}
+    fs.readFile file, (error, data) =>
+      compiler = stylus(data)
+        .set('compress', yes)
+        .set('firebug', @options.stylus?.firebug)
 
-    if typeof @options.stylus?.paths is 'object'
-      paths = (@getRootPath stylusPath for stylusPath in @options.stylus.paths)
-      compiler.set('paths', paths)
+      if typeof @options.stylus?.paths is 'object'
+        paths = (@getRootPath stylusPath for stylusPath in @options.stylus.paths)
+        compiler.set('paths', paths)
 
-    compiler.use nib if nib
-    compiler.render callback
+      compiler.use nib if nib
+      compiler.render callback
