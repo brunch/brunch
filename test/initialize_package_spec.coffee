@@ -17,5 +17,5 @@ describe 'package initializing', ->
     package = compiler.package()
     expect(package.paths).toEqual ['test/fixtures/base/app']
     expect(package.dependencies[0]).toEqual(
-      'test/fixtures/base/vendor/ConsoleDummy.js'
+      'test/fixtures/base/vendor/scripts/ConsoleDummy.js'
     )

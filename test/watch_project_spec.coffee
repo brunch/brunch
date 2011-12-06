@@ -62,13 +62,13 @@ describe 'project watcher', ->
   
   describe 'should update app.js', ->
     it 'when file has been added', ->
-      fs.writeFileSync 'brunch/vendor/anotherLib.js', '//anotherLib', 'utf8'
+      fs.writeFileSync 'brunch/vendor/scripts/anotherLib.js', '//anotherLib', 'utf8'
       app = fs.readFileSync 'brunch/build/scripts/app.js', 'utf8'
       waitsFor (-> !!app), '', 400
       
     it 'when file has been removed', ->
-      fs.writeFileSync 'brunch/vendor/anotherLib.js', '//anotherLib', 'utf8'
-      fs.unlinkSync 'brunch/vendor/anotherLib.js'
+      fs.writeFileSync 'brunch/vendor/scripts/anotherLib.js', '//anotherLib', 'utf8'
+      fs.unlinkSync 'brunch/vendor/scripts/anotherLib.js'
       app = fs.readFileSync 'brunch/build/scripts/app.js', 'utf8'
       waitsFor (-> !!app), '', 400
       runs ->
