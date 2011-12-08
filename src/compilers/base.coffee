@@ -82,3 +82,35 @@ class exports.Compiler
   matchesFile: (file) ->
     @patterns.some (pattern) ->
       file.match pattern
+
+
+class exports.CopyingCompiler extends exports.Compiler
+  map: (file, callback) ->
+    callback null, file
+
+  reduce: (memo, file, callback) ->
+    (memo ?= []).push file
+    callback null, memo
+
+  write: (files, callback) ->
+    unless @sourceDirectory
+      return callback 'You need to define "sourceDirectory"
+field in copying compilers'
+    
+    sourceDirectory = path.resolve @getRootPath @sourceDirectory
+    async.forEach files, (source, cb) =>
+      destination = @getBuildPath path.resolve(source).replace sourceDirectory, ''
+      copy = =>
+        helpers.copyFile source, destination, cb
+      destinationDirectory = path.dirname destination
+      fs.stat destinationDirectory, (error, stats) =>
+        if error?
+          process.nextTick =>
+            try
+              # fileUtil.mkdirs doesn't work properly.
+              fileUtil.mkdirsSync path.resolve(destinationDirectory), 0755
+              copy()
+            catch error
+              return
+        copy()
+    , callback
