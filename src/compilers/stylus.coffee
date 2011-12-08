@@ -16,7 +16,8 @@ class exports.StylusCompiler extends Compiler
   map: (file, callback) ->
     @options ?= {}
     fs.readFile file, (error, data) =>
-      compiler = stylus(data)
+      return callback error if error?
+      compiler = stylus(data.toString())
         .set('compress', yes)
         .set('firebug', @options.stylus?.firebug)
 

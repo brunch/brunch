@@ -6,23 +6,21 @@ uglify = require 'uglify-js'
 helpers = require '../helpers'
 {Compiler} = require './base'
 
-
 class exports.StitchCompiler extends Compiler
   patterns: [/(app|vendor)\/.*\.(js|coffee)$/]
 
-  collect: (type) ->
-    directory = @getRootPath type
+  collect: ->
+    directory = @getRootPath 'vendor', 'scripts'
     fileNames = helpers.filterFiles (fs.readdirSync directory), directory
-    if type is 'vendor'
-      # Generate list of dependencies and preserve order of brunch libaries,
-      # like defined in options.dependencies.
-      fileNames = @options.dependencies.concat fileNames.filter (fileName) =>
-        fileName not in @options.dependencies
+    # Generate list of dependencies and preserve order of brunch libaries,
+    # like defined in options.dependencies.
+    fileNames = @options.dependencies.concat fileNames.filter (fileName) =>
+      fileName not in @options.dependencies
     fileNames.map (fileName) => path.join directory, fileName
 
   package: ->
     @_package ?= stitch.createPackage
-      dependencies: @collect 'vendor'
+      dependencies: @collect()
       paths: [@getRootPath 'app']
 
   minify: (source) ->
@@ -33,7 +31,7 @@ class exports.StitchCompiler extends Compiler
   compile: (files, callback) ->
     # update package dependencies in case a dependency was added or removed
     if files.some((file) -> file.match /vendor\//)
-      @package().dependencies = @collect 'vendor'
+      @package().dependencies = @collect()
 
     @package().compile (error, source) =>
       return @logError error if error?

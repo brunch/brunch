@@ -13,11 +13,11 @@ class exports.Compiler
   constructor: (@options) ->
     null
 
-  getRootPath: (subPath) ->
-    path.join @options.rootPath, subPath
+  getRootPath: (subPathes...) ->
+    path.join @options.rootPath, subPathes...
 
-  getBuildPath: (subPath) ->
-    path.join @options.buildPath, subPath
+  getBuildPath: (subPathes...) ->
+    path.join @options.buildPath, subPathes...
 
   getClassName: ->
     @constructor.name
@@ -32,8 +32,8 @@ class exports.Compiler
   logError: (text = '') ->
     helpers.logError "#{@getFormattedClassName()} error. #{text}"
 
-  sort: (files, callback) ->
-    callback null, files
+  sort: (file, callback) ->
+    callback null, file
 
   map: (file, callback) ->
     fs.readFile file, callback
@@ -46,20 +46,22 @@ class exports.Compiler
     #fs.writeFile fileName, data, callback
 
   compile: (files, callback) ->
-    console.log 'Sorting', files
+    log = console.log
+    log = (value, _) => console.log value, @getClassName()
+    log 'Sorting', files
     async.sortBy files, @sort, (error, sorted) =>
       return @logError error if error?
-      console.log 'Mapping', sorted
+      log 'Mapping', sorted
       async.map sorted, @map, (error, mapped) =>
         return @logError error if error?
-        console.log 'Reducing', mapped
+        log 'Reducing', mapped
         async.reduce mapped, null, @reduce, (error, reduced) =>
           return @logError error if error?
-          console.log 'Writing', reduced
+          log 'Writing', reduced
           @write reduced, (error) =>
             return @logError error if error?
             @log()
-            callback()
+            callback @getClassName()
 
   clearQueue: (callback) ->
     @compile @changedFiles, callback
