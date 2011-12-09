@@ -1,7 +1,7 @@
 stylus = require 'stylus'
 fs = require 'fs'
 
-{Compiler} = require './base'
+{ConcatenatingCompiler} = require './base'
 
 # NIB is an official stylus library of useful mixins etc.
 # just like Compass.
@@ -10,8 +10,9 @@ try
 catch error
   null
 
-class exports.StylusCompiler extends Compiler
+class exports.StylusCompiler extends ConcatenatingCompiler
   patterns: [/\.styl$/]
+  destination: 'styles/main.css'
 
   map: (file, callback) ->
     @options ?= {}

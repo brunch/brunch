@@ -1,7 +1,4 @@
-fs = require 'fs'
 path = require 'path'
-async = require 'async'
-fileUtil = require 'file'
 
 helpers = require '../helpers'
 {CopyingCompiler} = require './base'
