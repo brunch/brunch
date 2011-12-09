@@ -7,7 +7,7 @@ helpers = require '../helpers'
 # Takes 2-element array.
 # Examples
 # 
-#   > group [['a', 1], ['b', 2], ['a', 3], ['c', 4], ['a', 0]]
+#   coffee> group [['a', 1], ['b', 2], ['a', 3], ['c', 4], ['a', 0]]
 #   [['a', [1, 3, 0]], ['b', [2]], ['c', [4]]]
 #
 # Returns new array in format [[key, values]].
@@ -130,12 +130,11 @@ class exports.ConcatenatingCompiler extends exports.Compiler
 
   map: (file, callback) ->
     fs.readFile file, (error, result) =>
-      console.log 'EREAJIAWJADJOASOIDJS', error if error?
       callback error, result.toString()
 
   reduce: (memo, file, callback) ->
     memo ?= ''
-    callback null, memo + file.toString()
+    callback null, memo + file
 
   write: (data, callback) ->
     @globalWriteQueue.add [@getBuildPath(@destination), data], callback
