@@ -1,18 +1,18 @@
 # Brunch
-Brunch is lightweight client side framework on top of backbone, eco and
-stylus using coffee-script.
+Brunch is client side framework on top of backbone, eco and
+stylus using CoffeeScript.
 
 ## Installation
-You'll need [node.js](http://nodejs.org/) 0.4.x and [npm](http://npmjs.org/).
-Type:
+You'll need [node.js](http://nodejs.org/) 0.4 / 0.6.
+[npm](http://npmjs.org/). Type:
 
     npm install -g brunch
 
 ## Getting Started
 Create a new project by
- 
+
     brunch new
- 
+
 Then you can start the file watcher. It will compile your .coffee, .styl and
 .eco files on the fly after every change so you don't have to do it manually.
  

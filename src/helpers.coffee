@@ -7,19 +7,127 @@ util = require 'util'
 async = require 'async'
 
 
+# Extends the object with properties from another object.
+# Example
+#   
+#   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
+#   # => {a: 5, b: 15, c: 20, e: 50}
+# 
 exports.extend = extend = (object, properties) ->
-  object[key] = val for own key, val of properties
+  object[key] = val for own key, val of properties;
   object
 
 
-# copy single file and executes callback when done
+# Shell color manipulation tools.
+colors =
+  black: 30
+  red: 31
+  green: 32
+  brown: 33
+  blue: 34
+  purple: 35
+  cyan: 36
+  gray: 37
+  none: ''
+  reset: 0
+
+
+getColor = (color) ->
+  colors[color.toString()] or colors.none
+
+
+colorize = (text, color) ->
+  "\033[#{getColor(color)}m#{text}\033[#{getColor('reset')}m"
+
+
+# Adds '0' if a positive number is lesser than 10.
+pad = (number) ->
+  num = "#{number}"
+  if num.length < 2
+    "0#{num}"
+  else
+    num
+
+# Generates current date and colorizes it, if specified.
+# Example
+# 
+#   formatDate()
+#   # => '[06:56:47]:'
+# 
+formatDate = (color = 'none') ->
+  date = new Date
+  timeArr = (pad date['get' + item]() for item in ['Hours', 'Minutes', 'Seconds'])
+  time = timeArr.join ':'
+  colorize "[#{time}]:", color
+
+# Example
+# 
+#   capitalize 'test'
+#   # => 'Test'
+#
+exports.capitalize = capitalize = (string) ->
+  string[0].toUpperCase() + string[1..]
+
+# Example
+# 
+#   formatClassName 'twitter_users'
+#   # => 'TwitterUsers'
+#
+exports.formatClassName = (filename) ->
+  filename.split('_').map(capitalize).join('')
+
+exports.isTesting = ->
+  'jasmine' of global
+
+exports.notify = (title, text) ->
+  null
+
+# Map of possible system notifiers in format
+# Key - "name of system command that would be executed".
+# Value - args, with which the command would be spawned.
+# E.g. spawn growlnotify, [title, '-m', text]
+exports.notifiers = notifiers =
+  growlnotify: (title, text) -> [title, '-m', text]
+  'notify-send': (title, text) -> [title, text]
+
+# Try to determine right system notifier.
+for name, transform of notifiers
+  do (name, transform) ->
+    exec "which #{name}", (error) ->
+      exports.notify = ((args...) -> spawn name, transform args...) unless error?
+
+exports.log = (text, color = 'green', isError = no) ->
+  stream = if isError then process.stderr else process.stdout
+  # TODO: log stdout on testing output end.
+  output = "#{formatDate(color)} #{text}\n"
+  stream.write output, 'utf8' unless exports.isTesting()
+  exports.notify 'Brunch error', text if isError
+
+exports.logError = (text) ->
+  exports.log text, 'red', yes
+
+exports.logDebug = (args...) ->
+  console.log formatDate('green'), args...
+
+exports.exit = ->
+  if exports.isTesting()
+    exports.logError 'Terminated process'
+  else
+    process.exit 0
+
+# Copies single file and executes callback when done.
 exports.copyFile = (source, destination, callback) ->
   read = fs.createReadStream source
   write = fs.createWriteStream destination
   util.pump read, write, -> callback?()
 
-
-# walk through tree, creates directories and copy files
+# Asynchronously walks through directory tree, creates directories and copies
+# files. Similar to `cp -r` in Unix.
+# 
+# Example
+# 
+#   walkTreeAndCopyFiles 'assets', 'build'
+# 
 exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
   fs.readdir source, (error, files) ->
     return callback error if error
@@ -49,8 +157,8 @@ exports.createBuildDirectories = (buildPath) ->
   for dirPath in ['styles', 'scripts']
     fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
 
-# recursive copy file tree from source to destination and fires
-# callback with error and a list of created files
+# Recursively copies directory tree from `source` to `destination`.
+# Fires callback function with error and a list of created files.
 exports.recursiveCopy = (source, destination, callback) ->
   fileUtil.mkdirsSync destination, 0755
   paths = []
@@ -64,12 +172,21 @@ exports.recursiveCopy = (source, destination, callback) ->
       callback err, paths.sort()
 
 
+# A simple file changes watcher.
+# 
+# Example
+# 
+#   (new Watcher)
+#     .add('app')
+#     .add('vendor')
+#     .onChange (file) ->
+#       console.log 'File %s was changed', file
+# 
 class exports.Watcher extends EventEmitter
   # RegExp that would filter invalid files (dotfiles, emacs caches etc).
   invalid: /^(\.|#)/
 
   constructor: ->
-    #console.log 'Created'
     @watched = {}
 
   _getWatchedDir: (directory) ->
@@ -114,18 +231,22 @@ class exports.Watcher extends EventEmitter
         @_handleFile file if stats.isFile()
         @_handleDir file if stats.isDirectory()
 
+  # Fired when some file was added.
   add: (file) ->
     @_handle file
     this
 
+  # Fired when some file was changed.
   onChange: (callback) ->
     @on 'change', callback
     this
 
+  # Fired when some file was deleted.
   onDelete: (callback) ->
     @on 'delete', callback
     this
 
+  # Removes all listeners from watched files.
   clear: ->
     @removeAllListeners 'change'
     for directory, files of @watched
@@ -142,90 +263,3 @@ exports.filterFiles = (files, sourcePath) ->
     stats = fs.statSync path.join sourcePath, filename
     return no if stats?.isDirectory()
     yes
-
-
-# Shell color manipulation tools.
-colors =
-  black: 30
-  red: 31
-  green: 32
-  brown: 33
-  blue: 34
-  purple: 35
-  cyan: 36
-  gray: 37
-  none: ''
-  reset: 0
-
-
-getColor = (color) ->
-  colors[color.toString()] or colors.none
-
-
-colorize = (text, color) ->
-  "\033[#{getColor(color)}m#{text}\033[#{getColor('reset')}m"
-
-
-pad = (number) ->
-  num = "#{number}"
-  if num.length < 2 then "0#{num}" else num
-
-
-formatDate = (color = 'none') ->
-  date = new Date
-  timeArr = (pad date['get' + item]() for item in ['Hours', 'Minutes', 'Seconds'])
-  time = timeArr.join ':'
-  colorize "[#{time}]:", color
-
-
-exports.capitalize = capitalize = (string) ->
-  string[0].toUpperCase() + string[1..]
-
-
-exports.formatClassName = (filename) ->
-  filename.split('_').map(capitalize).join('')
-
-
-exports.isTesting = ->
-  'jasmine' of global
-
-
-
-exports.notify = (title, text) -> null
-
-
-# Map of possible system notifiers in format
-# Key - "name of system command that would be executed".
-# Value - args, with which the command would be spawned.
-# E.g. spawn growlnotify, [title, '-m', text]
-exports.notifiers = notifiers =
-  growlnotify: (title, text) -> [title, '-m', text]
-  'notify-send': (title, text) -> [title, text]
-
-
-# Try to determine right system notifier.
-for name, transform of notifiers
-  do (name, transform) ->
-    exec "which #{name}", (error) ->
-      exports.notify = ((args...) -> spawn name, transform args...) unless error?
-
-
-exports.log = (text, color = 'green', isError = no) ->
-  stream = if isError then process.stderr else process.stdout
-  # TODO: log stdout on testing output end.
-  output = "#{formatDate(color)} #{text}\n"
-  stream.write output, 'utf8' unless exports.isTesting()
-  exports.notify 'Brunch error', text if isError
-
-
-exports.logError = (text) -> exports.log text, 'red', yes
-
-
-exports.logDebug = (args...) -> console.log formatDate('green'), args...
-
-
-exports.exit = ->
-  if exports.isTesting()
-    exports.logError 'Terminated process'
-  else
-    process.exit 0
