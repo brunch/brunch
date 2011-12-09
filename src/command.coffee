@@ -2,10 +2,8 @@ path = require 'path'
 yaml = require 'yaml'
 fs = require 'fs'
 argumentum = require 'argumentum'
-
 brunch = require './brunch'
 helpers = require './helpers'
-
 
 generateConfigPath = (rootPath) ->
   if rootPath?
@@ -117,7 +115,6 @@ commandLineConfig =
       help: 'display brunch version'
       flag: yes
       callback: -> brunch.VERSION
-
 
 exports.run = ->
   argumentum.load(commandLineConfig).parse()

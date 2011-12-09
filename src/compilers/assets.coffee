@@ -1,5 +1,4 @@
 path = require 'path'
-
 helpers = require '../helpers'
 {CopyingCompiler} = require './base'
 

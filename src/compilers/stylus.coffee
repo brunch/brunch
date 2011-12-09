@@ -1,6 +1,5 @@
 stylus = require 'stylus'
 fs = require 'fs'
-
 {ConcatenatingCompiler} = require './base'
 
 # NIB is an official stylus library of useful mixins etc.

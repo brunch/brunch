@@ -6,7 +6,6 @@ util = require 'util'
 {EventEmitter} = require 'events'
 async = require 'async'
 
-
 # Extends the object with properties from another object.
 # Example
 #   

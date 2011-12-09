@@ -1,14 +1,11 @@
 fs = require 'fs'
 path = require 'path'
 fileUtil = require 'file' 
-
 compilers = require './compilers'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
-
 exports.VERSION = require('./package').version
-
 exports.Brunch = class Brunch
   defaultConfig:
     rootPath: './'
@@ -103,7 +100,6 @@ directory \"#{@options.rootPath}\" already exists"
       return helpers.logError error if error?
       helpers.log "Generated #{filePath}"
     this
-
 
 for method in ['new', 'build', 'watch', 'test', 'generate']
   do (method) ->

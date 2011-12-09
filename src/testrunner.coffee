@@ -3,10 +3,8 @@ fs = require 'fs'
 path = require 'path'
 coffee = require 'coffee-script'
 jsdom = require 'jsdom'
-
 helpers = require './helpers'
 {TerminalReporter} = require '../vendor/reporter'
-
 
 compileSpecFile = (filePath) ->
   extension = path.extname filePath

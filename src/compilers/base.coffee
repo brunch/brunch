@@ -1,7 +1,6 @@
 fs = require 'fs'
 path = require 'path'
 async = require 'async'
-
 helpers = require '../helpers'
 
 # Takes 2-element array.
@@ -16,7 +15,6 @@ group = (items) ->
   for [destination, data] in items
     (itemsMap[destination] ?= []).push data
   ([file, dataArray] for file, dataArray of itemsMap)
-
 
 class Queue
   timeout: 20
@@ -50,9 +48,7 @@ class WriteQueue extends Queue
       fs.writeFile file, dataArray.join(''), next
     , onWrite
 
-
 writeQueue = new WriteQueue
-
 
 class exports.Compiler
   patterns: []
@@ -121,7 +117,6 @@ class exports.Compiler
     @patterns.some (pattern) ->
       file.match pattern
 
-
 # Compiler that concatenates all files (e.g. main.css + helpers.css).
 class exports.ConcatenatingCompiler extends exports.Compiler
   constructor: ->
@@ -138,7 +133,6 @@ class exports.ConcatenatingCompiler extends exports.Compiler
 
   write: (data, callback) ->
     @globalWriteQueue.add [@getBuildPath(@destination), data], callback
-
 
 # Compiler that just copies all files from @sourceDirectory to build dir.
 class exports.CopyingCompiler extends exports.Compiler
