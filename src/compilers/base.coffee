@@ -4,9 +4,13 @@ async = require 'async'
 
 helpers = require '../helpers'
 
-# Example
-#   group [['a', 1], ['b', 2], ['a', 3], ['c', 4], ['a', 0]]
-#   -> [['a', [1, 3, 0]], ['b', [2]], ['c', [4]]]
+# Takes 2-element array.
+# Examples
+# 
+#   > group [['a', 1], ['b', 2], ['a', 3], ['c', 4], ['a', 0]]
+#   [['a', [1, 3, 0]], ['b', [2]], ['c', [4]]]
+#
+# Returns new array in format [[key, values]].
 group = (items) ->
   itemsMap = {}
   for [destination, data] in items
@@ -35,6 +39,8 @@ class Queue
     @timeoutId = setTimeout (=> @clear callback), @timeout
 
 
+# Queue, that would be used for tracking file writing in compilers.
+# For example, both SASS & CSS compilers use one output file: `main.css`.
 class WriteQueue extends Queue
   timeout: 200
 
@@ -116,6 +122,7 @@ class exports.Compiler
       file.match pattern
 
 
+# Compiler that concatenates all files (e.g. main.css + helpers.css).
 class exports.ConcatenatingCompiler extends exports.Compiler
   constructor: ->
     super
@@ -134,6 +141,7 @@ class exports.ConcatenatingCompiler extends exports.Compiler
     @globalWriteQueue.add [@getBuildPath(@destination), data], callback
 
 
+# Compiler that just copies all files from @sourceDirectory to build dir.
 class exports.CopyingCompiler extends exports.Compiler
   map: (file, callback) ->
     callback null, file
