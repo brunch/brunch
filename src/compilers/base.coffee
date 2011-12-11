@@ -4,17 +4,31 @@ async = require 'async'
 helpers = require '../helpers'
 
 # Takes 2-element array.
-# Examples
+# Example
 # 
-#   coffee> group [['a', 1], ['b', 2], ['a', 3], ['c', 4], ['a', 0]]
-#   [['a', [1, 3, 0]], ['b', [2]], ['c', [4]]]
+#   group [{destination: 'a', data: 1, callback: 'f1'},
+#    {destination: 'a', data: 2, callback: 'f2'},
+#    {destination: 'b', data: 3, callback: 'f3'}]
+#   # => [{destination: 'a', data: [1, 2], callback: ['f1', 'f2']},
+#     {destination: 'b', data: [3], callback: ['f3']}]
 #
 # Returns new array in format [[key, values]].
-group = (items) ->
-  itemsMap = {}
-  for [destination, data] in items
-    (itemsMap[destination] ?= []).push data
-  ([file, dataArray] for file, dataArray of itemsMap)
+group = (items, key) ->
+  map = {}
+  result = []
+  counter = 0
+  for item in items
+    value = item[key]
+    unless value of map
+      map[value] = counter
+      newItem = {}
+      newItem[key] = value
+      result.push newItem
+      counter += 1
+    newItem = result[map[value]]
+    for fieldName, fieldValue of item when fieldName isnt key
+      (newItem[fieldName] ?= []).push fieldValue
+  result
 
 class Queue
   timeout: 20
@@ -42,11 +56,14 @@ class Queue
 class WriteQueue extends Queue
   timeout: 200
 
-  beforeClear: (items, onWrite) ->
-    items = group items
-    async.forEach items, ([file, dataArray], next) =>
-      fs.writeFile file, dataArray.join(''), next
-    , onWrite
+  beforeClear: (items) ->
+    groupped = group items, 'destination'
+    async.forEach groupped, ({destination, data, onWrite}, next) =>
+      fs.writeFile destination, data.join(''), next
+    , (error) =>
+      # onWrite is a list of callbacks.
+      items.forEach ({destination, data, onWrite}) =>
+        callback error for callback in onWrite
 
 writeQueue = new WriteQueue
 
@@ -88,19 +105,12 @@ class exports.Compiler
     callback null, data
 
   compile: (files, callback) ->
-    log = ->
-    #log = console.log
-    #log = (value, _) => console.log value, @getClassName()
-    log 'Sorting', files
-    async.sortBy files, @sort, (error, sorted) =>
+    async.sortBy files, @sort.bind(this), (error, sorted) =>
       return @logError error if error?
-      log 'Mapping', sorted
-      async.map sorted, @map, (error, mapped) =>
+      async.map sorted, @map.bind(this), (error, mapped) =>
         return @logError error if error?
-        log 'Reducing', mapped
-        async.reduce mapped, null, @reduce, (error, reduced) =>
+        async.reduce mapped, null, @reduce.bind(this), (error, reduced) =>
           return @logError error if error?
-          log 'Writing', reduced
           @write reduced, (error) =>
             return @logError error if error?
             @log()
@@ -132,7 +142,8 @@ class exports.ConcatenatingCompiler extends exports.Compiler
     callback null, memo + file
 
   write: (data, callback) ->
-    @globalWriteQueue.add [@getBuildPath(@destination), data], callback
+    destination = @getBuildPath @destination
+    @globalWriteQueue.add {destination, data, onWrite: callback}
 
 # Compiler that just copies all files from @sourceDirectory to build dir.
 class exports.CopyingCompiler extends exports.Compiler

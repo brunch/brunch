@@ -3,10 +3,11 @@ path = require 'path'
 stitch = require 'stitch'
 uglify = require 'uglify-js'
 helpers = require '../helpers'
-{Compiler} = require './base'
+{ConcatenatingCompiler} = require './base'
 
-class exports.StitchCompiler extends Compiler
+class exports.StitchCompiler extends ConcatenatingCompiler
   patterns: [/(app|vendor)\/.*\.(js|coffee)$/]
+  destination: 'scripts/app.js'
 
   collect: ->
     directory = @getRootPath 'vendor', 'scripts'
@@ -27,14 +28,16 @@ class exports.StitchCompiler extends Compiler
     {ast_mangle, ast_squeeze, gen_code} = uglify.uglify
     gen_code ast_squeeze ast_mangle parse source
 
-  compile: (files, callback) ->
-    # update package dependencies in case a dependency was added or removed
-    if files.some((file) -> file.match /vendor\//)
-      @package().dependencies = @collect()
+  map: (file, callback) ->
+    callback null, null
 
+  reduce: (memo, file, callback) ->
+    callback null, null
+
+  # write() takes nothing as a first argument.
+  write: (undef, callback) ->
     @package().compile (error, source) =>
       return @logError error if error?
-      if @options.minify
-        callback @minify source
-      else
-        callback source
+      data = if @options.minify then @minify source else source
+      destination = @getBuildPath @destination
+      @globalWriteQueue.add {destination, data, onWrite: callback}
