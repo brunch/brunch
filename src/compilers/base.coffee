@@ -58,12 +58,13 @@ class WriteQueue extends Queue
 
   beforeClear: (items) ->
     groupped = group items, 'destination'
-    async.forEach groupped, ({destination, data, onWrite}, next) =>
+    async.forEach groupped, ({destination, data}, next) =>
       fs.writeFile destination, data.join(''), next
     , (error) =>
       # onWrite is a list of callbacks.
-      items.forEach ({destination, data, onWrite}) =>
-        callback error for callback in onWrite
+      groupped.forEach ({onWrite}) =>
+        for callback in onWrite
+          callback error
 
 writeQueue = new WriteQueue
 
