@@ -33,7 +33,8 @@
   },
   "devDependencies": {
     "express":       "2.5.1",
-    "jasmine-node":  "1.0.13",
+    "mocha":         "0.3.6",
+    "should":        "0.3.2",
     "zombie":        "0.11.7"
   },
   "repository": {

@@ -43,7 +43,9 @@ task 'link', 'Link local brunch as your global npm module', ->
 ## Testing ##
 
 task 'test', 'Run test (spec) suite', ->
-  tester = spawn './node_modules/jasmine-node/bin/jasmine-node', ['--coffee', 'test']
+  tester = spawn './node_modules/mocha/bin/mocha', [
+    '--colors', '--require', 'should', '--reporter', 'spec'
+  ]
   tester.stdout.on 'data', writeData
   tester.stderr.on 'data', writeData
   tester.on 'exit', process.exit
