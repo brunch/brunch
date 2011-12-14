@@ -16,6 +16,32 @@ exports.extend = extend = (object, properties) ->
   object[key] = val for own key, val of properties;
   object
 
+# Groups array of objects by object field.
+# Example
+# 
+#   group [{destination: 'a', data: 1, callback: 'f1'},
+#    {destination: 'a', data: 2, callback: 'f2'},
+#    {destination: 'b', data: 3, callback: 'f3'}]
+#   # => [{destination: 'a', data: [1, 2], callback: ['f1', 'f2']},
+#     {destination: 'b', data: [3], callback: ['f3']}]
+#
+# Returns new array of objects.
+group = (items, key) ->
+  map = {}
+  result = []
+  counter = 0
+  for item in items
+    value = item[key]
+    unless value of map
+      map[value] = counter
+      newItem = {}
+      newItem[key] = value
+      result.push newItem
+      counter += 1
+    newItem = result[map[value]]
+    for fieldName, fieldValue of item when fieldName isnt key
+      (newItem[fieldName] ?= []).push fieldValue
+  result
 
 # Shell color manipulation tools.
 colors =

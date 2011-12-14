@@ -3,34 +3,7 @@ path = require 'path'
 async = require 'async'
 helpers = require '../helpers'
 
-# Takes 2-element array.
-# Example
-# 
-#   group [{destination: 'a', data: 1, callback: 'f1'},
-#    {destination: 'a', data: 2, callback: 'f2'},
-#    {destination: 'b', data: 3, callback: 'f3'}]
-#   # => [{destination: 'a', data: [1, 2], callback: ['f1', 'f2']},
-#     {destination: 'b', data: [3], callback: ['f3']}]
-#
-# Returns new array in format [[key, values]].
-group = (items, key) ->
-  map = {}
-  result = []
-  counter = 0
-  for item in items
-    value = item[key]
-    unless value of map
-      map[value] = counter
-      newItem = {}
-      newItem[key] = value
-      result.push newItem
-      counter += 1
-    newItem = result[map[value]]
-    for fieldName, fieldValue of item when fieldName isnt key
-      (newItem[fieldName] ?= []).push fieldValue
-  result
-
-class Queue
+class exports.Queue
   timeout: 20
 
   constructor: ->
@@ -53,11 +26,11 @@ class Queue
 
 # Queue, that would be used for tracking file writing in compilers.
 # For example, both SASS & CSS compilers use one output file: `main.css`.
-class WriteQueue extends Queue
+class exports.WriteQueue extends exports.Queue
   timeout: 200
 
   beforeClear: (items) ->
-    groupped = group items, 'destination'
+    groupped = helpers.group items, 'destination'
     async.forEach groupped, ({destination, data}, next) =>
       fs.writeFile destination, data.join(''), next
     , (error) =>
