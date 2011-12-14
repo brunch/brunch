@@ -26,7 +26,7 @@ describe 'project watcher', ->
 
     application = brunch.new options, (application) ->
       application.options.dependencies = [
-        'ConsoleDummy.js'
+        'console-helper.js'
         'jquery-1.7.js'
         'underscore-1.1.7.js'
         'backbone-0.5.3.js'

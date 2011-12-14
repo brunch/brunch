@@ -6,7 +6,7 @@ describe 'package initializing', ->
     options =
       rootPath: 'test/fixtures/base'
       dependencies: [
-        'ConsoleDummy.js',
+        'console-helper.js',
         'jquery-1.7.js',
         'underscore-1.1.7.js',
         'backbone-0.5.3.js'
@@ -17,5 +17,5 @@ describe 'package initializing', ->
     package = compiler.package()
     expect(package.paths).toEqual ['test/fixtures/base/app']
     expect(package.dependencies[0]).toEqual(
-      'test/fixtures/base/vendor/scripts/ConsoleDummy.js'
+      'test/fixtures/base/vendor/scripts/console-helper.js'
     )

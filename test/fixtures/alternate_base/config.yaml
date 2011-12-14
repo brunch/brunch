@@ -1,4 +1,4 @@
 dependencies:
-  - ConsoleDummy.js
+  - console-helper.js
 
 buildPath: 'public/app'
