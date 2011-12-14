@@ -26,7 +26,7 @@ exports.extend = extend = (object, properties) ->
 #     {destination: 'b', data: [3], callback: ['f3']}]
 #
 # Returns new array of objects.
-group = (items, key) ->
+exports.group = (items, key) ->
   map = {}
   result = []
   counter = 0
