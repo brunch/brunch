@@ -61,10 +61,6 @@ commandLineConfig =
           help: 'build path'
           metavar: 'DIRECTORY'
           full: 'output'
-        minify:
-          abbr: 'm'
-          flag: yes
-          help: 'minify the app.js output via UglifyJS'
       callback: (options) ->
         brunch.build parseOptions options
 
@@ -76,10 +72,6 @@ commandLineConfig =
           help: 'build path'
           metavar: 'DIRECTORY'
           full: 'output'
-        minify:
-          abbr: 'm'
-          flag: yes
-          help: 'minify the app.js output via UglifyJS'
       callback: (options) ->
         brunch.watch parseOptions options
 
