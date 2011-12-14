@@ -12,6 +12,7 @@ brunch  = require '../src/brunch'
 # add check if dispatch is called when js, coffee, styl, template file change
 # add check for different buildPath
 # add test for base template as well (obstacle: zombie currently doesn't support file://)
+###
 describe 'project watcher', ->
   options = {}
   expressProcess = null
@@ -92,3 +93,4 @@ describe 'project watcher', ->
       visited = yes
     waitsFor (-> visited), 'Cannot visit the localhost', 2000
     runs -> expect(result).toEqual '<h1>brunch</h1>'
+###

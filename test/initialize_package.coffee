@@ -15,7 +15,7 @@ describe 'package initializing', ->
     compiler = new StitchCompiler options
 
     package = compiler.package()
-    expect(package.paths).toEqual ['test/fixtures/base/app']
-    expect(package.dependencies[0]).toEqual(
+    package.paths.should.eql ['test/fixtures/base/app']
+    package.dependencies[0].should.eql(
       'test/fixtures/base/vendor/scripts/console-helper.js'
     )

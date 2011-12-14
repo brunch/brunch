@@ -8,19 +8,19 @@ describe 'new project', ->
   describe 'default', ->
     it 'should be created', (done) ->
       brunch.new
-        appPath: 'brunch'
+        rootPath: 'brunch'
         buildPath: 'brunch/build'
       , ->
-        (typeof fs.statSync 'brunch').should.eql 'object'
+        (typeof fs.statSync 'brunch/app').should.eql 'object'
         (typeof fs.statSync 'brunch/build').should.eql 'object'
         specHelpers.removeDirectory 'brunch', done
 
   describe 'with nested directories', ->
     it 'should be created', (done) ->
       brunch.new
-        appPath: 'js/client'
+        rootPath: 'js/client'
         buildPath: 'js/output'
       , ->
-        (typeof fs.statSync 'js/client/src').should.eql 'object'
+        (typeof fs.statSync 'js/client/app').should.eql 'object'
         (typeof fs.statSync 'js/output').should.eql 'object'
         specHelpers.removeDirectory 'js', done

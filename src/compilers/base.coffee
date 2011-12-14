@@ -3,7 +3,7 @@ path = require 'path'
 async = require 'async'
 helpers = require '../helpers'
 
-class exports.Queue
+class Queue
   timeout: 20
 
   constructor: ->
@@ -26,7 +26,7 @@ class exports.Queue
 
 # Queue, that would be used for tracking file writing in compilers.
 # For example, both SASS & CSS compilers use one output file: `main.css`.
-class exports.WriteQueue extends exports.Queue
+class WriteQueue extends Queue
   timeout: 200
 
   beforeClear: (items) ->
