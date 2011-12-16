@@ -19,29 +19,71 @@ exports.extend = extend = (object, properties) ->
 # Groups array of objects by object field.
 # Example
 # 
-#   group [{destination: 'a', data: 1, callback: 'f1'},
-#    {destination: 'a', data: 2, callback: 'f2'},
-#    {destination: 'b', data: 3, callback: 'f3'}]
-#   # => [{destination: 'a', data: [1, 2], callback: ['f1', 'f2']},
-#     {destination: 'b', data: [3], callback: ['f3']}]
+#   group [{destination: 'a', data: 1, str: 'f1'},
+#    {destination: 'a', data: 2, str: 'f2'},
+#    {destination: 'b', data: 3, str: 'f3'}]
+#   # => [
+#     {destination: 'a', files: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
+#     {destination: 'b', files: [{data: 3, str: 'f3'}]}
+#   ]
 #
 # Returns new array of objects.
-exports.group = (items, key) ->
+exports.groupLanguageFiles = (items) ->
   map = {}
   result = []
   counter = 0
   for item in items
-    value = item[key]
+    value = item.destination
     unless value of map
       map[value] = counter
       newItem = {}
-      newItem[key] = value
+      newItem.path = value
+      newItem.files = []
       result.push newItem
       counter += 1
-    newItem = result[map[value]]
-    for fieldName, fieldValue of item when fieldName isnt key
-      (newItem[fieldName] ?= []).push fieldValue
+    index = map[value]
+    newItem = result[index]
+    obj = {}
+    obj[fieldName] = fieldValue for own fieldName, fieldValue of item
+    newItem.files.push obj
   result
+
+exports.sortLanguageFiles = (data, config) ->
+  data.map (item) ->
+    orderMap = config.order[item.destination]
+    item.files = item.files.sort (a, b) ->
+      beforeA = orderMap.before.indexOf a.source
+      beforeB = orderMap.before.indexOf b.source
+
+      if beforeA isnt -1 and beforeB is -1
+        -1
+      else if beforeA is -1 and beforeB isnt -1
+        1
+      else if beforeA isnt -1 and beforeB isnt -1
+        beforeA > beforeB
+      else
+        afterA = orderMap.after.indexOf a.source
+        afterB = orderMap.after.indexOf b.source
+        
+        if afterA isnt -1 and afterB is -1
+          1
+        else if afterA is -1 and afterB isnt -1
+          -1
+        else if afterA isnt -1 and afterB isnt -1
+          afterA < afterB
+        else
+          0
+    item
+
+onChange: (changedFile) ->
+  for compileData in compileMap when compileData.destination is changedFile.destination
+    for file in compileData.files when file.source is changedFile.source
+      file.sourceData = changedFile.sourceData
+      return
+
+getSourceData = (data) ->
+  for destinationFile in data
+    (sourceData for {sourceData} in destinationFile.files)
 
 # Shell color manipulation tools.
 colors =

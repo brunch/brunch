@@ -3,7 +3,7 @@ path = require 'path'
 async = require 'async'
 helpers = require '../helpers'
 
-class Queue
+class TimeoutQueue
   timeout: 20
 
   constructor: ->
@@ -30,7 +30,7 @@ class WriteQueue extends Queue
   timeout: 200
 
   beforeClear: (items) ->
-    groupped = helpers.group items, 'destination'
+    groupped = helpers.groupCompilerFiles items
     async.forEach groupped, ({destination, data}, next) =>
       fs.writeFile destination, data.join(''), next
     , (error) =>
