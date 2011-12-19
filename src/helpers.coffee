@@ -29,50 +29,91 @@ exports.extend = extend = (object, properties) ->
 #
 # Returns new array of objects.
 exports.groupLanguageFiles = (items) ->
+  key = 'destination'
   map = {}
   result = []
   counter = 0
   for item in items
-    value = item.destination
+    value = item[key]
     unless value of map
       map[value] = counter
       newItem = {}
-      newItem.path = value
+      newItem[key] = value
       newItem.files = []
       result.push newItem
       counter += 1
     index = map[value]
     newItem = result[index]
     obj = {}
-    obj[fieldName] = fieldValue for own fieldName, fieldValue of item
+    for own fieldName, fieldValue of item when fieldName isnt key
+      obj[fieldName] = fieldValue
     newItem.files.push obj
   result
 
+# Function that sorts array.
+# array - array to be sorted.
+# a - item, that could be in array
+# b - another item, that could be in array
+# Examples
+# 
+#   compareArrayItems [555, 666], 555, 666
+#   # => 0
+#   compareArrayItems [555, 666], 666, 555
+#   # => 1
+#   compareArrayItems [555, 666], 666, 3592
+#   # => -1
+# Returns:
+# * -1 if b not in array
+# * 0 if index of a is bigger than index of b OR both items aren't in array
+# * 1 if index of a is smaller than index of b OR a not in array
+exports.compareArrayItems = compareArrayItems = (array, a, b) ->
+  [indexOfA, indexOfB] = [(array.indexOf a), (array.indexOf b)]
+  [hasA, hasB] = [indexOfA isnt -1, indexOfB isnt -1]
+  if hasA and not hasB
+    -1
+  else if not hasA and hasB
+    1
+  else if hasA and hasB
+    Number indexOfA > indexOfB
+  else
+    0
+
+# Example
+# 
+#   data = ['d', 'b', 'c', 'a', 'e']
+#   config =
+#     before: ['a', 'c']
+#     after: ['b', 'd']
+#   sortByConfig data, config
+#   # => ['a', 'c', 'e', 'b', 'd']
+exports.sortByConfig = sortByConfig = (data, config) ->
+  data.sort (a, b) ->
+    res = compareArrayItems config.before, a, b
+    if res is 0
+      Math.abs compareArrayItems config.after, a, b
+    else
+      res
+
+# Sorts by pattern.
+# 
+# Examples
+# 
+#   data = [
+#     {destination: 'vendor/jquery.js', files: ['b.coffee', 'a.coffee']}
+#   ]
+#   config =
+#     'vendor/jquery.js':
+#       before: ['a.coffee']
+#       after: ['b.coffee']
+#   sortLanguageFiles data, config
+#   # => [{destination: 'vendor/scripts/jquery.js', files: ['a.coffee', 'b.coffee']}]
+
 exports.sortLanguageFiles = (data, config) ->
   data.map (item) ->
-    orderMap = config.order[item.destination]
-    item.files = item.files.sort (a, b) ->
-      beforeA = orderMap.before.indexOf a.source
-      beforeB = orderMap.before.indexOf b.source
-
-      if beforeA isnt -1 and beforeB is -1
-        -1
-      else if beforeA is -1 and beforeB isnt -1
-        1
-      else if beforeA isnt -1 and beforeB isnt -1
-        beforeA > beforeB
-      else
-        afterA = orderMap.after.indexOf a.source
-        afterB = orderMap.after.indexOf b.source
-        
-        if afterA isnt -1 and afterB is -1
-          1
-        else if afterA is -1 and afterB isnt -1
-          -1
-        else if afterA isnt -1 and afterB isnt -1
-          afterA < afterB
-        else
-          0
+    files = item.files.map (file) ->
+      file.source
+    (sortByConfig files, config.order[item.destination]).forEach (file, index) ->
+      item.files[index].source = file
     item
 
 onChange: (changedFile) ->
@@ -98,14 +139,11 @@ colors =
   none: ''
   reset: 0
 
-
-getColor = (color) ->
-  colors[color.toString()] or colors.none
-
+getColor = (color = 'none') ->
+  colors[color.toString()]
 
 colorize = (text, color) ->
   "\033[#{getColor(color)}m#{text}\033[#{getColor('reset')}m"
-
 
 # Adds '0' if a positive number is lesser than 10.
 pad = (number) ->

@@ -12,19 +12,42 @@ describe 'helpers', ->
       ], 'test/fixtures/alternate_base/vendor/scripts'
       dependencyPaths.should.eql ['console-helper.js']
 
-  describe '#groupCompilerFiles()', ->
+  describe '#compareArrayItems()', ->
+    describe 'should compare correctly items', ->
+      it 'which are in array', ->
+        (helpers.compareArrayItems [555, 666], 555, 666).should.equal 0
+        (helpers.compareArrayItems [555, 666], 666, 555).should.equal 1
+      it 'one of which is in array', ->
+        (helpers.compareArrayItems [555, 666], 666, 3292).should.equal -1
+        (helpers.compareArrayItems [555, 666], 3292, 666).should.equal 1
+      it 'which are not in array', ->
+        (helpers.compareArrayItems [555, 666], 6, 5).should.equal 0
+
+  describe '#sortByConfig()', ->
+    data = ['d', 'b', 'c', 'a', 'e']
+    config =
+      before: ['a', 'c']
+      after: ['b', 'd']
+    (helpers.sortByConfig data, config).should.eql [
+      'a', 'c', 'e', 'b', 'd'
+    ]
+    
+
+  describe '#groupLanguageFiles()', ->
     it 'should group', ->
       files = [
         {destination: 'a', data: 1, str: 'f1'}
         {destination: 'a', data: 2, str: 'f2'}
         {destination: 'b', data: 3, str: 'f3'}
       ]
-      helpers.groupCompilerFiles(files).should.eql [
+      helpers.groupLanguageFiles(files).should.eql [
         {destination: 'a', files: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
         {destination: 'b', files: [{data: 3, str: 'f3'}]}
       ]
 
-  describe '#sortCompilerFiles()', ->
+  describe '#sortLanguageFiles()', ->
+
+
     it 'should sort files by config', ->
       files = [
         {
@@ -53,7 +76,7 @@ describe 'helpers', ->
             before: ['app/styles/main.css', 'app/styles/user.styl', 'app/styles/self.css']
             after: ['vendor/styles/helpers.css']
 
-      helpers.sortCompilerFiles(files, config).should.eql [
+      (helpers.sortLanguageFiles files, config).should.eql [
         {
           destination: 'scripts/app.js'
           files: [
