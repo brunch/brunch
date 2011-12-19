@@ -3,7 +3,7 @@ path = require 'path'
 async = require 'async'
 helpers = require '../helpers'
 
-class TimeoutQueue
+class Queue
   timeout: 20
 
   constructor: ->
