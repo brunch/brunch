@@ -19,35 +19,34 @@ exports.extend = extend = (object, properties) ->
 # Groups array of objects by object field.
 # Example
 # 
-#   group [{destination: 'a', data: 1, str: 'f1'},
-#    {destination: 'a', data: 2, str: 'f2'},
-#    {destination: 'b', data: 3, str: 'f3'}]
+#   group [{destinationPath: 'a', data: 1, str: 'f1'},
+#    {destinationPath: 'a', data: 2, str: 'f2'},
+#    {destinationPath: 'b', data: 3, str: 'f3'}]
 #   # => [
-#     {destination: 'a', files: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
-#     {destination: 'b', files: [{data: 3, str: 'f3'}]}
+#     {path: 'a', sourceFiles: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
+#     {path: 'b', sourceFiles: [{data: 3, str: 'f3'}]}
 #   ]
 #
 # Returns new array of objects.
 exports.groupLanguageFiles = (items) ->
-  key = 'destination'
   map = {}
   result = []
   counter = 0
   for item in items
-    value = item[key]
+    value = item.destinationPath
     unless value of map
       map[value] = counter
       newItem = {}
-      newItem[key] = value
-      newItem.files = []
+      newItem.path = value
+      newItem.sourceFiles = []
       result.push newItem
       counter += 1
     index = map[value]
     newItem = result[index]
     obj = {}
-    for own fieldName, fieldValue of item when fieldName isnt key
+    for own fieldName, fieldValue of item when fieldName isnt 'destinationPath'
       obj[fieldName] = fieldValue
-    newItem.files.push obj
+    newItem.sourceFiles.push obj
   result
 
 # Function that sorts array.
@@ -80,51 +79,56 @@ exports.compareArrayItems = compareArrayItems = (array, a, b) ->
 
 # Example
 # 
-#   data = ['d', 'b', 'c', 'a', 'e']
+#   data = ['1', '3', '5', '2', '4']
 #   config =
-#     before: ['a', 'c']
-#     after: ['b', 'd']
+#     before: ['1', '2']
+#     after: ['4', '5']
 #   sortByConfig data, config
-#   # => ['a', 'c', 'e', 'b', 'd']
+#   # => ['1', '2', '3', '4', '5']
 exports.sortByConfig = sortByConfig = (data, config) ->
-  data.sort (a, b) ->
-    res = compareArrayItems config.before, a, b
-    if res is 0
-      Math.abs compareArrayItems config.after, a, b
-    else
-      res
+  # Clone data to a new array because we
+  # don't want a side effect here.
+  [data...].sort((a, b) ->
+    compareArrayItems config.before, a, b
+  ).sort (a, b) ->
+    -(compareArrayItems config.after, a, b)
 
 # Sorts by pattern.
 # 
 # Examples
 # 
-#   data = [
-#     {destination: 'vendor/jquery.js', files: ['b.coffee', 'a.coffee']}
-#   ]
+#   data = [{
+#     path: 'vendor/jquery.js', sourceFiles: [
+#       {path: 'b.coffee'},
+#       {path: 'a.coffee'}
+#     ]
+#   }]
 #   config =
 #     'vendor/jquery.js':
 #       before: ['a.coffee']
 #       after: ['b.coffee']
 #   sortLanguageFiles data, config
 #   # => [{destination: 'vendor/scripts/jquery.js', files: ['a.coffee', 'b.coffee']}]
-
 exports.sortLanguageFiles = (data, config) ->
   data.map (item) ->
-    files = item.files.map (file) ->
-      file.source
-    (sortByConfig files, config.order[item.destination]).forEach (file, index) ->
-      item.files[index].source = file
+    pathes = (file.path for file in item.sourceFiles)
+    sorted = sortByConfig pathes, config.order[item.path]
+    item.sourceFiles = for file, index in sorted
+      item.sourceFiles[pathes.indexOf file]
     item
 
 onChange: (changedFile) ->
-  for compileData in compileMap when compileData.destination is changedFile.destination
-    for file in compileData.files when file.source is changedFile.source
-      file.sourceData = changedFile.sourceData
+  for destFile in destFiles when destFile.path is changedFile.path
+    for sourceFile in compileData.source when sourceFile.path is sourceFile.path
+      sourceFile.data = changedFile.data
       return
 
 getSourceData = (data) ->
+  result = []
   for destinationFile in data
-    (sourceData for {sourceData} in destinationFile.files)
+    for sourceFile in destinationFile.sourceFiles
+      result.push sourceFile.data
+  result
 
 # Shell color manipulation tools.
 colors =

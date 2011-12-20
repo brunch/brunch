@@ -24,3 +24,6 @@ exports.runServer = (appPath, callback = (->)) ->
   app.on 'listening', ->
     callback()
   app
+
+exports.logJSON = (object) ->
+  console.log JSON.stringify object, null, 2
