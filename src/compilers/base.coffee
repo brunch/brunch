@@ -23,20 +23,18 @@ class Queue
     clearTimeout @timeoutId if @timeoutId?
     @timeoutId = setTimeout (=> @clear callback), @timeout
 
-
 # Queue, that would be used for tracking file writing in compilers.
 # For example, both SASS & CSS compilers use one output file: `main.css`.
 class WriteQueue extends Queue
   timeout: 200
 
   beforeClear: (items) ->
-    groupped = helpers.groupCompilerFiles items
-    async.forEach groupped, ({destination, data}, next) =>
-      fs.writeFile destination, data.join(''), next
-    , (error) =>
-      # onWrite is a list of callbacks.
-      groupped.forEach ({onWrite}) =>
-        for callback in onWrite
+    destFiles = helpers.sortLanguageFiles (helpers.groupLanguageFiles items), config
+    for destFile in destFiles
+      data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
+      callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
+      fs.writeFile destFile.path, data, (error) =>
+        for callback in callbacks
           callback error
 
 writeQueue = new WriteQueue
@@ -116,8 +114,10 @@ class exports.ConcatenatingCompiler extends exports.Compiler
     callback null, memo + file
 
   write: (data, callback) ->
-    destination = @getBuildPath @destination
-    @globalWriteQueue.add {destination, data, onWrite: callback}
+    @globalWriteQueue.add
+      destinationPath: @getBuildPath @destination
+      data: data
+      onWrite: callback
 
 # Compiler that just copies all files from @sourceDirectory to build dir.
 class exports.CopyingCompiler extends exports.Compiler

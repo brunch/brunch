@@ -38,6 +38,7 @@ class exports.StitchCompiler extends ConcatenatingCompiler
   write: (undef, callback) ->
     @package().compile (error, source) =>
       return @logError error if error?
-      data = if @options.minify then @minify source else source
-      destination = @getBuildPath @destination
-      @globalWriteQueue.add {destination, data, onWrite: callback}
+      @globalWriteQueue.add
+        data: if @options.minify then @minify source else source
+        destinationPath: @getBuildPath @destination
+        onWrite: callback

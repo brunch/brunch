@@ -1,4 +1,8 @@
-exports.AssetsCompiler = require('./assets').AssetsCompiler
-exports.CSSCompiler = require('./css').CSSCompiler
-exports.StitchCompiler = require('./stitch').StitchCompiler
-exports.StylusCompiler = require('./stylus').StylusCompiler
+{AssetsCompiler} = require './assets'
+{CSSCompiler} = require './css'
+{StitchCompiler} = require './stitch'
+{StylusCompiler} = require './stylus'
+
+module.exports = {
+  AssetsCompiler, CSSCompiler, StitchCompiler, StylusCompiler
+}
