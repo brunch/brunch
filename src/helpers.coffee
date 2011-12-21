@@ -86,12 +86,17 @@ exports.compareArrayItems = compareArrayItems = (array, a, b) ->
 #   sortByConfig data, config
 #   # => ['1', '2', '3', '4', '5']
 exports.sortByConfig = sortByConfig = (data, config) ->
+  if typeof config isnt 'object'
+    throw new TypeError 'Sorting config is not an object'
+  config.before ?= []
+  config.after ?= []
   # Clone data to a new array because we
   # don't want a side effect here.
-  [data...].sort((a, b) ->
-    compareArrayItems config.before, a, b
-  ).sort (a, b) ->
-    -(compareArrayItems config.after, a, b)
+  [data...]
+    .sort (a, b) ->
+      compareArrayItems config.before, a, b
+    .sort (a, b) ->
+      -(compareArrayItems config.after, a, b)
 
 # Sorts by pattern.
 # 
@@ -104,11 +109,13 @@ exports.sortByConfig = sortByConfig = (data, config) ->
 #     ]
 #   }]
 #   config =
-#     'vendor/jquery.js':
-#       before: ['a.coffee']
-#       after: ['b.coffee']
+#     order:
+#       'vendor/jquery.js':
+#         before: ['a.coffee']
+#         after: ['b.coffee']
 #   sortLanguageFiles data, config
-#   # => [{destination: 'vendor/scripts/jquery.js', files: ['a.coffee', 'b.coffee']}]
+#   # => [{path: 'vendor/scripts/jquery.js', sourceFiles: [
+#     {path: 'a.coffee'}, {path: 'b.coffee'}]}]
 exports.sortLanguageFiles = (data, config) ->
   data.map (item) ->
     pathes = (file.path for file in item.sourceFiles)
@@ -129,6 +136,15 @@ getSourceData = (data) ->
     for sourceFile in destinationFile.sourceFiles
       result.push sourceFile.data
   result
+
+writeFiles = (items, config) ->
+  destFiles = helpers.sortLanguageFiles (helpers.groupLanguageFiles items), config
+  for destFile in destFiles
+    data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
+    callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
+    fs.writeFile destFile.path, data, (error) =>
+      for callback in callbacks
+        callback error
 
 # Shell color manipulation tools.
 colors =
