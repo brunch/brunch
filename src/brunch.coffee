@@ -2,6 +2,7 @@ fs = require 'fs'
 path = require 'path'
 fileUtil = require 'file' 
 compilers = require './compilers'
+filewriter = require './filewriter'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
@@ -28,6 +29,19 @@ exports.Brunch = class Brunch
     @options.buildPath ?= path.join options.rootPath, 'build', ''
     @options.compilers = (new compiler @options for name, compiler of compilers)
     @watcher = new helpers.Watcher
+    @writer = new filewriter.FileWriter
+      order:
+        'build/scripts/app.js':
+          before: [
+            'vendor/scripts/console-helper.js'
+            'vendor/scripts/jquery-1.7.js'
+            'vendor/scripts/underscore-1.1.7.js'
+            'vendor/scripts/backbone-0.5.3.js'
+          ]
+
+        'build/styles/main.css':
+          before: ['vendor/styles/normalize.css']
+          after: ['vendor/styles/helpers.css']
 
   _makeCallback: (fn) ->
     => fn? this
@@ -64,13 +78,16 @@ directory \"#{@options.rootPath}\" already exists"
     @watcher
       .add(path.join @options.rootPath, 'app')
       .add(path.join @options.rootPath, 'vendor')
-      .onChange (file) =>
-        for compiler in @options.compilers when compiler.matchesFile file
-          return compiler.onFileChanged file, =>
-            # If there would be no another `onFileChanged` in 30s,
-            # it would execute callback.
-            clearTimeout timer if timer
-            timer = setTimeout callback, 30
+      .on 'change', (file) =>
+        @options.compilers
+          .filter (compiler) => 
+            compiler.matchesFile file
+          .forEach (compiler) =>
+            compiler.compile file, (error, result) =>
+              return if error?
+              @writer.emit 'change', result if result?.path
+      .on 'remove', (file) =>
+        @writer.emit 'remove', file
     this
 
   stopWatching: (callback) ->

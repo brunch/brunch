@@ -16,136 +16,6 @@ exports.extend = extend = (object, properties) ->
   object[key] = val for own key, val of properties;
   object
 
-# Groups array of objects by object field.
-# Example
-# 
-#   group [{destinationPath: 'a', data: 1, str: 'f1'},
-#    {destinationPath: 'a', data: 2, str: 'f2'},
-#    {destinationPath: 'b', data: 3, str: 'f3'}]
-#   # => [
-#     {path: 'a', sourceFiles: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
-#     {path: 'b', sourceFiles: [{data: 3, str: 'f3'}]}
-#   ]
-#
-# Returns new array of objects.
-exports.groupLanguageFiles = (items) ->
-  map = {}
-  result = []
-  counter = 0
-  for item in items
-    value = item.destinationPath
-    unless value of map
-      map[value] = counter
-      newItem = {}
-      newItem.path = value
-      newItem.sourceFiles = []
-      result.push newItem
-      counter += 1
-    index = map[value]
-    newItem = result[index]
-    obj = {}
-    for own fieldName, fieldValue of item when fieldName isnt 'destinationPath'
-      obj[fieldName] = fieldValue
-    newItem.sourceFiles.push obj
-  result
-
-# Function that sorts array.
-# array - array to be sorted.
-# a - item, that could be in array
-# b - another item, that could be in array
-# Examples
-# 
-#   compareArrayItems [555, 666], 555, 666
-#   # => 0
-#   compareArrayItems [555, 666], 666, 555
-#   # => 1
-#   compareArrayItems [555, 666], 666, 3592
-#   # => -1
-# Returns:
-# * -1 if b not in array
-# * 0 if index of a is bigger than index of b OR both items aren't in array
-# * 1 if index of a is smaller than index of b OR a not in array
-exports.compareArrayItems = compareArrayItems = (array, a, b) ->
-  [indexOfA, indexOfB] = [(array.indexOf a), (array.indexOf b)]
-  [hasA, hasB] = [indexOfA isnt -1, indexOfB isnt -1]
-  if hasA and not hasB
-    -1
-  else if not hasA and hasB
-    1
-  else if hasA and hasB
-    Number indexOfA > indexOfB
-  else
-    0
-
-# Example
-# 
-#   data = ['1', '3', '5', '2', '4']
-#   config =
-#     before: ['1', '2']
-#     after: ['4', '5']
-#   sortByConfig data, config
-#   # => ['1', '2', '3', '4', '5']
-exports.sortByConfig = sortByConfig = (data, config) ->
-  if typeof config isnt 'object'
-    throw new TypeError 'Sorting config is not an object'
-  config.before ?= []
-  config.after ?= []
-  # Clone data to a new array because we
-  # don't want a side effect here.
-  [data...]
-    .sort (a, b) ->
-      compareArrayItems config.before, a, b
-    .sort (a, b) ->
-      -(compareArrayItems config.after, a, b)
-
-# Sorts by pattern.
-# 
-# Examples
-# 
-#   data = [{
-#     path: 'vendor/jquery.js', sourceFiles: [
-#       {path: 'b.coffee'},
-#       {path: 'a.coffee'}
-#     ]
-#   }]
-#   config =
-#     order:
-#       'vendor/jquery.js':
-#         before: ['a.coffee']
-#         after: ['b.coffee']
-#   sortLanguageFiles data, config
-#   # => [{path: 'vendor/scripts/jquery.js', sourceFiles: [
-#     {path: 'a.coffee'}, {path: 'b.coffee'}]}]
-exports.sortLanguageFiles = (data, config) ->
-  data.map (item) ->
-    pathes = (file.path for file in item.sourceFiles)
-    sorted = sortByConfig pathes, config.order[item.path]
-    item.sourceFiles = for file, index in sorted
-      item.sourceFiles[pathes.indexOf file]
-    item
-
-onChange: (changedFile) ->
-  for destFile in destFiles when destFile.path is changedFile.path
-    for sourceFile in compileData.source when sourceFile.path is sourceFile.path
-      sourceFile.data = changedFile.data
-      return
-
-getSourceData = (data) ->
-  result = []
-  for destinationFile in data
-    for sourceFile in destinationFile.sourceFiles
-      result.push sourceFile.data
-  result
-
-writeFiles = (items, config) ->
-  destFiles = helpers.sortLanguageFiles (helpers.groupLanguageFiles items), config
-  for destFile in destFiles
-    data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
-    callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
-    fs.writeFile destFile.path, data, (error) =>
-      for callback in callbacks
-        callback error
-
 # Shell color manipulation tools.
 colors =
   black: 30
@@ -219,7 +89,8 @@ exports.notifiers = notifiers =
 for name, transform of notifiers
   do (name, transform) ->
     exec "which #{name}", (error) ->
-      exports.notify = ((args...) -> spawn name, transform args...) unless error?
+      unless error?
+        exports.notify = (args...) -> spawn name, transform args...
 
 exports.log = (text, color = 'green', isError = no) ->
   stream = if isError then process.stderr else process.stdout
@@ -232,7 +103,7 @@ exports.logError = (text) ->
   exports.log text, 'red', yes
 
 exports.logDebug = (args...) ->
-  console.log formatDate('green'), args...
+  console.log (formatDate 'green'), args...
 
 exports.exit = ->
   if exports.isTesting()
@@ -340,10 +211,9 @@ class exports.Watcher extends EventEmitter
         return unless current
         previous = @_getWatchedDir directory
         for file in previous when file not in current
-          console.log 'Deleting file', (path.join directory, file)
-          @emit 'delete', file
+          @emit 'remove', file
         for file in current when file not in previous
-          @_handle (path.join directory, file)
+          @_handle path.join directory, file
     read directory
     @_watch directory, read
 
@@ -361,14 +231,8 @@ class exports.Watcher extends EventEmitter
     @_handle file
     this
 
-  # Fired when some file was changed.
-  onChange: (callback) ->
-    @on 'change', callback
-    this
-
-  # Fired when some file was deleted.
-  onDelete: (callback) ->
-    @on 'delete', callback
+  on: ->
+    super
     this
 
   # Removes all listeners from watched files.
