@@ -13,11 +13,11 @@ class exports.StylusCompiler extends ConcatenatingCompiler
   patterns: [/\.styl$/]
   destination: 'styles/main.css'
 
-  map: (file, callback) ->
+  compile: (file, callback) ->
     @options ?= {}
-    fs.readFile file, (error, data) =>
+    @queue.push file, (error, fileData) =>
       return callback error if error?
-      compiler = stylus(data.toString())
+      compiler = stylus(fileData.toString())
         .set('compress', yes)
         .set('firebug', @options.stylus?.firebug)
 
@@ -26,4 +26,10 @@ class exports.StylusCompiler extends ConcatenatingCompiler
         compiler.set('paths', paths)
 
       compiler.use nib if nib
-      compiler.render callback
+      compiler.render (error, data) =>
+        callback error,
+          destinationPath: @getBuildPath @destination
+          path: @getRootPath file
+          data: data.toString()
+          onWrite: => @log()
+      
