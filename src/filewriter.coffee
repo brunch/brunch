@@ -132,4 +132,5 @@ class exports.FileWriter extends EventEmitter
         for fileCallback in callbacks
           fileCallback error
         next()
-    , callback
+    , (error) =>
+      @emit 'write', error

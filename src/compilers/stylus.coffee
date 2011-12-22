@@ -32,4 +32,3 @@ class exports.StylusCompiler extends ConcatenatingCompiler
           path: @getRootPath file
           data: data.toString()
           onWrite: => @log()
-      

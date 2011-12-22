@@ -88,6 +88,7 @@ directory \"#{@options.rootPath}\" already exists"
               @writer.emit 'change', result if result?.path
       .on 'remove', (file) =>
         @writer.emit 'remove', file
+    @writer.on 'write', callback
     this
 
   stopWatching: (callback) ->
