@@ -5,11 +5,12 @@ helpers = require '../helpers'
 
 class exports.Compiler
   patterns: []
+  queue: async.queue (file, callback) =>
+    fs.readFile file, callback
+  , 5
 
   constructor: (@options) ->
-    @queue = async.queue (file, callback) =>
-      fs.readFile file, callback
-    , 5
+    null
 
   getRootPath: (subPathes...) ->
     path.join @options.rootPath, subPathes...
@@ -17,18 +18,10 @@ class exports.Compiler
   getBuildPath: (subPathes...) ->
     path.join @options.buildPath, subPathes...
 
-  getClassName: ->
-    @constructor.name
-
-  getFormattedClassName: ->
-    name = @getClassName().replace 'Compiler', ''
-    "[#{name}]:"
-
-  log: (text = 'compiled') ->
-    helpers.log "#{@getFormattedClassName()} #{text}."
-
-  logError: (text = '') ->
-    helpers.logError "#{@getFormattedClassName()} error. #{text}"
+  readFile: (file, callback) ->
+    console.log 'Reading file', file
+    @queue.push file, (error, data) ->
+      callback error, data.toString()
 
   compile: (file, callback) ->
     return @logError error if error?
@@ -41,13 +34,11 @@ class exports.Compiler
 
 class exports.ConcatenatingCompiler extends exports.Compiler
   compile: (file, callback) ->
-    console.log 'Reading file', file
-    @queue.push file, (error, fileData) =>
+    @readFile file, (error, data) =>
       callback error, 
         destinationPath: @getBuildPath @destination
         path: @getRootPath file
-        data: fileData.toString()
-        onWrite: => @log()
+        data: data
 
 # Compiler that just copies all files from @sourceDirectory to build dir.
 class exports.CopyingCompiler extends exports.Compiler

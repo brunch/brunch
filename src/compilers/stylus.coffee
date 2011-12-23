@@ -1,5 +1,4 @@
 stylus = require 'stylus'
-fs = require 'fs'
 {ConcatenatingCompiler} = require './base'
 
 # NIB is an official stylus library of useful mixins etc.
@@ -14,10 +13,9 @@ class exports.StylusCompiler extends ConcatenatingCompiler
   destination: 'styles/main.css'
 
   compile: (file, callback) ->
-    @options ?= {}
-    @queue.push file, (error, fileData) =>
+    @readFile file, (error, data) =>
       return callback error if error?
-      compiler = stylus(fileData.toString())
+      compiler = stylus(data)
         .set('compress', yes)
         .set('firebug', @options.stylus?.firebug)
 
@@ -26,9 +24,8 @@ class exports.StylusCompiler extends ConcatenatingCompiler
         compiler.set('paths', paths)
 
       compiler.use nib if nib
-      compiler.render (error, data) =>
+      compiler.render (error, css) =>
         callback error,
           destinationPath: @getBuildPath @destination
           path: @getRootPath file
-          data: data.toString()
-          onWrite: => @log()
+          data: css
