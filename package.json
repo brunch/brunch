@@ -20,7 +20,7 @@
     "test": "node_modules/coffee-script/bin/cake test"
   },
   "dependencies": {
-    "coffee-script": "1.1.3",
+    "coffee-script": "1.2.0",
     "eco":           "1.0.3",
     "argumentum":    "0.5.x",
     "stylus":        "0.19.3",
@@ -35,7 +35,7 @@
     "express":       "2.5.1",
     "mocha":         "0.3.6",
     "should":        "0.3.2",
-    "zombie":        "0.11.7"
+    "zombie":        "0.12.7"
   },
   "repository": {
     "type": "git",
