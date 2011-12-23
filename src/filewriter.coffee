@@ -110,7 +110,8 @@ class exports.FileWriter extends EventEmitter
     unless sourceFile
       sourceFile = changedFile
       concatenated = destFile.sourceFiles.concat [sourceFile]
-      filePath = path.join @config.buildPath, changedFile.destinationPath
+      # FIXME
+      filePath = path.join 'build', changedFile.destinationPath
       destFile.sourceFiles = exports.sort concatenated, @config.order[filePath]
       delete changedFile.destinationPath
     sourceFile.data = changedFile.data
@@ -124,7 +125,7 @@ class exports.FileWriter extends EventEmitter
     destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
       sourceFile.path isnt removedFile.path
 
-  write: (callback = (->)) =>
+  write: =>
     console.log 'Writing files', JSON.stringify @destFiles, null, 2
     async.forEach @destFiles, (destFile, next) =>
       data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''

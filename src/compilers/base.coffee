@@ -5,9 +5,7 @@ helpers = require '../helpers'
 
 class exports.Compiler
   patterns: []
-  queue: async.queue (file, callback) =>
-    fs.readFile file, callback
-  , 5
+  queue: async.queue fs.readFile, 5
 
   constructor: (@options) ->
     null
