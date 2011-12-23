@@ -110,7 +110,8 @@ class exports.FileWriter extends EventEmitter
     unless sourceFile
       sourceFile = changedFile
       concatenated = destFile.sourceFiles.concat [sourceFile]
-      destFile.sourceFiles = exports.sort concatenated, @config.order[changedFile.destinationPath]
+      filePath = path.join @config.buildPath, changedFile.destinationPath
+      destFile.sourceFiles = exports.sort concatenated, @config.order[filePath]
       delete changedFile.destinationPath
     sourceFile.data = changedFile.data
 
@@ -130,7 +131,7 @@ class exports.FileWriter extends EventEmitter
       callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
       fs.writeFile destFile.path, data, (error) =>
         for fileCallback in callbacks
-          fileCallback error
+          fileCallback? error
         next()
     , (error) =>
       @emit 'write', error

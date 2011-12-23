@@ -30,8 +30,9 @@ exports.Brunch = class Brunch
     @options.compilers = (new compiler @options for name, compiler of compilers)
     @watcher = new helpers.Watcher
     @writer = new filewriter.FileWriter
+      buildPath: @options.buildPath
       order:
-        'build/scripts/app.js':
+        'scripts/app.js':
           before: [
             'vendor/scripts/console-helper.js'
             'vendor/scripts/jquery-1.7.js'
@@ -39,7 +40,7 @@ exports.Brunch = class Brunch
             'vendor/scripts/backbone-0.5.3.js'
           ]
 
-        'build/styles/main.css':
+        'styles/main.css':
           before: ['vendor/styles/normalize.css']
           after: ['vendor/styles/helpers.css']
 
