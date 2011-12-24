@@ -93,11 +93,9 @@ class exports.FileWriter extends EventEmitter
     console.log 'Writing files', JSON.stringify @destFiles, null, 2
     async.forEach @destFiles, (destFile, next) =>
       data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
-      callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
       # TODO.
-      fs.writeFile (path.join 'build', destFile.path), data, (error) =>
-        for fileCallback in callbacks
-          fileCallback? error
-        next()
-    , (error) =>
-      @emit 'write', error
+      destPath = path.join 'build', destFile.path
+      fs.writeFile destPath, data, (error) =>
+        next error, {path: destPath, data}
+    , (error, results) =>
+      @emit 'write', results
