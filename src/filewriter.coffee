@@ -3,39 +3,6 @@ path = require 'path'
 async = require 'async'
 {EventEmitter} = require 'events'
 
-# Groups array of objects by object field.
-# Example
-# 
-#   group [{destinationPath: 'a', data: 1, str: 'f1'},
-#    {destinationPath: 'a', data: 2, str: 'f2'},
-#    {destinationPath: 'b', data: 3, str: 'f3'}]
-#   # => [
-#     {path: 'a', sourceFiles: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
-#     {path: 'b', sourceFiles: [{data: 3, str: 'f3'}]}
-#   ]
-#
-# Returns new array of objects.
-exports.group = (items) ->
-  map = {}
-  result = []
-  counter = 0
-  for item in items
-    value = item.destinationPath
-    unless value of map
-      map[value] = counter
-      newItem = {}
-      newItem.path = value
-      newItem.sourceFiles = []
-      result.push newItem
-      counter += 1
-    index = map[value]
-    newItem = result[index]
-    obj = {}
-    for own fieldName, fieldValue of item when fieldName isnt 'destinationPath'
-      obj[fieldName] = fieldValue
-    newItem.sourceFiles.push obj
-  result
-
 # Function that sorts array.
 # array - array to be sorted.
 # a - item, that could be in array
