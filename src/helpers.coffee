@@ -1,6 +1,6 @@
 fs  = require 'fs'
 path = require 'path'
-fileUtil = require 'file'
+mkdirp = require 'mkdirp'
 util = require 'util'
 {exec, spawn} = require 'child_process'
 {EventEmitter} = require 'events'
@@ -148,10 +148,6 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
             callback error, destinationPath
             next()
     , callback
-
-exports.createBuildDirectories = (buildPath) ->
-  for dirPath in ['styles', 'scripts']
-    fileUtil.mkdirsSync path.join(buildPath, dirPath), 0755
 
 # Recursively copies directory tree from `source` to `destination`.
 # Fires callback function with error and a list of created files.

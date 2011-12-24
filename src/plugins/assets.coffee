@@ -1,4 +1,5 @@
 path = require 'path'
+mkdirp = require 'mkdirp'
 helpers = require '../helpers'
 {BasePlugin} = require './base'
 
@@ -13,13 +14,7 @@ class exports.AssetsPlugin extends BasePlugin
       destinationDirectory = path.dirname destination
       fs.stat destinationDirectory, (error, stats) =>
         if error?
-          process.nextTick =>
-            try
-              # TODO: fileUtil.mkdirs doesn't work properly.
-              fileUtil.mkdirsSync path.resolve(destinationDirectory), 0755
-              copy()
-            catch error
-              return
+          mkdirp path.resolve(destinationDirectory), 0755, copy
         else
           copy()
     , callback

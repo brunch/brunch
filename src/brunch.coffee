@@ -1,6 +1,6 @@
 fs = require 'fs'
 path = require 'path'
-fileUtil = require 'file' 
+mkdirp = require 'mkdirp'
 filewriter = require './filewriter'
 helpers = require './helpers'
 testrunner = require './testrunner'
@@ -47,7 +47,6 @@ watchFile = (buildPath, once, callback) ->
   # TODO: test if cwd has config.
   watcher = new helpers.Watcher
   writer = new filewriter.FileWriter cfg
-  helpers.createBuildDirectories buildPath
   watcher
     .add('app')
     .add('vendor')
@@ -58,13 +57,10 @@ watchFile = (buildPath, once, callback) ->
           regExp.test file
         .forEach ([regExp, destinationPath, language]) ->
           language.compile file, (error, data) ->
-            console.log 'Compiled', language
-            #return
             if error?
               languageName = language.constructor.name.replace 'Language', ''
-              return helpers.logError "#{languageName} error: #{error}"
+              return helpers.logError "[#{languageName}] error: #{error}"
             writer.emit 'change', {destinationPath, path: file, data}
-              
     .on 'remove', (file) ->
       writer.emit 'remove', file
   writer.on 'write', (error, result) ->
@@ -79,12 +75,11 @@ exports.new = (rootPath, buildPath, callback = (->)) ->
 directory \"#{rootPath}\" already exists"
 
     # TODO: async.
-    fileUtil.mkdirsSync rootPath, 0755
-    fileUtil.mkdirsSync buildPath, 0755
-
-    helpers.recursiveCopy templatePath, rootPath, ->
-      helpers.log '[Brunch]: created brunch directory layout'
-      callback()
+    mkdirp rootPath, 0755, (error) ->
+       mkdirp buildPath, 0755, (error), ->
+         helpers.recursiveCopy templatePath, rootPath, ->
+           helpers.log '[Brunch]: created brunch directory layout'
+           callback()
 
 exports.build = (buildPath, callback = (->)) ->
   watchFile buildPath, yes, callback
