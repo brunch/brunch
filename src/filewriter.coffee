@@ -103,16 +103,13 @@ class exports.FileWriter extends EventEmitter
     destFile
 
   _onChange: (changedFile) =>
-    console.log 'FileWriter: change'
     destFile = @_getDestFile changedFile.destinationPath
     sourceFile = destFile.sourceFiles.filter(({path}) -> path is changedFile.path)[0]
     
     unless sourceFile
       sourceFile = changedFile
       concatenated = destFile.sourceFiles.concat [sourceFile]
-      # FIXME
-      filePath = path.join 'build', changedFile.destinationPath
-      destFile.sourceFiles = exports.sort concatenated, @config.order[filePath]
+      destFile.sourceFiles = exports.sort concatenated, @config.files[changedFile.destinationPath].order
       delete changedFile.destinationPath
     sourceFile.data = changedFile.data
 
@@ -130,7 +127,8 @@ class exports.FileWriter extends EventEmitter
     async.forEach @destFiles, (destFile, next) =>
       data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
       callbacks = (sourceFile.onWrite for sourceFile in destFile.sourceFiles)
-      fs.writeFile destFile.path, data, (error) =>
+      # TODO.
+      fs.writeFile (path.join 'build', destFile.path), data, (error) =>
         for fileCallback in callbacks
           fileCallback? error
         next()

@@ -50,7 +50,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.new options, ->
+        brunch.new options.rootPath, ->
           brunch.build parseOptions options
 
     build:
@@ -62,7 +62,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.build parseOptions options
+        brunch.build options.buildPath
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -73,12 +73,12 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.watch parseOptions options
+        brunch.watch options.buildPath
 
     generate:
       help: 'Generate model, view or route for current project'
       options:
-        generator:
+        type:
           position: 1
           help: 'generator type'
           metavar: 'GENERATOR'
@@ -90,7 +90,7 @@ commandLineConfig =
           metavar: 'NAME'
           required: yes
       callback: (options) ->
-        brunch.generate parseOptions options
+        brunch.generate options.type, options.name
 
     test:
       help: 'Run tests for a brunch project'
@@ -99,7 +99,7 @@ commandLineConfig =
           flag: yes
           help: 'set verbose option for test runner'
       callback: (options) ->
-        brunch.test parseOptions options
+        brunch.test options.verbose
 
   options:
     version:

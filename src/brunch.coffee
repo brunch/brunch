@@ -1,126 +1,116 @@
 fs = require 'fs'
 path = require 'path'
 fileUtil = require 'file' 
-compilers = require './compilers'
 filewriter = require './filewriter'
 helpers = require './helpers'
 testrunner = require './testrunner'
+languages = require './languages'
+plugins = require './plugins'
 
 exports.VERSION = require('./package').version
-exports.Brunch = class Brunch
-  defaultConfig:
-    rootPath: './'
-    dependencies: []
-    minify: no
-    mvc: 'backbone'
-    templates: 'eco'
-    styles: 'css'
-    tests: 'jasmine'
-    templateExtension: 'eco'  # Temporary.
 
-  constructor: (options) ->
-    options = helpers.extend @defaultConfig, options
-    # Nomnom arg parser creates properties in options for internal use
-    # We don't need them.
-    ignored = ['_'].concat [0..10]
-    for prop in ignored when prop of options
-      delete options[prop]
-    @options = options
-    @options.buildPath ?= path.join options.rootPath, 'build', ''
-    @options.compilers = (new compiler @options for name, compiler of compilers)
-    @watcher = new helpers.Watcher
-    @writer = new filewriter.FileWriter
-      buildPath: @options.buildPath
+cfg = 
+  plugins: [plugins.AssetsPlugin]
+  files:
+    'scripts/app.js':
+      languages:
+        '\.js$': languages.JavaScriptLanguage
+        '\.coffee$': languages.CoffeeScriptLanguage
       order:
-        'scripts/app.js':
-          before: [
-            'vendor/scripts/console-helper.js'
-            'vendor/scripts/jquery-1.7.js'
-            'vendor/scripts/underscore-1.1.7.js'
-            'vendor/scripts/backbone-0.5.3.js'
-          ]
+        before: [
+          'vendor/scripts/console-helper.js'
+          'vendor/scripts/jquery-1.7.js'
+          'vendor/scripts/underscore-1.1.7.js'
+          'vendor/scripts/backbone-0.5.3.js'
+        ]
 
-        'styles/main.css':
-          before: ['vendor/styles/normalize.css']
-          after: ['vendor/styles/helpers.css']
+    'styles/app.css':
+      languages:
+        '\.css$': languages.CSSLanguage
+        '\.styl$': languages.StylusLanguage
+      order:
+        before: ['vendor/styles/normalize.css']
+        after: ['vendor/styles/helpers.css']
 
-  _makeCallback: (fn) ->
-    => fn? this
+# Recompiles all files in current working directory.
+# 
+# buildPath - Path to applications build directory.
+# once      - Should watcher be stopped after compiling the app first time?
+# callback  - Callback that would be executed on each compilation.
+#  
+watchFile = (buildPath, once, callback) ->
+  languages = []
+  for destinationPath, settings of cfg.files
+    for regExp, language of settings.languages
+      languages.push [///#{regExp}///, destinationPath, new language cfg]
 
-  new: (callback) ->
-    callback = @_makeCallback callback
-    templatePath = path.join __dirname, '..', 'template', 'base'
-    path.exists @options.rootPath, (exists) =>
-      if exists
-        helpers.logError "[Brunch]: can\'t create project: 
-directory \"#{@options.rootPath}\" already exists"
-        return
+  # TODO: test if cwd has config.
+  watcher = new helpers.Watcher
+  writer = new filewriter.FileWriter cfg
+  helpers.createBuildDirectories buildPath
+  watcher
+    .add('app')
+    .add('vendor')
+    .on 'change', (file) ->
+      console.log "File #{file} was changed"
+      languages
+        .filter ([regExp, destinationPath, language]) ->
+          regExp.test file
+        .forEach ([regExp, destinationPath, language]) ->
+          language.compile file, (error, data) ->
+            console.log 'Compiled', language
+            #return
+            if error?
+              languageName = language.constructor.name.replace 'Language', ''
+              return helpers.logError "#{languageName} error: #{error}"
+            writer.emit 'change', {destinationPath, path: file, data}
+              
+    .on 'remove', (file) ->
+      writer.emit 'remove', file
+  writer.on 'write', (error, result) ->
+    watcher.clear() if once
+    callback error, result
 
-      fileUtil.mkdirsSync @options.rootPath, 0755
-      fileUtil.mkdirsSync @options.buildPath, 0755
+exports.new = (rootPath, buildPath, callback = (->)) ->
+  templatePath = path.join __dirname, '..', 'template', 'base'
+  path.exists rootPath, (exists) ->
+    if exists
+      return helpers.logError "[Brunch]: can\'t create project: 
+directory \"#{rootPath}\" already exists"
 
-      helpers.recursiveCopy templatePath, @options.rootPath, =>
-        helpers.log '[Brunch]: created brunch directory layout'
-        callback()
-    this
+    # TODO: async.
+    fileUtil.mkdirsSync rootPath, 0755
+    fileUtil.mkdirsSync buildPath, 0755
 
-  build: (callback) ->
-    callback = @_makeCallback callback
-    @watch =>
-      @watcher.clear()
+    helpers.recursiveCopy templatePath, rootPath, ->
+      helpers.log '[Brunch]: created brunch directory layout'
       callback()
-    this
 
-  watch: (callback) ->
-    callback = @_makeCallback callback
-    helpers.createBuildDirectories @options.buildPath
-    timer = null
+exports.build = (buildPath, callback = (->)) ->
+  watchFile buildPath, yes, callback
 
-    @watcher
-      .add(path.join @options.rootPath, 'app')
-      .add(path.join @options.rootPath, 'vendor')
-      .on 'change', (file) =>
-        @options.compilers
-          .filter (compiler) => 
-            compiler.matchesFile file
-          .forEach (compiler) =>
-            compiler.compile file, (error, result) =>
-              return if error?
-              @writer.emit 'change', result if result?.path
-      .on 'remove', (file) =>
-        @writer.emit 'remove', file
-    @writer.on 'write', callback
-    this
+exports.watch = (buildPath, callback = (->)) ->
+  watchFile buildPath, no, callback
 
-  stopWatching: (callback) ->
-    @watcher.clear()
+exports.test = (callback = (->)) ->
+  testrunner.run {}, callback
 
-  test: (callback) ->
-    callback = @_makeCallback callback
-    testrunner.run @options, callback
+exports.generate = (type, name, callback = (->)) ->
+  extension = switch type
+    when 'style' then 'styl'
+    when 'template' then 'eco'
+    else 'coffee'
+  filename = "#{name}.#{extension}"
+  filePath = path.join 'app', "#{type}s", filename
+  data = switch extension
+    when 'coffee'
+      genName = helpers.capitalize type
+      className = helpers.formatClassName name
+      "class exports.#{className} extends Backbone.#{genName}\n"
+    else
+      ''
 
-  generate: (callback) ->
-    callback = @_makeCallback callback
-    extension = switch @options.generator
-      when 'style' then 'styl'
-      when 'template' then 'eco'
-      else 'coffee'
-    filename = "#{@options.name}.#{extension}"
-    filePath = path.join @options.rootPath, 'app', "#{@options.generator}s", filename
-    data = switch extension
-      when 'coffee'
-        className = helpers.formatClassName @options.name
-        genName = helpers.capitalize @options.generator
-        "class exports.#{className} extends Backbone.#{genName}\n"
-      else
-        ''
-
-    fs.writeFile filePath, data, (error) ->
-      return helpers.logError error if error?
-      helpers.log "Generated #{filePath}"
-    this
-
-for method in ['new', 'build', 'watch', 'test', 'generate']
-  do (method) ->
-    exports[method] = (options, callback) ->
-      (new Brunch options)[method] callback
+  fs.writeFile filePath, data, (error) ->
+    return helpers.logError error if error?
+    helpers.log "Generated #{filePath}"
+    callback?()
