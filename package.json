@@ -1,47 +1,43 @@
 {
   "name":         "brunch",
-  "description":  "A lightweight client side framework on top of backbone.js, eco and stylus using coffee-script",
-  "version":      "0.9.0-pre",
+  "description":  "A powerful client side framework on top of backbone.js, eco and stylus using coffee-script",
+  "version":      "0.9.0-dev",
   "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunch.io/",
   "author":       "Brunch team <brunch@blossom.io>, twitter: @brunch",
-
-  "licenses":     [{
-    "type":       "MIT",
-    "url":        "http://github.com/brunch/brunch/raw/master/LICENSE"
-  }],
-  "engines": {
-    "node": ">= 0.4.8"
-  },
-  "bin": {
-    "brunch": "./bin/brunch"
-  },
-  "scripts": {
-    "test": "node_modules/coffee-script/bin/cake test"
-  },
-  "dependencies": {
-    "coffee-script": "1.2.0",
-    "eco":           "1.0.3",
-    "argumentum":    "0.5.x",
-    "stylus":        "0.19.3",
-    "async":         "0.1.15",
-    "yaml":          "0.2.2",
-    "mkdirp":        "0.2.1",
-    "stitch":        "0.3.2",
-    "uglify-js":     "1.1.1",
-    "jsdom":         "0.2.9"
-  },
-  "devDependencies": {
-    "express":       "2.5.1",
-    "mocha":         "0.3.6",
-    "should":        "0.3.2",
-    "zombie":        "0.12.7"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/brunch/brunch.git"
   },
   "bugs": {
     "url": "http://github.com/brunch/brunch/issues"
+  },
+  "licenses": [{
+    "type": "MIT",
+    "url": "http://github.com/brunch/brunch/raw/master/LICENSE"
+  }],
+  "main": "./lib/index",
+  "bin": {
+    "brunch": "./bin/brunch"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/coffee-script/bin/coffee -o lib/ src/",
+    "test": "./node_modules/mocha/bin/mocha --require should --reporter spec"
+  },
+  "engines": {
+    "node": "~0.6.6"
+  },
+  "dependencies": {
+    "coffee-script": "1.2.0",
+    "argumentum": "0.5.x",
+    "async": "0.1.15",
+    "mkdirp": "0.2.1",
+    "jsdom": "0.2.9"
+  },
+  "devDependencies": {
+    "express": "2.5.1",
+    "mocha": "0.3.6",
+    "should": "0.3.2",
+    "zombie": "0.12.7"
   }
 }

@@ -12,18 +12,6 @@ describe 'filewriter', ->
       it 'which are not in array', ->
         (filewriter.compareArrayItems [555, 666], 6, 5).should.equal 0
 
-  describe '#group()', ->
-    it 'should group', ->
-      files = [
-        {destinationPath: 'a', data: 1, str: 'f1'}
-        {destinationPath: 'a', data: 2, str: 'f2'}
-        {destinationPath: 'b', data: 3, str: 'f3'}
-      ]
-      filewriter.group(files).should.eql [
-        {path: 'a', sourceFiles: [{data: 1, str: 'f1'}, {data: 2, str: 'f2'}]},
-        {path: 'b', sourceFiles: [{data: 3, str: 'f3'}]}
-      ]
-
   describe '#sort()', ->
     it 'should sort files by config', ->
       files = [
@@ -48,9 +36,4 @@ describe 'filewriter', ->
         {path: 'app/styles/sidebar.sass'}
         {path: 'vendor/styles/helpers.css'} 
       ]
-
-  describe '#readConfig()', ->
-    it 'should read coffeescript configs properly', ->
-      config = filewriter.readConfig "#{__dirname}/fixtures/base/config.coffee"
-      config.should.eql {a: {b: 1}}
   

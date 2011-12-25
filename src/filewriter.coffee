@@ -53,9 +53,6 @@ exports.sort = (files, config) ->
       -(compareArrayItems config.after, a, b)
   sorted.map (file) -> files[pathes.indexOf file]
 
-exports.readConfig = (file) ->
-  require path.resolve file
-
 class exports.FileWriter extends EventEmitter
   constructor: (@config) ->
     @destFiles = []

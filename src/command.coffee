@@ -1,35 +1,17 @@
 path = require 'path'
-yaml = require 'yaml'
 fs = require 'fs'
 argumentum = require 'argumentum'
 brunch = require './brunch'
 helpers = require './helpers'
 
-generateConfigPath = (rootPath) ->
-  if rootPath?
-    path.join rootPath, 'config.yaml'
-  else
-    'config.yaml'
-
-
-loadConfig = (configPath) ->
+loadConfig = (configPath, callback) ->
   try
-    config = (fs.readFileSync configPath).toString()
+    config = (require path.resolve configPath).config
+    config.rootPath = path.dirname configPath
+    config
   catch error
-    helpers.logError '[Brunch]: couldn\'t find config.yaml file'
+    helpers.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
     helpers.exit()
-  try
-    options = yaml.eval config
-  catch error
-    helpers.logError "[Brunch]: couldn't load config.yaml file. #{error}"
-    helpers.exit()
-  options
-
-
-parseOptions = (options) ->
-  config = loadConfig generateConfigPath options.rootPath
-  helpers.extend options, config
-
 
 commandLineConfig =
   script: 'brunch'
@@ -51,7 +33,10 @@ commandLineConfig =
           full: 'output'
       callback: (options) ->
         brunch.new options.rootPath, ->
-          brunch.build parseOptions options
+          configPath = path.join options.rootPath, 'config.coffee'
+          config = loadConfig configPath
+          config.buildPath = options.buildPath
+          brunch.build config
 
     build:
       help: 'Build a brunch project'
@@ -62,7 +47,9 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.build options.buildPath
+        config = loadConfig 'config.coffee'
+        config.buildPath = options.buildPath
+        brunch.build config
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -73,7 +60,9 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.watch options.buildPath
+        config = loadConfig 'config.coffee'
+        config.buildPath = options.buildPath
+        brunch.watch config
 
     generate:
       help: 'Generate model, view or route for current project'
