@@ -1,0 +1,20 @@
+{
+  "author": "Your Name",
+  "name": "package-name",
+  "description": "Package description",
+  "version": "0.0.1",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": "~0.6.6"
+  },
+  "dependencies": {
+    "brunch-extensions": "0.1.0"
+  },
+  "devDependencies": {
+    
+  }
+}

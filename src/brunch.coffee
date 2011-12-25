@@ -61,7 +61,13 @@ directory \"#{rootPath}\" already exists"
        mkdirp buildPath, 0755, (error) ->
          helpers.recursiveCopy templatePath, rootPath, ->
            helpers.log '[Brunch]: created brunch directory layout'
-           callback()
+           helpers.log '[Brunch]: installing npm packages...'
+           (require 'child_process').exec "npm install #{rootPath}", (error, stderr, stdout) ->
+             if error?
+               helpers.logError "[Brunch]: error: #{stderr}"
+               return callback()
+             helpers.log '[Brunch]: installed package brunch-extensions'
+             callback()
 
 exports.build = (config, callback = (->)) ->
   watchFile config, yes, callback

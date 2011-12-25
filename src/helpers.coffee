@@ -152,16 +152,16 @@ exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
 # Recursively copies directory tree from `source` to `destination`.
 # Fires callback function with error and a list of created files.
 exports.recursiveCopy = (source, destination, callback) ->
-  fileUtil.mkdirsSync destination, 0755
-  paths = []
-  # callback will be called several times
-  walkTree source, destination, (err, filename) ->
-    if err
-      callback err
-    else if filename
-      paths.push filename
-    else
-      callback err, paths.sort()
+  mkdirp destination, 0755, (error) ->
+    paths = []
+    # callback will be called several times
+    walkTree source, destination, (err, filename) ->
+      if err
+        callback err
+      else if filename
+        paths.push filename
+      else
+        callback err, paths.sort()
 
 
 # A simple file changes watcher.
