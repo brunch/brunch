@@ -164,8 +164,7 @@ class exports.FileWriter extends EventEmitter
   write: =>
     console.log 'Writing files', JSON.stringify @destFiles, null, 2
     async.forEach @destFiles, (destFile, next) =>
-      # TODO.
-      destPath = path.join 'build', destFile.path
+      destPath = path.join @config.buildPath, destFile.path
       destIsJS = /\.js$/.test destPath
       data = ''
       data += requireDefinition if destIsJS

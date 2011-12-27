@@ -1,3 +1,4 @@
+async = require 'async'
 {exec} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
@@ -13,8 +14,8 @@ testrunner = require './testrunner'
 # callback  - Callback that would be executed on each compilation.
 #  
 watchFile = (config, once, callback) ->
-  console.log 'WF'
   changedFiles = {}
+  plugins = config.plugins.map (plugin) -> new plugin config
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
@@ -42,9 +43,13 @@ watchFile = (config, once, callback) ->
     .on 'remove', (file) ->
       writer.emit 'remove', file
   writer.on 'write', (result) ->
-    # TODO: post-write.
-    watcher.clear() if once
-    callback result
+    async.forEach plugins, (plugin, next) ->
+      console.log 'Loading plugin', plugin.constructor.name
+      plugin.load next
+    , (error) ->
+      return helpers.logError "[Brunch]: plugin error. #{error}" if error?
+      watcher.clear() if once
+      callback result
 
 exports.new = (rootPath, buildPath, callback = (->)) ->
   templatePath = path.join __dirname, 'template', 'base'
@@ -53,18 +58,19 @@ exports.new = (rootPath, buildPath, callback = (->)) ->
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
 
-    # TODO: async.
     mkdirp rootPath, 0755, (error) ->
-       mkdirp buildPath, 0755, (error) ->
-         helpers.recursiveCopy templatePath, rootPath, ->
-           helpers.log '[Brunch]: created brunch directory layout'
-           helpers.log '[Brunch]: installing npm packages...'
-           exec "npm install #{rootPath}", (error, stderr, stdout) ->
-             if error?
-               helpers.logError "[Brunch]: npm error: #{stderr}"
-               return callback()
-             helpers.log '[Brunch]: installed npm package brunch-extensions'
-             callback()
+      
+      mkdirp buildPath, 0755, (error) ->
+        helpers.logError "[Brunch]: Error #{error}"
+        helpers.recursiveCopy templatePath, rootPath, ->
+          helpers.log '[Brunch]: created brunch directory layout'
+          helpers.log '[Brunch]: installing npm packages...'
+          exec "npm install #{rootPath}", (error, stderr, stdout) ->
+            if error?
+              helpers.logError "[Brunch]: npm error: #{stderr}"
+              return callback error
+            helpers.log '[Brunch]: installed npm package brunch-extensions'
+            callback()
 
 exports.build = (config, callback = (->)) ->
   watchFile config, yes, callback
