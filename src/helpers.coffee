@@ -170,7 +170,7 @@ class exports.Watcher extends EventEmitter
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
-    fs.watch item, persistent: yes, interval: 500, (curr, prev) =>
+    fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
       callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
 
   _handleFile: (file) ->
@@ -211,7 +211,6 @@ class exports.Watcher extends EventEmitter
 
   # Removes all listeners from watched files.
   clear: ->
-    @removeAllListeners 'change'
     for directory, files of @watched
       for file in files
         fs.unwatchFile path.join directory, file
