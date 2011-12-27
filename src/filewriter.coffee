@@ -1,7 +1,7 @@
-fs = require 'fs'
-path = require 'path'
 async = require 'async'
 {EventEmitter} = require 'events'
+fs = require 'fs'
+path = require 'path'
 
 # Function that sorts array.
 # array - array to be sorted.
@@ -39,19 +39,84 @@ exports.compareArrayItems = compareArrayItems = (array, a, b) ->
 #     before: ['a.coffee'], after: ['b.coffee']
 #   # => [{path: 'a.coffee'}, {path: 'c.coffee'}, {path: 'b.coffee'}]
 # 
-exports.sort = (files, config) ->
+exports.sort = sort = (files, config) ->
   return files if typeof config isnt 'object'
   config.before ?= []
   config.after ?= []
   pathes = files.map (file) -> file.path
   # Clone data to a new array because we
   # don't want a side effect here.
-  sorted = [pathes...]
+  [pathes...]
     .sort (a, b) ->
       compareArrayItems config.before, a, b
     .sort (a, b) ->
       -(compareArrayItems config.after, a, b)
-  sorted.map (file) -> files[pathes.indexOf file]
+    .map (file) ->
+      files[pathes.indexOf file]
+
+requireDefinition = '''
+(function(/*! Brunch !*/) {
+  if (!this.require) {
+    var modules = {}, cache = {}, require = function(name, root) {
+      var module = cache[name], path = expand(root, name), fn;
+      if (module) {
+        return module;
+      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
+        module = {id: name, exports: {}};
+        try {
+          cache[name] = module.exports;
+          fn(module.exports, function(name) {
+            return require(name, dirname(path));
+          }, module);
+          return cache[name] = module.exports;
+        } catch (err) {
+          delete cache[name];
+          throw err;
+        }
+      } else {
+        throw 'module \\'' + name + '\\' not found';
+      }
+    }, expand = function(root, name) {
+      var results = [], parts, part;
+      if (/^\\.\\.?(\\/|$)/.test(name)) {
+        parts = [root, name].join('/').split('/');
+      } else {
+        parts = name.split('/');
+      }
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part == '..') {
+          results.pop();
+        } else if (part != '.' && part != '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    }, dirname = function(path) {
+      return path.split('/').slice(0, -1).join('/');
+    };
+    this.require = function(name) {
+      return require(name, '');
+    }
+    this.require.define = function(bundle) {
+      for (var key in bundle)
+        modules[key] = bundle[key];
+    };
+  }
+}).call(this);
+'''
+
+exports.wrap = wrap = (filePath, data) ->
+  moduleName = JSON.stringify(
+    filePath.replace(/^app\//, '').replace(/\.\w*$/, '')
+  )
+  """
+  (this.require.define({
+    #{moduleName}: function(exports, require, module) {
+      #{data}
+    }
+  }));\n
+  """
 
 class exports.FileWriter extends EventEmitter
   constructor: (@config) ->
@@ -73,7 +138,7 @@ class exports.FileWriter extends EventEmitter
     unless sourceFile
       sourceFile = changedFile
       concatenated = destFile.sourceFiles.concat [sourceFile]
-      destFile.sourceFiles = exports.sort concatenated, @config.files[changedFile.destinationPath].order
+      destFile.sourceFiles = sort concatenated, @config.files[changedFile.destinationPath].order
       delete changedFile.destinationPath
     sourceFile.data = changedFile.data
 
@@ -89,9 +154,18 @@ class exports.FileWriter extends EventEmitter
   write: =>
     console.log 'Writing files', JSON.stringify @destFiles, null, 2
     async.forEach @destFiles, (destFile, next) =>
-      data = (sourceFile.data for sourceFile in destFile.sourceFiles).join ''
       # TODO.
       destPath = path.join 'build', destFile.path
+      destIsJS = /\.js$/.test destPath
+      data = ''
+      data += requireDefinition if destIsJS
+      data += destFile.sourceFiles
+        .map (sourceFile) ->
+          if destIsJS and not (/^vendor/.test sourceFile.path)
+            wrap sourceFile.path, sourceFile.data
+          else
+            sourceFile.data
+        .join ''
       fs.writeFile destPath, data, (error) =>
         next error, {path: destPath, data}
     , (error, results) =>
