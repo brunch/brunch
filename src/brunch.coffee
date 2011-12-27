@@ -52,22 +52,22 @@ watchFile = (config, once, callback) ->
       callback result
 
 exports.new = (rootPath, buildPath, callback = (->)) ->
-  templatePath = path.join __dirname, 'template', 'base'
+  templatePath = path.join __dirname, '..', 'template', 'base'
   path.exists rootPath, (exists) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
 
     mkdirp rootPath, 0755, (error) ->
-      
+      return helpers.logError "[Brunch]: Error #{error}" if error?
       mkdirp buildPath, 0755, (error) ->
-        helpers.logError "[Brunch]: Error #{error}"
+        return helpers.logError "[Brunch]: Error #{error}" if error?
         helpers.recursiveCopy templatePath, rootPath, ->
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
-          exec "npm install #{rootPath}", (error, stderr, stdout) ->
+          exec "pushd . && cd #{rootPath} && npm install && popd", (error) ->
             if error?
-              helpers.logError "[Brunch]: npm error: #{stderr}"
+              helpers.logError "[Brunch]: npm error: #{error}"
               return callback error
             helpers.log '[Brunch]: installed npm package brunch-extensions'
             callback()
