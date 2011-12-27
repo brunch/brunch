@@ -4,7 +4,7 @@
   "version":      "0.9.0-dev",
   "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunch.io/",
-  "author":       "Brunch team <brunch@blossom.io>, twitter: @brunch",
+  "author":       "Brunch team, twitter: @brunch",
   "repository": {
     "type": "git",
     "url": "https://github.com/brunch/brunch.git"
@@ -16,7 +16,7 @@
     "type": "MIT",
     "url": "http://github.com/brunch/brunch/raw/master/LICENSE"
   }],
-  "main": "./lib/index",
+  "main": "./lib/brunch",
   "bin": {
     "brunch": "./bin/brunch"
   },
@@ -29,10 +29,11 @@
   },
   "dependencies": {
     "coffee-script": "1.2.0",
-    "argumentum": "0.5.x",
+    "argumentum": "0.5.0",
     "async": "0.1.15",
     "mkdirp": "0.2.1",
-    "jsdom": "0.2.9"
+    "jsdom": "0.2.9",
+    "growl": "1.4.0"
   },
   "devDependencies": {
     "express": "2.5.1",
