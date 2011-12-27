@@ -1,7 +1,12 @@
 argumentum = require 'argumentum'
+fs = require 'fs'
 path = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
+
+readPackageVersion = ->
+  package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
+  package.version
 
 loadConfig = (configPath, buildPath = 'build') ->
   try
@@ -92,7 +97,7 @@ commandLineConfig =
       abbr: 'v'
       help: 'display brunch version'
       flag: yes
-      callback: -> brunch.VERSION
+      callback: readPackageVersion
 
 exports.run = ->
   argumentum.load(commandLineConfig).parse()
