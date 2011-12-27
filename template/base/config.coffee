@@ -7,6 +7,7 @@ exports.config =
       languages:
         '\.js$': languages.JavaScriptLanguage
         '\.coffee$': languages.CoffeeScriptLanguage
+        '\.eco$': languages.EcoLanguage
       order:
         before: [
           'vendor/scripts/console-helper.js'
