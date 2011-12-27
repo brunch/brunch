@@ -1,6 +1,5 @@
-path = require 'path'
-fs = require 'fs'
 argumentum = require 'argumentum'
+path = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
 

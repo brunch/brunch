@@ -1,10 +1,8 @@
-util = require 'util'
 fs = require 'fs'
-path = require 'path'
-coffee = require 'coffee-script'
 jsdom = require 'jsdom'
+path = require 'path'
+util = require 'util'
 helpers = require './helpers'
-{TerminalReporter} = require '../vendor/reporter'
 
 compileSpecFile = (filePath) ->
   extension = path.extname filePath

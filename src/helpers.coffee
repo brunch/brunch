@@ -1,10 +1,11 @@
-fs  = require 'fs'
-path = require 'path'
-mkdirp = require 'mkdirp'
-util = require 'util'
+async = require 'async'
 {exec, spawn} = require 'child_process'
 {EventEmitter} = require 'events'
-async = require 'async'
+fs  = require 'fs'
+growl = require 'growl'
+mkdirp = require 'mkdirp'
+path = require 'path'
+util = require 'util'
 
 # Extends the object with properties from another object.
 # Example
@@ -51,7 +52,7 @@ pad = (number) ->
 # 
 formatDate = (color = 'none') ->
   date = new Date
-  timeArr = (pad date['get' + item]() for item in ['Hours', 'Minutes', 'Seconds'])
+  timeArr = (pad date["get#{item}"]() for item in ['Hours', 'Minutes', 'Seconds'])
   time = timeArr.join ':'
   colorize "[#{time}]:", color
 
@@ -74,30 +75,12 @@ exports.formatClassName = (filename) ->
 exports.isTesting = ->
   'jasmine' of global
 
-exports.notify = (title, text) ->
-  null
-
-# Map of possible system notifiers in format
-# Key - "name of system command that would be executed".
-# Value - args, with which the command would be spawned.
-# E.g. spawn growlnotify, [title, '-m', text]
-exports.notifiers = notifiers =
-  growlnotify: (title, text) -> [title, '-m', text]
-  'notify-send': (title, text) -> [title, text]
-
-# Try to determine right system notifier.
-for name, transform of notifiers
-  do (name, transform) ->
-    exec "which #{name}", (error) ->
-      unless error?
-        exports.notify = (args...) -> spawn name, transform args...
-
 exports.log = (text, color = 'green', isError = no) ->
   stream = if isError then process.stderr else process.stdout
   # TODO: log stdout on testing output end.
   output = "#{formatDate(color)} #{text}\n"
   stream.write output, 'utf8' unless exports.isTesting()
-  exports.notify 'Brunch error', text if isError
+  growl text, title: 'Brunch error' if isError
 
 exports.logError = (text) ->
   exports.log text, 'red', yes
@@ -163,15 +146,12 @@ exports.recursiveCopy = (source, destination, callback) ->
       else
         callback err, paths.sort()
 
-
 # A simple file changes watcher.
 # 
 # Example
 # 
 #   (new Watcher)
-#     .add('app')
-#     .add('vendor')
-#     .onChange (file) ->
+#     .on 'change', (file) ->
 #       console.log 'File %s was changed', file
 # 
 class exports.Watcher extends EventEmitter
@@ -189,9 +169,8 @@ class exports.Watcher extends EventEmitter
     basename = path.basename item
     # Prevent memory leaks.
     return if basename in parent
-    #console.log 'Watching', item
     parent.push basename
-    fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
+    fs.watch item, persistent: yes, interval: 500, (curr, prev) =>
       callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
 
   _handleFile: (file) ->
@@ -222,7 +201,6 @@ class exports.Watcher extends EventEmitter
         @_handleFile file if stats.isFile()
         @_handleDir file if stats.isDirectory()
 
-  # Fired when some file was added.
   add: (file) ->
     @_handle file
     this
@@ -239,12 +217,3 @@ class exports.Watcher extends EventEmitter
         fs.unwatchFile path.join directory, file
     @watched = {}
     this
-
-
-# Filter out dotfiles, emacs swap files and directories.
-exports.filterFiles = (files, sourcePath) ->
-  files.filter (filename) ->
-    return no if (exports.Watcher::invalid).test filename
-    stats = fs.statSync path.join sourcePath, filename
-    return no if stats?.isDirectory()
-    yes
