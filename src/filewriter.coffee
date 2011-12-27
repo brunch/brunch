@@ -1,6 +1,7 @@
 async = require 'async'
 {EventEmitter} = require 'events'
 fs = require 'fs'
+mkdirp = require 'mkdirp'
 path = require 'path'
 
 # Function that sorts array.
@@ -175,7 +176,16 @@ class exports.FileWriter extends EventEmitter
           else
             sourceFile.data
         .join ''
-      fs.writeFile destPath, data, (error) =>
-        next error, {path: destPath, data}
+      writeFile = (callback) ->
+        fs.writeFile destPath, data, callback
+      writeFile (error) ->
+        if error?
+          mkdirp (path.dirname destPath), 0755, (error) ->
+            next error if error?
+            writeFile (error) ->
+              next error, {path: destPath, data}
+        else
+          next null, {path: destPath, data}
     , (error, results) =>
-      @emit 'write', results
+      return @emit 'error' if error?
+      @emit 'write', error, results

@@ -42,6 +42,8 @@ watchFile = (config, once, callback) ->
             writer.emit 'change', {destinationPath, path: file, data}
     .on 'remove', (file) ->
       writer.emit 'remove', file
+  writer.on 'error', (error) ->
+    helpers.logError "[Brunch] write error. #{error}"
   writer.on 'write', (result) ->
     async.forEach plugins, (plugin, next) ->
       console.log 'Loading plugin', plugin.constructor.name
