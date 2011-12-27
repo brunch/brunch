@@ -3,10 +3,11 @@ path = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
 
-loadConfig = (configPath, callback) ->
+loadConfig = (configPath, buildPath = 'build') ->
   try
-    config = (require path.resolve configPath).config
+    {config} = require path.resolve configPath
     config.rootPath = path.dirname configPath
+    config.buildPath = buildPath
     config
   catch error
     helpers.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
@@ -33,8 +34,7 @@ commandLineConfig =
       callback: (options) ->
         brunch.new options.rootPath, ->
           configPath = path.join options.rootPath, 'config.coffee'
-          config = loadConfig configPath
-          config.buildPath = options.buildPath
+          config = loadConfig configPath, options.buildPath
           brunch.build config
 
     build:
@@ -46,8 +46,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        config = loadConfig 'config.coffee'
-        config.buildPath = options.buildPath
+        config = loadConfig 'config.coffee', options.buildPath
         brunch.build config
 
     watch:
@@ -59,8 +58,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        config = loadConfig 'config.coffee'
-        config.buildPath = options.buildPath
+        config = loadConfig 'config.coffee', options.buildPath
         brunch.watch config
 
     generate:
