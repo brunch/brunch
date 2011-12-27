@@ -39,8 +39,7 @@ commandLineConfig =
       callback: (options) ->
         brunch.new options.rootPath, ->
           configPath = path.join options.rootPath, 'config.coffee'
-          config = loadConfig configPath, options.buildPath
-          brunch.build config
+          brunch.build loadConfig configPath, options.buildPath
 
     build:
       help: 'Build a brunch project'
@@ -51,8 +50,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        config = loadConfig 'config.coffee', options.buildPath
-        brunch.build config
+        brunch.build loadConfig 'config.coffee', options.buildPath
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -63,8 +61,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        config = loadConfig 'config.coffee', options.buildPath
-        brunch.watch config
+        brunch.watch loadConfig 'config.coffee', options.buildPath
 
     generate:
       help: 'Generate model, view or route for current project'
