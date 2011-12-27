@@ -3,7 +3,7 @@ async = require 'async'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 path = require 'path'
-filewriter = require './filewriter'
+file = require './file'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
@@ -22,8 +22,8 @@ watchFile = (config, once, callback) ->
       languages.push [///#{regExp}///, destinationPath, new language config]
 
   # TODO: test if cwd has config.
-  watcher = new helpers.Watcher
-  writer = new filewriter.FileWriter config
+  watcher = new file.FileWatcher
+  writer = new file.FileWriter config
   watcher
     .add('app')
     .add('vendor')
@@ -64,7 +64,7 @@ directory \"#{rootPath}\" already exists"
       return helpers.logError "[Brunch]: Error #{error}" if error?
       mkdirp buildPath, 0755, (error) ->
         return helpers.logError "[Brunch]: Error #{error}" if error?
-        helpers.recursiveCopy templatePath, rootPath, ->
+        file.recursiveCopy templatePath, rootPath, ->
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
           exec "pushd . && cd #{rootPath} && npm install && popd", (error) ->

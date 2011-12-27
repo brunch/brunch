@@ -1,11 +1,4 @@
-async = require 'async'
-{exec, spawn} = require 'child_process'
-{EventEmitter} = require 'events'
-fs  = require 'fs'
 growl = require 'growl'
-mkdirp = require 'mkdirp'
-path = require 'path'
-util = require 'util'
 
 # Extends the object with properties from another object.
 # Example
@@ -94,125 +87,62 @@ exports.exit = ->
   else
     process.exit 0
 
-# Copies single file and executes callback when done.
-exports.copyFile = (source, destination, callback) ->
-  read = fs.createReadStream source
-  write = fs.createWriteStream destination
-  util.pump read, write, -> callback?()
-
-# Asynchronously walks through directory tree, creates directories and copies
-# files. Similar to `cp -r` in Unix.
+# Function that sorts array.
+# array - array to be sorted.
+# a - item, that could be in array
+# b - another item, that could be in array
+# Examples
 # 
-# Example
+#   compareArrayItems [555, 666], 555, 666
+#   # => 0
+#   compareArrayItems [555, 666], 666, 555
+#   # => 1
+#   compareArrayItems [555, 666], 666, 3592
+#   # => -1
+# Returns:
+# * -1 if b not in array
+# * 0 if index of a is bigger than index of b OR both items aren't in array
+# * 1 if index of a is smaller than index of b OR a not in array
+exports.compareArrayItems = compareArrayItems = (array, a, b) ->
+  [indexOfA, indexOfB] = [(array.indexOf a), (array.indexOf b)]
+  [hasA, hasB] = [indexOfA isnt -1, indexOfB isnt -1]
+  if hasA and not hasB
+    -1
+  else if not hasA and hasB
+    1
+  else if hasA and hasB
+    Number indexOfA > indexOfB
+  else
+    0
+
+# Sorts by pattern.
 # 
-#   walkTreeAndCopyFiles 'assets', 'build'
+# Examples
+#         
+#   sort [{path: 'b.coffee'}, {path: 'c.coffee'}, {path: 'a.coffee'}],
+#     before: ['a.coffee'], after: ['b.coffee']
+#   # => [{path: 'a.coffee'}, {path: 'c.coffee'}, {path: 'b.coffee'}]
 # 
-exports.walkTreeAndCopyFiles = walkTree = (source, destination, callback) ->
-  fs.readdir source, (error, files) ->
-    return callback error if error
-
-    # iterates over current directory
-    async.forEach files, (file, next) ->
-      return next() if file.match /^\./
-
-      sourcePath = path.join source, file
-      destinationPath = path.join destination, file
-
-      fs.stat sourcePath, (error, stats) ->
-        if not error and stats.isDirectory()
-          fs.mkdir destinationPath, 0755, ->
-            walkTree sourcePath, destinationPath, (error, destinationPath) ->
-              if destinationPath
-                callback error, destinationPath
-              else
-                next()
-        else
-          exports.copyFile sourcePath, destinationPath, ->
-            callback error, destinationPath
-            next()
-    , callback
-
-# Recursively copies directory tree from `source` to `destination`.
-# Fires callback function with error and a list of created files.
-exports.recursiveCopy = (source, destination, callback) ->
-  mkdirp destination, 0755, (error) ->
-    paths = []
-    # callback will be called several times
-    walkTree source, destination, (err, filename) ->
-      if err
-        callback err
-      else if filename
-        paths.push filename
-      else
-        callback err, paths.sort()
-
-# A simple file changes watcher.
-# 
-# Example
-# 
-#   (new Watcher)
-#     .on 'change', (file) ->
-#       console.log 'File %s was changed', file
-# 
-class exports.Watcher extends EventEmitter
-  # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-  invalid: /^(\.|#)/
-
-  constructor: ->
-    @watched = {}
-
-  _getWatchedDir: (directory) ->
-    @watched[directory] ?= []
-
-  _watch: (item, callback) ->
-    parent = @_getWatchedDir path.dirname item
-    basename = path.basename item
-    # Prevent memory leaks.
-    return if basename in parent
-    parent.push basename
-    fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
-      callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
-
-  _handleFile: (file) ->
-    emit = (file) =>
-      @emit 'change', file
-    emit file
-    @_watch file, emit
-
-  _handleDir: (directory) ->
-    read = (directory) =>
-      fs.readdir directory, (error, current) =>
-        return exports.logError error if error?
-        return unless current
-        previous = @_getWatchedDir directory
-        for file in previous when file not in current
-          @emit 'remove', file
-        for file in current when file not in previous
-          @_handle path.join directory, file
-    read directory
-    @_watch directory, read
-
-  _handle: (file) ->
-    return if @invalid.test path.basename file
-    fs.realpath file, (error, filePath) =>
-      return exports.logError error if error?
-      fs.stat file, (error, stats) =>
-        return exports.logError error if error?
-        @_handleFile file if stats.isFile()
-        @_handleDir file if stats.isDirectory()
-
-  add: (file) ->
-    @_handle file
-    this
-
-  on: ->
-    super
-    this
-
-  # Removes all listeners from watched files.
-  clear: ->
-    for directory, files of @watched
-      for file in files
-        fs.unwatchFile path.join directory, file
-    @watched = {}
-    this
+exports.sort = (files, config) ->
+  return files if typeof config isnt 'object'
+  config.before ?= []
+  config.after ?= []
+  pathes = files.map (file) -> file.path
+  # Clone data to a new array because we
+  # don't want a side effect here.
+  [pathes...]
+    .sort (a, b) ->
+      compareArrayItems config.before, a, b
+    .sort (a, b) ->
+      -(compareArrayItems config.after, a, b)
+    .sort (a, b) ->
+      aIsVendor = (a.indexOf 'vendor') is 0
+      bIsVendor = (b.indexOf 'vendor') is 0
+      if aIsVendor and not bIsVendor
+        -1
+      else if not aIsVendor and bIsVendor
+        1
+      else if aIsVendor and bIsVendor
+        0
+    .map (file) ->
+      files[pathes.indexOf file]
