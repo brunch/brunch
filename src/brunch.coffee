@@ -1,11 +1,10 @@
+{exec} = require 'child_process'
 fs = require 'fs'
-path = require 'path'
 mkdirp = require 'mkdirp'
+path = require 'path'
 filewriter = require './filewriter'
 helpers = require './helpers'
 testrunner = require './testrunner'
-
-exports.VERSION = require('./package').version
 
 # Recompiles all files in current working directory.
 # 
@@ -28,20 +27,17 @@ watchFile = (config, once, callback) ->
     .add('app')
     .add('vendor')
     .on 'change', (file) ->
-      clearTimeout changedFiles[file] if changedFiles[file]?
-      changedFiles[file] = setTimeout ->
-        console.log "File #{file} was changed"
-        console.log "Langs", languages
-        languages
-          .filter ([regExp, destinationPath, language]) ->
-            regExp.test file
-          .forEach ([regExp, destinationPath, language]) ->
-            language.compile file, (error, data) ->
-              if error?
-                languageName = language.constructor.name.replace 'Language', ''
-                return helpers.logError "[#{languageName}] error: #{error}"
-              writer.emit 'change', {destinationPath, path: file, data}
-      , 25
+      console.log "File #{file} was changed"
+      console.log "Langs", languages
+      languages
+        .filter ([regExp, destinationPath, language]) ->
+          regExp.test file
+        .forEach ([regExp, destinationPath, language]) ->
+          language.compile file, (error, data) ->
+            if error?
+              languageName = language.constructor.name.replace 'Language', ''
+              return helpers.logError "[#{languageName}] error: #{error}"
+            writer.emit 'change', {destinationPath, path: file, data}
     .on 'remove', (file) ->
       writer.emit 'remove', file
   writer.on 'write', (result) ->
@@ -50,7 +46,7 @@ watchFile = (config, once, callback) ->
     callback result
 
 exports.new = (rootPath, buildPath, callback = (->)) ->
-  templatePath = path.join __dirname, '..', 'template', 'base'
+  templatePath = path.join __dirname, 'template', 'base'
   path.exists rootPath, (exists) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
@@ -62,11 +58,11 @@ directory \"#{rootPath}\" already exists"
          helpers.recursiveCopy templatePath, rootPath, ->
            helpers.log '[Brunch]: created brunch directory layout'
            helpers.log '[Brunch]: installing npm packages...'
-           (require 'child_process').exec "npm install #{rootPath}", (error, stderr, stdout) ->
+           exec "npm install #{rootPath}", (error, stderr, stdout) ->
              if error?
-               helpers.logError "[Brunch]: error: #{stderr}"
+               helpers.logError "[Brunch]: npm error: #{stderr}"
                return callback()
-             helpers.log '[Brunch]: installed package brunch-extensions'
+             helpers.log '[Brunch]: installed npm package brunch-extensions'
              callback()
 
 exports.build = (config, callback = (->)) ->
