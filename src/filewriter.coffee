@@ -51,6 +51,15 @@ exports.sort = sort = (files, config) ->
       compareArrayItems config.before, a, b
     .sort (a, b) ->
       -(compareArrayItems config.after, a, b)
+    .sort (a, b) ->
+      aIsVendor = (a.indexOf 'vendor') is 0
+      bIsVendor = (b.indexOf 'vendor') is 0
+      if aIsVendor and not bIsVendor
+        -1
+      else if not aIsVendor and bIsVendor
+        1
+      else if aIsVendor and bIsVendor
+        0
     .map (file) ->
       files[pathes.indexOf file]
 
@@ -132,6 +141,7 @@ class exports.FileWriter extends EventEmitter
     destFile
 
   _onChange: (changedFile) =>
+    console.log 'FileWriter: change', changedFile.path
     destFile = @_getDestFile changedFile.destinationPath
     sourceFile = destFile.sourceFiles.filter(({path}) -> path is changedFile.path)[0]
     

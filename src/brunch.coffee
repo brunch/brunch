@@ -28,12 +28,13 @@ watchFile = (config, once, callback) ->
     .add('vendor')
     .on 'change', (file) ->
       console.log "File #{file} was changed"
-      console.log "Langs", languages
       languages
         .filter ([regExp, destinationPath, language]) ->
           regExp.test file
         .forEach ([regExp, destinationPath, language]) ->
+          console.log "Compiling #{file} with #{language.constructor.name}"
           language.compile file, (error, data) ->
+            console.log "Compiled #{file} with #{language.constructor.name}"
             if error?
               languageName = language.constructor.name.replace 'Language', ''
               return helpers.logError "[#{languageName}] error: #{error}"
