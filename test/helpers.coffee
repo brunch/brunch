@@ -1,16 +1,17 @@
+expect = require 'expect.js'
 helpers = require '../src/helpers'
 
 describe 'helpers', ->
   describe '#compareArrayItems()', ->
     describe 'should compare correctly items', ->
       it 'which are in array', ->
-        (helpers.compareArrayItems [555, 666], 555, 666).should.equal 0
-        (helpers.compareArrayItems [555, 666], 666, 555).should.equal 1
+        expect(helpers.compareArrayItems [555, 666], 555, 666).to.equal 0
+        expect(helpers.compareArrayItems [555, 666], 666, 555).to.equal 1
       it 'one of which is in array', ->
-        (helpers.compareArrayItems [555, 666], 666, 3292).should.equal -1
-        (helpers.compareArrayItems [555, 666], 3292, 666).should.equal 1
+        expect(helpers.compareArrayItems [555, 666], 666, 3292).to.equal -1
+        expect(helpers.compareArrayItems [555, 666], 3292, 666).to.equal 1
       it 'which are not in array', ->
-        (helpers.compareArrayItems [555, 666], 6, 5).should.equal 0
+        expect(helpers.compareArrayItems [555, 666], 6, 5).to.equal 0
 
   describe '#sort()', ->
     it 'should sort files by config', ->
@@ -28,8 +29,8 @@ describe 'helpers', ->
           'app/styles/self.css'
         ]
         after: ['vendor/styles/helpers.css']
-        
-      (helpers.sort files, config).should.eql [
+
+      expect(helpers.sort files, config).to.eql [
         {path: 'vendor/styles/helpers.css'}
         {path: 'app/styles/main.css'}
         {path: 'app/styles/user.styl'}
