@@ -8,16 +8,6 @@ readPackageVersion = ->
   package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
   package.version
 
-loadConfig = (configPath, buildPath = 'build') ->
-  try
-    {config} = require path.resolve configPath
-    config.rootPath = path.dirname configPath
-    config.buildPath = buildPath
-    config
-  catch error
-    helpers.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
-    helpers.exit()
-
 commandLineConfig =
   script: 'brunch'
   commandRequired: yes
@@ -39,7 +29,7 @@ commandLineConfig =
       callback: (options) ->
         brunch.new options.rootPath, ->
           configPath = path.join options.rootPath, 'config.coffee'
-          brunch.build loadConfig configPath, options.buildPath
+          brunch.build helpers.loadConfig configPath, options.buildPath
 
     build:
       help: 'Build a brunch project'
@@ -50,7 +40,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.build loadConfig 'config.coffee', options.buildPath
+        brunch.build helpers.loadConfig 'config.coffee', options.buildPath
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -71,7 +61,7 @@ commandLineConfig =
 the server would run'
           metavar: 'PORT'
       callback: (options) ->
-        config = loadConfig 'config.coffee', options.buildPath
+        config = helpers.loadConfig 'config.coffee', options.buildPath
         config.port = options.port if options.server
         brunch.watch config
 

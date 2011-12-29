@@ -11,6 +11,9 @@
   "engines": {
     "node": "~0.6.6"
   },
+  "scripts": {
+    "start": "brunch watch --server"
+  },
   "dependencies": {
     "brunch-extensions": "0.1.0"
   },

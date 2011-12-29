@@ -1,5 +1,11 @@
+coffeescript = require 'coffee-script'
 express = require 'express'
 growl = require 'growl'
+path = require 'path'
+
+require.extensions['.coffee'] ?= (module, filename) ->
+  content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
+  module._compile content, filename
 
 # Extends the object with properties from another object.
 # Example
@@ -157,3 +163,13 @@ exports.startServer = (port, rootPath = '.') ->
   server.get '/', (req, res) -> res.render 'index.html'
   server.listen parseInt port, 10
   exports.log "[Brunch]: application starting on http://0.0.0.0:#{port}."
+
+exports.loadConfig = (configPath, buildPath = 'build') ->
+  try
+    {config} = require path.resolve configPath
+  catch error
+    exports.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
+    exports.exit()
+  config.rootPath = path.dirname configPath
+  config.buildPath = buildPath
+  config
