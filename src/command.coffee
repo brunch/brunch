@@ -57,11 +57,23 @@ commandLineConfig =
       options:
         buildPath:
           abbr: 'o'
+          full: 'output'
           help: 'build path'
           metavar: 'DIRECTORY'
-          full: 'output'
+        server:
+          abbr: 's'
+          flag: yes
+          help: 'run a simple http server that would server `output` dir'
+        port:
+          abbr: 'p'
+          default: 3333
+          help: 'if a `server` option was specified, define on which port 
+the server would run'
+          metavar: 'PORT'
       callback: (options) ->
-        brunch.watch loadConfig 'config.coffee', options.buildPath
+        config = loadConfig 'config.coffee', options.buildPath
+        config.port = options.port if options.server
+        brunch.watch config
 
     generate:
       help: 'Generate model, view or route for current project'

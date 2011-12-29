@@ -1,3 +1,4 @@
+express = require 'express'
 growl = require 'growl'
 
 # Extends the object with properties from another object.
@@ -146,3 +147,13 @@ exports.sort = (files, config) ->
         0
     .map (file) ->
       files[pathes.indexOf file]
+
+exports.startServer = (port, rootPath = '.') ->
+  server = express.createServer()
+  server.configure ->
+    server.use express.static rootPath
+    server.set 'views', rootPath
+    server.set 'view options', layout: no
+  server.get '/', (req, res) -> res.render 'index.html'
+  server.listen parseInt port, 10
+  exports.log "[Brunch]: application starting on http://0.0.0.0:#{port}."

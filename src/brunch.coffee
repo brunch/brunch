@@ -19,8 +19,15 @@ watchFile = (config, once, callback) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
-      languages.push [///#{regExp}///, destinationPath, new language config]
+      try
+        lang = [///#{regExp}///, destinationPath, new language config]
+        languages.push lang
+      catch error
+        helpers.logError """[Brunch]: cannot parse config entry 
+config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
+"""
 
+  helpers.startServer config.port, config.buildPath if config.port
   # TODO: test if cwd has config.
   watcher = new file.FileWatcher
   writer = new file.FileWriter config
