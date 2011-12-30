@@ -230,10 +230,14 @@ class exports.FileWriter extends EventEmitter
   write: =>
     async.forEach @destFiles, (destFile, next) =>
       destPath = path.join @config.buildPath, destFile.path
+      files = destFile.sourceFiles
+      pathes = files.map (file) -> file.path
+      order = @config.files[destFile.path].order
+      destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
+        files[pathes.indexOf file]
+
       destIsJS = /\.js$/.test destPath
       data = ''
-      destFile.sourceFiles = helpers.sort destFile.sourceFiles,
-        @config.files[destFile.path].order
       data += requireDefinition if destIsJS
       data += destFile.sourceFiles
         .map (sourceFile) ->

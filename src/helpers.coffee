@@ -94,31 +94,11 @@ exports.exit = ->
   else
     process.exit 0
 
-# Function that sorts array.
-# array - array to be sorted.
-# a - item, that could be in array
-# b - another item, that could be in array
-# Examples
-# 
-#   compareArrayItems [555, 666], 555, 666
-#   # => 0
-#   compareArrayItems [555, 666], 666, 555
-#   # => 1
-#   compareArrayItems [555, 666], 666, 3592
-#   # => -1
-# Returns:
-# * -1 if b not in array
-# * 0 if index of a is bigger than index of b OR both items aren't in array
-# * 1 if index of a is smaller than index of b OR a not in array
-exports.compareArrayItems = compareArrayItems = (array, a, b) ->
-  [indexOfA, indexOfB] = [(array.indexOf a), (array.indexOf b)]
-  [hasA, hasB] = [indexOfA isnt -1, indexOfB isnt -1]
-  if hasA and not hasB
-    -1
-  else if not hasA and hasB
+compare = (a, b) ->
+  if a > b
     1
-  else if hasA and hasB
-    Number indexOfA > indexOfB
+  else if a < b
+    -1
   else
     0
 
@@ -134,25 +114,45 @@ exports.sort = (files, config) ->
   return files if typeof config isnt 'object'
   config.before ?= []
   config.after ?= []
-  pathes = files.map (file) -> file.path
-  # Clone data to a new array because we
-  # don't want a side effect here.
-  [pathes...]
+  # Clone data to a new array.
+  [files...]
     .sort (a, b) ->
-      compareArrayItems config.before, a, b
-    .sort (a, b) ->
-      -(compareArrayItems config.after, a, b)
-    .sort (a, b) ->
-      aIsVendor = (a.indexOf 'vendor') is 0
-      bIsVendor = (b.indexOf 'vendor') is 0
-      if aIsVendor and not bIsVendor
+      # Try to find items in config.before.
+      # Item that config.after contains would have bigger sorting index.
+      indexOfA = config.before.indexOf a
+      indexOfB = config.before.indexOf b
+      [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+      if hasA and not hasB
         -1
-      else if not aIsVendor and bIsVendor
+      else if not hasA and hasB
         1
-      else if aIsVendor and bIsVendor
-        0
-    .map (file) ->
-      files[pathes.indexOf file]
+      else if hasA and hasB
+        compare indexOfA, indexOfB
+      else
+        # Items wasn't found in config.before, try to find then in
+        # config.after.
+        # Item that config.after contains would have lower sorting index.
+        indexOfA = config.after.indexOf a
+        indexOfB = config.after.indexOf b
+        [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+        if hasA and not hasB
+          1
+        else if not hasA and hasB
+          -1
+        else if hasA and hasB
+          compare indexOfA, indexOfB
+        else
+          # If item path starts with 'vendor', it has bigger priority.
+          aIsVendor = (a.indexOf 'vendor') is 0
+          bIsVendor = (b.indexOf 'vendor') is 0
+          if aIsVendor and not bIsVendor
+            -1
+          else if not aIsVendor and bIsVendor
+            1
+          else
+            # All conditions were false, we don't care about order of
+            # these two items.
+            0
 
 exports.startServer = (port, rootPath = '.') ->
   server = express.createServer()
