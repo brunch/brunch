@@ -214,10 +214,8 @@ class exports.FileWriter extends EventEmitter
     
     unless sourceFile
       sourceFile = changedFile
-      concatenated = destFile.sourceFiles.concat [sourceFile]
-      order = @config.files[changedFile.destinationPath].order
-      destFile.sourceFiles = helpers.sort concatenated, order
-      delete changedFile.destinationPath
+      destFile.sourceFiles.push sourceFile
+      delete sourceFile.destinationPath
     sourceFile.data = changedFile.data
 
     clearTimeout @timeout if @timeout?
@@ -230,11 +228,12 @@ class exports.FileWriter extends EventEmitter
       sourceFile.path isnt removedFile.path
 
   write: =>
-    console.log 'Writing files', JSON.stringify @destFiles, null, 2
     async.forEach @destFiles, (destFile, next) =>
       destPath = path.join @config.buildPath, destFile.path
       destIsJS = /\.js$/.test destPath
       data = ''
+      destFile.sourceFiles = helpers.sort destFile.sourceFiles,
+        @config.files[destFile.path].order
       data += requireDefinition if destIsJS
       data += destFile.sourceFiles
         .map (sourceFile) ->
@@ -244,6 +243,8 @@ class exports.FileWriter extends EventEmitter
             sourceFile.data
         .join ''
       writeFile = (callback) ->
+        console.log "Writing file #{destPath} with content from files",
+          destFile.sourceFiles.map (sourceFile) -> sourceFile.path
         fs.writeFile destPath, data, callback
       writeFile (error) ->
         if error?

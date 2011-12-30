@@ -7,15 +7,7 @@ file = require './file'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
-# Recompiles all files in current working directory.
-# 
-# config    - Parsed app config.
-# once      - Should watcher be stopped after compiling the app first time?
-# callback  - Callback that would be executed on each compilation.
-#  
-watchFile = (config, once, callback) ->
-  changedFiles = {}
-  plugins = config.plugins.map (plugin) -> new plugin config
+getLanguagesFromConfig = (config) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
@@ -26,6 +18,18 @@ watchFile = (config, once, callback) ->
         helpers.logError """[Brunch]: cannot parse config entry 
 config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 """
+  languages
+  
+# Recompiles all files in current working directory.
+# 
+# config    - Parsed app config.
+# once      - Should watcher be stopped after compiling the app first time?
+# callback  - Ca=llback that would be executed on each compilation.
+#  
+watchFile = (config, once, callback) ->
+  changedFiles = {}
+  plugins = config.plugins.map (plugin) -> new plugin config
+  languages = getLanguagesFromConfig config
 
   helpers.startServer config.port, config.buildPath if config.port
   # TODO: test if cwd has config.
