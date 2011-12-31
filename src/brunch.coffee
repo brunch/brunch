@@ -39,14 +39,11 @@ watchFile = (config, once, callback) ->
     .add('app')
     .add('vendor')
     .on 'change', (file) ->
-      console.log "File #{file} was changed"
       languages
         .filter ([regExp, destinationPath, language]) ->
           regExp.test file
         .forEach ([regExp, destinationPath, language]) ->
-          console.log "Compiling #{file} with #{language.constructor.name}"
           language.compile file, (error, data) ->
-            console.log "Compiled #{file} with #{language.constructor.name}"
             if error?
               languageName = language.constructor.name.replace 'Language', ''
               return helpers.logError "[#{languageName}] error: #{error}"
@@ -57,10 +54,10 @@ watchFile = (config, once, callback) ->
     helpers.logError "[Brunch] write error. #{error}"
   writer.on 'write', (result) ->
     async.forEach plugins, (plugin, next) ->
-      console.log 'Loading plugin', plugin.constructor.name
       plugin.load next
     , (error) ->
       return helpers.logError "[Brunch]: plugin error. #{error}" if error?
+      helpers.log '[Brunch]: compiled.'
       watcher.clear() if once
       callback result
 

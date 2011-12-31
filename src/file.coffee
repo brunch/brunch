@@ -63,7 +63,7 @@ exports.recursiveCopy = (source, destination, callback) ->
 # 
 # Example
 # 
-#   (new Watcher)
+#   (new FileWatcher)
 #     .on 'change', (file) ->
 #       console.log 'File %s was changed', file
 # 
@@ -208,7 +208,6 @@ class exports.FileWriter extends EventEmitter
     destFile
 
   _onChange: (changedFile) =>
-    console.log 'FileWriter: change', changedFile.path
     destFile = @_getDestFile changedFile.destinationPath
     sourceFile = destFile.sourceFiles.filter(({path}) -> path is changedFile.path)[0]
     
@@ -222,7 +221,6 @@ class exports.FileWriter extends EventEmitter
     @timeout = setTimeout @write, 20
 
   _onRemove: (removedFile) =>
-    console.log 'FileWriter: remove'
     destFile = @_getDestFile removedFile.destinationPath
     destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
       sourceFile.path isnt removedFile.path
@@ -247,8 +245,8 @@ class exports.FileWriter extends EventEmitter
             sourceFile.data
         .join ''
       writeFile = (callback) ->
-        console.log "Writing file #{destPath} with content from files",
-          destFile.sourceFiles.map (sourceFile) -> sourceFile.path
+        #console.log "Writing file #{destPath} with content from files",
+        #  destFile.sourceFiles.map (sourceFile) -> sourceFile.path
         fs.writeFile destPath, data, callback
       writeFile (error) ->
         if error?
