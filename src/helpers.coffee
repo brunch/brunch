@@ -94,21 +94,13 @@ exports.exit = ->
   else
     process.exit 0
 
-compare = (a, b) ->
-  if a > b
-    1
-  else if a < b
-    -1
-  else
-    0
-
 # Sorts by pattern.
 # 
 # Examples
-#         
-#   sort [{path: 'b.coffee'}, {path: 'c.coffee'}, {path: 'a.coffee'}],
+#
+#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
 #     before: ['a.coffee'], after: ['b.coffee']
-#   # => [{path: 'a.coffee'}, {path: 'c.coffee'}, {path: 'b.coffee'}]
+#   # => ['a.coffee', 'c.coffee', 'b.coffee']
 # 
 exports.sort = (files, config) ->
   return files if typeof config isnt 'object'
@@ -127,7 +119,7 @@ exports.sort = (files, config) ->
       else if not hasA and hasB
         1
       else if hasA and hasB
-        compare indexOfA, indexOfB
+        indexOfA - indexOfB
       else
         # Items wasn't found in config.before, try to find then in
         # config.after.
@@ -140,7 +132,7 @@ exports.sort = (files, config) ->
         else if not hasA and hasB
           -1
         else if hasA and hasB
-          compare indexOfA, indexOfB
+          indexOfA - indexOfB
         else
           # If item path starts with 'vendor', it has bigger priority.
           aIsVendor = (a.indexOf 'vendor') is 0
