@@ -7,13 +7,26 @@ file = require './file'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
+# Creates an array of languages that would be used in brunch application.
+# 
+# config - parsed app config
+# 
+# Examples
+# 
+#   getLanguagesFromConfig {files: {
+#     'out1.js': {languages: {'\.coffee$': CoffeeScriptLanguage}}
+#   # => [/\.coffee/, 'out1.js', coffeeScriptLanguage]
+# 
+# Returns array.
 getLanguagesFromConfig = (config) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
       try
-        lang = [///#{regExp}///, destinationPath, new language config]
-        languages.push lang
+        languages.push {
+          regExp: ///#{regExp}///, destinationPath,
+          compiler: new language config
+        }
       catch error
         helpers.logError """[Brunch]: cannot parse config entry 
 config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
@@ -24,8 +37,9 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # 
 # config    - Parsed app config.
 # once      - Should watcher be stopped after compiling the app first time?
-# callback  - Ca=llback that would be executed on each compilation.
-#  
+# callback  - Callback that would be executed on each compilation.
+# 
+# 
 watchFile = (config, once, callback) ->
   changedFiles = {}
   plugins = config.plugins.map (plugin) -> new plugin config
@@ -40,12 +54,13 @@ watchFile = (config, once, callback) ->
     .add('vendor')
     .on 'change', (file) ->
       languages
-        .filter ([regExp, destinationPath, language]) ->
+        .filter ({regExp}) ->
           regExp.test file
-        .forEach ([regExp, destinationPath, language]) ->
-          language.compile file, (error, data) ->
+        .forEach ({compiler, destinationPath, regExp}) ->
+          compiler.compile file, (error, data) ->
             if error?
-              languageName = language.constructor.name.replace 'Language', ''
+              # TODO: (Coffee 1.2.1) compiler.name.
+              languageName = compiler.constructor.name.replace 'Language', ''
               return helpers.logError "[#{languageName}] error: #{error}"
             writer.emit 'change', {destinationPath, path: file, data}
     .on 'remove', (file) ->
@@ -61,6 +76,8 @@ watchFile = (config, once, callback) ->
       watcher.clear() if once
       callback result
 
+# Create new application in `rootPath` and build it.
+# App is created by copying directory `../template/base` to `rootPath`.
 exports.new = (rootPath, buildPath, callback = (->)) ->
   templatePath = path.join __dirname, '..', 'template', 'base'
   path.exists rootPath, (exists) ->
@@ -82,15 +99,18 @@ directory \"#{rootPath}\" already exists"
             helpers.log '[Brunch]: installed npm package brunch-extensions'
             callback()
 
+# Build application once and execute callback.
 exports.build = (config, callback = (->)) ->
   watchFile config, yes, callback
 
+# Watch application for changes and execute callback on every compilation.
 exports.watch = (config, callback = (->)) ->
   watchFile config, no, callback
 
 exports.test = (callback = (->)) ->
   testrunner.run {}, callback
 
+# 
 exports.generate = (type, name, callback = (->)) ->
   extension = switch type
     when 'style' then 'styl'

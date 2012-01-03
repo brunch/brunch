@@ -6,6 +6,8 @@ class exports.BrunchApplication
     @views = {}
     @utils = {}
     jQuery =>
-      @onReady this
+      @initialize this
+      Backbone.history.start()
 
-  onReady: -> null
+  initialize: ->
+    null

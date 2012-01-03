@@ -1,14 +1,11 @@
 {BrunchApplication} = require 'helpers'
-
+{MainRouter} = require 'routers/main_router'
+{HomeView} = require 'views/home_view'
 
 class exports.Application extends BrunchApplication
   # This callback would be executed on document ready event.
-  onReady: ->
-    {MainRouter} = require 'routers/main_router'
-    {HomeView} = require 'views/home_view'
-    @routers.main = new MainRouter
-    @views.home = new HomeView
-    Backbone.history.start()
-
+  initialize: ->
+    @router = new MainRouter
+    @homeView = new HomeView
 
 window.app = new exports.Application

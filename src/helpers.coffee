@@ -62,7 +62,7 @@ formatDate = (color = 'none') ->
 #   # => 'Test'
 #
 exports.capitalize = capitalize = (string) ->
-  string[0].toUpperCase() + string[1..]
+  (string[0] or '').toUpperCase() + string[1..]
 
 # Example
 # 
@@ -146,7 +146,7 @@ exports.sort = (files, config) ->
             # these two items.
             0
 
-exports.startServer = (port, rootPath = '.') ->
+exports.startServer = (port = 3333, rootPath = '.', callback = (->)) ->
   server = express.createServer()
   server.configure ->
     server.use express.static rootPath
@@ -154,6 +154,7 @@ exports.startServer = (port, rootPath = '.') ->
     server.set 'view options', layout: no
   server.get '/', (req, res) -> res.render 'index.html'
   server.listen parseInt port, 10
+  server.on 'listening', callback
   exports.log "[Brunch]: application starting on http://0.0.0.0:#{port}."
 
 exports.loadConfig = (configPath, buildPath = 'build') ->

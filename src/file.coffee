@@ -64,6 +64,7 @@ exports.recursiveCopy = (source, destination, callback) ->
 # Example
 # 
 #   (new FileWatcher)
+#     .add 'app'
 #     .on 'change', (file) ->
 #       console.log 'File %s was changed', file
 # 
@@ -84,7 +85,8 @@ class exports.FileWatcher extends EventEmitter
     return if basename in parent
     parent.push basename
     fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
-      callback? item unless curr.mtime.getTime() is prev.mtime.getTime()
+      if curr.mtime.getTime() isnt prev.mtime.getTime()
+        callback? item
 
   _handleFile: (file) ->
     emit = (file) =>
@@ -130,6 +132,7 @@ class exports.FileWatcher extends EventEmitter
     @watched = {}
     this
 
+# The definition would be added on top of every filewriter .js file.
 requireDefinition = '''
 (function(/*! Brunch !*/) {
   if (!this.require) {
@@ -194,6 +197,19 @@ exports.wrap = wrap = (filePath, data) ->
   }));\n
   """
 
+# 
+# config - parsed app config.
+# 
+# Example
+# 
+#   writer = (new FileWriter config)
+#     .on 'error', (error) ->
+#       console.log 'File write error', error
+#     .on 'write', (result) ->
+#       console.log 'Files has been written with data', result
+#   writer.emit 'change',
+#     destinationPath: 'result.js', path: 'app/client.coffee', data: 'fileData'
+# 
 class exports.FileWriter extends EventEmitter
   constructor: (@config) ->
     @destFiles = []
@@ -201,15 +217,17 @@ class exports.FileWriter extends EventEmitter
     @on 'remove', @_onRemove
 
   _getDestFile: (destinationPath) ->
-    destFile = @destFiles.filter(({path}) -> path is destinationPath)[0]
+    destFile = @destFiles.filter((file) -> file.path is destinationPath)[0]
     unless destFile
-      destFile = path: destinationPath, sourceFiles: []
+      destFile = {path: destinationPath,sourceFiles: []}
       @destFiles.push destFile
     destFile
 
   _onChange: (changedFile) =>
     destFile = @_getDestFile changedFile.destinationPath
-    sourceFile = destFile.sourceFiles.filter(({path}) -> path is changedFile.path)[0]
+    sourceFile = destFile.sourceFiles.filter(
+      (file) -> file.path is changedFile.path
+    )[0]
     
     unless sourceFile
       sourceFile = changedFile
@@ -218,44 +236,46 @@ class exports.FileWriter extends EventEmitter
     sourceFile.data = changedFile.data
 
     clearTimeout @timeout if @timeout?
-    @timeout = setTimeout @write, 20
+    @timeout = setTimeout @_write, 20
 
   _onRemove: (removedFile) =>
     destFile = @_getDestFile removedFile.destinationPath
     destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
       sourceFile.path isnt removedFile.path
 
-  write: =>
-    async.forEach @destFiles, (destFile, next) =>
-      destPath = path.join @config.buildPath, destFile.path
-      files = destFile.sourceFiles
-      pathes = files.map (file) -> file.path
-      order = @config.files[destFile.path].order
-      destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
-        files[pathes.indexOf file]
-
-      destIsJS = /\.js$/.test destPath
-      data = ''
-      data += requireDefinition if destIsJS
-      data += destFile.sourceFiles
-        .map (sourceFile) ->
-          if destIsJS and not (/^vendor/.test sourceFile.path)
-            wrap sourceFile.path, sourceFile.data
-          else
-            sourceFile.data
-        .join ''
-      writeFile = (callback) ->
-        #console.log "Writing file #{destPath} with content from files",
-        #  destFile.sourceFiles.map (sourceFile) -> sourceFile.path
-        fs.writeFile destPath, data, callback
-      writeFile (error) ->
-        if error?
-          mkdirp (path.dirname destPath), 0755, (error) ->
-            next error if error?
-            writeFile (error) ->
-              next error, {path: destPath, data}
+  _getFilesData: (destFile) ->
+    destIsJS = /\.js$/.test destFile.path
+    data = ''
+    data += requireDefinition if destIsJS
+    data += destFile.sourceFiles
+      .map (sourceFile) ->
+        if destIsJS and not (/^vendor/.test sourceFile.path)
+          wrap sourceFile.path, sourceFile.data
         else
-          next null, {path: destPath, data}
-    , (error, results) =>
+          sourceFile.data
+      .join ''
+    data
+
+  _writeFile: (destFile, callback) =>
+    files = destFile.sourceFiles
+    pathes = files.map (file) -> file.path
+    order = @config.files[destFile.path].order
+    destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
+      files[pathes.indexOf file]
+    destPath = path.join @config.buildPath, destFile.path
+    data = @_getFilesData destFile
+    writeFile = (callback) =>
+      fs.writeFile destPath, data, callback
+    writeFile (error) ->
+      if error?
+        mkdirp (path.dirname destPath), 0755, (error) ->
+          callback error if error?
+          writeFile (error) ->
+            callback error, {path: destPath, data}
+      else
+        callback null, {path: destPath, data}
+
+  _write: =>
+    async.forEach @destFiles, @_writeFile, (error, results) =>
       return @emit 'error' if error?
-      @emit 'write', error, results
+      @emit 'write', results

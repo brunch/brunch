@@ -4,10 +4,13 @@ path = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
 
+# Reads package.json and extracts brunch version from there.
+# Returns string.
 readPackageVersion = ->
   package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
   package.version
 
+# Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'
   commandRequired: yes
@@ -98,5 +101,6 @@ the server would run'
       flag: yes
       callback: readPackageVersion
 
+# The function would be executed every time user run `bin/brunch`.
 exports.run = ->
   argumentum.load(commandLineConfig).parse()
