@@ -6,7 +6,7 @@ helpers = require './helpers'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
-readPackageVersion = ->
+exports.readPackageVersion = readPackageVersion = ->
   package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
   package.version
 
@@ -84,15 +84,6 @@ the server would run'
           required: yes
       callback: (options) ->
         brunch.generate options.type, options.name
-
-    test:
-      help: 'Run tests for a brunch project'
-      options:
-        verbose:
-          flag: yes
-          help: 'set verbose option for test runner'
-      callback: (options) ->
-        brunch.test options.verbose
 
   options:
     version:

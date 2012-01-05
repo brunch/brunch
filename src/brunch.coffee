@@ -18,7 +18,7 @@ testrunner = require './testrunner'
 #   # => [/\.coffee/, 'out1.js', coffeeScriptLanguage]
 # 
 # Returns array.
-getLanguagesFromConfig = (config) ->
+exports.getLanguagesFromConfig = getLanguagesFromConfig = (config) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
@@ -61,7 +61,8 @@ watchFile = (config, once, callback) ->
             if error?
               # TODO: (Coffee 1.2.1) compiler.name.
               languageName = compiler.constructor.name.replace 'Language', ''
-              return helpers.logError "[#{languageName}] error: #{error}"
+              return helpers.logError "
+[#{languageName}]: cannot compile '#{file}': #{error}"
             writer.emit 'change', {destinationPath, path: file, data}
     .on 'remove', (file) ->
       writer.emit 'remove', file
@@ -107,9 +108,16 @@ exports.build = (config, callback = (->)) ->
 exports.watch = (config, callback = (->)) ->
   watchFile config, no, callback
 
-exports.test = (callback = (->)) ->
-  testrunner.run {}, callback
-
+# Generate new controller / model / view and its tests.
+# 
+# type - one of: collection, model, router, style, view
+# name - filename.
+# 
+# Examples
+# 
+#   generate 'style', 'user'
+#   generate 'view', 'user'
+#   generate 'collection', 'users'
 # 
 exports.generate = (type, name, callback = (->)) ->
   extension = switch type
