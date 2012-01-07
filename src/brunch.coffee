@@ -32,16 +32,16 @@ getLanguagesFromConfig = (config) ->
 config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 """
   languages
-  
+
 # Recompiles all files in current working directory.
 # 
-# rootPath - 
-# buildPath - 
+# rootPath - path to application directory.
+# buildPath - (optional) path to application output directory. Default: 'build'
 # config - Parsed app config.
 # persistent - Should watcher be stopped after compiling the app first time?
 # callback - Callback that would be executed on each compilation.
 # 
-watchFile = (rootPath, buildPath, config, persistent, callback) ->
+watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   if typeof buildPath is 'object'
     [config, persistent, callback] = [buildPath, config, persistent]
     buildPath = null
@@ -51,9 +51,10 @@ watchFile = (rootPath, buildPath, config, persistent, callback) ->
   config.rootPath = rootPath
   config.buildPath = buildPath
 
+  helpers.startServer config.port, config.buildPath if config.port
+
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
-  helpers.startServer config.port, config.buildPath if config.port
   writer = new fs_utils.FileWriter buildPath, config.files
   watcher = (new fs_utils.FSWatcher ['app', 'vendor'])
     .on 'change', (file) ->
@@ -111,22 +112,23 @@ directory \"#{rootPath}\" already exists"
 
 # Build application once and execute callback.
 exports.build = (rootPath, buildPath, config, callback = (->)) ->
-  watchFile rootPath, buildPath, config, no, callback
+  watchApplication rootPath, buildPath, config, no, callback
 
 # Watch application for changes and execute callback on every compilation.
 exports.watch = (rootPath, buildPath, config, callback = (->)) ->
-  watchFile rootPath, buildPath, config, yes, callback
+  watchApplication rootPath, buildPath, config, yes, callback
 
 # Generate new controller / model / view and its tests.
 # 
+# rootPath - path to application directory.
 # type - one of: collection, model, router, style, view
 # name - filename.
 # 
 # Examples
 # 
-#   generate 'style', 'user'
-#   generate 'view', 'user'
-#   generate 'collection', 'users'
+#   generate './twitter', 'style', 'user'
+#   generate '.', 'view', 'user'
+#   generate '.', 'collection', 'users'
 # 
 exports.generate = (rootPath, type, name, callback = (->)) ->
   extension = switch type
