@@ -93,7 +93,8 @@ directory \"#{rootPath}\" already exists"
         file.recursiveCopy templatePath, rootPath, ->
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
-          exec "pushd . && cd #{rootPath} && npm install && popd", (error) ->
+          process.chdir rootPath
+          exec 'npm install', (error) ->
             if error?
               helpers.logError "[Brunch]: npm error: #{error}"
               return callback error
