@@ -1,0 +1,27 @@
+## Brunch 0.9.0 (unreleased)
+* Added new API for plugins.
+* Added support for Jade and LESS. All language compilers / plugins are now
+located in separate repo,
+[brunch-extensions](https://github.com/brunch/brunch-extensions).
+* CoffeeScript (instead of YAML) is now used for application configs.
+* The build directory is now generated automatically.
+* All assets (index.html, images etc.) are placed in app/assets/.
+* `main.coffee` was renamed to `initialize.coffee` for clarity.
+* `src/vendor` and `src/app` moved to `vendor` and `app`.
+* All scripts from `src/vendor` are moved to `app/vendor/scripts`.
+* Added support for CoffeeScript in `vendor/scripts`.
+* Added support for Stylus / LESS in `vendor/styles`.
+* Templates have moved from `app/templates` to `app/views/templates`.
+* `brunch build` and `brunch watch` now compile files in current working
+directory (instead of in `./brunch/` subdir).
+* Added `brunch generate` command. It's basically a shortcut for creating new
+model / view / router. Example usage: `brunch generate view user`.
+* Added `brunch watch --server` flag that would run http server on
+build directory. It has an optional `--port` setting.
+* Added support for node 0.6.
+* Added growl support.
+* Changed reset.styl to normalize.css & helpers.css from html5boilerplate.
+* Improvements for vendor data: support CSS in vendor/styles directory,
+support CoffeeScript (in addition to js) in vendor/scripts directory.
+* Add firebug support to stylus compiler.
+* Improved time formatting in console logs.
