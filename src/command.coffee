@@ -45,7 +45,7 @@ commandLineConfig =
           full: 'output'
       callback: (options) ->
         config = helpers.loadConfig 'config.coffee'
-        brunch.build process.cwd(), options.buildPath, config
+        brunch.build '.', options.buildPath, config
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'
@@ -68,7 +68,7 @@ the server would run'
       callback: (options) ->
         config = helpers.loadConfig 'config.coffee'
         config.port = options.port if options.server
-        brunch.watch process.cwd(), options.buildPath, config
+        brunch.watch '.', options.buildPath, config
 
     generate:
       help: 'Generate model, view or route for current project'
@@ -85,7 +85,7 @@ the server would run'
           metavar: 'NAME'
           required: yes
       callback: (options) ->
-        brunch.generate process.cwd(), options.type, options.name
+        brunch.generate '.', options.type, options.name
 
   options:
     version:

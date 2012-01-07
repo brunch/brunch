@@ -41,6 +41,7 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # persistent - Should watcher be stopped after compiling the app first time?
 # callback - Callback that would be executed on each compilation.
 # 
+# Returns `fs_utils.FSWatcher` object.
 watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   if typeof buildPath is 'object'
     [config, persistent, callback] = [buildPath, config, persistent]
@@ -121,7 +122,7 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 # Generate new controller / model / view and its tests.
 # 
 # rootPath - path to application directory.
-# type - one of: collection, model, router, style, view
+# type - one of: collection, model, router, style, view.
 # name - filename.
 # 
 # Examples
@@ -133,7 +134,6 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 exports.generate = (rootPath, type, name, callback = (->)) ->
   extension = switch type
     when 'style' then 'styl'
-    when 'template' then 'eco'
     else 'coffee'
   filename = "#{name}.#{extension}"
   filePath = path.join rootPath, 'app', "#{type}s", filename
@@ -145,7 +145,22 @@ exports.generate = (rootPath, type, name, callback = (->)) ->
     else
       ''
 
-  fs.writeFile filePath, data, (error) ->
-    return helpers.logError error if error?
-    helpers.log "Generated #{filePath}"
-    callback()
+  generateFile = (callback) ->
+    fs.writeFile filePath, data, (error) ->
+      return helpers.logError error if error?
+      helpers.log "Generated #{filePath}"
+      callback()
+
+  generateTests = (callback) ->
+    return callback() unless extension is 'coffee'
+    testFilePath = path.join(
+      rootPath, 'test', 'unit', "#{type}s", "#{name}_test.#{extension}"
+    )
+    fs.writeFile testFilePath, '', (error) ->
+      return helpers.logError error if error?
+      helpers.log "Generated #{testFilePath}"
+      callback()
+
+  generateFile ->
+    generateTests ->
+      callback()

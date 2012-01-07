@@ -14,7 +14,7 @@ located in separate repo,
     * Added support for CoffeeScript in `vendor/scripts`.
     * Added support for Stylus / LESS in `vendor/styles`.
     * Templates have moved from `app/templates` to `app/views/templates`.
-* Command line API improved:
+* Updated command line API:
     * `brunch build` and `brunch watch` now compile files in current working
     directory (instead of in `./brunch/` subdir).
     * Added `brunch generate` command. It's basically a shortcut for creating new
