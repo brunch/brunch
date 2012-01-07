@@ -3,7 +3,7 @@ async = require 'async'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 path = require 'path'
-file = require './file'
+fs_utils = require './fs_utils'
 helpers = require './helpers'
 testrunner = require './testrunner'
 
@@ -18,7 +18,7 @@ testrunner = require './testrunner'
 #   # => [/\.coffee/, 'out1.js', coffeeScriptLanguage]
 # 
 # Returns array.
-exports.getLanguagesFromConfig = getLanguagesFromConfig = (config) ->
+getLanguagesFromConfig = (config) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages
@@ -35,28 +35,33 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
   
 # Recompiles all files in current working directory.
 # 
-# config    - Parsed app config.
-# once      - Should watcher be stopped after compiling the app first time?
-# callback  - Callback that would be executed on each compilation.
+# rootPath - 
+# buildPath - 
+# config - Parsed app config.
+# persistent - Should watcher be stopped after compiling the app first time?
+# callback - Callback that would be executed on each compilation.
 # 
-# 
-watchFile = (config, once, callback) ->
-  changedFiles = {}
+watchFile = (rootPath, buildPath, config, persistent, callback) ->
+  if typeof buildPath is 'object'
+    [config, persistent, callback] = [buildPath, config, persistent]
+    buildPath = null
+  buildPath ?= path.join rootPath, 'build'
+
+  # Pass rootPath & buildPath to config in order to allow plugins to use them.
+  config.rootPath = rootPath
+  config.buildPath = buildPath
+
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
-
   helpers.startServer config.port, config.buildPath if config.port
-  # TODO: test if cwd has config.
-  watcher = new file.FileWatcher
-  writer = new file.FileWriter config
-  watcher
-    .add('app')
-    .add('vendor')
+  writer = new fs_utils.FileWriter buildPath, config.files
+  watcher = (new fs_utils.FSWatcher ['app', 'vendor'])
     .on 'change', (file) ->
       languages
-        .filter ({regExp}) ->
-          regExp.test file
-        .forEach ({compiler, destinationPath, regExp}) ->
+        .filter (language) ->
+          language.regExp.test file
+        .forEach (language) ->
+          {compiler, destinationPath} = language
           compiler.compile file, (error, data) ->
             if error?
               # TODO: (Coffee 1.2.1) compiler.name.
@@ -73,24 +78,27 @@ watchFile = (config, once, callback) ->
       plugin.load next
     , (error) ->
       return helpers.logError "[Brunch]: plugin error. #{error}" if error?
-      helpers.log '[Brunch]: compiled.'
-      watcher.clear() if once
+      helpers.log "[Brunch]: compiled."
+      watcher.close() unless persistent
       callback result
+  watcher
 
 # Create new application in `rootPath` and build it.
 # App is created by copying directory `../template/base` to `rootPath`.
 exports.new = (rootPath, buildPath, callback = (->)) ->
+  callback = buildPath if typeof buildPath is 'function'
+
   templatePath = path.join __dirname, '..', 'template', 'base'
   path.exists rootPath, (exists) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
-
+    console.log 'mkdirp'
     mkdirp rootPath, 0755, (error) ->
       return helpers.logError "[Brunch]: Error #{error}" if error?
       mkdirp buildPath, 0755, (error) ->
         return helpers.logError "[Brunch]: Error #{error}" if error?
-        file.recursiveCopy templatePath, rootPath, ->
+        fs_utils.recursiveCopy templatePath, rootPath, ->
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
           process.chdir rootPath
@@ -102,12 +110,12 @@ directory \"#{rootPath}\" already exists"
             callback()
 
 # Build application once and execute callback.
-exports.build = (config, callback = (->)) ->
-  watchFile config, yes, callback
+exports.build = (rootPath, buildPath, config, callback = (->)) ->
+  watchFile rootPath, buildPath, config, no, callback
 
 # Watch application for changes and execute callback on every compilation.
-exports.watch = (config, callback = (->)) ->
-  watchFile config, no, callback
+exports.watch = (rootPath, buildPath, config, callback = (->)) ->
+  watchFile rootPath, buildPath, config, yes, callback
 
 # Generate new controller / model / view and its tests.
 # 
@@ -120,13 +128,13 @@ exports.watch = (config, callback = (->)) ->
 #   generate 'view', 'user'
 #   generate 'collection', 'users'
 # 
-exports.generate = (type, name, callback = (->)) ->
+exports.generate = (rootPath, type, name, callback = (->)) ->
   extension = switch type
     when 'style' then 'styl'
     when 'template' then 'eco'
     else 'coffee'
   filename = "#{name}.#{extension}"
-  filePath = path.join 'app', "#{type}s", filename
+  filePath = path.join rootPath, 'app', "#{type}s", filename
   data = switch extension
     when 'coffee'
       genName = helpers.capitalize type

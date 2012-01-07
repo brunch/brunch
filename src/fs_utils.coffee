@@ -63,17 +63,21 @@ exports.recursiveCopy = (source, destination, callback) ->
 # 
 # Example
 # 
-#   (new FileWatcher)
+#   (new FSWatcher)
 #     .add 'app'
 #     .on 'change', (file) ->
 #       console.log 'File %s was changed', file
 # 
-class exports.FileWatcher extends EventEmitter
+class exports.FSWatcher extends EventEmitter
   # RegExp that would filter invalid files (dotfiles, emacs caches etc).
   invalid: /^(\.|#)/
 
-  constructor: ->
+  constructor: (files) ->
     @watched = {}
+    if Array.isArray files
+      @_handle file for file in files
+    else
+      @_handle files
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
@@ -84,7 +88,7 @@ class exports.FileWatcher extends EventEmitter
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
-    fs.watchFile item, persistent: yes, interval: 500, (curr, prev) =>
+    fs.watchFile item, persistent: yes, interval: 100, (curr, prev) =>
       if curr.mtime.getTime() isnt prev.mtime.getTime()
         callback? item
 
@@ -116,16 +120,12 @@ class exports.FileWatcher extends EventEmitter
         @_handleFile file if stats.isFile()
         @_handleDir file if stats.isDirectory()
 
-  add: (file) ->
-    @_handle file
-    this
-
   on: ->
     super
     this
 
   # Removes all listeners from watched files.
-  clear: ->
+  close: ->
     for directory, files of @watched
       for file in files
         fs.unwatchFile path.join directory, file
@@ -211,7 +211,9 @@ exports.wrap = wrap = (filePath, data) ->
 #     destinationPath: 'result.js', path: 'app/client.coffee', data: 'fileData'
 # 
 class exports.FileWriter extends EventEmitter
-  constructor: (@config) ->
+  timeout: 50
+
+  constructor: (@buildPath, @files) ->
     @destFiles = []
     @on 'change', @_onChange
     @on 'remove', @_onRemove
@@ -235,8 +237,8 @@ class exports.FileWriter extends EventEmitter
       delete sourceFile.destinationPath
     sourceFile.data = changedFile.data
 
-    clearTimeout @timeout if @timeout?
-    @timeout = setTimeout @_write, 20
+    clearTimeout @timeoutId if @timeoutId?
+    @timeoutId = setTimeout @_write, @timeout
 
   _onRemove: (removedFile) =>
     destFile = @_getDestFile removedFile.destinationPath
@@ -259,10 +261,10 @@ class exports.FileWriter extends EventEmitter
   _writeFile: (destFile, callback) =>
     files = destFile.sourceFiles
     pathes = files.map (file) -> file.path
-    order = @config.files[destFile.path].order
+    order = @files[destFile.path].order
     destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
       files[pathes.indexOf file]
-    destPath = path.join @config.buildPath, destFile.path
+    destPath = path.join @buildPath, destFile.path
     data = @_getFilesData destFile
     writeFile = (callback) =>
       fs.writeFile destPath, data, callback

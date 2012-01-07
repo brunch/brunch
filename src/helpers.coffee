@@ -157,12 +157,10 @@ exports.startServer = (port = 3333, rootPath = '.', callback = (->)) ->
   server.on 'listening', callback
   exports.log "[Brunch]: application starting on http://0.0.0.0:#{port}."
 
-exports.loadConfig = (configPath, buildPath = 'build') ->
+exports.loadConfig = (configPath) ->
   try
     {config} = require path.resolve configPath
   catch error
     exports.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
     exports.exit()
-  config.rootPath = path.dirname configPath
-  config.buildPath = buildPath
   config
