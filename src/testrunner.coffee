@@ -3,6 +3,8 @@ jsdom = require 'jsdom'
 path = require 'path'
 util = require 'util'
 helpers = require './helpers'
+coffee = require 'coffee-script'
+TerminalReporter = require('./reporter').TerminalReporter
 
 compileSpecFile = (filePath) ->
   extension = path.extname filePath
@@ -25,16 +27,16 @@ getDirectorySpecs = (directory) -> (specs, file) ->
 getSpecFiles = (testPath) ->
   getDirectorySpecs(testPath) [], ''
 
-exports.run = (options, callback) ->
-  rootPath = path.resolve options.rootPath
+exports.run = (rootPath, buildPath, verbose=false, callback) ->
+  rootPath = path.resolve rootPath
   testPath = path.join rootPath, 'test'
   helpers.log "Running tests in #{testPath}"
   specs = getSpecFiles testPath
   # Run specs in fake browser.
   jsdom.env
-    html: path.join rootPath, 'index.html'
+    html: path.join buildPath, 'index.html'
     scripts: [
-      path.resolve options.buildPath, path.join 'scripts', 'app.js'
+      path.resolve buildPath, path.join 'scripts', 'app.js'
       path.resolve __dirname, path.join '..', 'vendor', 'jasmine.js'
     ]
     src: specs
@@ -46,7 +48,7 @@ exports.run = (options, callback) ->
       jasmineEnv = window.jasmine.getEnv()
       jasmineEnv.reporter = new TerminalReporter
         print: stream
-        verbose: options.verbose
+        verbose: verbose
         color: yes
         onComplete: null
         stackFilter: null

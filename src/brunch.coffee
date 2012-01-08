@@ -8,15 +8,15 @@ helpers = require './helpers'
 testrunner = require './testrunner'
 
 # Creates an array of languages that would be used in brunch application.
-# 
+#
 # config - parsed app config
-# 
+#
 # Examples
-# 
+#
 #   getLanguagesFromConfig {files: {
 #     'out1.js': {languages: {'\.coffee$': CoffeeScriptLanguage}}
 #   # => [/\.coffee/, 'out1.js', coffeeScriptLanguage]
-# 
+#
 # Returns array.
 getLanguagesFromConfig = (config) ->
   languages = []
@@ -28,19 +28,19 @@ getLanguagesFromConfig = (config) ->
           compiler: new language config
         }
       catch error
-        helpers.logError """[Brunch]: cannot parse config entry 
+        helpers.logError """[Brunch]: cannot parse config entry
 config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 """
   languages
 
 # Recompiles all files in current working directory.
-# 
+#
 # rootPath - path to application directory.
 # buildPath - (optional) path to application output directory. Default: 'build'
 # config - Parsed app config.
 # persistent - Should watcher be stopped after compiling the app first time?
 # callback - Callback that would be executed on each compilation.
-# 
+#
 # Returns `fs_utils.FSWatcher` object.
 watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   if typeof buildPath is 'object'
@@ -93,7 +93,7 @@ exports.new = (rootPath, buildPath, callback = (->)) ->
   templatePath = path.join __dirname, '..', 'template', 'base'
   path.exists rootPath, (exists) ->
     if exists
-      return helpers.logError "[Brunch]: can\'t create project: 
+      return helpers.logError "[Brunch]: can\'t create project:
 directory \"#{rootPath}\" already exists"
     console.log 'mkdirp'
     mkdirp rootPath, 0755, (error) ->
@@ -120,17 +120,17 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
   watchApplication rootPath, buildPath, config, yes, callback
 
 # Generate new controller / model / view and its tests.
-# 
+#
 # rootPath - path to application directory.
 # type - one of: collection, model, router, style, view.
 # name - filename.
-# 
+#
 # Examples
-# 
+#
 #   generate './twitter', 'style', 'user'
 #   generate '.', 'view', 'user'
 #   generate '.', 'collection', 'users'
-# 
+#
 exports.generate = (rootPath, type, name, callback = (->)) ->
   extension = switch type
     when 'style' then 'styl'
@@ -164,3 +164,17 @@ exports.generate = (rootPath, type, name, callback = (->)) ->
   generateFile ->
     generateTests ->
       callback()
+
+# Test all spec files
+#
+# rootPath - path to application directory.
+# buildPath - path to build directory.(default:build)
+# verbose - verbose test results
+#
+# Examples
+#
+#   test '.'
+#
+exports.test = (rootPath,buildPath,verbose)->
+  buildPath ?= path.join rootPath, 'build'
+  testrunner.run rootPath,buildPath,verbose
