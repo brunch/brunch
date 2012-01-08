@@ -62,7 +62,7 @@ commandLineConfig =
         port:
           abbr: 'p'
           default: 3333
-          help: 'if a `server` option was specified, define on which port 
+          help: 'if a `server` option was specified, define on which port
 the server would run'
           metavar: 'PORT'
       callback: (options) ->
@@ -86,6 +86,22 @@ the server would run'
           required: yes
       callback: (options) ->
         brunch.generate '.', options.type, options.name
+
+    test:
+      help: 'Test jasmine specs for current project'
+      options:
+        buildPath:
+          abbr: 'o'
+          help: 'build path'
+          metavar: 'DIRECTORY'
+          full: 'output'
+        verbose:
+          abbr: 'v'
+          help: 'verbose test results'
+          flag: true
+          full: 'verbose'
+      callback: (options) ->
+        brunch.test '.', options.buildPath, options.verbose
 
   options:
     version:
