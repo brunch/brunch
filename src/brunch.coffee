@@ -160,8 +160,8 @@ exports.generate = (rootPath, type, name, callback = (->)) ->
         return helpers.logError error if error?
         helpers.log "Generated #{testFilePath}"
         callback()
-    path.exists testDirPath, (exists) ->
-      return write() if exists?
+    path.exists testDirPath, (error) ->
+      return write() unless error?
       mkdirp testDirPath, 0755, (error) ->
         return helpers.logError if error?
         write()
