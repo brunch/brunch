@@ -4,7 +4,7 @@
   "version":      "0.9.0-beta1",
   "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunch.io/",
-  "author":       "Brunch team, twitter: @brunch",
+  "author":       "Brunch team (http://brunch.io)",
   "repository": {
     "type": "git",
     "url": "https://github.com/brunch/brunch.git"
