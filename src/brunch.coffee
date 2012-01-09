@@ -5,7 +5,6 @@ mkdirp = require 'mkdirp'
 path = require 'path'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
-testrunner = require './testrunner'
 
 # Creates an array of languages that would be used in brunch application.
 # 
