@@ -1,0 +1,82 @@
+Upgrading brunch
+================
+
+Upgrading to 0.9
+----------------
+
+Upgrading to 0.8
+----------------
+
+* Update Vendor. First of all you need upgrade files from brunch/src/vendor:
+
+  * backbone-master.js -> backbone-0.5.2.js
+  * ConsoleDummy.js
+  * jquery-1.5.2.js -> jquery-1.6.2.js
+  * underscore-1.1.5.js -> underscore-1.1.7.js
+
+* Upgrade to Backbone 0.5.0+: rename Controllers to Routers, refresh to reset and call navigate instead of saveLocation and setLocation. For more details please visit http://documentcloud.github.com/backbone/#Upgrading
+
+
+Upgrading to 0.7
+----------------
+
+Since 0.7.0 brunch uses stitch which comes with a CommonJS modules
+implementation. Therefore developers have to require modules and export
+variables and functions explicitly. See an upgrade example here:
+https://github.com/brunch/example-todos/commit/c57ec1a418b8dcf694185b03a254199217972652
+
+* Update Vendor: remove brunch-0.x.js file from brunch/src/vendor and instead add these files:
+
+  * backbone-master.js
+  * ConsoleDummy.js
+  * jquery-1.5.2.js
+  * underscore-1.1.5.js
+
+You can find them by creating a new brunch app in src/vendor.
+
+* Add a config.yaml clone from a new brunch app to brunch/config.yaml
+* Update index.html
+* Replace all your 'script' tags with
+
+  .. code-block:: html
+
+      <script src="web/js/app.js"></script>
+      <script>require('main');</script>
+
+* You need to explicitly export everything that needs to be visible in another file. For example a Todo Model should change from
+
+  .. code-block:: coffeescript
+
+    class Todo extends Backbone.Model
+
+
+to
+
+  .. code-block:: coffeescript
+
+    class exports.Todo extends Backbone.Model
+
+
+* If you want to use any object or function from another module you need to require it. For example if the Todo model is used in Todos collection you need to add this piece of code to todos_collection.coffee.
+
+  .. code-block:: coffeescript
+
+    {Todo} = require 'models/todo'
+
+* Stitch also compiles templates. So you have to require them as well.
+
+  .. code-block:: coffeescript
+
+    homeTemplate = require 'templates/home'
+
+    class exports.HomeView extends Backbone.View
+      render: ->
+        @$(@el).html homeTemplate()
+
+* Cleanup Directory Structure: remove these legacy files/directories
+
+  * brunch/build/web/js/concatenation.js
+  * brunch/build/web/js/templates.js
+  * brunch/build/web/js/vendor/
+  * brunch/config/
+  * docs/ (keep it in case you still want to use docco manually)
