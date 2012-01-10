@@ -55,8 +55,9 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
 
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
+  directories = ['app', 'vendor'].map (dir) -> path.join rootPath, dir
   writer = new fs_utils.FileWriter buildPath, config.files
-  watcher = (new fs_utils.FSWatcher ['app', 'vendor'])
+  watcher = (new fs_utils.FSWatcher directories)
     .on 'change', (file) ->
       languages
         .filter (language) ->
@@ -88,13 +89,13 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
 # App is created by copying directory `../template/base` to `rootPath`.
 exports.new = (rootPath, buildPath, callback = (->)) ->
   callback = buildPath if typeof buildPath is 'function'
+  buildPath ?= path.join rootPath, 'build'
 
   templatePath = path.join __dirname, '..', 'template', 'base'
   path.exists rootPath, (exists) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
-    console.log 'mkdirp'
     mkdirp rootPath, 0755, (error) ->
       return helpers.logError "[Brunch]: Error #{error}" if error?
       mkdirp buildPath, 0755, (error) ->
@@ -102,8 +103,10 @@ directory \"#{rootPath}\" already exists"
         fs_utils.recursiveCopy templatePath, rootPath, ->
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
+          prevDir = process.cwd()
           process.chdir rootPath
           exec 'npm install', (error) ->
+            process.chdir prevDir
             if error?
               helpers.logError "[Brunch]: npm error: #{error}"
               return callback error

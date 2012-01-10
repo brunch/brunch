@@ -101,7 +101,7 @@ class exports.FSWatcher extends EventEmitter
   _handleDir: (directory) ->
     read = (directory) =>
       fs.readdir directory, (error, current) =>
-        return exports.logError error if error?
+        return helpers.logError error if error?
         return unless current
         previous = @_getWatchedDir directory
         for file in previous when file not in current
@@ -114,9 +114,9 @@ class exports.FSWatcher extends EventEmitter
   _handle: (file) ->
     return if @invalid.test path.basename file
     fs.realpath file, (error, filePath) =>
-      return exports.logError error if error?
+      return helpers.logError error if error?
       fs.stat file, (error, stats) =>
-        return exports.logError error if error?
+        return helpers.logError error if error?
         @_handleFile file if stats.isFile()
         @_handleDir file if stats.isDirectory()
 
@@ -230,7 +230,7 @@ class exports.FileWriter extends EventEmitter
     sourceFile = destFile.sourceFiles.filter(
       (file) -> file.path is changedFile.path
     )[0]
-    
+
     unless sourceFile
       sourceFile = changedFile
       destFile.sourceFiles.push sourceFile
