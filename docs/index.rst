@@ -13,6 +13,7 @@ Contents:
 
    structure
    commands
+   config
    plugins
    upgrading
 
