@@ -13,7 +13,7 @@ Contents:
 
    structure
    commands
-   plugin_api
+   plugins
    upgrading
 
 
