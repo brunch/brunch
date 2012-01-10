@@ -44,8 +44,10 @@ Overview
 Description
 -----------
 
-*  `app/assets` contains images / static files. Contents of the directory would be copied to `build/` without change.
-* Other `app/` directories could contai Languages, that compile to JS (coffeescript, roy etc.) or js files and located in `app` are automatically wrapped in module closure.
+* `Cakefile` is a coffeescript makefile.
+* `config.coffee` contains configuration of your app. You can set plugins / languages that would be used here.
+* `app/assets` contains images / static files. Contents of the directory would be copied to `build/` without change.
+* Other `app/` directories could contain files that would be compiled. Languages, that compile to JS (coffeescript, roy etc.) or js files and located in `app` are automatically wrapped in module closure so they can be loaded by `require('module/location')`.
 * `build` is generated automatically, so you don't need to put anything there.
-* `test/unit`
-* `vendor` contains all third-party code. The code wouldn't be.
+* `test/` contains feature & unit tests.
+* `vendor` contains all third-party code. The code wouldn't be wrapped in modules, it would be loaded instantly instead.

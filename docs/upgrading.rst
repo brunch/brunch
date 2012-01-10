@@ -4,6 +4,12 @@ Upgrading brunch
 Upgrading to 0.9
 ----------------
 
+* Move `src/app` to `app` and `src/vendor` to `vendor/scripts`
+* Move all files that you were putting to `build` directory out of there, to `app/assets`. `build` is now generated automatically.
+* Upgrade `vendor/scripts/backbone-0.5.2.js` to `vendor/scripts/backbone-0.5.3.js` and `vendor/scripts/jquery-1.6.2.js` to `vendor/scripts/jquery-1.7.js`.
+* Rename `vendor/scripts/ConsoleDummy.js` to `vendor/scripts/console-helper.js`.
+* Create `package.json` and `config.coffee`. You can copy them from new brunch application (`brunch new app && cp app/package.json app/config.coffee && rm -rf app`). Though, `config.coffee` would require some editing if you've edited `config.yaml` in brunch 0.8.
+
 Upgrading to 0.8
 ----------------
 

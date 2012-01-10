@@ -1,6 +1,6 @@
 {
   "name":         "brunch",
-  "description":  "A powerful client side framework on top of backbone.js, eco and stylus using coffee-script",
+  "description":  "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
   "version":      "0.9.0-beta1",
   "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage":     "http://brunch.io/",
