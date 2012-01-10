@@ -1,7 +1,7 @@
 ## Brunch 0.9.0 (unreleased)
 * Added new API for plugins.
-* Added support for Jade and LESS. All language compilers / plugins are now
-located in separate repo,
+* Added support for Jade, LESS and Roy. All language compilers / plugins are
+now located in separate repo,
 [brunch-extensions](https://github.com/brunch/brunch-extensions).
 * CoffeeScript (instead of YAML) is now used for application configs.
 * Improved file watcher speed by 5-fold.
