@@ -22,6 +22,8 @@ exports.config =
         '\.js$': languages.JavaScriptLanguage
         '\.coffee$': languages.CoffeeScriptLanguage
         '\.eco$': languages.EcoLanguage
+        #'\.jade$': languages.JadeLanguage
+        #'\.roy$': languages.RoyLanguage
       order:
         before: [
           'vendor/scripts/console-helper.js'
@@ -34,6 +36,7 @@ exports.config =
       languages:
         '\.css$': languages.CSSLanguage
         '\.styl$': languages.StylusLanguage
+        #'\.less$': languages.LESSLanguage
       order:
         before: ['vendor/styles/normalize.css']
         after: ['vendor/styles/helpers.css']
