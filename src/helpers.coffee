@@ -94,6 +94,18 @@ exports.exit = ->
   else
     process.exit 0
 
+exports.composeAsyncFns = (f, g) -> (x, callback) ->
+  f x, (error, result) ->
+    return callback error if error?
+    g result, (error, result) ->
+      return callback error if error?
+      callback null, result
+
+# Takes an array of async functions and produces one async function.
+exports.foldAsyncFns = (array) ->
+  array.reduceRight exports.composeAsyncFns, (result, callback) ->
+    callback null, result
+
 # Sorts by pattern.
 # 
 # Examples

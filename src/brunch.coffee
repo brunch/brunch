@@ -56,7 +56,7 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
   directories = ['app', 'vendor'].map (dir) -> path.join rootPath, dir
-  writer = new fs_utils.FileWriter buildPath, config.files
+  writer = new fs_utils.FileWriter buildPath, config.files, plugins
   watcher = (new fs_utils.FSWatcher directories)
     .on 'change', (file) ->
       languages
@@ -76,13 +76,9 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   writer.on 'error', (error) ->
     helpers.logError "[Brunch] write error. #{error}"
   writer.on 'write', (result) ->
-    async.forEach plugins, (plugin, next) ->
-      plugin.load next
-    , (error) ->
-      return helpers.logError "[Brunch]: plugin error. #{error}" if error?
-      helpers.log "[Brunch]: compiled."
-      watcher.close() unless persistent
-      callback result
+    helpers.log "[Brunch]: compiled."
+    watcher.close() unless persistent
+    callback result
   watcher
 
 # Create new application in `rootPath` and build it.

@@ -75,6 +75,7 @@ class exports.FSWatcher extends EventEmitter
   constructor: (files) ->
     @watched = {}
     if Array.isArray files
+      #files.forEach @_handle
       @_handle file for file in files
     else
       @_handle files
@@ -213,7 +214,7 @@ exports.wrap = wrap = (filePath, data) ->
 class exports.FileWriter extends EventEmitter
   timeout: 50
 
-  constructor: (@buildPath, @files) ->
+  constructor: (@buildPath, @files, @plugins) ->
     @destFiles = []
     @on 'change', @_onChange
     @on 'remove', @_onRemove
@@ -221,7 +222,7 @@ class exports.FileWriter extends EventEmitter
   _getDestFile: (destinationPath) ->
     destFile = @destFiles.filter((file) -> file.path is destinationPath)[0]
     unless destFile
-      destFile = {path: destinationPath,sourceFiles: []}
+      destFile = {path: destinationPath, sourceFiles: []}
       @destFiles.push destFile
     destFile
 
@@ -258,26 +259,35 @@ class exports.FileWriter extends EventEmitter
       .join ''
     data
 
-  _writeFile: (destFile, callback) =>
+  _concatFiles: (destFile) =>
     files = destFile.sourceFiles
     pathes = files.map (file) -> file.path
     order = @files[destFile.path].order
     destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
       files[pathes.indexOf file]
-    destPath = path.join @buildPath, destFile.path
     data = @_getFilesData destFile
+    {path: (path.join @buildPath, destFile.path), data}
+
+  _writeFile: (file, callback) =>
     writeFile = (callback) =>
-      fs.writeFile destPath, data, callback
+      fs.writeFile file.path, file.data, callback
     writeFile (error) ->
       if error?
         mkdirp (path.dirname destPath), 0755, (error) ->
           callback error if error?
           writeFile (error) ->
-            callback error, {path: destPath, data}
+            callback error, file
       else
-        callback null, {path: destPath, data}
+        callback null, file
 
   _write: =>
-    async.forEach @destFiles, @_writeFile, (error, results) =>
-      return @emit 'error' if error?
-      @emit 'write', results
+    applyPlugins = helpers.foldAsyncFns @plugins.map (plugin) ->
+      (files, callback) ->
+        plugin.load files, callback
+    files = @destFiles.map @_concatFiles
+    applyPlugins files, (error, files) =>
+      return helpers.logError "[Brunch]: plugin error. #{error}" if error?
+      async.forEach files, @_writeFile, (error, results) =>
+        return @emit 'error' if error?
+        console.log 1488
+        @emit 'write', results
