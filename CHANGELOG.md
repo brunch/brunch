@@ -3,6 +3,7 @@
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,
 [brunch-extensions](https://github.com/brunch/brunch-extensions).
+* Added JS & CSS minifier.
 * CoffeeScript (instead of YAML) is now used for application configs.
 * Improved file watcher speed by 5-fold.
 * Implemented new directory structure:

@@ -4,6 +4,7 @@
 exports.config =
   # Available plugins:
   # * AssetsPlugin: copy `app/assets` contents to `build/`
+  # * MinifyPlugin: minifies all CSS & JS files.
   plugins: [plugins.AssetsPlugin]
 
   # Contains a list of output filenames that your application would generate.
