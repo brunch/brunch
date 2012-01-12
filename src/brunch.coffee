@@ -2,6 +2,7 @@ async = require 'async'
 {exec} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
+{ncp} = require 'ncp'
 path = require 'path'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
@@ -96,7 +97,8 @@ directory \"#{rootPath}\" already exists"
       return helpers.logError "[Brunch]: Error #{error}" if error?
       mkdirp buildPath, 0755, (error) ->
         return helpers.logError "[Brunch]: Error #{error}" if error?
-        fs_utils.recursiveCopy templatePath, rootPath, ->
+        ncp templatePath, rootPath, (error) ->
+          return helpers.logError error if error?
           helpers.log '[Brunch]: created brunch directory layout'
           helpers.log '[Brunch]: installing npm packages...'
           prevDir = process.cwd()
