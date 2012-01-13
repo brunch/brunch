@@ -220,7 +220,7 @@ class exports.FileWriter extends EventEmitter
       fs.writeFile file.path, file.data, callback
     writeFile (error) ->
       if error?
-        mkdirp (path.dirname destPath), 0755, (error) ->
+        mkdirp (path.dirname file.path), 0755, (error) ->
           callback error if error?
           writeFile (error) ->
             callback error, file
