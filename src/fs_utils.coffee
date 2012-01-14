@@ -2,16 +2,17 @@ async = require 'async'
 {EventEmitter} = require 'events'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
-path = require 'path'
+pathModule = require 'path'
 util = require 'util'
 helpers = require './helpers'
 
 # A simple file changes watcher.
 # 
+# files - array of directories that would be watched.
+# 
 # Example
 # 
-#   (new FSWatcher)
-#     .add 'app'
+#   (new FSWatcher ['app', 'vendor'])
 #     .on 'change', (file) ->
 #       console.log 'File %s was changed', file
 # 
@@ -31,8 +32,8 @@ class exports.FSWatcher extends EventEmitter
     @watched[directory] ?= []
 
   _watch: (item, callback) ->
-    parent = @_getWatchedDir path.dirname item
-    basename = path.basename item
+    parent = @_getWatchedDir pathModule.dirname item
+    basename = pathModule.basename item
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
@@ -55,13 +56,13 @@ class exports.FSWatcher extends EventEmitter
         for file in previous when file not in current
           @emit 'remove', file
         for file in current when file not in previous
-          @_handle path.join directory, file
+          @_handle pathModule.join directory, file
     read directory
     @_watch directory, read
 
   _handle: (file) ->
-    return if @invalid.test path.basename file
-    fs.realpath file, (error, filePath) =>
+    return if @invalid.test pathModule.basename file
+    fs.realpath file, (error, path) =>
       return helpers.logError error if error?
       fs.stat file, (error, stats) =>
         return helpers.logError error if error?
@@ -76,7 +77,7 @@ class exports.FSWatcher extends EventEmitter
   close: ->
     for directory, files of @watched
       for file in files
-        fs.unwatchFile path.join directory, file
+        fs.unwatchFile pathModule.join directory, file
     @watched = {}
     this
 
@@ -133,9 +134,9 @@ requireDefinition = '''
 }).call(this);
 '''
 
-exports.wrap = wrap = (filePath, data) ->
+exports.wrap = wrap = (path, data) ->
   moduleName = JSON.stringify(
-    filePath.replace(/^app\//, '').replace(/\.\w*$/, '')
+    path.replace(/^app\//, '').replace(/\.\w*$/, '')
   )
   """
   (this.require.define({
@@ -145,12 +146,69 @@ exports.wrap = wrap = (filePath, data) ->
   }));\n
   """
 
+# Collects content from a list of files and wraps it with
+# require.js module definition.
 # 
-# config - parsed app config.
+# files - array of objects with fields {file, data}.
+# wrapResult - wrap result with a definition of require.js or not.
 # 
 # Example
 # 
-#   writer = (new FileWriter config)
+#   getFilesData [{'app/views/user.coffee', 'filedata'}], yes
+# 
+# Returns a string.
+getFilesData = (files, wrapResult = no) -> 
+  data = ''
+  data += requireDefinition if wrapResult
+  data += files
+    .map (file) ->
+      if wrapResult and not (/^vendor/.test file.path)
+        wrap file.path, file.data
+      else
+        file.data
+    .join ''
+  data
+
+# Creates file if it doesn't exist and writes data to it.
+# Would also create a parent directories if they don't exist.
+#
+# path - path to file that would be written.
+# data - data to be written
+# callback(error, path, data) - would be executed on error or on
+#    successful write.
+# 
+# Example
+# 
+#   writeFile 'test.txt', 'data', (error) -> console.log error if error?
+# 
+writeFile = (path, data, callback) ->
+  write = (callback) ->
+    fs.writeFile path, data, callback
+  write (error) ->
+    return callback null, path, data unless error?
+    mkdirp (pathModule.dirname path), 0755, (error) ->
+      return callback error if error?
+      write (error) ->
+        callback error, path, data
+
+# The class could be used to 
+# FileWriter would respond to
+#   
+#   .emit 'change', {destinationPath, path, data}
+# 
+# and launch 100ms write timer. If any other 'change' would occur in that
+# period, the timer will be reset. Class events:
+# - 'error' (error): would be emitten when error happened.
+# - 'write' (results): would be emitted when all files has been written.
+# 
+# buildPath - an output directory.
+# files - config entry, that describes file order etc.
+# plugins - a list of functions with signature (files, callback).
+#   Every plugin would be applied to the list of files.
+# 
+# Example
+# 
+#   writer = (new FileWriter buildPath, files, plugins)
 #     .on 'error', (error) ->
 #       console.log 'File write error', error
 #     .on 'write', (result) ->
@@ -193,47 +251,28 @@ class exports.FileWriter extends EventEmitter
     destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
       sourceFile.path isnt removedFile.path
 
-  _getFilesData: (destFile) ->
-    destIsJS = /\.js$/.test destFile.path
-    data = ''
-    data += requireDefinition if destIsJS
-    data += destFile.sourceFiles
-      .map (sourceFile) ->
-        if destIsJS and not (/^vendor/.test sourceFile.path)
-          wrap sourceFile.path, sourceFile.data
-        else
-          sourceFile.data
-      .join ''
-    data
-
   _concatFiles: (destFile) =>
     files = destFile.sourceFiles
     pathes = files.map (file) -> file.path
     order = @files[destFile.path].order
     destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
       files[pathes.indexOf file]
-    data = @_getFilesData destFile
-    {path: (path.join @buildPath, destFile.path), data}
-
-  _writeFile: (file, callback) =>
-    writeFile = (callback) =>
-      fs.writeFile file.path, file.data, callback
-    writeFile (error) ->
-      if error?
-        mkdirp (path.dirname file.path), 0755, (error) ->
-          callback error if error?
-          writeFile (error) ->
-            callback error, file
-      else
-        callback null, file
+    wrapResult = /\.js$/.test destFile.path
+    {
+      path: (pathModule.join @buildPath, destFile.path),
+      data: (getFilesData destFile.sourceFiles, wrapResult),
+    }
 
   _write: =>
     plugins = @plugins.map (plugin) -> (files, callback) ->
       plugin.load files, callback
-    files = @destFiles.map @_concatFiles
-    noop = (callback) -> callback null, files
-    async.waterfall [noop, plugins...], (error, files) =>
+    getFiles = (callback) =>
+      callback null, @destFiles.map @_concatFiles
+    write = (file, callback) ->
+      writeFile file.path, file.data, callback
+
+    async.waterfall [getFiles, plugins...], (error, files) =>
       return helpers.logError "[Brunch]: plugin error. #{error}" if error?
-      async.forEach files, @_writeFile, (error, results) =>
-        return @emit 'error' if error?
+      async.forEach files, write, (error, results) =>
+        return @emit 'error', error if error?
         @emit 'write', results

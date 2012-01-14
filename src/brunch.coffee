@@ -3,7 +3,7 @@ async = require 'async'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
-path = require 'path'
+pathModule = require 'path'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
 
@@ -46,7 +46,7 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   if typeof buildPath is 'object'
     [config, persistent, callback] = [buildPath, config, persistent]
     buildPath = null
-  buildPath ?= path.join rootPath, 'build'
+  buildPath ?= pathModule.join rootPath, 'build'
 
   # Pass rootPath & buildPath to config in order to allow plugins to use them.
   config.rootPath = rootPath
@@ -56,7 +56,7 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
 
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
-  directories = ['app', 'vendor'].map (dir) -> path.join rootPath, dir
+  directories = ['app', 'vendor'].map (dir) -> pathModule.join rootPath, dir
   writer = new fs_utils.FileWriter buildPath, config.files, plugins
   watcher = (new fs_utils.FSWatcher directories)
     .on 'change', (file) ->
@@ -86,10 +86,10 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
 # App is created by copying directory `../template/base` to `rootPath`.
 exports.new = (rootPath, buildPath, callback = (->)) ->
   callback = buildPath if typeof buildPath is 'function'
-  buildPath ?= path.join rootPath, 'build'
+  buildPath ?= pathModule.join rootPath, 'build'
 
-  templatePath = path.join __dirname, '..', 'template', 'base'
-  path.exists rootPath, (exists) ->
+  templatePath = pathModule.join __dirname, '..', 'template', 'base'
+  pathModule.exists rootPath, (exists) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
@@ -136,7 +136,7 @@ exports.generate = (rootPath, type, name, callback = (->)) ->
     when 'style' then 'styl'
     else 'coffee'
   filename = "#{name}.#{extension}"
-  filePath = path.join rootPath, 'app', "#{type}s", filename
+  path = pathModule.join rootPath, 'app', "#{type}s", filename
   data = switch extension
     when 'coffee'
       genName = helpers.capitalize type
@@ -146,21 +146,21 @@ exports.generate = (rootPath, type, name, callback = (->)) ->
       ''
 
   generateFile = (callback) ->
-    fs.writeFile filePath, data, (error) ->
+    fs.writeFile path, data, (error) ->
       return helpers.logError error if error?
-      helpers.log "Generated #{filePath}"
+      helpers.log "Generated #{path}"
       callback()
 
   generateTests = (callback) ->
     return callback() unless extension is 'coffee'
-    testDirPath = path.join rootPath, 'test', 'unit', "#{type}s"
-    testFilePath = path.join testDirPath, "#{name}_test.#{extension}"
+    testDirPath = pathModule.join rootPath, 'test', 'unit', "#{type}s"
+    testFilePath = pathModule.join testDirPath, "#{name}_test.#{extension}"
     write = ->
       fs.writeFile testFilePath, '', (error) ->
         return helpers.logError error if error?
         helpers.log "Generated #{testFilePath}"
         callback()
-    path.exists testDirPath, (exists) ->
+    pathModule.exists testDirPath, (exists) ->
       return write() if exists
       mkdirp testDirPath, 0755, (error) ->
         return helpers.logError error if error?
