@@ -22,11 +22,7 @@ class exports.FSWatcher extends EventEmitter
 
   constructor: (files) ->
     @watched = {}
-    if Array.isArray files
-      #files.forEach @_handle
-      @_handle file for file in files
-    else
-      @_handle files
+    @_handle file for file in files
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
@@ -134,20 +130,27 @@ requireDefinition = '''
 }).call(this);
 '''
 
-exports.wrap = wrap = (path, data) ->
+# Defines a requirejs module.
+# This allows brunch users to use `require 'module/name'` in browsers.
+# 
+# path - path to file, contents of which will be wrapped.
+# source - file contents.
+# 
+# Returns a wrapped string.
+exports.wrap = wrap = (path, source) ->
   moduleName = JSON.stringify(
     path.replace(/^app\//, '').replace(/\.\w*$/, '')
   )
   """
   (this.require.define({
     #{moduleName}: function(exports, require, module) {
-      #{data}
+      #{source}
     }
   }));\n
   """
 
 # Collects content from a list of files and wraps it with
-# require.js module definition.
+# require.js module definition if needed.
 # 
 # files - array of objects with fields {file, data}.
 # wrapResult - wrap result with a definition of require.js or not.
