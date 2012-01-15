@@ -35,7 +35,7 @@ Syntax:
           after: [<list of files that would be loaded after other files>]
 
 * ``<output filename>``: path to file in ``build`` directory that would be written. For example, ``'scripts/app.js'``.
-* ``<filename regExp>``: if filename matches this regExp, file would be compiled with ``<language class>``. Example: ``'\.js$'``.
+* ``<filename regExp>``: if filename matches this regExp, file would be compiled with ``<language class>``. Example: ``'\\.js$'``.
 * ``<language class>``: language class. More info at `<plugins.html#languages>`_.
 
 ``order`` object contains lists of files that break default loading order.
