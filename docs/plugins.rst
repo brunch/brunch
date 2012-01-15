@@ -47,20 +47,20 @@ Brunch has a bunch of languages, included by-default.
 
 List of languages that compile to .js:
 
-* ``'\.coffee$': languages.CoffeeScriptLanguage``: basic support for coffeescript_ files
-* ``'\.eco$': languages.EcoLanguage``: eco_ -- ERB-like coffeescript-based templates
-* ``'\.mustache$': languages.HoganLanguage``: hogan_ -- mustache-compatible templates by Twitter folks
-* ``'\.jade$': languages.JadeLanguage``: Jade_ -- elegant HAML-like template language
-* ``'\.js$': languages.JavaScriptLanguage``: basic support for javascript files
-* ``'\.roy$': languages.RoyLanguage``: Roy_, functional language, that compiles to js
-* ``'\.swig$': languages.SwigLanguage``: Swig_ -- django-like templates
+* ``'\\.coffee$': languages.CoffeeScriptLanguage``: basic support for coffeescript_ files
+* ``'\\.eco$': languages.EcoLanguage``: eco_ -- ERB-like coffeescript-based templates
+* ``'\\.mustache$': languages.HoganLanguage``: hogan_ -- mustache-compatible templates by Twitter folks
+* ``'\\.jade$': languages.JadeLanguage``: Jade_ -- elegant HAML-like template language
+* ``'\\.js$': languages.JavaScriptLanguage``: basic support for javascript files
+* ``'\\.roy$': languages.RoyLanguage``: Roy_, functional language, that compiles to js
+* ``'\\.swig$': languages.SwigLanguage``: Swig_ -- django-like templates
 
 List of languages that compile to .css:
 
-* ``'\.css$': languages.CSSLanguage``: basic support for css files
-* ``'\.styl$': languages.StylusLanguage``: stylus_ is a robust language that supports Sass syntax. Also includes nib_, a small and powerful library, providing robust cross-browser CSS3 mixins
-* ``'\.less$': languages.LESSLanguage``: basic support for LESS_
-* ``'\.s[ac]ss$': languages.SASSLanguage``: basic support for Sass_, a ruby-based style language
+* ``'\\.css$': languages.CSSLanguage``: basic support for css files
+* ``'\\.styl$': languages.StylusLanguage``: stylus_ is a robust language that supports Sass syntax. Also includes nib_, a small and powerful library, providing robust cross-browser CSS3 mixins
+* ``'\\.less$': languages.LESSLanguage``: basic support for LESS_
+* ``'\\.s[ac]ss$': languages.SASSLanguage``: basic support for Sass_, a ruby-based style language
 
 Plugins
 =======
