@@ -74,6 +74,7 @@ Example:
 
 
 ``plugins``
+===========
 
 Simply, a list of plugins. More info about plugins at `<plugins.html#plugins>`_.
 
