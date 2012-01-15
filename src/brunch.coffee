@@ -122,7 +122,7 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 # Generate new controller / model / view and its tests.
 # 
 # rootPath - path to application directory.
-# type - one of: collection, model, router, style, view.
+# type - one of: collection, model, router, style, template, view.
 # name - filename.
 # 
 # Examples
@@ -131,28 +131,34 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 #   generate '.', 'view', 'user'
 #   generate '.', 'collection', 'users'
 # 
-exports.generate = (rootPath, type, name, callback = (->)) ->
-  extension = switch type
-    when 'style' then 'styl'
-    else 'coffee'
-  filename = "#{name}.#{extension}"
-  path = pathModule.join rootPath, 'app', "#{type}s", filename
-  data = switch extension
-    when 'coffee'
-      genName = helpers.capitalize type
-      className = helpers.formatClassName name
-      "class exports.#{className} extends Backbone.#{genName}\n"
-    else
-      ''
+exports.generate = (rootPath, type, name, config, callback = (->)) ->
+  # We'll additionally generate tests for 'script' languages.
+  languageType = switch type
+    when 'collection', 'model', 'router', 'view' then 'script'
+    else type
+
+  extension = config.defaultExtensions[languageType]
 
   generateFile = (callback) ->
+    filename = "#{name}.#{extension}"
+    path = pathModule.join rootPath, 'app', "#{type}s", filename
+    genName = helpers.capitalize type
+    className = helpers.formatClassName name
+    data = switch extension
+      when 'coffee'
+        "class exports.#{className} extends Backbone.#{genName}\n"
+      when 'js'
+        "exports.#{className} = Backbone.#{genName}.extend({\n\n});"
+      else
+        ''
     fs.writeFile path, data, (error) ->
       return helpers.logError error if error?
       helpers.log "Generated #{path}"
       callback()
 
   generateTests = (callback) ->
-    return callback() unless extension is 'coffee'
+    # TODO: remove the spike.
+    return callback() unless languageType is 'script'
     testDirPath = pathModule.join rootPath, 'test', 'unit', "#{type}s"
     testFilePath = pathModule.join testDirPath, "#{name}_test.#{extension}"
     write = ->

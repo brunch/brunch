@@ -40,7 +40,7 @@ brunch generate
 ---------------
 Generate model, view or route for current project. Options:
 
-* `type`: (required) generator type. One of: collection, model, router, style, view.
+* `type`: (required) generator type. One of: collection, model, router, style, template, view.
 * `name`: (required) generator class name / filename.
 
 Examples: 

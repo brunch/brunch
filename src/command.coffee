@@ -76,13 +76,11 @@ the server would run'
         type:
           position: 1
           help: 'generator type'
-          metavar: 'GENERATOR'
           choices: ['collection', 'model', 'router', 'style', 'template', 'view']
           required: yes
         name:
           position: 2
           help: 'generator class name / filename'
-          metavar: 'NAME'
           required: yes
       callback: (options) ->
         brunch.generate '.', options.type, options.name
