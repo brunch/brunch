@@ -2,7 +2,7 @@
 Configuration file
 ******************
 
-Brunch uses coffeescript configuration files to control various aspects of your application.
+Brunch uses coffeescript configuration file (``config.coffee``, located in the root directory) to control various aspects of your application.
 
 ``defaultExtensions``
 =====================
@@ -37,6 +37,8 @@ Syntax:
 * ``<output filename>``: path to file in ``build`` directory that would be written. For example, ``'scripts/app.js'``.
 * ``<filename regExp>``: if filename matches this regExp, file would be compiled with ``<language class>``. Example: ``'\\.js$'``.
 * ``<language class>``: language class. More info at `<plugins.html#languages>`_.
+
+**A list of languages, included with brunch:** `<plugins.html#default-languages>`_.
 
 ``order`` object contains lists of files that break default loading order.
 
@@ -77,6 +79,8 @@ Example:
 ===========
 
 Simply, a list of plugins. More info about plugins at `<plugins.html#plugins>`_.
+
+**A list of plugins, included with brunch:** `<plugins.html#default-plugins>`_.
 
 Syntax: ``plugins: [<list of plugins>]``
 
