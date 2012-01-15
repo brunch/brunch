@@ -124,12 +124,13 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 # rootPath - path to application directory.
 # type - one of: collection, model, router, style, template, view.
 # name - filename.
+# config - parsed app config.
 # 
 # Examples
 # 
-#   generate './twitter', 'style', 'user'
-#   generate '.', 'view', 'user'
-#   generate '.', 'collection', 'users'
+#   generate './twitter', 'style', 'user', config
+#   generate '.', 'view', 'user', config
+#   generate '.', 'collection', 'users', config
 # 
 exports.generate = (rootPath, type, name, config, callback = (->)) ->
   unless config.defaultExtensions
