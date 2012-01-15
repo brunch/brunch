@@ -1,8 +1,9 @@
+*******************
 Directory structure
-===================
+*******************
 
 Overview
---------
+========
 
 ::
 
@@ -42,7 +43,7 @@ Overview
       helpers.css
 
 Description
------------
+===========
 
 * ``Cakefile`` is a coffeescript makefile.
 * ``config.coffee`` contains configuration of your app. You can set plugins / languages that would be used here.

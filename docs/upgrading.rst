@@ -1,8 +1,9 @@
+****************
 Upgrading brunch
-================
+****************
 
-Upgrading to 0.9
-----------------
+Upgrading to 1.0
+================
 
 * Move ``src/app`` to ``app`` and ``src/vendor`` to ``vendor/scripts``
 * Move all files that you were putting to ``build`` directory out of there, to ``app/assets``. ``build`` is now generated automatically.
@@ -11,7 +12,7 @@ Upgrading to 0.9
 * Create ``package.json`` and ``config.coffee``. You can copy them from new brunch application (``brunch new app && cp app/package.json app/config.coffee && rm -rf app``). Though, ``config.coffee`` would require some editing if you've edited ``config.yaml`` previously.
 
 Upgrading to 0.8
-----------------
+================
 
 * Update Vendor. First of all you need upgrade files from brunch/src/vendor:
 
@@ -24,7 +25,7 @@ Upgrading to 0.8
 
 
 Upgrading to 0.7
-----------------
+================
 
 Since 0.7.0 brunch uses stitch which comes with a CommonJS modules
 implementation. Therefore developers have to require modules and export
