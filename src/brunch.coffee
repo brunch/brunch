@@ -99,16 +99,16 @@ directory \"#{rootPath}\" already exists"
         return helpers.logError "[Brunch]: Error #{error}" if error?
         ncp templatePath, rootPath, (error) ->
           return helpers.logError error if error?
-          helpers.log '[Brunch]: created brunch directory layout'
-          helpers.log '[Brunch]: installing npm packages...'
+          helpers.log 'created brunch directory layout'
+          helpers.log 'installing npm packages...'
           prevDir = process.cwd()
           process.chdir rootPath
           exec 'npm install', (error) ->
             process.chdir prevDir
             if error?
-              helpers.logError "[Brunch]: npm error: #{error}"
+              helpers.logError "npm error: #{error}"
               return callback error
-            helpers.log '[Brunch]: installed npm package brunch-extensions'
+            helpers.log 'installed npm package brunch-extensions'
             callback()
 
 # Build application once and execute callback.
@@ -132,6 +132,10 @@ exports.watch = (rootPath, buildPath, config, callback = (->)) ->
 #   generate '.', 'collection', 'users'
 # 
 exports.generate = (rootPath, type, name, config, callback = (->)) ->
+  unless config.defaultExtensions
+    callback()
+    return helpers.logError "Cannot find `defaultExtensions` option in config."
+  
   # We'll additionally generate tests for 'script' languages.
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'script'
@@ -141,7 +145,10 @@ exports.generate = (rootPath, type, name, config, callback = (->)) ->
 
   generateFile = (callback) ->
     filename = "#{name}.#{extension}"
-    path = pathModule.join rootPath, 'app', "#{type}s", filename
+    path = if languageType is 'template'
+      pathModule.join rootPath, 'app', 'views', "#{type}s", filename
+    else
+      pathModule.join rootPath, 'app', "#{type}s", filename
     genName = helpers.capitalize type
     className = helpers.formatClassName name
     data = switch extension

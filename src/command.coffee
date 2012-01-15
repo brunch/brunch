@@ -83,7 +83,8 @@ the server would run'
           help: 'generator class name / filename'
           required: yes
       callback: (options) ->
-        brunch.generate '.', options.type, options.name
+        config = helpers.loadConfig 'config.coffee'
+        brunch.generate '.', options.type, options.name, config
 
   options:
     version:
