@@ -1,30 +1,24 @@
 {languages, plugins} = require 'brunch-extensions'
 
 # Make config loadable via require() for brunch.
+# See config docs at http://brunch.readthedocs.org/en/latest/config.html.
 exports.config =
-  # Available plugins:
-  # * AssetsPlugin: copy `app/assets` contents to `build/`
-  # * MinifyPlugin: minifies all CSS & JS files.
-  plugins: [plugins.AssetsPlugin]
+  # Edit this to change extension & content of files, created by
+  # `brunch generate`.
+  defaultExtensions:
+    script: 'coffee'
+    style: 'styl'
+    template: 'eco'
 
-  # Contains a list of output filenames that your application would generate.
-  # Format:
-  #
-  # 'filename': 
-  #   languages:
-  #     'regExp, with which input files will be matched': language class
-  #   order:
-  #     before: [files, that would be loaded before anything else]
-  #     after: [files, that would be loaded after anything else]
-  #
+  # List of files that your application would generate.
+  # List of included languages:
+  # http://brunch.readthedocs.org/en/latest/plugins.html#default-languages
   files:
     'scripts/app.js':
       languages:
         '\.js$': languages.JavaScriptLanguage
         '\.coffee$': languages.CoffeeScriptLanguage
         '\.eco$': languages.EcoLanguage
-        #'\.jade$': languages.JadeLanguage
-        #'\.roy$': languages.RoyLanguage
       order:
         before: [
           'vendor/scripts/console-helper.js'
@@ -37,7 +31,10 @@ exports.config =
       languages:
         '\.css$': languages.CSSLanguage
         '\.styl$': languages.StylusLanguage
-        #'\.less$': languages.LESSLanguage
       order:
         before: ['vendor/styles/normalize.css']
         after: ['vendor/styles/helpers.css']
+  
+  # List of included plugins:
+  # http://brunch.readthedocs.org/en/latest/plugins.html#default-plugins
+  plugins: [plugins.AssetsPlugin]
