@@ -53,9 +53,9 @@ Example:
     files:
       'scripts/app.js':
         languages:
-          '\.js$': languages.JavaScriptLanguage
-          '\.coffee$': languages.CoffeeScriptLanguage
-          '\.eco$': languages.EcoLanguage
+          '\\.js$': languages.JavaScriptLanguage
+          '\\.coffee$': languages.CoffeeScriptLanguage
+          '\\.eco$': languages.EcoLanguage
         order:
           before: [
             'vendor/scripts/console-helper.js'
@@ -66,8 +66,8 @@ Example:
 
       'styles/app.css':
         languages:
-          '\.css$': languages.CSSLanguage
-          '\.styl$': languages.StylusLanguage
+          '\\.css$': languages.CSSLanguage
+          '\\.styl$': languages.StylusLanguage
         order:
           before: ['vendor/styles/normalize.css']
           after: ['vendor/styles/helpers.css']
