@@ -1,69 +1,54 @@
 {spawn} = require 'child_process'
+{EventEmitter} = require 'events'
 fs = require 'fs'
-path = require 'path'
-{log,error} = require 'util'
+{join} = require 'path'
+{log, error} = require 'util'
 
-MODEL_TEST_PATH = 'test/unit/models'
-COLLECTION_TEST_PATH = 'test/unit/collections'
-VIEW_TEST_PATH = 'test/unit/views'
-ROUTE_TEST_PATH = 'test/unit/routes'
+pathes = do ->
+  root = 'test'
+  functional = join root, 'functional'
+  unit = join root, 'unit'
 
-TEST_PATHS = [
-  MODEL_TEST_PATH,
-  COLLECTION_TEST_PATH,
-  VIEW_TEST_PATH,
-  ROUTE_TEST_PATH
-]
+  {
+    root, functional, unit,
+    collection: (join unit, 'collections'), model: (join unit, 'models'),
+    router: (join unit, 'routers'), view: (join unit, 'views')
+  }
 
-TEST_COMMAND="#{__dirname}/node_modules/.bin/mocha"
-TEST_OPTIONS='-r should --growl --reporter spec'
+runMocha = (target) ->
+  log 'Test started'
+  command = 'node' + path.join __dirname, 'node_modules', '.bin', 'mocha'
+  options = '-r should --growl --reporter spec'
+  args = "#{options} #{target}".trimRight().split(' ')
+  spawn "#{command}", args, customFds: [0, 1, 2]
 
-task 'test', (options)->
-  {EventEmitter} = require 'events'
+expandPath = (target, callback) ->
+  fs.readdir target, (error, files) ->
+    return callback "Files aren't found. path:'#{target}'" unless files    
+    expansion = ''
+    files
+      .map (file) ->
+        join target, file
+      .forEach (file) ->
+        expansion += file + ' '
+    callback null, expansion
+
+task 'test', (options) ->
   emitter = new EventEmitter
-  emitter.once 'expanded',(paths)->
+  emitter.once 'expanded', (paths) ->
     runMocha paths
-  target = ""
+  target = ''
   pathEmitter = new EventEmitter
   count = 0
-  pathEmitter.on 'finished',(paths)->
+  pathEmitter.on 'finished', (paths) ->
     count += 1
-    emitter.emit 'expanded',paths if TEST_PATHS.length is count
-  TEST_PATHS.forEach (testPath)->
-    expansionPath testPath,(result)->
+    emitter.emit 'expanded', paths if testPaths.length is count
+  testPaths.forEach (testPath) ->
+    expandPath testPath, (result) ->
       target += result
-      pathEmitter.emit 'finished',target
+      pathEmitter.emit 'finished', target
 
-task 'test_models', (options)->
-  expansionPath MODEL_TEST_PATH,(target)->
-    runMocha target
-
-task 'test_collections', (options)->
-  expansionPath COLLECTION_TEST_PATH,(target)->
-    runMocha target
-
-task 'test_views', (options)->
-  expansionPath VIEW_TEST_PATH,(target)->
-    runMocha target
-
-task 'test_routes', (options)->
-  expansionPath ROUTE_TEST_PATH,(target)->
-    runMocha target
-
-runMocha = (target)->
-  log 'start test'
-  args = "#{TEST_OPTIONS} #{target}".trimRight().split(' ')
-  spawn  "#{TEST_COMMAND}",args,customFds : [0, 1, 2]
-
-expansionPath = (target,callback)->
-  expansion = ""
-  fs.readdir target,(err,files)->
-    if !files
-      error "Files aren't found. path:'#{target}'"
-      return
-    files = files.map (file)->
-      return path.join(target,file)
-    files.forEach (file)->
-      expansion += file + ' '
-    callback expansion
-
+['collections', 'models', 'routes', 'views'].forEach (type) ->
+  task "test:unit:#{type}", (options) ->
+    expandPath pathes["#{type}s"], (error, target) ->
+      runMocha target
