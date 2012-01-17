@@ -1,0 +1,18 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+
+/* TEAM */
+  <your title>: <your name>
+  Site: 
+  Twitter: 
+  Location: 
+
+/* THANKS */
+  Names (& URL): 
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: Brunch, Backbone.js, html5boilerplate, jQuery, Underscore.js,
+    Stylus, eco
+  Software: <list of tools you've used e.g. emacs>
