@@ -1,5 +1,5 @@
 class exports.MainRouter extends Backbone.Router
-  routes :
+  routes:
     '': 'home'
 
   home: ->

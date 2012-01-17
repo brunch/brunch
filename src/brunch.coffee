@@ -52,7 +52,7 @@ watchApplication = (rootPath, buildPath, config, persistent, callback) ->
   config.rootPath = rootPath
   config.buildPath = buildPath
 
-  helpers.startServer config.port, config.buildPath if config.port
+  helpers.startServer config.server.port, config.buildPath if config.server.run
 
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config

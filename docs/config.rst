@@ -91,3 +91,15 @@ Example:
     # (assuming you've imported)
     # {plugins} = require 'brunch-extensions'
     plugins: [plugins.AssetsPlugin]
+
+``server``
+===========
+
+Contains params of webserver that runs on ``brunch watch --server``.
+
+Example:
+
+::
+
+    server:
+      port: 6832

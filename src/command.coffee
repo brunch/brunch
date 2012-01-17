@@ -61,13 +61,14 @@ commandLineConfig =
           help: 'run a simple http server that would server `output` dir'
         port:
           abbr: 'p'
-          default: 3333
           help: 'if a `server` option was specified, define on which port 
 the server would run'
           metavar: 'PORT'
       callback: (options) ->
         config = helpers.loadConfig 'config.coffee'
-        config.port = options.port if options.server
+        config.server ?= {}
+        config.server.run = yes if options.server
+        config.server.port = options.port if options.port
         brunch.watch '.', options.buildPath, config
 
     generate:
