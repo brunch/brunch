@@ -145,13 +145,16 @@ exports.generate = (rootPath, type, name, config, callback = (->)) ->
   extension = config.defaultExtensions[languageType]
 
   generateFile = (callback) ->
+    name += "_#{type}" if type in ['router', 'view']
     filename = "#{name}.#{extension}"
+    genName = helpers.capitalize type
+    className = helpers.formatClassName name
+
     path = if languageType is 'template'
       pathModule.join rootPath, 'app', 'views', "#{type}s", filename
     else
       pathModule.join rootPath, 'app', "#{type}s", filename
-    genName = helpers.capitalize type
-    className = helpers.formatClassName name
+
     data = switch extension
       when 'coffee'
         "class exports.#{className} extends Backbone.#{genName}\n"
