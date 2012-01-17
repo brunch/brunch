@@ -53,7 +53,6 @@ List of languages that compile to .js:
 * ``'\\.jade$': languages.JadeLanguage``: Jade_ -- elegant HAML-like template language
 * ``'\\.js$': languages.JavaScriptLanguage``: basic support for javascript files
 * ``'\\.roy$': languages.RoyLanguage``: Roy_, functional language, that compiles to js
-* ``'\\.swig$': languages.SwigLanguage``: Swig_ -- django-like templates
 
 List of languages that compile to .css:
 
