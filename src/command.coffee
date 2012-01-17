@@ -72,7 +72,8 @@ the server would run'
           options.port
         else
           config.server.port or 3333
-        brunch.watch '.', options.buildPath, config
+        config.server.buildPath = options.buildPath if options.buildPath
+        brunch.watch '.', config.server.buildPath, config
 
     generate:
       help: 'Generate model, view or route for current project'
