@@ -68,7 +68,10 @@ the server would run'
         config = helpers.loadConfig 'config.coffee'
         config.server ?= {}
         config.server.run = yes if options.server
-        config.server.port = options.port if options.port
+        config.server.port = if options.port
+          options.port
+        else
+          config.server.port or 3333
         brunch.watch '.', options.buildPath, config
 
     generate:
