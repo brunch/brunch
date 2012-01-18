@@ -45,7 +45,8 @@ commandLineConfig =
           full: 'output'
       callback: (options) ->
         config = helpers.loadConfig 'config.coffee'
-        brunch.build '.', options.buildPath, config
+        config.buildPath = options.buildPath if options.buildPath
+        brunch.build '.', config
 
     watch:
       help: 'Watch brunch directory and rebuild if something changed'

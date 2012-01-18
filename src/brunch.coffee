@@ -36,7 +36,6 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # Recompiles all files in current working directory.
 # 
 # rootPath - path to application directory.
-# buildPath - (optional) path to application output directory. Default: 'build'
 # config - Parsed app config.
 # persistent - Should watcher be stopped after compiling the app first time?
 # callback - Callback that would be executed on each compilation.
@@ -109,8 +108,8 @@ directory \"#{rootPath}\" already exists"
             callback()
 
 # Build application once and execute callback.
-exports.build = (rootPath, buildPath, config, callback = (->)) ->
-  watchApplication rootPath, buildPath, config, no, callback
+exports.build = (rootPath, config, callback = (->)) ->
+  watchApplication rootPath, config, no, callback
 
 # Watch application for changes and execute callback on every compilation.
 exports.watch = (rootPath, config, callback = (->)) ->
