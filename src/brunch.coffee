@@ -42,22 +42,19 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # callback - Callback that would be executed on each compilation.
 # 
 # Returns `fs_utils.FSWatcher` object.
-watchApplication = (rootPath, buildPath, config, persistent, callback) ->
-  if typeof buildPath is 'object'
-    [config, persistent, callback] = [buildPath, config, persistent]
-    buildPath = null
-  buildPath ?= pathModule.join rootPath, 'build'
+watchApplication = (rootPath, config, persistent, callback) ->
+  config.buildPath ?= pathModule.join rootPath, 'build'
+  config.server.port ?= 3333
 
-  # Pass rootPath & buildPath to config in order to allow plugins to use them.
+  # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
-  config.buildPath = buildPath
-
+  
   helpers.startServer config.server.port, config.buildPath if config.server.run
 
   plugins = config.plugins.map (plugin) -> new plugin config
   languages = getLanguagesFromConfig config
   directories = ['app', 'vendor'].map (dir) -> pathModule.join rootPath, dir
-  writer = new fs_utils.FileWriter buildPath, config.files, plugins
+  writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
   watcher = (new fs_utils.FSWatcher directories)
     .on 'change', (file) ->
       languages
@@ -116,8 +113,8 @@ exports.build = (rootPath, buildPath, config, callback = (->)) ->
   watchApplication rootPath, buildPath, config, no, callback
 
 # Watch application for changes and execute callback on every compilation.
-exports.watch = (rootPath, buildPath, config, callback = (->)) ->
-  watchApplication rootPath, buildPath, config, yes, callback
+exports.watch = (rootPath, config, callback = (->)) ->
+  watchApplication rootPath, config, yes, callback
 
 # Generate new controller / model / view and its tests.
 # 

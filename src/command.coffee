@@ -68,12 +68,9 @@ the server would run'
         config = helpers.loadConfig 'config.coffee'
         config.server ?= {}
         config.server.run = yes if options.server
-        config.server.port = if options.port
-          options.port
-        else
-          config.server.port or 3333
-        config.server.buildPath = options.buildPath if options.buildPath
-        brunch.watch '.', config.server.buildPath, config
+        config.server.port = options.port if options.port
+        config.buildPath = options.buildPath if options.buildPath
+        brunch.watch '.', config
 
     generate:
       help: 'Generate model, view or route for current project'
