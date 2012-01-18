@@ -161,7 +161,7 @@ exports.startServer = (port = 3333, rootPath = '.', callback = (->)) ->
 
 exports.loadConfig = (configPath) ->
   try
-    {config} = require path.resolve configPath
+    {config} = require sysPath.resolve configPath
   catch error
     exports.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
     exports.exit()

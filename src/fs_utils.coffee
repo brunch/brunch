@@ -2,7 +2,7 @@ async = require 'async'
 {EventEmitter} = require 'events'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
-pathModule = require 'path'
+sysPath = require 'path'
 util = require 'util'
 helpers = require './helpers'
 
@@ -28,8 +28,8 @@ class exports.FSWatcher extends EventEmitter
     @watched[directory] ?= []
 
   _watch: (item, callback) ->
-    parent = @_getWatchedDir pathModule.dirname item
-    basename = pathModule.basename item
+    parent = @_getWatchedDir sysPath.dirname item
+    basename = sysPath.basename item
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
@@ -52,12 +52,12 @@ class exports.FSWatcher extends EventEmitter
         for file in previous when file not in current
           @emit 'remove', file
         for file in current when file not in previous
-          @_handle pathModule.join directory, file
+          @_handle sysPath.join directory, file
     read directory
     @_watch directory, read
 
   _handle: (file) ->
-    return if @invalid.test pathModule.basename file
+    return if @invalid.test sysPath.basename file
     fs.realpath file, (error, path) =>
       return helpers.logError error if error?
       fs.stat file, (error, stats) =>
@@ -73,7 +73,7 @@ class exports.FSWatcher extends EventEmitter
   close: ->
     for directory, files of @watched
       for file in files
-        fs.unwatchFile pathModule.join directory, file
+        fs.unwatchFile sysPath.join directory, file
     @watched = {}
     this
 
@@ -189,7 +189,7 @@ writeFile = (path, data, callback) ->
     fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?
-    mkdirp (pathModule.dirname path), 0755, (error) ->
+    mkdirp (sysPath.dirname path), 0755, (error) ->
       return callback error if error?
       write (error) ->
         callback error, path, data
@@ -262,7 +262,7 @@ class exports.FileWriter extends EventEmitter
       files[pathes.indexOf file]
     wrapResult = /\.js$/.test destFile.path
     {
-      path: (pathModule.join @buildPath, destFile.path),
+      path: (sysPath.join @buildPath, destFile.path),
       data: (getFilesData destFile.sourceFiles, wrapResult),
     }
 

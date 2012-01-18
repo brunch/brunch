@@ -1,13 +1,13 @@
 argumentum = require 'argumentum'
 fs = require 'fs'
-path = require 'path'
+sysPath = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
 exports.readPackageVersion = readPackageVersion = ->
-  package = JSON.parse fs.readFileSync path.join __dirname, '..', 'package.json'
+  package = JSON.parse fs.readFileSync sysPath.join __dirname, '..', 'package.json'
   package.version
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
@@ -31,8 +31,8 @@ commandLineConfig =
           full: 'output'
       callback: (options) ->
         brunch.new options.rootPath, options.buildPath, ->
-          configPath = path.join options.rootPath, 'config.coffee'
-          config = helpers.loadConfig path.join options.rootPath, 'config.coffee'
+          configPath = sysPath.join options.rootPath, 'config.coffee'
+          config = helpers.loadConfig sysPath.join options.rootPath, 'config.coffee'
           brunch.build options.rootPath, options.buildPath, config
 
     build:
