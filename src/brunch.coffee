@@ -15,10 +15,14 @@ helpers = require './helpers'
 # 
 #   getLanguagesFromConfig {files: {
 #     'out1.js': {languages: {'\.coffee$': CoffeeScriptLanguage}}
-#   # => [/\.coffee/, 'out1.js', coffeeScriptLanguage]
+#   # => {
+#     regExp: /\.coffee/,
+#     destinationPath: 'out1.js',
+#     compiler: coffeeScriptLanguage
+#   }
 # 
 # Returns array.
-getLanguagesFromConfig = (config) ->
+exports.getLanguagesFromConfig = getLanguagesFromConfig = (config) ->
   languages = []
   for destinationPath, settings of config.files
     for regExp, language of settings.languages

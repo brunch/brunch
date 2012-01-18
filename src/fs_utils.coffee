@@ -49,10 +49,17 @@ class exports.FSWatcher extends EventEmitter
         return helpers.logError error if error?
         return unless current
         previous = @_getWatchedDir directory
-        for file in previous when file not in current
-          @emit 'remove', file
-        for file in current when file not in previous
-          @_handle sysPath.join directory, file
+        previous
+          .filter (file) ->
+            file not in current
+          .forEach (file) =>
+            @emit 'remove', sysPath.join directory, file
+        
+        current
+          .filter (file) ->
+            file not in previous
+          .forEach (file) =>
+            @_handle sysPath.join directory, file
     read directory
     @_watch directory, read
 
@@ -160,7 +167,7 @@ exports.wrap = wrap = (path, source) ->
 #   getFilesData [{'app/views/user.coffee', 'filedata'}], yes
 # 
 # Returns a string.
-getFilesData = (files, wrapResult = no) -> 
+getFilesData = (files, wrapResult = no) ->
   data = ''
   data += requireDefinition if wrapResult
   data += files
@@ -222,10 +229,14 @@ writeFile = (path, data, callback) ->
 class exports.FileWriter extends EventEmitter
   timeout: 50
 
-  constructor: (@buildPath, @files, @plugins) ->
+  constructor: (@buildPath, @files = {}, @plugins = []) ->
     @destFiles = []
     @on 'change', @_onChange
     @on 'remove', @_onRemove
+  
+  _startTimer: ->
+    clearTimeout @timeoutId if @timeoutId?
+    @timeoutId = setTimeout @_write, @timeout
 
   _getDestFile: (destinationPath) ->
     destFile = @destFiles.filter((file) -> file.path is destinationPath)[0]
@@ -245,19 +256,18 @@ class exports.FileWriter extends EventEmitter
       destFile.sourceFiles.push sourceFile
       delete sourceFile.destinationPath
     sourceFile.data = changedFile.data
-
-    clearTimeout @timeoutId if @timeoutId?
-    @timeoutId = setTimeout @_write, @timeout
+    @_startTimer()
 
   _onRemove: (removedFile) =>
-    destFile = @_getDestFile removedFile.destinationPath
-    destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
-      sourceFile.path isnt removedFile.path
+    @destFiles.forEach (destFile) ->
+      destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
+        sourceFile.path isnt removedFile
+    @_startTimer()
 
   _concatFiles: (destFile) =>
     files = destFile.sourceFiles
     pathes = files.map (file) -> file.path
-    order = @files[destFile.path].order
+    order = @files[destFile.path]?.order
     destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
       files[pathes.indexOf file]
     wrapResult = /\.js$/.test destFile.path

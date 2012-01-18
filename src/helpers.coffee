@@ -1,7 +1,7 @@
 coffeescript = require 'coffee-script'
 express = require 'express'
 growl = require 'growl'
-path = require 'path'
+sysPath = require 'path'
 
 require.extensions['.coffee'] ?= (module, filename) ->
   content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
