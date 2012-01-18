@@ -146,11 +146,11 @@ exports.sort = (files, config) ->
             # these two items.
             0
 
-exports.startServer = (port = 3333, rootPath = '.', callback = (->)) ->
+exports.startServer = (port = 3333, path = '.', callback = (->)) ->
   server = express.createServer()
   server.configure ->
-    server.use express.static rootPath
-    server.set 'views', rootPath
+    server.use express.static path
+    server.set 'views', path
     server.set 'view options', layout: no
     server.register '.html', compile: (str, options) -> (locals) -> str
   server.get '/', (req, res) ->
