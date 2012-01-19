@@ -33,7 +33,8 @@ commandLineConfig =
         brunch.new options.rootPath, options.buildPath, ->
           configPath = sysPath.join options.rootPath, 'config.coffee'
           config = helpers.loadConfig sysPath.join options.rootPath, 'config.coffee'
-          brunch.build options.rootPath, options.buildPath, config
+          config.buildPath = options.buildPath if options.buildPath
+          brunch.build options.rootPath, config
 
     build:
       help: 'Build a brunch project'
