@@ -47,6 +47,7 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # Returns `fs_utils.FSWatcher` object.
 watchApplication = (rootPath, config, persistent, callback) ->
   config.buildPath ?= sysPath.join rootPath, 'build'
+  config.server ?= {}
   config.server.port ?= 3333
 
   # Pass rootPath to config in order to allow plugins to use it.
