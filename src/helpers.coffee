@@ -34,7 +34,7 @@ getColor = (color = 'none') ->
   colors[color.toString()]
 
 colorize = (text, color) ->
-  "\033[#{getColor(color)}m#{text}\033[#{getColor('reset')}m"
+  "\x1b[#{getColor(color)}m#{text}\x1b[#{getColor('reset')}m"
 
 # Adds '0' if a positive number is lesser than 10.
 pad = (number) ->

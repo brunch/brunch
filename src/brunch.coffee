@@ -94,9 +94,9 @@ exports.new = (rootPath, buildPath, callback = (->)) ->
     if exists
       return helpers.logError "[Brunch]: can\'t create project: 
 directory \"#{rootPath}\" already exists"
-    mkdirp rootPath, 0755, (error) ->
+    mkdirp rootPath, (parseInt 755, 8), (error) ->
       return helpers.logError "[Brunch]: Error #{error}" if error?
-      mkdirp buildPath, 0755, (error) ->
+      mkdirp buildPath, (parseInt 755, 8), (error) ->
         return helpers.logError "[Brunch]: Error #{error}" if error?
         ncp templatePath, rootPath, (error) ->
           return helpers.logError error if error?
@@ -180,7 +180,7 @@ exports.generate = (rootPath, type, name, config, callback = (->)) ->
         callback()
     sysPath.exists testDirPath, (exists) ->
       return write() if exists
-      mkdirp testDirPath, 0755, (error) ->
+      mkdirp testDirPath, (parseInt 755, 8), (error) ->
         return helpers.logError error if error?
         write()
 

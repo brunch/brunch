@@ -196,7 +196,7 @@ writeFile = (path, data, callback) ->
     fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?
-    mkdirp (sysPath.dirname path), 0755, (error) ->
+    mkdirp (sysPath.dirname path), (parseInt 755, 8), (error) ->
       return callback error if error?
       write (error) ->
         callback error, path, data
