@@ -31,11 +31,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        brunch.new options.rootPath, options.buildPath, ->
-          configPath = sysPath.join options.rootPath, 'config.coffee'
-          config = helpers.loadConfig sysPath.join options.rootPath, 'config.coffee'
-          config.buildPath = options.buildPath if options.buildPath
-          brunch.build options.rootPath, config
+        brunch.new options.rootPath, options.buildPath
 
     build:
       abbr: 'b'
