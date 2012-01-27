@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "coffee-script": "1.2.0",
-    "argumentum": "0.5.0",
+    "argumentum": "0.6.0",
     "async": "0.1.15",
     "mkdirp": "0.2.1",
     "ncp": "0.2.3",

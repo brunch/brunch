@@ -7,8 +7,8 @@ helpers = require './helpers'
 # Reads package.json and extracts brunch version from there.
 # Returns string.
 exports.readPackageVersion = readPackageVersion = ->
-  package = JSON.parse fs.readFileSync sysPath.join __dirname, '..', 'package.json'
-  package.version
+  content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
+  (JSON.parse content).version
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
@@ -16,6 +16,7 @@ commandLineConfig =
   commandRequired: yes
   commands:
     new:
+      abbr: 'n'
       help: 'Create new brunch project'
       options:
         rootPath:
@@ -37,6 +38,7 @@ commandLineConfig =
           brunch.build options.rootPath, config
 
     build:
+      abbr: 'b'
       help: 'Build a brunch project'
       options:
         buildPath:
@@ -50,6 +52,7 @@ commandLineConfig =
         brunch.build '.', config
 
     watch:
+      abbr: 'w'
       help: 'Watch brunch directory and rebuild if something changed'
       options:
         buildPath:
@@ -75,6 +78,7 @@ the server would run'
         brunch.watch '.', config
 
     generate:
+      abbr: 'g'
       help: 'Generate model, view or route for current project'
       options:
         type:
