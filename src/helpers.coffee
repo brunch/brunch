@@ -146,18 +146,13 @@ exports.sort = (files, config) ->
             # these two items.
             0
 
-exports.startServer = (port = 3333, path = '.', callback = (->)) ->
-  server = express.createServer()
-  server.configure ->
-    server.use express.static path
-    server.set 'views', path
-    server.set 'view options', layout: no
-    server.register '.html', compile: (str, options) -> (locals) -> str
-  server.get '/', (req, res) ->
-    res.render 'index.html'
-  server.listen parseInt port, 10
-  server.on 'listening', callback
-  exports.log "[Brunch]: application starting on http://0.0.0.0:#{port}."
+exports.startServer = (port = 3333, path = '.') ->
+  try
+    server = require sysPath.resolve 'server.coffee'
+    server.startServer( port, path, express, @)
+  catch error
+    exports.logError "[Brunch]: couldn\'t load server.coffee. #{error}"
+    exports.exit()
 
 exports.loadConfig = (configPath) ->
   try
