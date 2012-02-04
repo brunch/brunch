@@ -1,10 +1,10 @@
 {
-  "name":         "brunch",
-  "description":  "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version":      "1.0.0-beta3",
-  "keywords":     ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
-  "homepage":     "http://brunch.io/",
-  "author":       "Brunch team (http://brunch.io)",
+  "name": "brunch",
+  "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
+  "version": "1.0.0-beta",
+  "keywords": ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
+  "homepage": "http://brunch.io/",
+  "author": "Brunch team (http://brunch.io)",
   "repository": {
     "type": "git",
     "url": "https://github.com/brunch/brunch.git"
