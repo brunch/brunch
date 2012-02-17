@@ -59,7 +59,7 @@ List of languages that compile to .css:
 * ``'\\.css$': languages.CSSLanguage``: basic support for css files
 * ``'\\.styl$': languages.StylusLanguage``: stylus_ is a robust language that supports Sass syntax. Also includes nib_, a small and powerful library, providing robust cross-browser CSS3 mixins
 * ``'\\.less$': languages.LESSLanguage``: basic support for LESS_
-* ``'\\.s[ac]ss$': languages.SASSLanguage``: basic support for Sass_, a ruby-based style language
+* ``'\\.s[ac]ss$': languages.SassLanguage``: basic support for Sass_, a ruby-based style language
 
 Plugins
 =======
