@@ -6,6 +6,13 @@ sysPath = require 'path'
 util = require 'util'
 helpers = require './helpers'
 
+# A list of plugins your app would use. You could use:
+# * npm package name, optionally with version number / range ('stylus-brunch@0.1.0')
+# * git repo with package ('git://github.com/brunch/stylus-brunch.git')
+# * tarball with package ('https://github.com/brunch/stylus-brunch/tarball/0.2')
+# * path to directory with package ('../stylus-brunch')
+
+
 # A simple file changes watcher.
 # 
 # files - array of directories that would be watched.
@@ -54,7 +61,7 @@ class exports.FSWatcher extends EventEmitter
             file not in current
           .forEach (file) =>
             @emit 'remove', sysPath.join directory, file
-        
+
         current
           .filter (file) ->
             file not in previous
@@ -233,7 +240,7 @@ class exports.FileWriter extends EventEmitter
     @destFiles = []
     @on 'change', @_onChange
     @on 'remove', @_onRemove
-  
+
   _startTimer: ->
     clearTimeout @timeoutId if @timeoutId?
     @timeoutId = setTimeout @_write, @timeout
@@ -277,15 +284,15 @@ class exports.FileWriter extends EventEmitter
     }
 
   _write: =>
-    plugins = @plugins.map (plugin) -> (files, callback) ->
-      plugin.load files, callback
+    beforeWrite = @plugins.map (plugin) -> (files, callback) ->
+      plugin.beforeWrite files, callback
     getFiles = (callback) =>
       callback null, @destFiles.map @_concatFiles
     write = (file, callback) ->
       writeFile file.path, file.data, callback
 
-    async.waterfall [getFiles, plugins...], (error, files) =>
-      return helpers.logError "[Brunch]: plugin error. #{error}" if error?
+    async.waterfall [getFiles, beforeWrite...], (error, files) =>
+      return helpers.logError "beforeWrite plugin error. #{error}" if error?
       async.forEach files, write, (error, results) =>
         return @emit 'error', error if error?
         @emit 'write', results

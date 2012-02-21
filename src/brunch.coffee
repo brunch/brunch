@@ -1,5 +1,5 @@
 async = require 'async'
-{exec} = require 'child_process'
+{spawn} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
@@ -7,35 +7,34 @@ sysPath = require 'path'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
 
-# Creates an array of languages that would be used in brunch application.
-# 
-# config - parsed app config
-# 
-# Examples
-# 
-#   getLanguagesFromConfig {files: {
-#     'out1.js': {languages: {'\.coffee$': CoffeeScriptLanguage}}
-#   # => {
-#     regExp: /\.coffee/,
-#     destinationPath: 'out1.js',
-#     compiler: coffeeScriptLanguage
-#   }
-# 
-# Returns array.
-exports.getLanguagesFromConfig = getLanguagesFromConfig = (config) ->
-  languages = []
-  for destinationPath, settings of config.files
-    for regExp, language of settings.languages
-      try
-        languages.push {
-          regExp: ///#{regExp}///, destinationPath,
-          compiler: new language config
-        }
-      catch error
-        helpers.logError """[Brunch]: cannot parse config entry 
-config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
-"""
-  languages
+loadPlugins = (config, callback) ->
+  fs.readFile 'package.json', (error, data) ->
+    deps = (JSON.parse data).dependencies
+    callback null, Object.keys(deps).map (dependency) ->
+      plugin = require sysPath.join '.', 'node_modules', dependency
+      new plugin config
+
+isCompilerFor = (path) -> (plugin) ->
+  pattern = if plugin.pattern
+    plugin.pattern
+  else if plugin.extension
+    ///\.#{plugin.extension}$///
+  else
+    null
+  (typeof plugin.compile is 'function') and !!(pattern?.test path)
+
+compileFile = (path, compiler, destinationPath, callback) ->
+  compiler.compile path, (error, data) ->
+    if error?
+      return callback "[#{languageName}]: cannot compile '#{path}': #{error}"
+    callback null, {destinationPath, path, data}
+
+passFileToCompilers = (path, plugins, callback) ->
+  plugins
+    .filter(isCompilerFor path)
+    .forEach (language) ->
+      {compiler, destinationPath} = language
+      compileFile path, compiler, destinationPath, callback
 
 # Recompiles all files in current working directory.
 # 
@@ -52,29 +51,19 @@ watchApplication = (rootPath, config, persistent, callback) ->
 
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
-  
-  helpers.startServer config.server.port, config.buildPath if config.server.run
 
-  plugins = config.plugins.map (plugin) -> new plugin config
-  languages = getLanguagesFromConfig config
+  #mkdirp buildPath, (parseInt 755, 8), (error) ->
+  #  return helpers.logError "[Brunch]: Error #{error}" if error?
+  helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
   writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
   watcher = (new fs_utils.FSWatcher directories)
-    .on 'change', (file) ->
-      languages
-        .filter (language) ->
-          language.regExp.test file
-        .forEach (language) ->
-          {compiler, destinationPath} = language
-          compiler.compile file, (error, data) ->
-            if error?
-              # TODO: (Coffee 1.2.1) compiler.name.
-              languageName = compiler.constructor.name.replace 'Language', ''
-              return helpers.logError "
-[#{languageName}]: cannot compile '#{file}': #{error}"
-            writer.emit 'change', {destinationPath, path: file, data}
-    .on 'remove', (file) ->
-      writer.emit 'remove', file
+    .on 'change', (path) ->
+      passFileToCompilers path, plugins, (error, result) ->
+        return helpers.logError error if error?
+        writer.emit 'change', result
+    .on 'remove', (path) ->
+      writer.emit 'remove', path
   writer.on 'error', (error) ->
     helpers.logError "[Brunch] write error. #{error}"
   writer.on 'write', (result) ->
@@ -92,25 +81,14 @@ exports.new = (rootPath, buildPath, callback = (->)) ->
   templatePath = sysPath.join __dirname, '..', 'template', 'base'
   sysPath.exists rootPath, (exists) ->
     if exists
-      return helpers.logError "[Brunch]: can\'t create project: 
-directory \"#{rootPath}\" already exists"
+      return helpers.logError "Can't create project: 
+directory '#{rootPath}' already exists"
     mkdirp rootPath, (parseInt 755, 8), (error) ->
-      return helpers.logError "[Brunch]: Error #{error}" if error?
-      mkdirp buildPath, (parseInt 755, 8), (error) ->
-        return helpers.logError "[Brunch]: Error #{error}" if error?
-        ncp templatePath, rootPath, (error) ->
-          return helpers.logError error if error?
-          helpers.log 'created brunch directory layout'
-          helpers.log 'installing npm packages...'
-          prevDir = process.cwd()
-          process.chdir rootPath
-          exec 'npm install', (error) ->
-            process.chdir prevDir
-            if error?
-              helpers.logError "npm error: #{error}"
-              return callback error
-            helpers.log 'installed npm package brunch-extensions'
-            callback()
+      return helpers.logError error if error?
+      ncp templatePath, rootPath, (error) ->
+        return helpers.logError error if error?
+        helpers.log 'Created brunch directory layout'
+        callback()
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->
@@ -134,35 +112,26 @@ exports.watch = (rootPath, config, callback = (->)) ->
 #   generate '.', 'collection', 'users', config
 # 
 exports.generate = (rootPath, type, name, config, callback = (->)) ->
-  unless config.defaultExtensions
+  unless config.extensions
     callback()
-    return helpers.logError "Cannot find `defaultExtensions` option in config."
-  
+    return helpers.logError "Cannot find `extensions` option in config."
+
   # We'll additionally generate tests for 'script' languages.
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'script'
     else type
 
-  extension = config.defaultExtensions[languageType]
+  extension = config.extensions[languageType]
 
   generateFile = (callback) ->
     name += "_#{type}" if type in ['router', 'view']
     filename = "#{name}.#{extension}"
-    genName = helpers.capitalize type
-    className = helpers.formatClassName name
 
     path = if languageType is 'template'
       sysPath.join rootPath, 'app', 'views', "#{type}s", filename
     else
       sysPath.join rootPath, 'app', "#{type}s", filename
 
-    data = switch extension
-      when 'coffee'
-        "class exports.#{className} extends Backbone.#{genName}\n"
-      when 'js'
-        "exports.#{className} = Backbone.#{genName}.extend({\n\n});"
-      else
-        ''
     fs.writeFile path, data, (error) ->
       return helpers.logError error if error?
       helpers.log "Generated #{path}"

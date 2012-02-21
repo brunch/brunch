@@ -9,16 +9,20 @@
     "url": ""
   },
   "engines": {
-    "node": "~0.6.6"
+    "node": "~0.6.10"
   },
   "scripts": {
     "start": "brunch watch --server"
   },
   "dependencies": {
-    "brunch-extensions": "0.1.0"
+    "javascript-brunch": "git+ssh://git@github.com:brunch/javascript-brunch.git",
+    "css-brunch": "git+ssh://git@github.com:brunch/css-brunch.git",
+    "coffee-script-brunch": "git+ssh://git@github.com:brunch/coffee-script-brunch.git",
+    "stylus-brunch": "git+ssh://git@github.com:brunch/stylus-brunch.git",
+    "eco-brunch": "git+ssh://git@github.com:brunch/eco-brunch.git"
   },
   "devDependencies": {
-    "mocha": "0.9.0",
-    "expect.js": "0.1.1"
+    "mocha": "0.12.1",
+    "expect.js": "0.1.2"
   }
 }

@@ -56,24 +56,8 @@ formatDate = (color = 'none') ->
   time = timeArr.join ':'
   colorize "[#{time}]:", color
 
-# Example
-# 
-#   capitalize 'test'
-#   # => 'Test'
-#
-exports.capitalize = capitalize = (string) ->
-  (string[0] or '').toUpperCase() + string[1..]
-
-# Example
-# 
-#   formatClassName 'twitter_users'
-#   # => 'TwitterUsers'
-#
-exports.formatClassName = (filename) ->
-  filename.split('_').map(capitalize).join('')
-
 exports.isTesting = ->
-  'jasmine' of global
+  no
 
 exports.log = (text, color = 'green', isError = no) ->
   stream = if isError then process.stderr else process.stdout

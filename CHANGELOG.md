@@ -1,4 +1,7 @@
-## Brunch 0.9.0 (unreleased)
+## Brunch 1.0.0 (unreleased)
+* Rewritten API for plugins.
+
+## Brunch 0.9.0 (January 10, 2012)
 * Added new API for plugins.
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,

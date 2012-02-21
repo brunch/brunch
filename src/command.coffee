@@ -25,13 +25,10 @@ commandLineConfig =
           metavar: 'APP_PATH'
           required: yes
           full: 'appPath'
-        buildPath:
-          abbr: 'o'
-          help: 'build path'
-          metavar: 'DIRECTORY'
-          full: 'output'
       callback: (options) ->
-        brunch.new options.rootPath, options.buildPath
+        brunch.new options.rootPath, ->
+          configPath = sysPath.join options.rootPath, 'config.coffee'
+          brunch.install options.rootPath, helpers.loadConfig configPath
 
     build:
       abbr: 'b'
