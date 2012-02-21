@@ -3,6 +3,9 @@
 # Make config loadable via require() for brunch.
 # See config docs at http://brunch.readthedocs.org/en/latest/config.html.
 exports.config =
+  # Uncomment and edit the next line to change default build path
+  # buildPath: 'public'
+
   # Edit this to change extension & content of files, created by
   # `brunch generate`.
   defaultExtensions:
@@ -14,7 +17,7 @@ exports.config =
   # List of included languages:
   # http://brunch.readthedocs.org/en/latest/plugins.html#default-languages
   files:
-    'scripts/app.js':
+    'javascripts/app.js':
       languages:
         '\\.js$': languages.JavaScriptLanguage
         '\\.coffee$': languages.CoffeeScriptLanguage
