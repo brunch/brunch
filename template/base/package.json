@@ -15,7 +15,7 @@
     "start": "brunch watch --server"
   },
   "dependencies": {
-    "brunch-extensions": "0.1.0"
+    "brunch-extensions": "0.2.2"
   },
   "devDependencies": {
     
