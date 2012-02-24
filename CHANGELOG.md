@@ -1,5 +1,7 @@
 ## Brunch 1.0.0 (unreleased)
-* Rewritten API for plugins.
+* Added support for generator templates.
+* Added support for different extensions in brunch generators.
+* Rewritten API for plugins to be framework-agnostic & much more simple.
 
 ## Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
