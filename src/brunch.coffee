@@ -44,7 +44,7 @@ passFileToCompilers = (path, plugins, callback) ->
 # callback - Callback that would be executed on each compilation.
 # 
 # Returns `fs_utils.FSWatcher` object.
-watchApplication = (rootPath, config, persistent, callback) ->
+watchApplication = (persistent, rootPath, config, callback) ->
   config.buildPath ?= sysPath.join rootPath, 'public'
   config.server ?= {}
   config.server.port ?= 3333
@@ -86,7 +86,49 @@ generateFile = (path, data, callback) ->
 
 destroyFile = (path, callback) ->
   helpers.log "destroy #{path}"
-  fs.unlink file, callback
+  fs.unlink path, callback
+
+generateOrDestroy = (generate, options, callback) ->
+  {rootPath, type, name, config, parentDir} = options
+  generateOrDestroyFile = if generate then generateFile else destroyFile
+  console.log 'g', config
+
+  languageType = switch type
+    when 'collection', 'model', 'router', 'view' then 'javascripts'
+    when 'style' then 'stylesheets'
+    else type
+
+  extension = config.files[languageType].defaultExtension ? switch languageType
+    when 'javascripts' then 'coffee'
+    when 'stylesheets' then 'styl'
+    when 'templates' then 'eco'
+
+  initFile = (parentDir, callback) ->
+    name += "_#{type}" if type in ['router', 'view']
+    parentDir ?= if languageType is 'template'
+      sysPath.join rootPath, 'app', 'views', "#{type}s"
+    else
+      sysPath.join rootPath, 'app', "#{type}s"
+    fullPath = sysPath.join parentDir, "#{name}.#{extension}"
+    data = ''
+    if generate
+      generateFile fullPath, data, callback
+    else
+      destroyFile fullPath, callback
+
+  # We'll additionally generate tests for 'script' languages.
+  initTests = (parentDir, callback) ->
+    return callback() unless languageType is 'script'
+    parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
+    fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
+    if generate
+      generateFile fullPath, data, callback
+    else
+      destroyFile fullPath, callback
+ 
+  initFile parentDir, ->
+    initTests parentDir, ->
+      callback()
 
 # Create new application in `rootPath` and build it.
 # App is created by copying directory `../template/base` to `rootPath`.
@@ -106,11 +148,11 @@ exports.new = (options, callback = (->)) ->
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->
-  watchApplication rootPath, config, no, callback
+  watchApplication no, rootPath, config, callback
 
 # Watch application for changes and execute callback on every compilation.
 exports.watch = (rootPath, config, callback = (->)) ->
-  watchApplication rootPath, config, yes, callback
+  watchApplication yes, rootPath, config, callback
 
 # Generate new controller / model / view and its tests.
 # 
@@ -120,37 +162,7 @@ exports.watch = (rootPath, config, callback = (->)) ->
 # config - parsed app config.
 # 
 exports.generate = (options, callback = (->)) ->
-  {rootPath, type, name, config, parentDir} = options
-
-  languageType = switch type
-    when 'collection', 'model', 'router', 'view' then 'javascript'
-    when 'style' then 'stylesheet'
-    else type
-
-  extension = config.files[languageType].defaultExtension ? switch languageType
-    when 'javascript' then 'coffee'
-    when 'stylesheet' then 'styl'
-    when 'template' then 'eco'
-
-  genFile = (parentDir, callback) ->
-    name += "_#{type}" if type in ['router', 'view']
-    filePath = "#{name}.#{extension}"
-    parentDir ?= if languageType is 'template'
-      sysPath.join rootPath, 'app', 'views', "#{type}s"
-    else
-      sysPath.join rootPath, 'app', "#{type}s"
-    generateFile (sysPath.join parentDir, filePath), callback
-
-  # We'll additionally generate tests for 'script' languages.
-  genTests = (parentDir, callback) ->
-    return callback() unless languageType is 'script'
-    parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
-    filePath = "#{name}_test.#{extension}"
-    generateFile (sysPath.join parentDir, filePath), callback
- 
-  genFile parentDir, ->
-    genTests parentDir, ->
-      callback()
+  generateOrDestroy yes, options, callback
 
 exports.destroy = (options, callback = (->)) ->
-  {rootPath, type, name, config, parentDir} = options
+  generateOrDestroy no, options, callback

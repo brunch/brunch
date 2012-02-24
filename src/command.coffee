@@ -10,6 +10,11 @@ exports.readPackageVersion = readPackageVersion = ->
   content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
   (JSON.parse content).version
 
+generatorChoices = ->
+  config = helpers.loadConfig 'config.coffee'
+  []
+
+
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'
@@ -79,16 +84,17 @@ the server would run'
         type:
           position: 1
           help: 'generator type'
-          choices: generatorChoices
+          #choices: generatorChoices
           required: yes
         name:
           position: 2
           help: 'generator class name / filename'
           required: yes
-        path:
+        parentDir:
           abbr: 'p'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
+          full: 'path'
       callback: (options) ->
         options.rootPath = '.'
         options.config = helpers.loadConfig 'config.coffee'
@@ -101,16 +107,17 @@ the server would run'
         type:
           position: 1
           help: 'generator type'
-          choices: generatorChoices
+          #choices: generatorChoices
           required: yes
         name:
           position: 2
           help: 'generator class name / filename'
           required: yes
-        path:
+        parentDir:
           abbr: 'p'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
+          full: 'path'
       callback: (options) ->
         options.rootPath = '.'
         options.config = helpers.loadConfig 'config.coffee'
