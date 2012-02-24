@@ -25,10 +25,12 @@ commandLineConfig =
           metavar: 'APP_PATH'
           required: yes
           full: 'appPath'
+        template:
+          abbr: 't'
+          help: 'path to application template'
       callback: (options) ->
-        brunch.new options.rootPath, ->
-          configPath = sysPath.join options.rootPath, 'config.coffee'
-          brunch.install options.rootPath, helpers.loadConfig configPath
+        brunch.new options, ->
+          brunch.install rootPath: options.rootPath
 
     build:
       abbr: 'b'
@@ -72,20 +74,47 @@ the server would run'
 
     generate:
       abbr: 'g'
-      help: 'Generate model, view or route for current project'
+      help: 'Generate file(s) from template for current project'
       options:
         type:
           position: 1
           help: 'generator type'
-          choices: ['collection', 'model', 'router', 'style', 'template', 'view']
+          choices: generatorChoices
           required: yes
         name:
           position: 2
           help: 'generator class name / filename'
           required: yes
+        path:
+          abbr: 'p'
+          help: 'path to generated file directory'
+          metavar: 'DIRECTORY'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
-        brunch.generate '.', options.type, options.name, config
+        options.rootPath = '.'
+        options.config = helpers.loadConfig 'config.coffee'
+        brunch.generate options
+
+    destroy:
+      abbr: 'd'
+      help: 'Destroy changes made by brunch generate for current project'
+      options:
+        type:
+          position: 1
+          help: 'generator type'
+          choices: generatorChoices
+          required: yes
+        name:
+          position: 2
+          help: 'generator class name / filename'
+          required: yes
+        path:
+          abbr: 'p'
+          help: 'path to generated file directory'
+          metavar: 'DIRECTORY'
+      callback: (options) ->
+        options.rootPath = '.'
+        options.config = helpers.loadConfig 'config.coffee'
+        brunch.destroy options
 
   options:
     version:

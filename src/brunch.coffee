@@ -72,20 +72,34 @@ watchApplication = (rootPath, config, persistent, callback) ->
     callback result
   watcher
 
+generateFile = (path, data, callback) ->
+  parentDir = sysPath.dirname path
+  write = ->
+    helpers.log "create #{path}"
+    fs.writeFile path, data, callback
+  sysPath.exists parentDir, (exists) ->
+    return write() if exists
+    helpers.log "invoke #{parentDir}"
+    mkdirp parentDir, (parseInt 755, 8), (error) ->
+      return helpers.logError if error?
+      write()
+
+destroyFile = (path, callback) ->
+  helpers.log "destroy #{path}"
+  fs.unlink file, callback
+
 # Create new application in `rootPath` and build it.
 # App is created by copying directory `../template/base` to `rootPath`.
-exports.new = (rootPath, buildPath, callback = (->)) ->
-  callback = buildPath if typeof buildPath is 'function'
+exports.new = (options, callback = (->)) ->
+  {rootPath, buildPath, template} = options
   buildPath ?= sysPath.join rootPath, 'build'
-
-  templatePath = sysPath.join __dirname, '..', 'template', 'base'
+  template ?= sysPath.join __dirname, '..', 'template', 'base'
   sysPath.exists rootPath, (exists) ->
     if exists
-      return helpers.logError "Can't create project: 
-directory '#{rootPath}' already exists"
+      return helpers.logError "Directory '#{rootPath}' already exists"
     mkdirp rootPath, (parseInt 755, 8), (error) ->
       return helpers.logError error if error?
-      ncp templatePath, rootPath, (error) ->
+      ncp template, rootPath, (error) ->
         return helpers.logError error if error?
         helpers.log 'Created brunch directory layout'
         callback()
@@ -105,54 +119,38 @@ exports.watch = (rootPath, config, callback = (->)) ->
 # name - filename.
 # config - parsed app config.
 # 
-# Examples
-# 
-#   generate './twitter', 'style', 'user', config
-#   generate '.', 'view', 'user', config
-#   generate '.', 'collection', 'users', config
-# 
-exports.generate = (rootPath, type, name, config, callback = (->)) ->
-  unless config.extensions
-    callback()
-    return helpers.logError "Cannot find `extensions` option in config."
+exports.generate = (options, callback = (->)) ->
+  {rootPath, type, name, config, parentDir} = options
 
-  # We'll additionally generate tests for 'script' languages.
   languageType = switch type
-    when 'collection', 'model', 'router', 'view' then 'script'
+    when 'collection', 'model', 'router', 'view' then 'javascript'
+    when 'style' then 'stylesheet'
     else type
 
-  extension = config.extensions[languageType]
+  extension = config.files[languageType].defaultExtension ? switch languageType
+    when 'javascript' then 'coffee'
+    when 'stylesheet' then 'styl'
+    when 'template' then 'eco'
 
-  generateFile = (callback) ->
+  genFile = (parentDir, callback) ->
     name += "_#{type}" if type in ['router', 'view']
-    filename = "#{name}.#{extension}"
-
-    path = if languageType is 'template'
-      sysPath.join rootPath, 'app', 'views', "#{type}s", filename
+    filePath = "#{name}.#{extension}"
+    parentDir ?= if languageType is 'template'
+      sysPath.join rootPath, 'app', 'views', "#{type}s"
     else
-      sysPath.join rootPath, 'app', "#{type}s", filename
+      sysPath.join rootPath, 'app', "#{type}s"
+    generateFile (sysPath.join parentDir, filePath), callback
 
-    fs.writeFile path, data, (error) ->
-      return helpers.logError error if error?
-      helpers.log "Generated #{path}"
-      callback()
-
-  generateTests = (callback) ->
-    # TODO: remove the spike.
+  # We'll additionally generate tests for 'script' languages.
+  genTests = (parentDir, callback) ->
     return callback() unless languageType is 'script'
-    testDirPath = sysPath.join rootPath, 'test', 'unit', "#{type}s"
-    testFilePath = sysPath.join testDirPath, "#{name}_test.#{extension}"
-    write = ->
-      fs.writeFile testFilePath, '', (error) ->
-        return helpers.logError error if error?
-        helpers.log "Generated #{testFilePath}"
-        callback()
-    sysPath.exists testDirPath, (exists) ->
-      return write() if exists
-      mkdirp testDirPath, (parseInt 755, 8), (error) ->
-        return helpers.logError error if error?
-        write()
-
-  generateFile ->
-    generateTests ->
+    parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
+    filePath = "#{name}_test.#{extension}"
+    generateFile (sysPath.join parentDir, filePath), callback
+ 
+  genFile parentDir, ->
+    genTests parentDir, ->
       callback()
+
+exports.destroy = (options, callback = (->)) ->
+  {rootPath, type, name, config, parentDir} = options
