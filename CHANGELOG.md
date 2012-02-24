@@ -1,7 +1,11 @@
 ## Brunch 1.0.0 (unreleased)
-* Added support for generator templates.
-* Added support for different extensions in brunch generators.
-* Rewritten API for plugins to be framework-agnostic & much more simple.
+* Rewritten API for plugins to be framework-agnostic & much more simple:
+    * Added support for generator templates.
+    * Added support for different extensions in brunch generators.
+* Improved command line API:
+    * Added `--template` / `-t` option to `brunch new`.
+    * Added `--path` `-p` option to `brunch generate`.
+    * Added support for custom webservers to `brunch watch --server`.
 
 ## Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
