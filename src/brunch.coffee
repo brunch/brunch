@@ -121,7 +121,7 @@ generateOrDestroy = (generate, options, callback) ->
 
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
-    return callback() unless languageType is 'script'
+    return callback() unless languageType is 'javascripts'
     parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
     fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
     if generate
