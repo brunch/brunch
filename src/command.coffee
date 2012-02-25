@@ -14,7 +14,6 @@ generatorChoices = ->
   config = helpers.loadConfig 'config.coffee'
   []
 
-
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'

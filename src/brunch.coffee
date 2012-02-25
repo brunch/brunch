@@ -11,7 +11,7 @@ loadPlugins = (config, callback) ->
   fs.readFile 'package.json', (error, data) ->
     deps = (JSON.parse data).dependencies
     callback null, Object.keys(deps).map (dependency) ->
-      plugin = require sysPath.join '.', 'node_modules', dependency
+      plugin = require "#{process.cwd()}/node_modules/#{dependency}"
       new plugin config
 
 isCompilerFor = (path) -> (plugin) ->
@@ -48,12 +48,9 @@ watchApplication = (persistent, rootPath, config, callback) ->
   config.buildPath ?= sysPath.join rootPath, 'public'
   config.server ?= {}
   config.server.port ?= 3333
-
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
 
-  #mkdirp buildPath, (parseInt 755, 8), (error) ->
-  #  return helpers.logError "[Brunch]: Error #{error}" if error?
   helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
   writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
@@ -110,11 +107,17 @@ generateOrDestroy = (generate, options, callback) ->
     else
       sysPath.join rootPath, 'app', "#{type}s"
     fullPath = sysPath.join parentDir, "#{name}.#{extension}"
-    data = ''
-    if generate
-      generateFile fullPath, data, callback
-    else
-      destroyFile fullPath, callback
+    loadPlugins config, (error, plugins) ->
+      plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
+      generator = plugin?.generators[config.framework or 'backbone']?[type]
+      data = if generator?
+        generator name
+      else
+        ''
+      if generate
+        generateFile fullPath, data, callback
+      else
+        destroyFile fullPath, callback
 
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
@@ -122,10 +125,10 @@ generateOrDestroy = (generate, options, callback) ->
     parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
     fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
     if generate
-      generateFile fullPath, data, callback
+      generateFile fullPath, '', callback
     else
       destroyFile fullPath, callback
- 
+
   initFile parentDir, ->
     initTests parentDir, ->
       callback()
