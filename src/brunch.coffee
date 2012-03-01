@@ -1,5 +1,5 @@
 async = require 'async'
-{spawn} = require 'child_process'
+{exec, spawn} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
@@ -23,18 +23,18 @@ isCompilerFor = (path) -> (plugin) ->
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
-compileFile = (path, compiler, destinationPath, callback) ->
+compileFile = (path, plugin, destinationPath, callback) ->
   compiler.compile path, (error, data) ->
     if error?
       return callback "[#{languageName}]: cannot compile '#{path}': #{error}"
     callback null, {destinationPath, path, data}
 
 passFileToCompilers = (path, plugins, callback) ->
+  console.log 1488, plugins
   plugins
     .filter(isCompilerFor path)
-    .forEach (language) ->
-      {compiler, destinationPath} = language
-      compileFile path, compiler, destinationPath, callback
+    .forEach (plugin) ->
+      compileFile path, plugin, destinationPath, callback
 
 # Recompiles all files in current working directory.
 # 
@@ -53,21 +53,24 @@ watchApplication = (persistent, rootPath, config, callback) ->
 
   helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
-  writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
-  watcher = (new fs_utils.FSWatcher directories)
-    .on 'change', (path) ->
-      passFileToCompilers path, plugins, (error, result) ->
-        return helpers.logError error if error?
-        writer.emit 'change', result
-    .on 'remove', (path) ->
-      writer.emit 'remove', path
-  writer.on 'error', (error) ->
-    helpers.logError "[Brunch] write error. #{error}"
-  writer.on 'write', (result) ->
-    helpers.log "[Brunch]: compiled."
-    watcher.close() unless persistent
-    callback result
-  watcher
+  
+  loadPlugins config, (error, plugins) ->
+    return helpers.logError error if error?
+    writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
+    watcher = (new fs_utils.FSWatcher directories)
+      .on 'change', (path) ->
+        passFileToCompilers path, plugins, (error, result) ->
+          return helpers.logError error if error?
+          writer.emit 'change', result
+      .on 'remove', (path) ->
+        writer.emit 'remove', path
+    writer.on 'error', (error) ->
+      helpers.logError "[Brunch] write error. #{error}"
+    writer.on 'write', (result) ->
+      helpers.log "[Brunch]: compiled."
+      watcher.close() unless persistent
+      callback result
+    watcher
 
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
@@ -88,7 +91,6 @@ destroyFile = (path, callback) ->
 generateOrDestroy = (generate, options, callback) ->
   {rootPath, type, name, config, parentDir} = options
   generateOrDestroyFile = if generate then generateFile else destroyFile
-  console.log 'g', config
 
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'javascripts'
@@ -133,6 +135,13 @@ generateOrDestroy = (generate, options, callback) ->
     initTests parentDir, ->
       callback()
 
+exports.install = (rootPath, callback = (->)) ->
+  prevDir = process.cwd()
+  process.chdir rootPath
+  exec 'npm install', (error, stdout, stderr) ->
+    process.chdir prevDir
+    callback stderr, stdout
+
 # Create new application in `rootPath` and build it.
 # App is created by copying directory `../template/base` to `rootPath`.
 exports.new = (options, callback = (->)) ->
@@ -147,7 +156,7 @@ exports.new = (options, callback = (->)) ->
       ncp template, rootPath, (error) ->
         return helpers.logError error if error?
         helpers.log 'Created brunch directory layout'
-        callback()
+        exports.install rootPath, callback
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->

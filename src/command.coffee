@@ -33,8 +33,7 @@ commandLineConfig =
           abbr: 't'
           help: 'path to application template'
       callback: (options) ->
-        brunch.new options, ->
-          brunch.install rootPath: options.rootPath
+        brunch.new options
 
     build:
       abbr: 'b'
