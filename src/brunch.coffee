@@ -23,19 +23,6 @@ isCompilerFor = (path) -> (plugin) ->
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
-compileFile = (path, plugin, destinationPath, callback) ->
-  compiler.compile path, (error, data) ->
-    if error?
-      return callback "[#{languageName}]: cannot compile '#{path}': #{error}"
-    callback null, {destinationPath, path, data}
-
-passFileToCompilers = (path, plugins, callback) ->
-  console.log 1488, plugins
-  plugins
-    .filter(isCompilerFor path)
-    .forEach (plugin) ->
-      compileFile path, plugin, destinationPath, callback
-
 # Recompiles all files in current working directory.
 # 
 # rootPath - path to application directory.
@@ -54,20 +41,23 @@ watchApplication = (persistent, rootPath, config, callback) ->
   helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
   
+  fileList = new fs_utils.FileList
+  
   loadPlugins config, (error, plugins) ->
     return helpers.logError error if error?
-    writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
+    writer = new fs_utils.FileWriter config, plugins
     watcher = (new fs_utils.FSWatcher directories)
       .on 'change', (path) ->
-        passFileToCompilers path, plugins, (error, result) ->
-          return helpers.logError error if error?
-          writer.emit 'change', result
+        compiler = plugins.filter(isCompilerFor path)[0]
+        return unless compiler
+        file = new fs_utils.File path, compiler
+        fileList.add file
       .on 'remove', (path) ->
-        writer.emit 'remove', path
-    writer.on 'error', (error) ->
-      helpers.logError "[Brunch] write error. #{error}"
+        fileList.remove path
+    fileList.on 'resetTimer', ->
+      writer.write fileList
     writer.on 'write', (result) ->
-      helpers.log "[Brunch]: compiled."
+      helpers.log "compiled."
       watcher.close() unless persistent
       callback result
     watcher
@@ -138,6 +128,7 @@ generateOrDestroy = (generate, options, callback) ->
 exports.install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   process.chdir rootPath
+  helpers.log 'Installing packages...'
   exec 'npm install', (error, stdout, stderr) ->
     process.chdir prevDir
     callback stderr, stdout

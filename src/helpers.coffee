@@ -133,7 +133,7 @@ exports.sort = (files, config) ->
 exports.startServer = (port = 3333, path = '.') ->
   try
     server = require sysPath.resolve 'server.coffee'
-    server.startServer( port, path, express, @)
+    server.startServer port, path, express, this
   catch error
     exports.logError "[Brunch]: couldn\'t load server.coffee. #{error}"
     exports.exit()

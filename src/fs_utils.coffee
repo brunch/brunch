@@ -6,12 +6,156 @@ sysPath = require 'path'
 util = require 'util'
 helpers = require './helpers'
 
-# A list of plugins your app would use. You could use:
-# * npm package name, optionally with version number / range ('stylus-brunch@0.1.0')
-# * git repo with package ('git://github.com/brunch/stylus-brunch.git')
-# * tarball with package ('https://github.com/brunch/stylus-brunch/tarball/0.2')
-# * path to directory with package ('../stylus-brunch')
+# The definition would be added on top of every filewriter .js file.
+requireDefinition = '''
+(function(/*! Brunch !*/) {
+  if (!this.require) {
+    var modules = {}, cache = {}, require = function(name, root) {
+      var module = cache[name], path = expand(root, name), fn;
+      if (module) {
+        return module;
+      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
+        module = {id: name, exports: {}};
+        try {
+          cache[name] = module.exports;
+          fn(module.exports, function(name) {
+            return require(name, dirname(path));
+          }, module);
+          return cache[name] = module.exports;
+        } catch (err) {
+          delete cache[name];
+          throw err;
+        }
+      } else {
+        throw 'module \\'' + name + '\\' not found';
+      }
+    }, expand = function(root, name) {
+      var results = [], parts, part;
+      if (/^\\.\\.?(\\/|$)/.test(name)) {
+        parts = [root, name].join('/').split('/');
+      } else {
+        parts = name.split('/');
+      }
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part == '..') {
+          results.pop();
+        } else if (part != '.' && part != '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    }, dirname = function(path) {
+      return path.split('/').slice(0, -1).join('/');
+    };
+    this.require = function(name) {
+      return require(name, '');
+    };
+    this.require.brunch = true;
+    this.require.define = function(bundle) {
+      for (var key in bundle)
+        modules[key] = bundle[key];
+    };
+  }
+}).call(this);
+'''
 
+pluralize = (word) -> word + 's'
+dePluralize = (word) -> word[0..word.length - 1]
+
+exports.File = class File
+  constructor: (@path, @compiler) ->
+    @type = @compiler.compilerType
+    @data = ''
+
+  # Defines a requirejs module in scripts & templates.
+  # This allows brunch users to use `require 'module/name'` in browsers.
+  # 
+  # path - path to file, contents of which will be wrapped.
+  # source - file contents.
+  # 
+  # Returns a wrapped string.
+  _wrap: (data) ->
+    if @type in ['javascript', 'template'] and not (/^vendor/.test @path)
+      moduleName = JSON.stringify(
+        @path.replace(/^app\//, '').replace(/\.\w*$/, '')
+      )
+      """
+      (this.require.define({
+        #{moduleName}: function(exports, require, module) {
+          #{data}
+        }
+      }));\n
+      """
+    else
+      data
+
+  compile: (callback) ->
+    fs.readFile @path, (error, data) =>
+      return callback error if error?
+      @compiler.compile data.toString(), @path, (error, result) =>
+        @data = @_wrap result if result?
+        callback error, result
+
+exports.FileList = class FileList extends EventEmitter
+  constructor: ->
+    @files = []
+
+  resetTimer: ->
+    clearTimeout @timer if @timer?
+    @timer = setTimeout (=> @emit 'resetTimer'), 150
+
+  get: (searchFunction) ->
+    (@files.filter searchFunction)[0] 
+
+  add: (file) ->
+    @files = @files.concat [file]
+    compilerName = file.compiler.constructor.name
+    file.compile (error, result) =>
+      if error?
+        return helpers.logError "#{compilerName} error in '#{file.path}': 
+#{error}"
+      @resetTimer()
+
+  remove: (path) ->
+    removed = @get (file) -> file.path is path
+    @files = @files.filter (file) -> file isnt removed
+    delete removed
+    @resetTimer()
+
+class GeneratedFile
+  constructor: (@path, @sourceFiles, @config) ->
+    null
+  
+  # Collects content from a list of files and wraps it with
+  # require.js module definition if needed.
+  getData: (files) ->
+    data = ''
+    data += requireDefinition if /\.js$/.test @path
+    data += files.map((file) -> file.data).join ''
+    data
+    
+  _extractOrder: (files, config) ->
+    types = files.map (file) -> pluralize file.type
+    arrays = (value.order for own key, value of config.files when key in types)
+    arrays.reduce (memo, array) ->
+      array or= {}
+      {
+        before: memo.before.concat(array.before or []),
+        after: memo.after.concat(array.after or [])
+      }
+    , {before: [], after: []}
+
+  join: (config) ->
+    files = @sourceFiles
+    pathes = files.map (file) -> file.path
+    order = @_extractOrder files, config
+    sourceFiles = (helpers.sort pathes, order).map (file) ->
+      files[pathes.indexOf file]
+    @getData sourceFiles
+
+  write: (callback) ->
+    writeFile @path, (@join @config), callback
 
 # A simple file changes watcher.
 # 
@@ -91,101 +235,6 @@ class exports.FSWatcher extends EventEmitter
     @watched = {}
     this
 
-# The definition would be added on top of every filewriter .js file.
-requireDefinition = '''
-(function(/*! Brunch !*/) {
-  if (!this.require) {
-    var modules = {}, cache = {}, require = function(name, root) {
-      var module = cache[name], path = expand(root, name), fn;
-      if (module) {
-        return module;
-      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
-        module = {id: name, exports: {}};
-        try {
-          cache[name] = module.exports;
-          fn(module.exports, function(name) {
-            return require(name, dirname(path));
-          }, module);
-          return cache[name] = module.exports;
-        } catch (err) {
-          delete cache[name];
-          throw err;
-        }
-      } else {
-        throw 'module \\'' + name + '\\' not found';
-      }
-    }, expand = function(root, name) {
-      var results = [], parts, part;
-      if (/^\\.\\.?(\\/|$)/.test(name)) {
-        parts = [root, name].join('/').split('/');
-      } else {
-        parts = name.split('/');
-      }
-      for (var i = 0, length = parts.length; i < length; i++) {
-        part = parts[i];
-        if (part == '..') {
-          results.pop();
-        } else if (part != '.' && part != '') {
-          results.push(part);
-        }
-      }
-      return results.join('/');
-    }, dirname = function(path) {
-      return path.split('/').slice(0, -1).join('/');
-    };
-    this.require = function(name) {
-      return require(name, '');
-    }
-    this.require.define = function(bundle) {
-      for (var key in bundle)
-        modules[key] = bundle[key];
-    };
-  }
-}).call(this);
-'''
-
-# Defines a requirejs module.
-# This allows brunch users to use `require 'module/name'` in browsers.
-# 
-# path - path to file, contents of which will be wrapped.
-# source - file contents.
-# 
-# Returns a wrapped string.
-exports.wrap = wrap = (path, source) ->
-  moduleName = JSON.stringify(
-    path.replace(/^app\//, '').replace(/\.\w*$/, '')
-  )
-  """
-  (this.require.define({
-    #{moduleName}: function(exports, require, module) {
-      #{source}
-    }
-  }));\n
-  """
-
-# Collects content from a list of files and wraps it with
-# require.js module definition if needed.
-# 
-# files - array of objects with fields {file, data}.
-# wrapResult - wrap result with a definition of require.js or not.
-# 
-# Example
-# 
-#   getFilesData [{'app/views/user.coffee', 'filedata'}], yes
-# 
-# Returns a string.
-getFilesData = (files, wrapResult = no) ->
-  data = ''
-  data += requireDefinition if wrapResult
-  data += files
-    .map (file) ->
-      if wrapResult and not (/^vendor/.test file.path)
-        wrap file.path, file.data
-      else
-        file.data
-    .join ''
-  data
-
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
 #
@@ -199,8 +248,7 @@ getFilesData = (files, wrapResult = no) ->
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 # 
 writeFile = (path, data, callback) ->
-  write = (callback) ->
-    fs.writeFile path, data, callback
+  write = (callback) -> fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?
     mkdirp (sysPath.dirname path), (parseInt 755, 8), (error) ->
@@ -234,65 +282,63 @@ writeFile = (path, data, callback) ->
 #     destinationPath: 'result.js', path: 'app/client.coffee', data: 'fileData'
 # 
 class exports.FileWriter extends EventEmitter
-  timeout: 50
-
-  constructor: (@buildPath, @files = {}, @plugins = []) ->
+  constructor: (@config, @plugins) ->
     @destFiles = []
-    @on 'change', @_onChange
-    @on 'remove', @_onRemove
+    @initFilesConfig @config.files
 
-  _startTimer: ->
-    clearTimeout @timeoutId if @timeoutId?
-    @timeoutId = setTimeout @_write, @timeout
+  initFilesConfig: (filesConfig) ->
+    # Copy config.
+    config = helpers.extend filesConfig, {}
+    for own type, data of config
+      if typeof data.joinTo is 'string'
+        object = {}
+        object[data.joinTo] = /.+/
+        data.joinTo = object
+      for own destinationPath, regExpOrFunction of data.joinTo
+        data.joinTo[destinationPath] = if typeof regExpOrFunction is 'function'
+          regExpOrFunction
+        else
+          (string) -> regExpOrFunction.test string
+    config
 
-  _getDestFile: (destinationPath) ->
-    destFile = @destFiles.filter((file) -> file.path is destinationPath)[0]
-    unless destFile
-      destFile = {path: destinationPath, sourceFiles: []}
-      @destFiles.push destFile
-    destFile
+  getDestinationPathes: (file) ->
+    pathes = []
+    data = @config.files[pluralize file.type]
+    for own destinationPath, tester of data.joinTo when tester file.path
+      pathes.push destinationPath
+    if pathes.length > 0 then pathes else null
 
-  _onChange: (changedFile) =>
-    destFile = @_getDestFile changedFile.destinationPath
-    sourceFile = destFile.sourceFiles.filter(
-      (file) -> file.path is changedFile.path
-    )[0]
+  getFiles: (fileList) ->
+    map = {}
+    fileList.files.forEach (file) =>
+      pathes = @getDestinationPathes file
+      return unless pathes?
+      pathes.forEach (path) =>
+        map[path] ?= []
+        map[path].push file
+    for generatedFilePath, sourceFiles of map
+      generatedFilePath = sysPath.join @config.buildPath, generatedFilePath
+      new GeneratedFile generatedFilePath, sourceFiles, @config
 
-    unless sourceFile
-      sourceFile = changedFile
-      destFile.sourceFiles.push sourceFile
-      delete sourceFile.destinationPath
-    sourceFile.data = changedFile.data
-    @_startTimer()
+  ###
+  write: (fileList, filesConfig) ->
+    write = (callback) -> file.write callback
+    async.forEach (@getFiles fileList), write, (error, results) =>
+      return helpers.logError "write error. #{error}" if error?
+      @emit 'write', results
+  ###
 
-  _onRemove: (removedFile) =>
-    @destFiles.forEach (destFile) ->
-      destFile.sourceFiles = destFile.sourceFiles.filter (sourceFile) ->
-        sourceFile.path isnt removedFile
-    @_startTimer()
-
-  _concatFiles: (destFile) =>
-    files = destFile.sourceFiles
-    pathes = files.map (file) -> file.path
-    order = @files[destFile.path]?.order
-    destFile.sourceFiles = (helpers.sort pathes, order).map (file) ->
-      files[pathes.indexOf file]
-    wrapResult = /\.js$/.test destFile.path
-    {
-      path: (sysPath.join @buildPath, destFile.path),
-      data: (getFilesData destFile.sourceFiles, wrapResult),
-    }
-
-  _write: =>
-    beforeWrite = @plugins.map (plugin) -> (files, callback) ->
-      plugin.beforeWrite files, callback
-    getFiles = (callback) =>
-      callback null, @destFiles.map @_concatFiles
-    write = (file, callback) ->
-      writeFile file.path, file.data, callback
+  write: (fileList) =>
+    beforeWrite = @plugins
+      .filter (plugin) ->
+        plugin.beforeWrite
+      .map (plugin) ->
+        (files, callback) -> plugin.beforeWrite files, callback
+    getFiles = (callback) => callback null, @getFiles fileList
+    write = (file, callback) -> file.write callback
 
     async.waterfall [getFiles, beforeWrite...], (error, files) =>
-      return helpers.logError "beforeWrite plugin error. #{error}" if error?
+      return helpers.logError "plugin error. #{error}" if error?
       async.forEach files, write, (error, results) =>
-        return @emit 'error', error if error?
+        return helpers.logError "write error. #{error}" if error?
         @emit 'write', results
