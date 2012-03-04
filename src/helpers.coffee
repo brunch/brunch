@@ -14,7 +14,7 @@ require.extensions['.coffee'] ?= (module, filename) ->
 #   # => {a: 5, b: 15, c: 20, e: 50}
 # 
 exports.extend = extend = (object, properties) ->
-  object[key] = val for own key, val of properties;
+  object[key] = val for own key, val of properties
   object
 
 # Shell color manipulation tools.

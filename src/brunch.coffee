@@ -8,10 +8,11 @@ fs_utils = require './fs_utils'
 helpers = require './helpers'
 
 loadPlugins = (config, callback) ->
+  cwd = sysPath.resolve config.rootPath
   fs.readFile 'package.json', (error, data) ->
     deps = (JSON.parse data).dependencies
     callback null, Object.keys(deps).map (dependency) ->
-      plugin = require "#{process.cwd()}/node_modules/#{dependency}"
+      plugin = require "#{cwd}/node_modules/#{dependency}"
       new plugin config
 
 isCompilerFor = (path) -> (plugin) ->
@@ -45,21 +46,30 @@ watchApplication = (persistent, rootPath, config, callback) ->
   
   loadPlugins config, (error, plugins) ->
     return helpers.logError error if error?
+    addToFileList = (disableWrapping) -> (path) ->
+      compiler = plugins.filter(isCompilerFor path)[0]
+      return unless compiler
+      file = new fs_utils.File path, compiler
+      file.disableWrapping = disableWrapping if disableWrapping
+      fileList.add file
+    
+    plugins.forEach (plugin) ->
+      return unless plugin.include?
+      includePathes = if typeof plugin.include is 'function'
+        plugin.include()
+      else
+        plugin.include
+      includePathes.forEach addToFileList yes
+
     writer = new fs_utils.FileWriter config, plugins
     watcher = (new fs_utils.FSWatcher directories)
-      .on 'change', (path) ->
-        compiler = plugins.filter(isCompilerFor path)[0]
-        return unless compiler
-        file = new fs_utils.File path, compiler
-        fileList.add file
-      .on 'remove', (path) ->
-        fileList.remove path
-    fileList.on 'resetTimer', ->
-      writer.write fileList
+      .on('change', addToFileList no)
+      .on('remove', (path) -> fileList.remove path)
+    fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       helpers.log "compiled."
       watcher.close() unless persistent
-      callback result
+      callback null, result
     watcher
 
 generateFile = (path, data, callback) ->

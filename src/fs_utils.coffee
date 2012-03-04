@@ -67,6 +67,7 @@ exports.File = class File
   constructor: (@path, @compiler) ->
     @type = @compiler.compilerType
     @data = ''
+    @disableWrapping = !(/^vendor/.test @path)
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -76,7 +77,7 @@ exports.File = class File
   # 
   # Returns a wrapped string.
   _wrap: (data) ->
-    if @type in ['javascript', 'template'] and not (/^vendor/.test @path)
+    if @type in ['javascript', 'template'] and @disableWrapping
       moduleName = JSON.stringify(
         @path.replace(/^app\//, '').replace(/\.\w*$/, '')
       )
