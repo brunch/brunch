@@ -33,5 +33,5 @@ exports.config =
         after: ['vendor/styles/helpers.css']
 
     templates:
-      generatorExtension: 'eco'
+      defaultExtension: 'eco'
       joinTo: 'javascripts/app.js'
