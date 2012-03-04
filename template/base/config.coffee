@@ -30,7 +30,7 @@ exports.config =
           'vendor/scripts/backbone-0.9.0.js'
         ]
 
-    'styles/app.css':
+    'stylesheets/app.css':
       languages:
         '\\.css$': languages.CSSLanguage
         '\\.styl$': languages.StylusLanguage
