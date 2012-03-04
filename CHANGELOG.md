@@ -1,7 +1,14 @@
 ## Brunch 1.0.0 (unreleased)
+* Changed default naming of build directory & its subdirs. Now the style
+matches expressjs and rails.
+    * `build` directory is now `public`.
+    * `scripts` has been renamed to `javascripts`.
+    * `styles` has been renamed to `stylesheets`.
 * Rewritten API for plugins to be framework-agnostic & much more simple:
+    * All `brunch-extensions` plugins have been split into separate repos.
     * Added support for generator templates.
     * Added support for different extensions in brunch generators.
+    * Added support for including files with plugins.
 * Improved command line API:
     * Added `--template` / `-t` option to `brunch new`.
     * Added `--path` `-p` option to `brunch generate`.
