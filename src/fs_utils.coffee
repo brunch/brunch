@@ -330,16 +330,14 @@ class exports.FileWriter extends EventEmitter
   ###
 
   write: (fileList) =>
-    beforeWrite = @plugins
-      .filter (plugin) ->
-        plugin.beforeWrite
-      .map (plugin) ->
-        (files, callback) -> plugin.beforeWrite files, callback
+    minifiers = @plugins
+      .filter((plugin) -> plugin.minify)
+      .map((plugin) -> plugin.minify)
     getFiles = (callback) => callback null, @getFiles fileList
     write = (file, callback) -> file.write callback
 
-    async.waterfall [getFiles, beforeWrite...], (error, files) =>
-      return helpers.logError "plugin error. #{error}" if error?
+    async.waterfall [getFiles, minifiers...], (error, files) =>
+      return helpers.logError "minify error. #{error}" if error?
       async.forEach files, write, (error, results) =>
         return helpers.logError "write error. #{error}" if error?
         @emit 'write', results
