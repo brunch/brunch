@@ -67,9 +67,12 @@ watchApplication = (persistent, rootPath, config, callback) ->
       .on('remove', (path) -> fileList.remove path)
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
-      helpers.log "compiled."
-      watcher.close() unless persistent
-      callback null, result
+      assetPath = sysPath.join rootPath, 'app', 'assets'
+      ncp assetPath, config.buildPath, (error) ->
+        helpers.logError "Asset compilation error: #{error}" if error?
+        helpers.log "compiled."
+        watcher.close() unless persistent
+        callback null, result
     watcher
 
 generateFile = (path, data, callback) ->

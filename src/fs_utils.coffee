@@ -61,7 +61,29 @@ requireDefinition = '''
 '''
 
 pluralize = (word) -> word + 's'
+
 dePluralize = (word) -> word[0..word.length - 1]
+
+# Creates file if it doesn't exist and writes data to it.
+# Would also create a parent directories if they don't exist.
+#
+# path - path to file that would be written.
+# data - data to be written
+# callback(error, path, data) - would be executed on error or on
+#    successful write.
+# 
+# Example
+# 
+#   writeFile 'test.txt', 'data', (error) -> console.log error if error?
+# 
+writeFile = (path, data, callback) ->
+  write = (callback) -> fs.writeFile path, data, callback
+  write (error) ->
+    return callback null, path, data unless error?
+    mkdirp (sysPath.dirname path), (parseInt 755, 8), (error) ->
+      return callback error if error?
+      write (error) ->
+        callback error, path, data
 
 exports.File = class File
   constructor: (@path, @compiler) ->
@@ -243,52 +265,6 @@ class exports.FSWatcher extends EventEmitter
     @watched = {}
     this
 
-# Creates file if it doesn't exist and writes data to it.
-# Would also create a parent directories if they don't exist.
-#
-# path - path to file that would be written.
-# data - data to be written
-# callback(error, path, data) - would be executed on error or on
-#    successful write.
-# 
-# Example
-# 
-#   writeFile 'test.txt', 'data', (error) -> console.log error if error?
-# 
-writeFile = (path, data, callback) ->
-  write = (callback) -> fs.writeFile path, data, callback
-  write (error) ->
-    return callback null, path, data unless error?
-    mkdirp (sysPath.dirname path), (parseInt 755, 8), (error) ->
-      return callback error if error?
-      write (error) ->
-        callback error, path, data
-
-# The class could be used to 
-# FileWriter would respond to
-#   
-#   .emit 'change', {destinationPath, path, data}
-# 
-# and launch 100ms write timer. If any other 'change' would occur in that
-# period, the timer will be reset. Class events:
-# - 'error' (error): would be emitten when error happened.
-# - 'write' (results): would be emitted when all files has been written.
-# 
-# buildPath - an output directory.
-# files - config entry, that describes file order etc.
-# plugins - a list of functions with signature (files, callback).
-#   Every plugin would be applied to the list of files.
-# 
-# Example
-# 
-#   writer = (new FileWriter buildPath, files, plugins)
-#     .on 'error', (error) ->
-#       console.log 'File write error', error
-#     .on 'write', (result) ->
-#       console.log 'Files has been written with data', result
-#   writer.emit 'change',
-#     destinationPath: 'result.js', path: 'app/client.coffee', data: 'fileData'
-# 
 class exports.FileWriter extends EventEmitter
   constructor: (@config, @plugins) ->
     @destFiles = []
