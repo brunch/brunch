@@ -22,7 +22,7 @@
     "eco-brunch": "git+ssh://git@github.com:brunch/eco-brunch.git"
   },
   "devDependencies": {
-    "mocha": "0.12.1",
+    "mocha": "0.14.0",
     "expect.js": "0.1.2"
   }
 }

@@ -52,7 +52,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
       file = new fs_utils.File path, compiler
       file.disableWrapping = disableWrapping if disableWrapping
       fileList.add file
-    
+
     plugins.forEach (plugin) ->
       return unless plugin.include?
       includePathes = if typeof plugin.include is 'function'
