@@ -126,16 +126,11 @@ exports.FileList = class FileList extends EventEmitter
 
 class GeneratedFile
   constructor: (@path, @sourceFiles, @config) ->
-    null
-  
-  # Collects content from a list of files and wraps it with
-  # require.js module definition if needed.
-  getData: (files) ->
-    data = ''
-    data += requireDefinition if /\.js$/.test @path
-    data += files.map((file) -> file.data).join ''
-    data
-    
+    @type = if (@sourceFiles.some (file) -> file.type is 'javascript')
+      'javascript'
+    else
+      'stylesheet'
+
   _extractOrder: (files, config) ->
     types = files.map (file) -> pluralize file.type
     arrays = (value.order for own key, value of config.files when key in types)
@@ -147,16 +142,28 @@ class GeneratedFile
       }
     , {before: [], after: []}
 
-  join: (config) ->
+  # Collects content from a list of files and wraps it with
+  # require.js module definition if needed.
+  joinSourceFiles: ->
     files = @sourceFiles
     pathes = files.map (file) -> file.path
-    order = @_extractOrder files, config
+    order = @_extractOrder files, @config
     sourceFiles = (helpers.sort pathes, order).map (file) ->
       files[pathes.indexOf file]
-    @getData sourceFiles
+    data = ''
+    data += requireDefinition if @type is 'javascript'
+    data += sourceFiles.map((file) -> file.data).join ''
+    data
+
+  minify: (data, callback) ->
+    if @minifier?.minify?
+      @minifier.minify data, @path, callback
+    else
+      callback null, data
 
   write: (callback) ->
-    writeFile @path, (@join @config), callback
+    @minify @joinSourceFiles(), (error, data) =>
+      writeFile @path, data, callback
 
 # A simple file changes watcher.
 # 
@@ -285,9 +292,9 @@ writeFile = (path, data, callback) ->
 class exports.FileWriter extends EventEmitter
   constructor: (@config, @plugins) ->
     @destFiles = []
-    @initFilesConfig @config.files
+    @_initFilesConfig @config.files
 
-  initFilesConfig: (filesConfig) ->
+  _initFilesConfig: (filesConfig) ->
     # Copy config.
     config = helpers.extend filesConfig, {}
     for own type, data of config
@@ -302,42 +309,33 @@ class exports.FileWriter extends EventEmitter
           (string) -> regExpOrFunction.test string
     config
 
-  getDestinationPathes: (file) ->
+  _getDestinationPathes: (file) ->
     pathes = []
     data = @config.files[pluralize file.type]
     for own destinationPath, tester of data.joinTo when tester file.path
       pathes.push destinationPath
     if pathes.length > 0 then pathes else null
 
-  getFiles: (fileList) ->
+  _getFiles: (fileList, minifiers) ->
     map = {}
     fileList.files.forEach (file) =>
-      pathes = @getDestinationPathes file
+      pathes = @_getDestinationPathes file
       return unless pathes?
       pathes.forEach (path) =>
         map[path] ?= []
         map[path].push file
+    files = []
     for generatedFilePath, sourceFiles of map
       generatedFilePath = sysPath.join @config.buildPath, generatedFilePath
-      new GeneratedFile generatedFilePath, sourceFiles, @config
-
-  ###
-  write: (fileList, filesConfig) ->
-    write = (callback) -> file.write callback
-    async.forEach (@getFiles fileList), write, (error, results) =>
-      return helpers.logError "write error. #{error}" if error?
-      @emit 'write', results
-  ###
+      file = new GeneratedFile generatedFilePath, sourceFiles, @config
+      for minifier in minifiers when minifier.minifierType is file.type
+        file.minifier = minifier
+      files.push file
+    files
 
   write: (fileList) =>
-    minifiers = @plugins
-      .filter((plugin) -> plugin.minify)
-      .map((plugin) -> plugin.minify)
-    getFiles = (callback) => callback null, @getFiles fileList
+    files = @_getFiles fileList, @plugins.filter (plugin) -> !!plugin.minify
     write = (file, callback) -> file.write callback
-
-    async.waterfall [getFiles, minifiers...], (error, files) =>
-      return helpers.logError "minify error. #{error}" if error?
-      async.forEach files, write, (error, results) =>
-        return helpers.logError "write error. #{error}" if error?
-        @emit 'write', results
+    async.forEach files, write, (error, results) =>
+      return helpers.logError "write error. #{error}" if error?
+      @emit 'write', results
