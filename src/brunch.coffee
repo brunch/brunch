@@ -5,7 +5,7 @@ mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
 helpers = require './helpers'
-global.helpers = helpers
+logger = require './logger'
 fs_utils = require './fs_utils'
 
 loadPlugins = (config, callback) ->

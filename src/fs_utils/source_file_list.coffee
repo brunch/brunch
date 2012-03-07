@@ -1,4 +1,5 @@
 {EventEmitter} = require 'events'
+logger = require '../logger'
 
 class exports.SourceFileList extends EventEmitter
   RESET_TIME: 100

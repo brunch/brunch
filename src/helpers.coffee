@@ -2,38 +2,11 @@ coffeescript = require 'coffee-script'
 express = require 'express'
 growl = require 'growl'
 sysPath = require 'path'
-winston = require 'winston'
-util = require 'util'
+logger = require './logger'
 
 require.extensions['.coffee'] ?= (module, filename) ->
   content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
   module._compile content, filename
-
-class ConsoleGrowlTransport extends winston.transports.Console
-  constructor: ->
-    super
-    @super = ConsoleGrowlTransport.__super__
-
-  log: (level, msg, meta, callback) ->
-    args = arguments
-    notify = (notifyCallback) ->
-      if level is 'error'
-        growl msg, title: 'Brunch error', notifyCallback
-      else
-        notifyCallback()
-    notify =>
-      @super.log.apply this, args
-
-exports.logger = logger = new winston.Logger transports: [
-  new ConsoleGrowlTransport {
-    colorize: 'true',
-    timestamp: 'true'
-  }
-]
-
-debug = process.env.BRUNCH_DEBUG is '1'
-logger.setLevels winston.config.syslog.levels unless debug
-global.logger = logger
 
 # Extends the object with properties from another object.
 # Example

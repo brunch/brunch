@@ -3,6 +3,7 @@ async = require 'async'
 sysPath = require 'path'
 common = require './common'
 {GeneratedFile} = require './generated_file'
+logger = require '../logger'
 
 class exports.FileWriter extends EventEmitter
   constructor: (@config, @plugins) ->

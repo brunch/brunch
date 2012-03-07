@@ -1,6 +1,7 @@
 {EventEmitter} = require 'events'
 fs = require 'fs'
 sysPath = require 'path'
+logger = require '../logger'
 
 class exports.FileWatcher extends EventEmitter
   # RegExp that would filter invalid files (dotfiles, emacs caches etc).

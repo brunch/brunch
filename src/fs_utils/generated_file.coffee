@@ -1,4 +1,5 @@
 common = require './common'
+logger = require '../logger'
 
 # The definition would be added on top of every filewriter .js file.
 requireDefinition = '''
