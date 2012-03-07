@@ -4,8 +4,9 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
-fs_utils = require './fs_utils'
 helpers = require './helpers'
+global.helpers = helpers
+fs_utils = require './fs_utils'
 
 loadPlugins = (config, callback) ->
   cwd = sysPath.resolve config.rootPath
@@ -42,15 +43,18 @@ watchApplication = (persistent, rootPath, config, callback) ->
   helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
   
-  fileList = new fs_utils.FileList
+  fileList = new fs_utils.SourceFileList
   
   loadPlugins config, (error, plugins) ->
-    return helpers.logError error if error?
-    addToFileList = (disableWrapping) -> (path) ->
+    return logger.error error if error?
+    start = null
+    addToFileList = (isPluginHelper) -> (path) ->
+      start = Date.now()
+      logger.log 'debug', "File '#{path}' was changed"
       compiler = plugins.filter(isCompilerFor path)[0]
       return unless compiler
-      file = new fs_utils.File path, compiler
-      file.disableWrapping = disableWrapping if disableWrapping
+      file = new fs_utils.SourceFile path, compiler
+      file.isPluginHelper = yes if isPluginHelper
       fileList.add file
 
     plugins.forEach (plugin) ->
@@ -62,15 +66,16 @@ watchApplication = (persistent, rootPath, config, callback) ->
       includePathes.forEach addToFileList yes
 
     writer = new fs_utils.FileWriter config, plugins
-    watcher = (new fs_utils.FSWatcher directories)
+    watcher = (new fs_utils.FileWatcher directories)
       .on('change', addToFileList no)
       .on('remove', (path) -> fileList.remove path)
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       assetPath = sysPath.join rootPath, 'app', 'assets'
       ncp assetPath, config.buildPath, (error) ->
-        helpers.logError "Asset compilation error: #{error}" if error?
-        helpers.log "compiled."
+        logger.error "Asset compilation failed: #{error}" if error?
+        logger.info "compiled."
+        logger.log 'debug', "compilation time: #{Date.now() - start}ms"
         watcher.close() unless persistent
         callback null, result
     watcher
@@ -78,17 +83,17 @@ watchApplication = (persistent, rootPath, config, callback) ->
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
   write = ->
-    helpers.log "create #{path}"
+    logger.info "create #{path}"
     fs.writeFile path, data, callback
   sysPath.exists parentDir, (exists) ->
     return write() if exists
-    helpers.log "invoke #{parentDir}"
+    logger.info "create #{parentDir}"
     mkdirp parentDir, (parseInt 755, 8), (error) ->
-      return helpers.logError if error?
+      return logger.error if error?
       write()
 
 destroyFile = (path, callback) ->
-  helpers.log "destroy #{path}"
+  logger.info "destroy #{path}"
   fs.unlink path, callback
 
 generateOrDestroy = (generate, options, callback) ->
@@ -141,7 +146,7 @@ generateOrDestroy = (generate, options, callback) ->
 exports.install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   process.chdir rootPath
-  helpers.log 'Installing packages...'
+  logger.info 'Installing packages...'
   exec 'npm install', (error, stdout, stderr) ->
     process.chdir prevDir
     callback stderr, stdout
@@ -154,12 +159,12 @@ exports.new = (options, callback = (->)) ->
   template ?= sysPath.join __dirname, '..', 'template', 'base'
   sysPath.exists rootPath, (exists) ->
     if exists
-      return helpers.logError "Directory '#{rootPath}' already exists"
+      return logger.error "Directory '#{rootPath}' already exists"
     mkdirp rootPath, (parseInt 755, 8), (error) ->
-      return helpers.logError error if error?
+      return logger.error error if error?
       ncp template, rootPath, (error) ->
-        return helpers.logError error if error?
-        helpers.log 'Created brunch directory layout'
+        return logger.error error if error?
+        logger.info 'Created brunch directory layout'
         exports.install rootPath, callback
 
 # Build application once and execute callback.

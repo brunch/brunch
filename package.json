@@ -34,7 +34,8 @@
     "mkdirp": "0.2.1",
     "ncp": "0.2.3",
     "growl": "1.4.1",
-    "express": "2.5.1"
+    "express": "2.5.1",
+    "winston": "0.5.10"
   },
   "devDependencies": {
     "mocha": "0.14.0",
