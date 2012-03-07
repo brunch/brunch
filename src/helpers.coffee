@@ -66,13 +66,28 @@ exports.exit = ->
   else
     process.exit 0
 
-exports.startServer = (port = 3333, path = '.') ->
-  try
-    server = require sysPath.resolve 'server.coffee'
-    server.startServer port, path, express, this
-  catch error
-    logger.error "couldn\'t load server.coffee. #{error}"
-    exports.exit()
+startDefaultServer = (port, path, callback) ->
+  server = express.createServer()
+  server.configure ->
+    server.use express.static path
+    server.set 'views', path
+    server.set 'view options', layout: no
+    server.register '.html', compile: (str, options) -> (locals) -> str
+  server.get '/', (req, res) ->
+    res.render 'index.html'
+  server.listen parseInt port, 10
+  server.on 'listening', callback
+  logger.info "application started on http://0.0.0.0:#{port}."
+
+exports.startServer = (port, buildPath, config, callback = (->)) ->
+  if config.server?.path
+    try
+      server = require sysPath.resolve config.server.path
+      server.startServer port, buildPath, callback
+    catch error
+      logger.error "couldn\'t load server #{config.server.path}: #{error}"
+  else
+    startDefaultServer port, buildPath, callback
 
 exports.loadConfig = (configPath) ->
   try
