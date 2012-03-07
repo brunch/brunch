@@ -147,7 +147,7 @@ exports.FileList = class FileList extends EventEmitter
     @resetTimer()
 
 class GeneratedFile
-  constructor: (@path, @sourceFiles, @config) ->
+  constructor: (@path, @sourceFiles, @config) ->    
     @type = if (@sourceFiles.some (file) -> file.type is 'javascript')
       'javascript'
     else
@@ -271,18 +271,20 @@ class exports.FileWriter extends EventEmitter
     @_initFilesConfig @config.files
 
   _initFilesConfig: (filesConfig) ->
-    # Copy config.
-    config = helpers.extend filesConfig, {}
-    for own type, data of config
+    config = filesConfig
+    Object.keys(config).forEach (type) =>
+      data = config[type]
       if typeof data.joinTo is 'string'
         object = {}
         object[data.joinTo] = /.+/
         data.joinTo = object
-      for own destinationPath, regExpOrFunction of data.joinTo
-        data.joinTo[destinationPath] = if typeof regExpOrFunction is 'function'
-          regExpOrFunction
+      Object.keys(data.joinTo).forEach (destinationPath) =>
+        regExpOrFunction = data.joinTo[destinationPath]
+        data.joinTo[destinationPath] = if regExpOrFunction instanceof RegExp
+          (string) ->
+            regExpOrFunction.test string
         else
-          (string) -> regExpOrFunction.test string
+          regExpOrFunction
     config
 
   _getDestinationPathes: (file) ->
