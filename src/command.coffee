@@ -10,6 +10,10 @@ exports.readPackageVersion = readPackageVersion = ->
   content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
   (JSON.parse content).version
 
+generatorChoices = ->
+  config = helpers.loadConfig 'config.coffee'
+  []
+
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'
@@ -25,13 +29,11 @@ commandLineConfig =
           metavar: 'APP_PATH'
           required: yes
           full: 'appPath'
-        buildPath:
-          abbr: 'o'
-          help: 'build path'
-          metavar: 'DIRECTORY'
-          full: 'output'
+        template:
+          abbr: 't'
+          help: 'path to application template'
       callback: (options) ->
-        brunch.new options.rootPath, options.buildPath
+        brunch.new options
 
     build:
       abbr: 'b'
@@ -75,20 +77,49 @@ the server would run'
 
     generate:
       abbr: 'g'
-      help: 'Generate model, view or route for current project'
+      help: 'Generate file(s) from template for current project'
       options:
         type:
           position: 1
           help: 'generator type'
-          choices: ['collection', 'model', 'router', 'style', 'template', 'view']
+          #choices: generatorChoices
           required: yes
         name:
           position: 2
           help: 'generator class name / filename'
           required: yes
+        parentDir:
+          abbr: 'p'
+          help: 'path to generated file directory'
+          metavar: 'DIRECTORY'
+          full: 'path'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
-        brunch.generate '.', options.type, options.name, config
+        options.rootPath = '.'
+        options.config = helpers.loadConfig 'config.coffee'
+        brunch.generate options
+
+    destroy:
+      abbr: 'd'
+      help: 'Destroy changes made by brunch generate for current project'
+      options:
+        type:
+          position: 1
+          help: 'generator type'
+          #choices: generatorChoices
+          required: yes
+        name:
+          position: 2
+          help: 'generator class name / filename'
+          required: yes
+        parentDir:
+          abbr: 'p'
+          help: 'path to generated file directory'
+          metavar: 'DIRECTORY'
+          full: 'path'
+      callback: (options) ->
+        options.rootPath = '.'
+        options.config = helpers.loadConfig 'config.coffee'
+        brunch.destroy options
 
   options:
     version:

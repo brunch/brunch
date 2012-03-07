@@ -1,4 +1,25 @@
-## Brunch 0.9.0 (unreleased)
+## Brunch 1.0.0 (unreleased)
+* Changed default naming of build directory & its subdirs. Now the style
+matches expressjs and rails.
+    * `build` directory is now `public`.
+    * `scripts` has been renamed to `javascripts`.
+    * `styles` has been renamed to `stylesheets`.
+* Rewritten API for plugins to be framework-agnostic & much more simple:
+    * All `brunch-extensions` plugins have been split into separate repos.
+    * Added support for generator templates.
+    * Added support for different extensions in brunch generators.
+    * Added support for including files with plugins.
+* Improved command line API:
+    * Added `--template` / `-t` option to `brunch new`.
+    * Added `--path` `-p` option to `brunch generate`.
+    * Added support for custom webservers to `brunch watch --server`.
+* Fixed Jade templates. See
+[jade-brunch](https://github.com/brunch/jade-brunch) for more info.
+
+## Brunch 0.9.1 (February 21, 2012)
+* Updated brunch-extensions to 0.2.2.
+
+## Brunch 0.9.0 (January 10, 2012)
 * Added new API for plugins.
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,

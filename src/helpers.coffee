@@ -2,6 +2,7 @@ coffeescript = require 'coffee-script'
 express = require 'express'
 growl = require 'growl'
 sysPath = require 'path'
+logger = require './logger'
 
 require.extensions['.coffee'] ?= (module, filename) ->
   content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
@@ -14,7 +15,7 @@ require.extensions['.coffee'] ?= (module, filename) ->
 #   # => {a: 5, b: 15, c: 20, e: 50}
 # 
 exports.extend = extend = (object, properties) ->
-  object[key] = val for own key, val of properties;
+  object[key] = val for own key, val of properties
   object
 
 # Shell color manipulation tools.
@@ -56,108 +57,27 @@ formatDate = (color = 'none') ->
   time = timeArr.join ':'
   colorize "[#{time}]:", color
 
-# Example
-# 
-#   capitalize 'test'
-#   # => 'Test'
-#
-exports.capitalize = capitalize = (string) ->
-  (string[0] or '').toUpperCase() + string[1..]
-
-# Example
-# 
-#   formatClassName 'twitter_users'
-#   # => 'TwitterUsers'
-#
-exports.formatClassName = (filename) ->
-  filename.split('_').map(capitalize).join('')
-
 exports.isTesting = ->
-  'jasmine' of global
-
-exports.log = (text, color = 'green', isError = no) ->
-  stream = if isError then process.stderr else process.stdout
-  # TODO: log stdout on testing output end.
-  output = "#{formatDate(color)} #{text}\n"
-  stream.write output, 'utf8' unless exports.isTesting()
-  growl text, title: 'Brunch error' if isError
-
-exports.logError = (text) ->
-  exports.log text, 'red', yes
-
-exports.logDebug = (args...) ->
-  console.log (formatDate 'green'), args...
+  no
 
 exports.exit = ->
   if exports.isTesting()
-    exports.logError 'Terminated process'
+    logger.error 'Terminated process'
   else
     process.exit 0
-
-# Sorts by pattern.
-# 
-# Examples
-#
-#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
-#     before: ['a.coffee'], after: ['b.coffee']
-#   # => ['a.coffee', 'c.coffee', 'b.coffee']
-# 
-exports.sort = (files, config) ->
-  return files if typeof config isnt 'object'
-  config.before ?= []
-  config.after ?= []
-  # Clone data to a new array.
-  [files...]
-    .sort (a, b) ->
-      # Try to find items in config.before.
-      # Item that config.after contains would have bigger sorting index.
-      indexOfA = config.before.indexOf a
-      indexOfB = config.before.indexOf b
-      [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-      if hasA and not hasB
-        -1
-      else if not hasA and hasB
-        1
-      else if hasA and hasB
-        indexOfA - indexOfB
-      else
-        # Items wasn't found in config.before, try to find then in
-        # config.after.
-        # Item that config.after contains would have lower sorting index.
-        indexOfA = config.after.indexOf a
-        indexOfB = config.after.indexOf b
-        [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-        if hasA and not hasB
-          1
-        else if not hasA and hasB
-          -1
-        else if hasA and hasB
-          indexOfA - indexOfB
-        else
-          # If item path starts with 'vendor', it has bigger priority.
-          aIsVendor = (a.indexOf 'vendor') is 0
-          bIsVendor = (b.indexOf 'vendor') is 0
-          if aIsVendor and not bIsVendor
-            -1
-          else if not aIsVendor and bIsVendor
-            1
-          else
-            # All conditions were false, we don't care about order of
-            # these two items.
-            0
 
 exports.startServer = (port = 3333, path = '.') ->
   try
     server = require sysPath.resolve 'server.coffee'
-    server.startServer( port, path, express, @)
+    server.startServer port, path, express, this
   catch error
-    exports.logError "[Brunch]: couldn\'t load server.coffee. #{error}"
+    logger.error "couldn\'t load server.coffee. #{error}"
     exports.exit()
 
 exports.loadConfig = (configPath) ->
   try
     {config} = require sysPath.resolve configPath
   catch error
-    exports.logError "[Brunch]: couldn\'t load config.coffee. #{error}"
+    logger.error "couldn\'t load config.coffee. #{error}"
     exports.exit()
   config

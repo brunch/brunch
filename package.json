@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta2",
   "keywords": ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
@@ -25,7 +25,7 @@
     "test": "./node_modules/mocha/bin/mocha --reporter spec"
   },
   "engines": {
-    "node": "~0.6.6"
+    "node": "~0.6.10"
   },
   "dependencies": {
     "coffee-script": "1.2.0",
@@ -34,11 +34,12 @@
     "mkdirp": "0.2.1",
     "ncp": "0.2.3",
     "growl": "1.4.1",
-    "express": "2.5.1"
+    "express": "2.5.1",
+    "winston": "0.5.10"
   },
   "devDependencies": {
-    "mocha": "0.8.0",
-    "expect.js": "0.1.1",
+    "mocha": "0.14.0",
+    "expect.js": "0.1.2",
     "zombie": "0.12.7"
   }
 }

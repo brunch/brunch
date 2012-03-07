@@ -1,41 +1,29 @@
 async = require 'async'
-{exec} = require 'child_process'
+{exec, spawn} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
-fs_utils = require './fs_utils'
 helpers = require './helpers'
+logger = require './logger'
+fs_utils = require './fs_utils'
 
-# Creates an array of languages that would be used in brunch application.
-# 
-# config - parsed app config
-# 
-# Examples
-# 
-#   getLanguagesFromConfig {files: {
-#     'out1.js': {languages: {'\.coffee$': CoffeeScriptLanguage}}
-#   # => {
-#     regExp: /\.coffee/,
-#     destinationPath: 'out1.js',
-#     compiler: coffeeScriptLanguage
-#   }
-# 
-# Returns array.
-exports.getLanguagesFromConfig = getLanguagesFromConfig = (config) ->
-  languages = []
-  for destinationPath, settings of config.files
-    for regExp, language of settings.languages
-      try
-        languages.push {
-          regExp: ///#{regExp}///, destinationPath,
-          compiler: new language config
-        }
-      catch error
-        helpers.logError """[Brunch]: cannot parse config entry 
-config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
-"""
-  languages
+loadPlugins = (config, callback) ->
+  cwd = sysPath.resolve config.rootPath
+  fs.readFile 'package.json', (error, data) ->
+    deps = (JSON.parse data).dependencies
+    callback null, Object.keys(deps).map (dependency) ->
+      plugin = require "#{cwd}/node_modules/#{dependency}"
+      new plugin config
+
+isCompilerFor = (path) -> (plugin) ->
+  pattern = if plugin.pattern
+    plugin.pattern
+  else if plugin.extension
+    ///\.#{plugin.extension}$///
+  else
+    null
+  (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
 # Recompiles all files in current working directory.
 # 
@@ -45,80 +33,147 @@ config.files['#{destinationPath}'].languages['#{regExp}']: #{error}.
 # callback - Callback that would be executed on each compilation.
 # 
 # Returns `fs_utils.FSWatcher` object.
-watchApplication = (rootPath, config, persistent, callback) ->
+watchApplication = (persistent, rootPath, config, callback) ->
   config.buildPath ?= sysPath.join rootPath, 'public'
   config.server ?= {}
   config.server.port ?= 3333
-
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
-  
-  helpers.startServer config.server.port, config.buildPath if config.server.run
 
-  plugins = config.plugins.map (plugin) -> new plugin config
-  languages = getLanguagesFromConfig config
+  helpers.startServer config.server.port, config.buildPath if config.server.run
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
-  writer = new fs_utils.FileWriter config.buildPath, config.files, plugins
-  watcher = (new fs_utils.FSWatcher directories)
-    .on 'change', (file) ->
-      languages
-        .filter (language) ->
-          language.regExp.test file
-        .forEach (language) ->
-          {compiler, destinationPath} = language
-          compiler.compile file, (error, data) ->
-            if error?
-              # TODO: (Coffee 1.2.1) compiler.name.
-              languageName = compiler.constructor.name.replace 'Language', ''
-              return helpers.logError "
-[#{languageName}]: cannot compile '#{file}': #{error}"
-            writer.emit 'change', {destinationPath, path: file, data}
-    .on 'remove', (file) ->
-      writer.emit 'remove', file
-  writer.on 'error', (error) ->
-    helpers.logError "[Brunch] write error. #{error}"
-  writer.on 'write', (result) ->
-    helpers.log "[Brunch]: compiled."
-    watcher.close() unless persistent
-    callback result
-  watcher
+  
+  fileList = new fs_utils.SourceFileList
+  
+  loadPlugins config, (error, plugins) ->
+    return logger.error error if error?
+    start = null
+    addToFileList = (isPluginHelper) -> (path) ->
+      start = Date.now()
+      logger.log 'debug', "File '#{path}' was changed"
+      compiler = plugins.filter(isCompilerFor path)[0]
+      return unless compiler
+      file = new fs_utils.SourceFile path, compiler
+      file.isPluginHelper = yes if isPluginHelper
+      fileList.add file
+
+    plugins.forEach (plugin) ->
+      return unless plugin.include?
+      includePathes = if typeof plugin.include is 'function'
+        plugin.include()
+      else
+        plugin.include
+      includePathes.forEach addToFileList yes
+
+    writer = new fs_utils.FileWriter config, plugins
+    watcher = (new fs_utils.FileWatcher directories)
+      .on('change', addToFileList no)
+      .on('remove', (path) -> fileList.remove path)
+    fileList.on 'resetTimer', -> writer.write fileList
+    writer.on 'write', (result) ->
+      assetPath = sysPath.join rootPath, 'app', 'assets'
+      ncp assetPath, config.buildPath, (error) ->
+        logger.error "Asset compilation failed: #{error}" if error?
+        logger.info "compiled."
+        logger.log 'debug', "compilation time: #{Date.now() - start}ms"
+        watcher.close() unless persistent
+        callback null, result
+    watcher
+
+generateFile = (path, data, callback) ->
+  parentDir = sysPath.dirname path
+  write = ->
+    logger.info "create #{path}"
+    fs.writeFile path, data, callback
+  sysPath.exists parentDir, (exists) ->
+    return write() if exists
+    logger.info "create #{parentDir}"
+    mkdirp parentDir, (parseInt 755, 8), (error) ->
+      return logger.error if error?
+      write()
+
+destroyFile = (path, callback) ->
+  logger.info "destroy #{path}"
+  fs.unlink path, callback
+
+generateOrDestroy = (generate, options, callback) ->
+  {rootPath, type, name, config, parentDir} = options
+  generateOrDestroyFile = if generate then generateFile else destroyFile
+
+  languageType = switch type
+    when 'collection', 'model', 'router', 'view' then 'javascripts'
+    when 'style' then 'stylesheets'
+    else type
+
+  extension = config.files[languageType].defaultExtension ? switch languageType
+    when 'javascripts' then 'coffee'
+    when 'stylesheets' then 'styl'
+    when 'templates' then 'eco'
+
+  initFile = (parentDir, callback) ->
+    name += "_#{type}" if type in ['router', 'view']
+    parentDir ?= if languageType is 'template'
+      sysPath.join rootPath, 'app', 'views', "#{type}s"
+    else
+      sysPath.join rootPath, 'app', "#{type}s"
+    fullPath = sysPath.join parentDir, "#{name}.#{extension}"
+    loadPlugins config, (error, plugins) ->
+      plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
+      generator = plugin?.generators[config.framework or 'backbone']?[type]
+      data = if generator?
+        generator name
+      else
+        ''
+      if generate
+        generateFile fullPath, data, callback
+      else
+        destroyFile fullPath, callback
+
+  # We'll additionally generate tests for 'script' languages.
+  initTests = (parentDir, callback) ->
+    return callback() unless languageType is 'javascripts'
+    parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
+    fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
+    if generate
+      generateFile fullPath, '', callback
+    else
+      destroyFile fullPath, callback
+
+  initFile parentDir, ->
+    initTests parentDir, ->
+      callback()
+
+exports.install = (rootPath, callback = (->)) ->
+  prevDir = process.cwd()
+  process.chdir rootPath
+  logger.info 'Installing packages...'
+  exec 'npm install', (error, stdout, stderr) ->
+    process.chdir prevDir
+    callback stderr, stdout
 
 # Create new application in `rootPath` and build it.
 # App is created by copying directory `../template/base` to `rootPath`.
-exports.new = (rootPath, buildPath, callback = (->)) ->
-  callback = buildPath if typeof buildPath is 'function'
+exports.new = (options, callback = (->)) ->
+  {rootPath, buildPath, template} = options
   buildPath ?= sysPath.join rootPath, 'build'
-
-  templatePath = sysPath.join __dirname, '..', 'template', 'base'
+  template ?= sysPath.join __dirname, '..', 'template', 'base'
   sysPath.exists rootPath, (exists) ->
     if exists
-      return helpers.logError "[Brunch]: can\'t create project: 
-directory \"#{rootPath}\" already exists"
+      return logger.error "Directory '#{rootPath}' already exists"
     mkdirp rootPath, (parseInt 755, 8), (error) ->
-      return helpers.logError "[Brunch]: Error #{error}" if error?
-      mkdirp buildPath, (parseInt 755, 8), (error) ->
-        return helpers.logError "[Brunch]: Error #{error}" if error?
-        ncp templatePath, rootPath, (error) ->
-          return helpers.logError error if error?
-          helpers.log 'created brunch directory layout'
-          helpers.log 'installing npm packages...'
-          prevDir = process.cwd()
-          process.chdir rootPath
-          exec 'npm install', (error) ->
-            process.chdir prevDir
-            if error?
-              helpers.logError "npm error: #{error}"
-              return callback error
-            helpers.log 'installed npm package brunch-extensions'
-            callback()
+      return logger.error error if error?
+      ncp template, rootPath, (error) ->
+        return logger.error error if error?
+        logger.info 'Created brunch directory layout'
+        exports.install rootPath, callback
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->
-  watchApplication rootPath, config, no, callback
+  watchApplication no, rootPath, config, callback
 
 # Watch application for changes and execute callback on every compilation.
 exports.watch = (rootPath, config, callback = (->)) ->
-  watchApplication rootPath, config, yes, callback
+  watchApplication yes, rootPath, config, callback
 
 # Generate new controller / model / view and its tests.
 # 
@@ -127,63 +182,8 @@ exports.watch = (rootPath, config, callback = (->)) ->
 # name - filename.
 # config - parsed app config.
 # 
-# Examples
-# 
-#   generate './twitter', 'style', 'user', config
-#   generate '.', 'view', 'user', config
-#   generate '.', 'collection', 'users', config
-# 
-exports.generate = (rootPath, type, name, config, callback = (->)) ->
-  unless config.defaultExtensions
-    callback()
-    return helpers.logError "Cannot find `defaultExtensions` option in config."
-  
-  # We'll additionally generate tests for 'script' languages.
-  languageType = switch type
-    when 'collection', 'model', 'router', 'view' then 'script'
-    else type
+exports.generate = (options, callback = (->)) ->
+  generateOrDestroy yes, options, callback
 
-  extension = config.defaultExtensions[languageType]
-
-  generateFile = (callback) ->
-    name += "_#{type}" if type in ['router', 'view']
-    filename = "#{name}.#{extension}"
-    genName = helpers.capitalize type
-    className = helpers.formatClassName name
-
-    path = if languageType is 'template'
-      sysPath.join rootPath, 'app', 'views', "#{type}s", filename
-    else
-      sysPath.join rootPath, 'app', "#{type}s", filename
-
-    data = switch extension
-      when 'coffee'
-        "class exports.#{className} extends Backbone.#{genName}\n"
-      when 'js'
-        "exports.#{className} = Backbone.#{genName}.extend({\n\n});"
-      else
-        ''
-    fs.writeFile path, data, (error) ->
-      return helpers.logError error if error?
-      helpers.log "Generated #{path}"
-      callback()
-
-  generateTests = (callback) ->
-    # TODO: remove the spike.
-    return callback() unless languageType is 'script'
-    testDirPath = sysPath.join rootPath, 'test', 'unit', "#{type}s"
-    testFilePath = sysPath.join testDirPath, "#{name}_test.#{extension}"
-    write = ->
-      fs.writeFile testFilePath, '', (error) ->
-        return helpers.logError error if error?
-        helpers.log "Generated #{testFilePath}"
-        callback()
-    sysPath.exists testDirPath, (exists) ->
-      return write() if exists
-      mkdirp testDirPath, (parseInt 755, 8), (error) ->
-        return helpers.logError error if error?
-        write()
-
-  generateFile ->
-    generateTests ->
-      callback()
+exports.destroy = (options, callback = (->)) ->
+  generateOrDestroy no, options, callback
