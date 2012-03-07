@@ -13,6 +13,8 @@ matches expressjs and rails.
     * Added `--template` / `-t` option to `brunch new`.
     * Added `--path` `-p` option to `brunch generate`.
     * Added support for custom webservers to `brunch watch --server`.
+* Fixed Jade templates. See
+[jade-brunch](https://github.com/brunch/jade-brunch) for more info.
 
 ## Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
