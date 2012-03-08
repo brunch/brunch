@@ -1,3 +1,4 @@
+growl = require 'growl'
 winston = require 'winston'
 
 class ConsoleGrowlTransport extends winston.transports.Console

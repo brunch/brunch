@@ -1,6 +1,5 @@
 coffeescript = require 'coffee-script'
 express = require 'express'
-growl = require 'growl'
 sysPath = require 'path'
 logger = require './logger'
 
