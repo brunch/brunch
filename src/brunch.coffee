@@ -16,7 +16,7 @@ loadPlugins = (config, callback) ->
       .map (dependency) ->
         require "#{cwd}/node_modules/#{dependency}"
       .filter (plugin) ->
-        (plugin::)? and ((plugin::minifierType)? or (plugin::compilerType)?)
+        (plugin::)? and plugin::brunchPlugin
       .map (plugin) ->
         new plugin config
     callback null, plugins

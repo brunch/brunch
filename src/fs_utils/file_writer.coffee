@@ -46,7 +46,7 @@ class exports.FileWriter extends EventEmitter
     for generatedFilePath, sourceFiles of map
       generatedFilePath = sysPath.join @config.buildPath, generatedFilePath
       file = new GeneratedFile generatedFilePath, sourceFiles, @config
-      for minifier in minifiers when minifier.minifierType is file.type
+      for minifier in minifiers when minifier.type is file.type
         file.minifier = minifier
       files.push file
     files

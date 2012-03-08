@@ -5,7 +5,7 @@ pluginHelperCounter = 0
 
 class exports.SourceFile
   constructor: (@path, @compiler) ->
-    @type = @compiler.compilerType
+    @type = @compiler.type
     @data = ''
     @isPluginHelper = no
 
