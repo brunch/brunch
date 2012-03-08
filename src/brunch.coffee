@@ -45,7 +45,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
 
-  if config.server.run
+  if persistent and config.server.run
     helpers.startServer config.server.port, config.buildPath, config
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
 
