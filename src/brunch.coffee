@@ -11,10 +11,15 @@ fs_utils = require './fs_utils'
 loadPlugins = (config, callback) ->
   cwd = sysPath.resolve config.rootPath
   fs.readFile 'package.json', (error, data) ->
-    deps = (JSON.parse data).dependencies
-    callback null, Object.keys(deps).map (dependency) ->
-      plugin = require "#{cwd}/node_modules/#{dependency}"
-      new plugin config
+    deps = Object.keys (JSON.parse data).dependencies
+    plugins = deps
+      .map (dependency) ->
+        require "#{cwd}/node_modules/#{dependency}"
+      .filter (plugin) ->
+        (plugin::)? and ((plugin::minifierType)? or (plugin::compilerType)?)
+      .map (plugin) ->
+        new plugin config
+    callback null, plugins
 
 isCompilerFor = (path) -> (plugin) ->
   pattern = if plugin.pattern
