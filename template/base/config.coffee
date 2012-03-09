@@ -36,6 +36,9 @@ exports.config =
       defaultExtension: 'eco'
       joinTo: 'javascripts/app.js'
 
+  # Enable or disable minifying of result js / css files.
+  minify: no
+
   # Settings of web server that will run with `brunch watch [--server]`.
   # server:
   #   # Path to your server node.js module.

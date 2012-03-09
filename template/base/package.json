@@ -16,10 +16,15 @@
   },
   "dependencies": {
     "javascript-brunch": "git+ssh://git@github.com:brunch/javascript-brunch.git",
-    "css-brunch": "git+ssh://git@github.com:brunch/css-brunch.git",
     "coffee-script-brunch": "git+ssh://git@github.com:brunch/coffee-script-brunch.git",
+
+    "css-brunch": "git+ssh://git@github.com:brunch/css-brunch.git",
     "stylus-brunch": "git+ssh://git@github.com:brunch/stylus-brunch.git",
-    "eco-brunch": "git+ssh://git@github.com:brunch/eco-brunch.git"
+
+    "eco-brunch": "git+ssh://git@github.com:brunch/eco-brunch.git",
+    
+    "uglify-js-brunch": "git+ssh://git@github.com:brunch/uglify-js-brunch.git",
+    "clean-css-brunch": "git+ssh://git@github.com:brunch/clean-css-brunch.git"
   },
   "devDependencies": {
     "mocha": "0.14.0",

@@ -139,7 +139,7 @@ class exports.GeneratedFile
     data
 
   minify: (data, callback) ->
-    if @minifier?.minify?
+    if @config.minify and @minifier?.minify?
       @minifier.minify data, @path, callback
     else
       callback null, data
