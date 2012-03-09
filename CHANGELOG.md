@@ -1,4 +1,6 @@
 ## Brunch 1.0.0 (unreleased)
+* Default app now uses two separate files to simplify debugging: `app.js` and 
+`vendor.js`.
 * Changed default naming of build directory & its subdirs. Now the style
 matches expressjs and rails.
     * `build` directory is now `public`.
