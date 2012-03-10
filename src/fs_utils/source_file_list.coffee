@@ -42,5 +42,4 @@ class exports.SourceFileList extends EventEmitter
   remove: (path) ->
     removed = @getByPath path
     @files = @files.filter (file) -> file isnt removed
-    delete removed
     @resetTimer()
