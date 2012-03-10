@@ -2,6 +2,7 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 
+# A simple function that will return pluralized form of word.
 exports.pluralize = (word) ->
   word + 's'
 

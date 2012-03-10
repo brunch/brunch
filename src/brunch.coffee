@@ -70,7 +70,8 @@ watchApplication = (persistent, rootPath, config, callback) ->
       includePathes.forEach addToFileList yes
 
     writer = new fs_utils.FileWriter config, plugins
-    watcher = (new fs_utils.FileWatcher directories)
+    watcher = (new fs_utils.FileWatcher)
+      .add(directories)
       .on('change', addToFileList no)
       .on('remove', (path) -> fileList.remove path)
     fileList.on 'resetTimer', -> writer.write fileList

@@ -3,6 +3,7 @@ sysPath = require 'path'
 
 pluginHelperCounter = 0
 
+# A file that will be compiled by brunch.
 class exports.SourceFile
   constructor: (@path, @compiler) ->
     @type = @compiler.type
@@ -37,6 +38,8 @@ class exports.SourceFile
       else
         data
 
+  # Reads file and compiles it with compiler. Data is cached to `this.data`
+  # in order to do compilation only if the file was changed.
   compile: (callback) ->
     fs.readFile @path, (error, data) =>
       return callback error if error?

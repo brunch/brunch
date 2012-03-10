@@ -5,6 +5,7 @@ common = require './common'
 {GeneratedFile} = require './generated_file'
 logger = require '../logger'
 
+# 
 class exports.FileWriter extends EventEmitter
   constructor: (@config, @plugins) ->
     @destFiles = []
@@ -28,10 +29,10 @@ class exports.FileWriter extends EventEmitter
     config
 
   _getDestinationPathes: (file) ->
-    pathes = []
     data = @config.files[common.pluralize file.type]
-    for own destinationPath, tester of data.joinTo when tester file.path
-      pathes.push destinationPath
+    pathes = (Object.keys data.joinTo).filter (destinationPath) ->
+      checkingFunction = data.joinTo[destinationPath]
+      checkingFunction file.path
     if pathes.length > 0 then pathes else null
 
   _getFiles: (fileList, minifiers) ->
@@ -42,14 +43,16 @@ class exports.FileWriter extends EventEmitter
       pathes.forEach (path) =>
         map[path] ?= []
         map[path].push file
-    files = []
-    for generatedFilePath, sourceFiles of map
-      generatedFilePath = sysPath.join @config.buildPath, generatedFilePath
-      file = new GeneratedFile generatedFilePath, sourceFiles, @config
-      for minifier in minifiers when minifier.type is file.type
-        file.minifier = minifier
-      files.push file
-    files
+    (Object.keys map).map (generatedFilePath) =>
+      sourceFiles = map[generatedFilePath]
+      fullPath = sysPath.join @config.buildPath, generatedFilePath
+      file = new GeneratedFile fullPath, sourceFiles, @config
+      minifiers
+        .filter (minifier) ->
+          minifier.type is file.type
+        .forEach (minifier) ->
+          file.minifier = minifier
+      file
 
   write: (fileList) =>
     files = @_getFiles fileList, @plugins.filter (plugin) -> !!plugin.minify

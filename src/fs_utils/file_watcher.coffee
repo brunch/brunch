@@ -3,13 +3,23 @@ fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
 
+# Watches files & directories for changes.
+# Uses old node.js API (fs.watchFile) because fs.watch doesn't
+# provide filenames on OS X.
+# 
+# Examples
+# 
+#   watcher = (new FileWatcher)
+#     .add(directories)
+#     .on('change', (path) -> console.log 'File', path, 'was added / changed')
+#     .on('remove', (path) -> console.log 'File', path, 'was removed')
+# 
 class exports.FileWatcher extends EventEmitter
   # RegExp that would filter invalid files (dotfiles, emacs caches etc).
   invalid: /^(\.|#)/
 
-  constructor: (files) ->
+  constructor: ->
     @watched = {}
-    @_handle file for file in files
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
@@ -50,7 +60,7 @@ class exports.FileWatcher extends EventEmitter
     read directory
     @_watch directory, read
 
-  _handle: (file) ->
+  _handle: (file) =>
     return if @invalid.test sysPath.basename file
     fs.realpath file, (error, path) =>
       return logger.error error if error?
@@ -59,14 +69,27 @@ class exports.FileWatcher extends EventEmitter
         @_handleFile file if stats.isFile()
         @_handleDir file if stats.isDirectory()
 
+  # Public: Adds directories / files for tracking.
+  # 
+  # * files - array of strings (file pathes).
+  # 
+  # Examples
+  # 
+  #   add ['app', 'vendor']
+  # 
+  # Returns an instance of FileWatcher for chaning.
+  add: (files) ->
+    files.forEach @_handle
+    this
+
   on: ->
     super
     this
 
   # Removes all listeners from watched files.
   close: ->
-    for directory, files of @watched
-      for file in files
+    (Object.keys @watched).forEach (directory) ->
+      @watched[directory].forEach (file) ->
         fs.unwatchFile sysPath.join directory, file
     @watched = {}
     this
