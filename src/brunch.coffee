@@ -59,9 +59,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
       logger.log 'debug', "File '#{path}' was changed"
       compiler = plugins.filter(isCompilerFor path)[0]
       return unless compiler
-      file = new fs_utils.SourceFile path, compiler
-      file.isPluginHelper = yes if isPluginHelper
-      fileList.add file
+      fileList.add {path, compiler, isPluginHelper}
 
     plugins.forEach (plugin) ->
       return unless plugin.include?
