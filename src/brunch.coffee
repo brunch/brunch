@@ -44,6 +44,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
   config.server.port ?= 3333
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
+  assetDirectories = [(sysPath.join rootPath, 'app', 'assets')]
 
   if persistent and config.server.run
     helpers.startServer config.server.port, config.buildPath, config
@@ -74,6 +75,10 @@ watchApplication = (persistent, rootPath, config, callback) ->
       .add(directories)
       .on('change', addToFileList no)
       .on('remove', (path) -> fileList.remove path)
+    assetWatcher = (new fs_utils.FileWatcher)
+      .add(assetDirectories)
+      .on('change', fileList.resetTimer)
+      .on('remove', fileList.resetTimer)
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       assetPath = sysPath.join rootPath, 'app', 'assets'
@@ -81,7 +86,9 @@ watchApplication = (persistent, rootPath, config, callback) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
-        watcher.close() unless persistent
+        unless persistent
+          watcher.close()
+          assetWatcher.close()
         callback null, result
     watcher
 

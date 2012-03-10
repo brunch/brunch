@@ -14,7 +14,7 @@ class exports.SourceFileList extends EventEmitter
 
   # Called every time any file was changed.
   # Emits `resetTimer` event after `RESET_TIME`.
-  resetTimer: ->
+  resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout (=> @emit 'resetTimer'), @RESET_TIME
 
