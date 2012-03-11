@@ -46,7 +46,7 @@ exports.loadConfig = (configPath) ->
     {config} = require sysPath.resolve configPath
   catch error
     logger.error "couldn\'t load config.coffee. #{error}"
-    exports.exit()
+    process.exit 1
   config
 
 exports.loadPlugins = (config, callback) ->
