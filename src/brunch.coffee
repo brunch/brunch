@@ -8,19 +8,6 @@ helpers = require './helpers'
 logger = require './logger'
 fs_utils = require './fs_utils'
 
-loadPlugins = (config, callback) ->
-  cwd = sysPath.resolve config.rootPath
-  fs.readFile 'package.json', (error, data) ->
-    deps = Object.keys (JSON.parse data).dependencies
-    plugins = deps
-      .map (dependency) ->
-        require "#{cwd}/node_modules/#{dependency}"
-      .filter (plugin) ->
-        (plugin::)? and plugin::brunchPlugin
-      .map (plugin) ->
-        new plugin config
-    callback null, plugins
-
 isCompilerFor = (path) -> (plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
@@ -52,7 +39,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
 
   fileList = new fs_utils.SourceFileList
   
-  loadPlugins config, (error, plugins) ->
+  helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
     start = null
     addToFileList = (isPluginHelper) -> (path) ->
@@ -129,7 +116,7 @@ generateOrDestroy = (generate, options, callback) ->
     else
       sysPath.join rootPath, 'app', "#{type}s"
     fullPath = sysPath.join parentDir, "#{name}.#{extension}"
-    loadPlugins config, (error, plugins) ->
+    helpers.loadPlugins config, (error, plugins) ->
       plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
       generator = plugin?.generators[config.framework or 'backbone']?[type]
       data = if generator?
@@ -155,7 +142,7 @@ generateOrDestroy = (generate, options, callback) ->
     initTests parentDir, ->
       callback()
 
-exports.install = (rootPath, callback = (->)) ->
+install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   process.chdir rootPath
   logger.info 'Installing packages...'
@@ -177,7 +164,7 @@ exports.new = (options, callback = (->)) ->
       ncp template, rootPath, (error) ->
         return logger.error error if error?
         logger.info 'Created brunch directory layout'
-        exports.install rootPath, callback
+        install rootPath, callback
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->

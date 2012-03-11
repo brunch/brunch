@@ -1,5 +1,6 @@
 coffeescript = require 'coffee-script'
 express = require 'express'
+fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
 
@@ -16,54 +17,6 @@ require.extensions['.coffee'] ?= (module, filename) ->
 exports.extend = extend = (object, properties) ->
   object[key] = val for own key, val of properties
   object
-
-# Shell color manipulation tools.
-colors =
-  black: 30
-  red: 31
-  green: 32
-  brown: 33
-  blue: 34
-  purple: 35
-  cyan: 36
-  gray: 37
-  none: ''
-  reset: 0
-
-getColor = (color = 'none') ->
-  colors[color.toString()]
-
-colorize = (text, color) ->
-  "\x1b[#{getColor(color)}m#{text}\x1b[#{getColor('reset')}m"
-
-# Adds '0' if a positive number is lesser than 10.
-pad = (number) ->
-  num = "#{number}"
-  if num.length < 2
-    "0#{num}"
-  else
-    num
-
-# Generates current date and colorizes it, if specified.
-# Example
-# 
-#   formatDate()
-#   # => '[06:56:47]:'
-# 
-formatDate = (color = 'none') ->
-  date = new Date
-  timeArr = (pad date["get#{item}"]() for item in ['Hours', 'Minutes', 'Seconds'])
-  time = timeArr.join ':'
-  colorize "[#{time}]:", color
-
-exports.isTesting = ->
-  no
-
-exports.exit = ->
-  if exports.isTesting()
-    logger.error 'Terminated process'
-  else
-    process.exit 0
 
 startDefaultServer = (port, path, callback) ->
   server = express.createServer()
@@ -95,3 +48,17 @@ exports.loadConfig = (configPath) ->
     logger.error "couldn\'t load config.coffee. #{error}"
     exports.exit()
   config
+
+exports.loadPlugins = (config, callback) ->
+  cwd = sysPath.resolve config.rootPath
+  fs.readFile 'package.json', (error, data) ->
+    return callback error if error?
+    deps = Object.keys (JSON.parse data).dependencies
+    plugins = deps
+      .map (dependency) ->
+        require "#{cwd}/node_modules/#{dependency}"
+      .filter (plugin) ->
+        (plugin::)? and plugin::brunchPlugin
+      .map (plugin) ->
+        new plugin config
+    callback null, plugins

@@ -5,12 +5,17 @@ common = require './common'
 {GeneratedFile} = require './generated_file'
 logger = require '../logger'
 
-# 
+# A bridge between `GeneratedFile` and `SourceFileList`.
 class exports.FileWriter extends EventEmitter
+  # * config  - parsed app config
+  # * plugins - hashmap of plugins from package.json.
   constructor: (@config, @plugins) ->
     @destFiles = []
     @_initFilesConfig @config.files
 
+  # config.files[type].joinTo can be string, map of (str -> regExp)
+  # or map of (str -> fn). This converts all cases to one interface
+  # (str -> fn).
   _initFilesConfig: (filesConfig) ->
     config = filesConfig
     Object.keys(config).forEach (type) =>

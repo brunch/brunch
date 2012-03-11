@@ -47,7 +47,7 @@ class exports.FileWatcher extends EventEmitter
         return unless current
         previous = @_getWatchedDir directory
         previous
-          .filter (file) ->
+          .filter (file) =>
             file not in current
           .forEach (file) =>
             @emit 'remove', sysPath.join directory, file
@@ -88,8 +88,8 @@ class exports.FileWatcher extends EventEmitter
 
   # Removes all listeners from watched files.
   close: ->
-    (Object.keys @watched).forEach (directory) ->
-      @watched[directory].forEach (file) ->
+    (Object.keys @watched).forEach (directory) =>
+      @watched[directory].forEach (file) =>
         fs.unwatchFile sysPath.join directory, file
     @watched = {}
     this
