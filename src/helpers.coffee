@@ -50,13 +50,13 @@ exports.loadConfig = (configPath) ->
   config
 
 exports.loadPlugins = (config, callback) ->
-  cwd = sysPath.resolve config.rootPath
-  fs.readFile 'package.json', (error, data) ->
+  rootPath = sysPath.resolve config.rootPath
+  fs.readFile (sysPath.join rootPath, 'package.json'), (error, data) ->
     return callback error if error?
     deps = Object.keys (JSON.parse data).dependencies
     plugins = deps
       .map (dependency) ->
-        require "#{cwd}/node_modules/#{dependency}"
+        require "#{rootPath}/node_modules/#{dependency}"
       .filter (plugin) ->
         (plugin::)? and plugin::brunchPlugin
       .map (plugin) ->
