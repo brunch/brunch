@@ -15,16 +15,16 @@
     "start": "brunch watch --server"
   },
   "dependencies": {
-    "javascript-brunch": "git+ssh://git@github.com:brunch/javascript-brunch.git",
-    "coffee-script-brunch": "git+ssh://git@github.com:brunch/coffee-script-brunch.git",
+    "javascript-brunch": "1.0.x",
+    "coffee-script-brunch": "1.0.x",
 
-    "css-brunch": "git+ssh://git@github.com:brunch/css-brunch.git",
-    "stylus-brunch": "git+ssh://git@github.com:brunch/stylus-brunch.git",
+    "css-brunch": "1.0.x",
+    "stylus-brunch": "1.0.x",
 
-    "eco-brunch": "git+ssh://git@github.com:brunch/eco-brunch.git",
+    "eco-brunch": "1.0.x",
     
-    "uglify-js-brunch": "git+ssh://git@github.com:brunch/uglify-js-brunch.git",
-    "clean-css-brunch": "git+ssh://git@github.com:brunch/clean-css-brunch.git"
+    "uglify-js-brunch": "1.0.x",
+    "clean-css-brunch": "1.0.x"
   },
   "devDependencies": {
     "mocha": "0.14.0",
