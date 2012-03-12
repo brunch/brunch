@@ -1,6 +1,6 @@
 exports.config =
-  # Uncomment and edit the next line to change default build path.
-  # buildPath: 'public'
+  # Edit the next line to change default build path.
+  buildPath: 'public'
 
   files:
     javascripts:
@@ -35,6 +35,10 @@ exports.config =
     templates:
       defaultExtension: 'eco'
       joinTo: 'javascripts/app.js'
+
+  # Change this if you're using something other than backbone (e.g. 'ember').
+  # Content of files, generated with `brunch generate` depends on the setting.
+  # framework: 'backbone'
 
   # Enable or disable minifying of result js / css files.
   minify: no
