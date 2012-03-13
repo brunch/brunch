@@ -8,6 +8,9 @@ require.extensions['.coffee'] ?= (module, filename) ->
   content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
   module._compile content, filename
 
+exports.startsWith = (string, substring) ->
+  string.indexOf(substring) isnt -1
+
 # Extends the object with properties from another object.
 # Example
 #   

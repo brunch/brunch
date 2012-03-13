@@ -31,7 +31,10 @@ watchApplication = (persistent, rootPath, config, callback) ->
   config.server.port ?= 3333
   # Pass rootPath to config in order to allow plugins to use it.
   config.rootPath = rootPath
-  assetDirectories = [(sysPath.join rootPath, 'app', 'assets')]
+  assetPath = sysPath.join rootPath, 'app', 'assets'
+  ignored = (path) ->
+    helpers.startsWith(path, assetPath) or
+    helpers.startsWith(sysPath.basename(path), '_')
 
   if persistent and config.server.run
     helpers.startServer config.server.port, config.buildPath, config
@@ -41,18 +44,17 @@ watchApplication = (persistent, rootPath, config, callback) ->
 
   helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
-    ignored = /^_/
     start = null
     addToFileList = (isPluginHelper) -> (path) ->
       start = Date.now()
       logger.log 'debug', "File '#{path}' was changed"
-      return fileList.resetTimer() if ignored.test sysPath.basename path
+      return fileList.resetTimer() if ignored path
       compiler = plugins.filter(isCompilerFor path)[0]
       return unless compiler
       fileList.add {path, compiler, isPluginHelper}
 
     removeFromFileList = (path) ->
-      return fileList.resetTimer() if ignored.test sysPath.basename path
+      return fileList.resetTimer() if ignored path
       fileList.remove path
 
     plugins.forEach (plugin) ->
