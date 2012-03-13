@@ -38,16 +38,22 @@ watchApplication = (persistent, rootPath, config, callback) ->
   directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
 
   fileList = new fs_utils.SourceFileList
-  
+
   helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
+    ignored = /^_/
     start = null
     addToFileList = (isPluginHelper) -> (path) ->
       start = Date.now()
       logger.log 'debug', "File '#{path}' was changed"
+      return fileList.resetTimer() if ignored.test sysPath.basename path
       compiler = plugins.filter(isCompilerFor path)[0]
       return unless compiler
       fileList.add {path, compiler, isPluginHelper}
+
+    removeFromFileList = (path) ->
+      return fileList.resetTimer() if ignored.test sysPath.basename path
+      fileList.remove path
 
     plugins.forEach (plugin) ->
       return unless plugin.include?
@@ -61,11 +67,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
     watcher = (new fs_utils.FileWatcher)
       .add(directories)
       .on('change', addToFileList no)
-      .on('remove', (path) -> fileList.remove path)
-    assetWatcher = (new fs_utils.FileWatcher)
-      .add(assetDirectories)
-      .on('change', fileList.resetTimer)
-      .on('remove', fileList.resetTimer)
+      .on('remove', removeFromFileList)
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       assetPath = sysPath.join rootPath, 'app', 'assets'
@@ -73,9 +75,7 @@ watchApplication = (persistent, rootPath, config, callback) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
-        unless persistent
-          watcher.close()
-          assetWatcher.close()
+        watcher.close() unless persistent
         callback null, result
     watcher
 
