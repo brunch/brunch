@@ -18,7 +18,7 @@ matches expressjs and rails.
     * Added support for custom webservers to `brunch watch --server`.
 * Files, whose names start with `_` and files in `app/assets` are now ignored
 by compiler (but not by watcher).
-* Update backbone to 0.9.1 and underscore to 1.3.1.
+* Update backbone to 0.9.1, underscore to 1.3.1 and jquery to 1.7.1.
 * Added IcedCoffeeScript plugin.
 * Fixed Jade templates. See
 [jade-brunch](https://github.com/brunch/jade-brunch) for more info.
