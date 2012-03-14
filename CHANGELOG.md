@@ -1,4 +1,5 @@
 ## Brunch 1.0.0 (unreleased)
+* Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 
 `vendor.js`.
 * Changed default naming of build directory & its subdirs. Now the style
@@ -15,9 +16,13 @@ matches expressjs and rails.
     * Added `--template` / `-t` option to `brunch new`.
     * Added `--path` `-p` option to `brunch generate`.
     * Added support for custom webservers to `brunch watch --server`.
+* Files, whose names start with `_` and files in `app/assets` are now ignored
+by compiler (but not by watcher).
 * Fixed Jade templates. See
 [jade-brunch](https://github.com/brunch/jade-brunch) for more info.
 * Added support for javascript config files.
+* Added debugging mode. You can enable it by prepending `BRUNCH_DEBUG=1 ` to
+brunch command.
 
 ## Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
