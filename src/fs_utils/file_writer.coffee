@@ -1,7 +1,7 @@
 async = require 'async'
 {EventEmitter} = require 'events'
 sysPath = require 'path'
-common = require './common'
+helpers = require '../helpers'
 {GeneratedFile} = require './generated_file'
 logger = require '../logger'
 
@@ -34,7 +34,7 @@ class exports.FileWriter extends EventEmitter
     config
 
   _getDestinationPathes: (file) ->
-    data = @config.files[common.pluralize file.type]
+    data = @config.files[helpers.pluralize file.type]
     pathes = (Object.keys data.joinTo).filter (destinationPath) ->
       checkingFunction = data.joinTo[destinationPath]
       checkingFunction file.path

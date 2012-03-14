@@ -8,6 +8,10 @@ require.extensions['.coffee'] ?= (module, filename) ->
   content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
   module._compile content, filename
 
+# A simple function that will return pluralized form of word.
+exports.pluralize = (word) ->
+  word + 's'
+
 exports.startsWith = (string, substring) ->
   string.indexOf(substring) is 0
 

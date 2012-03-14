@@ -1,4 +1,5 @@
 common = require './common'
+helpers = require '../helpers'
 logger = require '../logger'
 
 # The definition would be added on top of every filewriter .js file.
@@ -120,7 +121,7 @@ class exports.GeneratedFile
       'stylesheet'
 
   _extractOrder: (files, config) ->
-    types = files.map (file) -> common.pluralize file.type
+    types = files.map (file) -> helpers.pluralize file.type
     arrays = (value.order for own key, value of config.files when key in types)
     arrays.reduce (memo, array) ->
       array or= {}

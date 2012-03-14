@@ -2,10 +2,6 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 
-# A simple function that will return pluralized form of word.
-exports.pluralize = (word) ->
-  word + 's'
-
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
 #

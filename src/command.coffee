@@ -10,9 +10,9 @@ exports.readPackageVersion = readPackageVersion = ->
   content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
   (JSON.parse content).version
 
-generatorChoices = ->
-  config = helpers.loadConfig 'config.coffee'
-  []
+generatorChoices = [
+  'collection', 'model', 'router', 'style', 'template', 'view'
+]
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
@@ -82,7 +82,7 @@ the server would run'
         type:
           position: 1
           help: 'generator type'
-          #choices: generatorChoices
+          choices: generatorChoices
           required: yes
         name:
           position: 2
@@ -105,7 +105,7 @@ the server would run'
         type:
           position: 1
           help: 'generator type'
-          #choices: generatorChoices
+          choices: generatorChoices
           required: yes
         name:
           position: 2

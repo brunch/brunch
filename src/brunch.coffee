@@ -94,24 +94,30 @@ generateFile = (path, data, callback) ->
       write()
 
 destroyFile = (path, callback) ->
-  logger.info "destroy #{path}"
-  fs.unlink path, callback
+  fs.unlink path, (error) ->
+    return logger.error "#{error}" if error?
+    logger.info "destroy #{path}"
+    callback error
 
 generateOrDestroy = (generate, options, callback) ->
   {rootPath, type, name, config, parentDir} = options
   generateOrDestroyFile = if generate then generateFile else destroyFile
 
   languageType = switch type
-    when 'collection', 'model', 'router', 'view' then 'javascripts'
-    when 'style' then 'stylesheets'
+    when 'collection', 'model', 'router', 'view' then 'javascript'
+    when 'style' then 'stylesheet'
     else type
 
-  extension = config.files[languageType].defaultExtension ? switch languageType
-    when 'javascripts' then 'coffee'
-    when 'stylesheets' then 'styl'
-    when 'templates' then 'eco'
+  configSection = config.files[helpers.pluralize languageType]
+
+  extension = configSection?.defaultExtension ? switch languageType
+    when 'javascript' then 'coffee'
+    when 'stylesheet' then 'styl'
+    when 'template' then 'eco'
+    else ''
 
   initFile = (parentDir, callback) ->
+    logger.log 'debug', "Initializing file"
     name += "_#{type}" if type in ['router', 'view']
     parentDir ?= if languageType is 'template'
       sysPath.join rootPath, 'app', 'views', "#{type}s"
@@ -120,9 +126,12 @@ generateOrDestroy = (generate, options, callback) ->
     fullPath = sysPath.join parentDir, "#{name}.#{extension}"
     helpers.loadPlugins config, (error, plugins) ->
       plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
-      generator = plugin?.generators[config.framework or 'backbone']?[type]
+      generator = plugin?.generators?[config.framework or 'backbone']?[type]
       data = if generator?
-        generator name
+        if typeof generator is 'function'
+          generator name
+        else
+          generator
       else
         ''
       if generate
@@ -132,7 +141,7 @@ generateOrDestroy = (generate, options, callback) ->
 
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
-    return callback() unless languageType is 'javascripts'
+    return callback() unless languageType is 'javascript'
     parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
     fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
     if generate
