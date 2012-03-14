@@ -18,6 +18,7 @@ matches expressjs and rails.
     * Added support for custom webservers to `brunch watch --server`.
 * Files, whose names start with `_` and files in `app/assets` are now ignored
 by compiler (but not by watcher).
+* Added IcedCoffeeScript plugin.
 * Fixed Jade templates. See
 [jade-brunch](https://github.com/brunch/jade-brunch) for more info.
 * Added support for javascript config files.

@@ -102,6 +102,8 @@ destroyFile = (path, callback) ->
 generateOrDestroy = (generate, options, callback) ->
   {rootPath, type, name, config, parentDir} = options
   generateOrDestroyFile = if generate then generateFile else destroyFile
+  appPath = sysPath.join rootPath, 'app'
+  testPath = sysPath.join rootPath, 'test', 'unit'
 
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'javascript'
@@ -116,14 +118,17 @@ generateOrDestroy = (generate, options, callback) ->
     when 'template' then 'eco'
     else ''
 
+  name += "_#{type}" if type in ['router', 'view']
+  parentDir ?= if languageType is 'template'
+    sysPath.join 'views', "#{helpers.pluralize type}"
+  else
+    "#{helpers.pluralize type}"
+
+  logger.log 'debug', "Initializing file of type '#{languageType}' with 
+extension '#{extension}'"
+
   initFile = (parentDir, callback) ->
-    logger.log 'debug', "Initializing file"
-    name += "_#{type}" if type in ['router', 'view']
-    parentDir ?= if languageType is 'template'
-      sysPath.join rootPath, 'app', 'views', "#{type}s"
-    else
-      sysPath.join rootPath, 'app', "#{type}s"
-    fullPath = sysPath.join parentDir, "#{name}.#{extension}"
+    fullPath = sysPath.join appPath, parentDir, "#{name}.#{extension}"
     helpers.loadPlugins config, (error, plugins) ->
       plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
       generator = plugin?.generators?[config.framework or 'backbone']?[type]
@@ -142,8 +147,7 @@ generateOrDestroy = (generate, options, callback) ->
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
     return callback() unless languageType is 'javascript'
-    parentDir ?= sysPath.join rootPath, 'test', 'unit', "#{type}s"
-    fullPath = sysPath.join parentDir, "#{name}_test.#{extension}"
+    fullPath = sysPath.join testPath, parentDir, "#{name}.#{extension}"
     if generate
       generateFile fullPath, '', callback
     else
