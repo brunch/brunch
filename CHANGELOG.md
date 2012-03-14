@@ -1,4 +1,4 @@
-## Brunch 1.0.0 (unreleased)
+## Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 
 `vendor.js`.
