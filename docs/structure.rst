@@ -2,18 +2,18 @@
 Directory structure
 *******************
 
-Overview
-========
+Simple (included with brunch)
+=============================
 
 ::
 
-  Cakefile
   config.coffee
   README.md
 
   /app/
     /assets/
       index.html
+      humans.txt
       images/
     collections/
     models/
@@ -42,10 +42,6 @@ Overview
       normalize.css
       helpers.css
 
-Description
-===========
-
-* ``Cakefile`` is a coffeescript makefile.
 * ``config.coffee`` contains configuration of your app. You can set plugins / languages that would be used here.
 * ``app/assets`` contains images / static files. Contents of the directory would be copied to ``build/`` without change.
 * Other ``app/`` directories could contain files that would be compiled. Languages, that compile to JS (coffeescript, roy etc.) or js files and located in ``app`` are automatically wrapped in module closure so they can be loaded by ``require('module/location')``.

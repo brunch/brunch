@@ -2,6 +2,17 @@
 Upgrading brunch
 ****************
 
+Upgrading to 1.0
+================
+
+* Edit config:
+    * Remove ``plugins`` section, as it has been moved to ``package.json``.
+    * Remove ``defaultExtensions`` section.
+    * Edit ``files`` section to conform to new config API.
+* Remove ``node_modules/`` directory. Install plugins you need by editing ``package.json`` and executing ``npm install`` after it.
+    
+* Upgrade backbone & jquery to latest versions (optional).
+
 Upgrading to 0.9
 ================
 
