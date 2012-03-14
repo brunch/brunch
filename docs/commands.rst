@@ -59,8 +59,8 @@ Examples:
 * ``brunch generate collection user_list``: would generate file ``app/collections/user_list.coffee`` with class ``UserList`` and a unit-test ``test/unit/collections/user_list.coffee``.
 * ``brunch g model post -p app/twitter/models``: would generate file ``app/twitter/models/post.coffee`` with class ``Post`` and a unit-test ``test/unit/twitter/models/post.coffee``.
 
-``brunch destroy``
-------------------
+``brunch destroy <type> <name>``
+--------------------------------
 Destroy model, view or route for current project, created by `brunch generate`. Options:
 
 * ``type``: (required) generator type. One of: collection, model, router, style, template, view.
