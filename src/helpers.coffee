@@ -9,7 +9,7 @@ require.extensions['.coffee'] ?= (module, filename) ->
   module._compile content, filename
 
 exports.startsWith = (string, substring) ->
-  string.indexOf(substring) isnt -1
+  string.indexOf(substring) is 0
 
 # Extends the object with properties from another object.
 # Example
