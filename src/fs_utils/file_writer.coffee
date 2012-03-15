@@ -13,9 +13,14 @@ class exports.FileWriter extends EventEmitter
     @destFiles = []
     @_initFilesConfig @config.files
 
-  # config.files[type].joinTo can be string, map of (str -> regExp)
-  # or map of (str -> fn). This converts all cases to one interface
-  # (str -> fn).
+  # config.files[type].joinTo can be :
+  # a String
+  # a RexExp
+  # a Function
+  # an Array of mixed Strings, RexExps, Functions, Objects or Arrays
+  # an Object of key (path) of mixed Strings or RexExps
+  # This converts all cases to one interface (str -> fn).
+
   _initFilesConfig: (filesConfig) ->
     config = filesConfig
     Object.keys(config).forEach (type) =>
