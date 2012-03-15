@@ -24,14 +24,55 @@ class exports.FileWriter extends EventEmitter
         object = {}
         object[data.joinTo] = /.+/
         data.joinTo = object
+
       Object.keys(data.joinTo).forEach (destinationPath) =>
-        regExpOrFunction = data.joinTo[destinationPath]
-        data.joinTo[destinationPath] = if regExpOrFunction instanceof RegExp
-          (string) ->
-            regExpOrFunction.test string
-        else
-          regExpOrFunction
+        data.joinTo[destinationPath] = @_processOption data.joinTo[destinationPath]
+
     config
+
+  _processOption: (option) ->
+    if option instanceof RegExp
+      @_testRegex option
+
+    else if option instanceof Array
+      @_processArrayOptions option
+
+    else if typeof option is 'function'
+      option
+
+    else if typeof option is 'string'
+      @_testRegex(new RegExp option)
+
+    else if typeof option is 'object'
+      @_processObjectOptions option
+
+    else logger.error "#{option} is an invalid option"
+
+  _processObjectOptions: (options) ->
+    (string) =>
+      for path, childs of options
+        for child in childs
+          if child instanceof RegExp
+            concat = new RegExp path + child.source
+
+          else if typeof child is 'string'
+            concat = path + child
+
+          else
+            logger.error "#{child} is an invalid option for #{path}"
+
+          return true if (@_processOption concat)(string)
+
+      return false
+
+  _processArrayOptions: (options) ->
+    (string) =>
+      for option in options
+        return true if (@_processOption option)(string)
+      return false
+
+  _testRegex: (regex) ->
+    (string) -> regex.test string
 
   _getDestinationPathes: (file) ->
     data = @config.files[helpers.pluralize file.type]
