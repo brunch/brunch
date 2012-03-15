@@ -17,10 +17,10 @@ exports.startsWith = (string, substring) ->
 
 # Extends the object with properties from another object.
 # Example
-#   
+#
 #   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
 #   # => {a: 5, b: 15, c: 20, e: 50}
-# 
+#
 exports.extend = extend = (object, properties) ->
   object[key] = val for own key, val of properties
   object
@@ -48,11 +48,12 @@ exports.startServer = (port, buildPath, config, callback = (->)) ->
   else
     startDefaultServer port, buildPath, callback
 
-exports.loadConfig = (configPath) ->
+exports.loadConfig = (configFileName) ->
   try
+    configPath = if configFileName? then configFileName + ".coffee" else 'config.coffee'
     {config} = require sysPath.resolve configPath
   catch error
-    logger.error "couldn\'t load config.coffee. #{error}"
+    logger.error "couldn\'t load #{configPath}. #{error}"
     process.exit 1
   config
 

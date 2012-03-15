@@ -45,7 +45,7 @@ commandLineConfig =
           metavar: 'DIRECTORY'
           full: 'output'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
+        config = helpers.loadConfig options.configFileName
         config.buildPath = options.buildPath if options.buildPath
         brunch.build '.', config
 
@@ -64,11 +64,11 @@ commandLineConfig =
           help: 'run a simple http server that would server `output` dir'
         port:
           abbr: 'p'
-          help: 'if a `server` option was specified, define on which port 
+          help: 'if a `server` option was specified, define on which port
 the server would run'
           metavar: 'PORT'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
+        config = helpers.loadConfig options.configFileName
         config.server ?= {}
         config.server.run = yes if options.server
         config.server.port = options.port if options.port
@@ -95,7 +95,7 @@ the server would run'
           full: 'path'
       callback: (options) ->
         options.rootPath = '.'
-        options.config = helpers.loadConfig 'config.coffee'
+        options.config = helpers.loadConfig options.configFileName
         brunch.generate options
 
     destroy:
@@ -118,7 +118,7 @@ the server would run'
           full: 'path'
       callback: (options) ->
         options.rootPath = '.'
-        options.config = helpers.loadConfig 'config.coffee'
+        options.config = helpers.loadConfig options.configFileName
         brunch.destroy options
 
   options:
@@ -127,6 +127,10 @@ the server would run'
       help: 'display brunch version'
       flag: yes
       callback: readPackageVersion
+    configFileName:
+      abbr: 'c'
+      full: 'config'
+      help: 'Specify the config file to use'
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
