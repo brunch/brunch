@@ -1,1 +1,1 @@
-# Write your [jasmine](http://pivotal.github.com/jasmine/) specs here.
+# Write your [mocha](http://visionmedia.github.com/mocha/) specs here.
