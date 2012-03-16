@@ -48,12 +48,12 @@ exports.startServer = (port, buildPath, config, callback = (->)) ->
   else
     startDefaultServer port, buildPath, callback
 
-exports.loadConfig = (configPath) ->
+exports.loadConfig = (configPath = 'config') ->
   try
     {config} = require sysPath.resolve configPath
   catch error
-    logger.error "couldn\'t load config.coffee. #{error}"
-    process.exit 1
+    logger.error "couldn\'t load config #{configPath}. #{error}"
+    config = null
   config
 
 exports.loadPlugins = (config, callback) ->

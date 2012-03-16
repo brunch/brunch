@@ -1,3 +1,10 @@
+## Brunch 1.0.1 (unreleased)
+* Removed buggy & unused Cakefile from default template.
+* Fixed loading of non-coffeescript configs.
+* Added optional `--config` param to all commands expect `brunch new`. Usage:
+`brunch build --config ios_config`.
+* Deprecated `--output` param in `brunch build` and `brunch watch` commands.
+
 ## Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 

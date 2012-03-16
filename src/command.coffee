@@ -3,6 +3,7 @@ fs = require 'fs'
 sysPath = require 'path'
 brunch = require './brunch'
 helpers = require './helpers'
+logger = require './logger'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
@@ -44,9 +45,17 @@ commandLineConfig =
           help: 'build path'
           metavar: 'DIRECTORY'
           full: 'output'
+        configPath:
+          abbr: 'c'
+          help: 'path to config file'
+          metavar: 'CONFIG'
+          full: 'config'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
-        config.buildPath = options.buildPath if options.buildPath
+        config = helpers.loadConfig options.configPath
+        return unless config?
+        if options.buildPath
+          logger.warn '--output param is deprecated. Use config field.'
+          config.buildPath = options.buildPath
         brunch.build '.', config
 
     watch:
@@ -58,6 +67,11 @@ commandLineConfig =
           full: 'output'
           help: 'build path'
           metavar: 'DIRECTORY'
+        configPath:
+          abbr: 'c'
+          help: 'path to config file'
+          metavar: 'CONFIG'
+          full: 'config'
         server:
           abbr: 's'
           flag: yes
@@ -68,11 +82,14 @@ commandLineConfig =
 the server would run'
           metavar: 'PORT'
       callback: (options) ->
-        config = helpers.loadConfig 'config.coffee'
+        config = helpers.loadConfig options.configPath
+        return unless config?
         config.server ?= {}
         config.server.run = yes if options.server
         config.server.port = options.port if options.port
-        config.buildPath = options.buildPath if options.buildPath
+        if options.buildPath
+          logger.warn '--output param is deprecated. Use config field.'
+          config.buildPath = options.buildPath
         brunch.watch '.', config
 
     generate:
@@ -93,9 +110,15 @@ the server would run'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
           full: 'path'
+        configPath:
+          abbr: 'c'
+          help: 'path to config file'
+          metavar: 'CONFIG'
+          full: 'config'
       callback: (options) ->
         options.rootPath = '.'
-        options.config = helpers.loadConfig 'config.coffee'
+        options.config = helpers.loadConfig options.configPath
+        return unless options.config?
         brunch.generate options
 
     destroy:
@@ -116,9 +139,15 @@ the server would run'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
           full: 'path'
+        configPath:
+          abbr: 'c'
+          help: 'path to config file'
+          metavar: 'CONFIG'
+          full: 'config'
       callback: (options) ->
         options.rootPath = '.'
-        options.config = helpers.loadConfig 'config.coffee'
+        options.config = helpers.loadConfig options.configPath
+        return unless options.config?
         brunch.destroy options
 
   options:
