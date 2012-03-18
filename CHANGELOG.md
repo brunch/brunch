@@ -1,4 +1,5 @@
-## Brunch 1.0.1 (unreleased)
+## Brunch 1.0.1 (March 18, 2012)
+* Fixed installation on node <0.6.10.
 * Removed buggy & unused Cakefile from default template.
 * Fixed loading of non-coffeescript configs.
 * Added optional `--config` param to all commands expect `brunch new`. Usage:
