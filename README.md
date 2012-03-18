@@ -3,7 +3,7 @@ A lightweight approach to building HTML5 applications with emphasis on
 elegance and simplicity.
 
 ## Getting started
-You'll need [node.js](http://nodejs.org/) 0.6. Type:
+You'll need [node.js](http://nodejs.org/) 0.6.10+. Type:
 
     npm install -g brunch
 
