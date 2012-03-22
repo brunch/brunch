@@ -1,0 +1,3 @@
+[submodule "skeletons/simple-coffee"]
+	path = skeletons/simple-coffee
+	url = git@github.com:brunch/simple-coffee-skeleton.git
