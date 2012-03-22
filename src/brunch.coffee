@@ -172,7 +172,7 @@ exports.new = (options, callback = (->)) ->
   {rootPath, skeleton} = options
 
   copySkeleton = (skeletonPath) ->
-    skeletonDir = sysPath.join __dirname, '..', 'skeleton'
+    skeletonDir = sysPath.join __dirname, '..', 'skeletons'
     skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
     logger.log 'debug', "Copying skeleton from #{skeletonPath}"
 
@@ -185,12 +185,8 @@ exports.new = (options, callback = (->)) ->
     mkdirp rootPath, (parseInt 755, 8), (error) ->
       return logger.error error if error?
       sysPath.exists skeletonPath, (exists) ->
-        return copyDirectory skeletonPath if exists
-        brunchSkeletonPath = sysPath.join skeletonDir, skeletonPath
-        sysPath.exists brunchSkeletonPath, (exists) ->
-          unless exists
-            return logger.error "Skeleton '#{skeleton}' doesn't exist"
-          copyDirectory brunchSkeletonPath
+        return logger.error "Skeleton '#{skeleton}' doesn't exist" unless exists
+        copyDirectory skeletonPath
 
   cloneSkeleton = (URL) ->
     logger.log 'debug', "Cloning skeleton from git URL #{URL}"
