@@ -159,27 +159,52 @@ extension '#{extension}'"
 
 install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
-  process.chdir rootPath
   logger.info 'Installing packages...'
+  process.chdir rootPath
   exec 'npm install', (error, stdout, stderr) ->
     process.chdir prevDir
-    callback stderr, stdout
+    return callback stderr.toString() if error?
+    callback null, stdout
 
 # Create new application in `rootPath` and build it.
-# App is created by copying directory `../template/base` to `rootPath`.
+# App is created by copying directory to `rootPath`.
 exports.new = (options, callback = (->)) ->
-  {rootPath, buildPath, template} = options
-  buildPath ?= sysPath.join rootPath, 'build'
-  template ?= sysPath.join __dirname, '..', 'template', 'base'
-  sysPath.exists rootPath, (exists) ->
-    if exists
-      return logger.error "Directory '#{rootPath}' already exists"
-    mkdirp rootPath, (parseInt 755, 8), (error) ->
-      return logger.error error if error?
-      ncp template, rootPath, (error) ->
+  {rootPath, skeleton} = options
+
+  copySkeleton = (skeletonPath) ->
+    skeletonDir = sysPath.join __dirname, '..', 'skeleton'
+    skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
+    logger.log 'debug', "Copying skeleton from #{skeletonPath}"
+
+    copyDirectory = (from) ->
+      ncp from, rootPath, (error) ->
         return logger.error error if error?
         logger.info 'Created brunch directory layout'
         install rootPath, callback
+
+    mkdirp rootPath, (parseInt 755, 8), (error) ->
+      return logger.error error if error?
+      sysPath.exists skeletonPath, (exists) ->
+        return copyDirectory skeletonPath if exists
+        brunchSkeletonPath = sysPath.join skeletonDir, skeletonPath
+        sysPath.exists brunchSkeletonPath, (exists) ->
+          unless exists
+            return logger.error "Skeleton '#{skeleton}' doesn't exist"
+          copyDirectory brunchSkeletonPath
+
+  cloneSkeleton = (URL) ->
+    logger.log 'debug', "Cloning skeleton from git URL #{URL}"
+    exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
+      return logger.error "Git clone error: #{stderr.toString()}" if error?
+      logger.info 'Created brunch directory layout'
+      install rootPath, callback
+
+  sysPath.exists rootPath, (exists) ->
+    return logger.error "Directory '#{rootPath}' already exists" if exists
+    if /http|git/.test skeleton
+      cloneSkeleton skeleton, callback
+    else
+      copySkeleton skeleton, callback
 
 # Build application once and execute callback.
 exports.build = (rootPath, config, callback = (->)) ->

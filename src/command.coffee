@@ -30,9 +30,10 @@ commandLineConfig =
           metavar: 'APP_PATH'
           required: yes
           full: 'appPath'
-        template:
-          abbr: 't'
-          help: 'path to application template'
+        skeleton:
+          abbr: 's'
+          help: 'path to / name of / git URL of application skeleton
+(template).\nDefault skeletons: "simple-js", "simple-coffee".'
       callback: (options) ->
         brunch.new options
 
@@ -40,11 +41,6 @@ commandLineConfig =
       abbr: 'b'
       help: 'Build a brunch project'
       options:
-        buildPath:
-          abbr: 'o'
-          help: 'build path'
-          metavar: 'DIRECTORY'
-          full: 'output'
         configPath:
           abbr: 'c'
           help: 'path to config file'
@@ -53,20 +49,12 @@ commandLineConfig =
       callback: (options) ->
         config = helpers.loadConfig options.configPath
         return unless config?
-        if options.buildPath
-          logger.warn '--output param is deprecated. Use config field.'
-          config.buildPath = options.buildPath
         brunch.build '.', config
 
     watch:
       abbr: 'w'
       help: 'Watch brunch directory and rebuild if something changed'
       options:
-        buildPath:
-          abbr: 'o'
-          full: 'output'
-          help: 'build path'
-          metavar: 'DIRECTORY'
         configPath:
           abbr: 'c'
           help: 'path to config file'
@@ -75,7 +63,7 @@ commandLineConfig =
         server:
           abbr: 's'
           flag: yes
-          help: 'run a simple http server that would server `output` dir'
+          help: 'run a simple http server that would serve public dir'
         port:
           abbr: 'p'
           help: 'if a `server` option was specified, define on which port 
@@ -87,9 +75,6 @@ the server would run'
         config.server ?= {}
         config.server.run = yes if options.server
         config.server.port = options.port if options.port
-        if options.buildPath
-          logger.warn '--output param is deprecated. Use config field.'
-          config.buildPath = options.buildPath
         brunch.watch '.', config
 
     generate:

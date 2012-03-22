@@ -6,21 +6,19 @@ Command line API
 Create new brunch project. Options:
 
 * ``rootPath``: (required) name of project directory that would be created
-* ``-o DIRECTORY, --output DIRECTORY```: build path
 * ``-t PATH_TO_TEMPLATE --template PATH_TO_TEMPLATE``: path to project, contents of which will be copied to new .
 
 Short-cut: ``brunch n``.
 
 Examples:
 
-* ``brunch new twitter -o twitter``: would create ``twitter/`` directory and create new brunch project there.
 * ``brunch new twitter -t ~/brunch-templates/simple``
 
 ``brunch build``
 ----------------
 Build a brunch project. Options:
 
-* ``-o DIRECTORY, --output DIRECTORY``: build path
+* ``-o DIRECTORY, --output DIRECTORY``: build path (deprecated, use config)
 
 Short-cut: ``brunch b``.
 
@@ -32,7 +30,7 @@ Examples:
 ----------------
 Watch brunch directory and rebuild if something changed. Options:
 
-* ``-o DIRECTORY, --output DIRECTORY``: build path
+* ``-o DIRECTORY, --output DIRECTORY``: build path (deprecated, use config)
 * ``-s, --server``: run a simple http server that would server `output` dir
 * ``-p PORT, --port PORT``: if a `server` option was specified, define on which port the server would run
 
