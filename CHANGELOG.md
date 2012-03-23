@@ -7,6 +7,8 @@
     * Removed `--output` param in `brunch build` and `brunch watch` commands.
     * Param `--template` in `brunch new` has been renamed to `--skeleton`.
     `--skeleton` supports relative / absolute path and git repo URLs.
+* Module loader now throws real exceptions instead of strings when module
+wasn't found.
 
 ## Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.

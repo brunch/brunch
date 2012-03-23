@@ -23,7 +23,7 @@ requireDefinition = '''
           throw err;
         }
       } else {
-        throw 'module \\'' + name + '\\' not found';
+        throw new Error("Cannot find module '" + name + "'");
       }
     }, expand = function(root, name) {
       var results = [], parts, part;
