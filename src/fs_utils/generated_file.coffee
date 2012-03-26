@@ -5,27 +5,21 @@ logger = require '../logger'
 # The definition would be added on top of every filewriter .js file.
 requireDefinition = '''
 (function(/*! Brunch !*/) {
+  'use strict';
+
   if (!this.require) {
-    var modules = {}, cache = {}, require = function(name, root) {
-      var module = cache[name], path = expand(root, name), fn;
-      if (module) {
-        return module;
-      } else if (fn = modules[path] || modules[path = expand(path, './index')]) {
-        module = {id: name, exports: {}};
-        try {
-          cache[name] = module.exports;
-          fn(module.exports, function(name) {
-            return require(name, dirname(path));
-          }, module);
-          return cache[name] = module.exports;
-        } catch (err) {
-          delete cache[name];
-          throw err;
-        }
-      } else {
-        throw new Error("Cannot find module '" + name + "'");
-      }
-    }, expand = function(root, name) {
+    var modules = {};
+    var cache = {};
+    var __hasProp = ({}).hasOwnProperty;
+
+    var getModule = function(path) {
+      var dirIndex;
+      if (__hasProp.call(modules, path)) return modules[path];
+      dirIndex = expand(path, './index');
+      if (__hasProp.call(modules, dirIndex)) return modules[dirIndex];
+    };
+
+    var expand = function(root, name) {
       var results = [], parts, part;
       if (/^\\.\\.?(\\/|$)/.test(name)) {
         parts = [root, name].join('/').split('/');
@@ -41,16 +35,48 @@ requireDefinition = '''
         }
       }
       return results.join('/');
-    }, dirname = function(path) {
+    };
+
+    var require = function(name, root) {
+      var path = expand(root, name);
+      var dirIndex = expand(path, './index');
+      var module, loader;
+
+      if (__hasProp.call(cache, name)) {
+        return cache[name];
+      } else if (loader = getModule(path)) {
+        module = {id: name, exports: {}};
+        try {
+          cache[name] = module.exports;
+          loader(module.exports, function(name) {
+            return require(name, dirname(path));
+          }, module);
+          cache[name] = module.exports;
+          return cache[name];
+        } catch (err) {
+          delete cache[name];
+          throw err;
+        }
+      } else {
+        throw new Error("Cannot find module '" + name + "'");
+      }
+    };
+
+    var dirname = function(path) {
       return path.split('/').slice(0, -1).join('/');
     };
+
     this.require = function(name) {
       return require(name, '');
     };
+
     this.require.brunch = true;
     this.require.define = function(bundle) {
-      for (var key in bundle)
-        modules[key] = bundle[key];
+      for (var key in bundle) {
+        if (__hasProp.call(bundle, key)) {
+          modules[key] = bundle[key];
+        }
+      }
     };
   }
 }).call(this);
