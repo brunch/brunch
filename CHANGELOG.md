@@ -11,6 +11,10 @@
 wasn't found.
 * Fixed an issue when module loader loaded non-existing modules.
 
+## Brunch 1.0.1 (March 26, 2012)
+* Updated dependencies.
+* Fixed permissions issue with `app/assets` folder.
+
 ## Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 
