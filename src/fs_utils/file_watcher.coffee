@@ -88,7 +88,7 @@ class exports.FileWatcher extends EventEmitter
 
   # Removes all listeners from watched files.
   close: ->
-    (Object.keys @watched).forEach (directory) =>
+    Object.keys(@watched).forEach (directory) =>
       @watched[directory].forEach (file) =>
         fs.unwatchFile sysPath.join directory, file
     @watched = {}

@@ -148,14 +148,20 @@ class exports.GeneratedFile
 
   _extractOrder: (files, config) ->
     types = files.map (file) -> helpers.pluralize file.type
-    arrays = (value.order for own key, value of config.files when key in types)
-    arrays.reduce (memo, array) ->
-      array or= {}
-      {
-        before: memo.before.concat(array.before or []),
-        after: memo.after.concat(array.after or [])
-      }
-    , {before: [], after: []}
+    Object.keys(config.files)
+      .filter (key) ->
+        key in types
+      # Extract order value from config.
+      .map (key) ->
+        config.files[key].order
+      # Join orders together.
+      .reduce (memo, array) ->
+        array or= {}
+        {
+          before: memo.before.concat(array.before or []),
+          after: memo.after.concat(array.after or [])
+        }
+      , {before: [], after: []}
 
   # Collects content from a list of files and wraps it with
   # require.js module definition if needed.

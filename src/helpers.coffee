@@ -22,7 +22,8 @@ exports.startsWith = (string, substring) ->
 #   # => {a: 5, b: 15, c: 20, e: 50}
 # 
 exports.extend = extend = (object, properties) ->
-  object[key] = val for own key, val of properties
+  Object.keys(properties).forEach (key) ->
+    object[key] = properties[key]
   object
 
 startDefaultServer = (port, path, callback) ->

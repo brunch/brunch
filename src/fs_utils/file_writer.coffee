@@ -35,7 +35,7 @@ class exports.FileWriter extends EventEmitter
 
   _getDestinationPathes: (file) ->
     data = @config.files[helpers.pluralize file.type]
-    pathes = (Object.keys data.joinTo).filter (destinationPath) ->
+    pathes = Object.keys(data.joinTo).filter (destinationPath) ->
       checkingFunction = data.joinTo[destinationPath]
       checkingFunction file.path
     if pathes.length > 0 then pathes else null
@@ -48,7 +48,7 @@ class exports.FileWriter extends EventEmitter
       pathes.forEach (path) =>
         map[path] ?= []
         map[path].push file
-    (Object.keys map).map (generatedFilePath) =>
+    Object.keys(map).map (generatedFilePath) =>
       sourceFiles = map[generatedFilePath]
       fullPath = sysPath.join @config.buildPath, generatedFilePath
       file = new GeneratedFile fullPath, sourceFiles, @config
