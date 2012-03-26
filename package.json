@@ -30,12 +30,12 @@
   "dependencies": {
     "coffee-script": "1.2.0",
     "argumentum": "0.6.0",
-    "async": "0.1.15",
-    "mkdirp": "0.2.1",
-    "ncp": "0.2.3",
-    "growl": "1.4.1",
-    "express": "2.5.1",
-    "winston": "0.5.10"
+    "async": "0.1.18",
+    "mkdirp": "0.3.0",
+    "ncp": "0.2.6",
+    "growl": "1.5.0",
+    "express": "2.5.8",
+    "winston": "0.5.11"
   },
   "devDependencies": {
     "mocha": "0.14.0",
