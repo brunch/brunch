@@ -1,3 +1,7 @@
+## Brunch 1.0.2 (March 28, 2012)
+* Removed `Cakefile` from default template.
+* Changed recommended framework in `test/spec` to Mocha.
+
 ## Brunch 1.0.1 (March 26, 2012)
 * Updated dependencies.
 * Fixed permissions issue with `app/assets` folder.
