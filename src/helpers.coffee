@@ -52,6 +52,7 @@ exports.startServer = (port, buildPath, config, callback = (->)) ->
 exports.loadConfig = (configPath = 'config') ->
   try
     {config} = require sysPath.resolve configPath
+    config.rootPath ?= '.'
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
     config = null

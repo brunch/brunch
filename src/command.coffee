@@ -26,16 +26,13 @@ commandLineConfig =
       options:
         rootPath:
           position: 1
-          help: 'application path'
-          metavar: 'APP_PATH'
+          help: 'root path of project'
+          metavar: 'ROOT_PATH'
           required: yes
-          full: 'appPath'
         skeleton:
           abbr: 's'
-          help: 'path to / name of / git URL of application skeleton
-(template).\nDefault skeletons: "simple-js", "simple-coffee".'
-      callback: (options) ->
-        brunch.new options
+          help: 'path to / git URL of application skeleton (template).'
+      callback: brunch.new
 
     build:
       abbr: 'b'
@@ -46,10 +43,7 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: (options) ->
-        config = helpers.loadConfig options.configPath
-        return unless config?
-        brunch.build '.', config
+      callback: brunch.build
 
     watch:
       abbr: 'w'
@@ -69,13 +63,7 @@ commandLineConfig =
           help: 'if a `server` option was specified, define on which port 
 the server would run'
           metavar: 'PORT'
-      callback: (options) ->
-        config = helpers.loadConfig options.configPath
-        return unless config?
-        config.server ?= {}
-        config.server.run = yes if options.server
-        config.server.port = options.port if options.port
-        brunch.watch '.', config
+      callback: brunch.watch
 
     generate:
       abbr: 'g'
@@ -100,11 +88,7 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: (options) ->
-        options.rootPath = '.'
-        options.config = helpers.loadConfig options.configPath
-        return unless options.config?
-        brunch.generate options
+      callback: brunch.generate
 
     destroy:
       abbr: 'd'
@@ -129,11 +113,7 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: (options) ->
-        options.rootPath = '.'
-        options.config = helpers.loadConfig options.configPath
-        return unless options.config?
-        brunch.destroy options
+      callback: brunch.destroy
 
   options:
     version:

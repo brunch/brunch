@@ -6,6 +6,8 @@
     * Removed `--output` param in `brunch build` and `brunch watch` commands.
     * Param `--template` in `brunch new` has been renamed to `--skeleton`.
     `--skeleton` supports relative / absolute path and git repo URLs.
+    Also, git metadata is automatically removed in cloned / copied projects.
+* Node.js API now mirrors CLI api.
 * Module loader now throws real exceptions instead of strings when module
 wasn't found.
 * Scripts that are not in the config[lang].order are now compiled in

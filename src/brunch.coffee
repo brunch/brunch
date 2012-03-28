@@ -9,7 +9,54 @@ helpers = require './helpers'
 logger = require './logger'
 fs_utils = require './fs_utils'
 
-isCompilerFor = (path) -> (plugin) ->
+install = (rootPath, callback = (->)) ->
+  # Remove git metadata.
+  rimraf (sysPath.join rootPath, '.git'), (error) ->
+    return logger.error error if error?
+    prevDir = process.cwd()
+    logger.info 'Installing packages...'
+    process.chdir rootPath
+    # Install node packages.
+    exec 'npm install', (error, stdout, stderr) ->
+      process.chdir prevDir
+      return callback stderr.toString() if error?
+      callback null, stdout
+
+create = (options, callback = (->)) ->
+  {rootPath, skeleton} = options
+
+  copySkeleton = (skeletonPath) ->
+    skeletonDir = sysPath.join __dirname, '..', 'skeletons'
+    skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
+    logger.log 'debug', "Copying skeleton from #{skeletonPath}"
+
+    copyDirectory = (from) ->
+      ncp from, rootPath, (error) ->
+        return logger.error error if error?
+        logger.info 'Created brunch directory layout'
+        install rootPath, callback
+
+    mkdirp rootPath, (parseInt 755, 8), (error) ->
+      return logger.error error if error?
+      sysPath.exists skeletonPath, (exists) ->
+        return logger.error "Skeleton '#{skeleton}' doesn't exist" unless exists
+        copyDirectory skeletonPath
+
+  cloneSkeleton = (URL) ->
+    logger.log 'debug', "Cloning skeleton from git URL #{URL}"
+    exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
+      return logger.error "Git clone error: #{stderr.toString()}" if error?
+      logger.info 'Created brunch directory layout'
+      install rootPath, callback
+
+  sysPath.exists rootPath, (exists) ->
+    return logger.error "Directory '#{rootPath}' already exists" if exists
+    if /(https?|git):\/\//.test skeleton
+      cloneSkeleton skeleton, callback
+    else
+      copySkeleton skeleton, callback
+
+isCompilerFor = (path, plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
@@ -18,20 +65,19 @@ isCompilerFor = (path) -> (plugin) ->
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
-# Recompiles all files in current working directory.
-# 
-# rootPath - path to application directory.
-# config - Parsed app config.
-# persistent - Should watcher be stopped after compiling the app first time?
-# callback - Callback that would be executed on each compilation.
-# 
-# Returns `fs_utils.FSWatcher` object.
-watchApplication = (persistent, rootPath, config, callback) ->
+watch = (persistent, options, callback = (->)) ->
+  config = helpers.loadConfig options.configPath
+  return callback() unless config?
+
+  if persistent
+    config.server ?= {}
+    config.server.run = yes if options.server
+    config.server.port = options.port if options.port
+
+  {rootPath} = config
   config.buildPath ?= sysPath.join rootPath, 'public'
   config.server ?= {}
   config.server.port ?= 3333
-  # Pass rootPath to config in order to allow plugins to use it.
-  config.rootPath = rootPath
   assetPath = sysPath.join rootPath, 'app', 'assets'
   ignored = (path) ->
     helpers.startsWith(path, assetPath) or
@@ -39,18 +85,18 @@ watchApplication = (persistent, rootPath, config, callback) ->
 
   if persistent and config.server.run
     helpers.startServer config.server.port, config.buildPath, config
-  directories = ['app', 'vendor'].map (dir) -> sysPath.join rootPath, dir
+  directories = ['app', 'vendor'].map sysPath.join.bind(null, rootPath)
 
   fileList = new fs_utils.SourceFileList
 
   helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
     start = null
-    addToFileList = (isPluginHelper) -> (path) ->
+    addToFileList = (isPluginHelper, path) ->
       start = Date.now()
       logger.log 'debug', "File '#{path}' was changed"
       return fileList.resetTimer() if ignored path
-      compiler = plugins.filter(isCompilerFor path)[0]
+      compiler = plugins.filter(isCompilerFor.bind(null, path))[0]
       return unless compiler
       fileList.add {path, compiler, isPluginHelper}
 
@@ -64,12 +110,12 @@ watchApplication = (persistent, rootPath, config, callback) ->
         plugin.include()
       else
         plugin.include
-      includePathes.forEach addToFileList yes
+      includePathes.forEach addToFileList.bind(null, yes)
 
     writer = new fs_utils.FileWriter config, plugins
     watcher = (new fs_utils.FileWatcher)
       .add(directories)
-      .on('change', addToFileList no)
+      .on('change', addToFileList.bind(null, no))
       .on('remove', removeFromFileList)
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
@@ -100,11 +146,17 @@ destroyFile = (path, callback) ->
     logger.info "destroy #{path}"
     callback error
 
-generateOrDestroy = (generate, options, callback) ->
-  {rootPath, type, name, config, parentDir} = options
-  generateOrDestroyFile = if generate then generateFile else destroyFile
-  appPath = sysPath.join rootPath, 'app'
-  testPath = sysPath.join rootPath, 'test', 'unit'
+scaffold = (rollback, options, callback = (->)) ->
+  {type, name, parentDir, configPath} = options
+  config = helpers.loadConfig configPath
+  return callback() unless config?
+
+  generateOrDestroyFile = if rollback
+    (fullPath, data, callback) -> destroyFile fullPath, callback
+  else
+    generateFile
+  appPath = sysPath.join config.rootPath, 'app'
+  testPath = sysPath.join config.rootPath, 'test', 'unit'
 
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'javascript'
@@ -140,88 +192,21 @@ extension '#{extension}'"
           generator
       else
         ''
-      if generate
-        generateFile fullPath, data, callback
-      else
-        destroyFile fullPath, callback
+      generateOrDestroyFile fullPath, data, callback
 
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
     return callback() unless languageType is 'javascript'
     fullPath = sysPath.join testPath, parentDir, "#{name}.#{extension}"
-    if generate
-      generateFile fullPath, '', callback
-    else
-      destroyFile fullPath, callback
+    data = ''
+    generateOrDestroyFile fullPath, data, callback
 
   initFile parentDir, ->
     initTests parentDir, ->
       callback()
 
-install = (rootPath, callback = (->)) ->
-  rimraf (sysPath.join rootPath, '.git'), (error) ->
-    return logger.error error if error?
-    prevDir = process.cwd()
-    logger.info 'Installing packages...'
-    process.chdir rootPath
-    exec 'npm install', (error, stdout, stderr) ->
-      process.chdir prevDir
-      return callback stderr.toString() if error?
-      callback null, stdout
-
-# Create new application in `rootPath` and build it.
-# App is created by copying directory to `rootPath`.
-exports.new = (options, callback = (->)) ->
-  {rootPath, skeleton} = options
-
-  copySkeleton = (skeletonPath) ->
-    skeletonDir = sysPath.join __dirname, '..', 'skeletons'
-    skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
-    logger.log 'debug', "Copying skeleton from #{skeletonPath}"
-
-    copyDirectory = (from) ->
-      ncp from, rootPath, (error) ->
-        return logger.error error if error?
-        logger.info 'Created brunch directory layout'
-        install rootPath, callback
-
-    mkdirp rootPath, (parseInt 755, 8), (error) ->
-      return logger.error error if error?
-      sysPath.exists skeletonPath, (exists) ->
-        return logger.error "Skeleton '#{skeleton}' doesn't exist" unless exists
-        copyDirectory skeletonPath
-
-  cloneSkeleton = (URL) ->
-    logger.log 'debug', "Cloning skeleton from git URL #{URL}"
-    exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
-      return logger.error "Git clone error: #{stderr.toString()}" if error?
-      logger.info 'Created brunch directory layout'
-      install rootPath, callback
-
-  sysPath.exists rootPath, (exists) ->
-    return logger.error "Directory '#{rootPath}' already exists" if exists
-    if /http|git/.test skeleton
-      cloneSkeleton skeleton, callback
-    else
-      copySkeleton skeleton, callback
-
-# Build application once and execute callback.
-exports.build = (rootPath, config, callback = (->)) ->
-  watchApplication no, rootPath, config, callback
-
-# Watch application for changes and execute callback on every compilation.
-exports.watch = (rootPath, config, callback = (->)) ->
-  watchApplication yes, rootPath, config, callback
-
-# Generate new controller / model / view and its tests.
-# 
-# rootPath - path to application directory.
-# type - one of: collection, model, router, style, template, view.
-# name - filename.
-# config - parsed app config.
-# 
-exports.generate = (options, callback = (->)) ->
-  generateOrDestroy yes, options, callback
-
-exports.destroy = (options, callback = (->)) ->
-  generateOrDestroy no, options, callback
+exports.new = create
+exports.build = watch.bind(null, no)
+exports.watch = watch.bind(null, yes)
+exports.generate = scaffold.bind(null, no)
+exports.destroy = scaffold.bind(null, yes)
