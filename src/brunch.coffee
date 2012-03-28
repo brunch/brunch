@@ -51,7 +51,7 @@ create = (options, callback = (->)) ->
 
   sysPath.exists rootPath, (exists) ->
     return logger.error "Directory '#{rootPath}' already exists" if exists
-    if /(https?|git):\/\//.test skeleton
+    if /(https?|git)(:\/\/|@)/.test skeleton
       cloneSkeleton skeleton, callback
     else
       copySkeleton skeleton, callback
