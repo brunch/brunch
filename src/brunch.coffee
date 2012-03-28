@@ -3,6 +3,7 @@ async = require 'async'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
+rimraf = require 'rimraf'
 sysPath = require 'path'
 helpers = require './helpers'
 logger = require './logger'
@@ -158,13 +159,15 @@ extension '#{extension}'"
       callback()
 
 install = (rootPath, callback = (->)) ->
-  prevDir = process.cwd()
-  logger.info 'Installing packages...'
-  process.chdir rootPath
-  exec 'npm install', (error, stdout, stderr) ->
-    process.chdir prevDir
-    return callback stderr.toString() if error?
-    callback null, stdout
+  rimraf (sysPath.join rootPath, '.git'), (error) ->
+    return logger.error error if error?
+    prevDir = process.cwd()
+    logger.info 'Installing packages...'
+    process.chdir rootPath
+    exec 'npm install', (error, stdout, stderr) ->
+      process.chdir prevDir
+      return callback stderr.toString() if error?
+      callback null, stdout
 
 # Create new application in `rootPath` and build it.
 # App is created by copying directory to `rootPath`.
