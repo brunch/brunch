@@ -1,5 +1,4 @@
 ## Brunch 1.1.0 (unreleased)
-* Removed unused Cakefile from default template.
 * Fixed loading of non-coffeescript configs.
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
@@ -9,6 +8,8 @@
     `--skeleton` supports relative / absolute path and git repo URLs.
 * Module loader now throws real exceptions instead of strings when module
 wasn't found.
+* Scripts that are not in the config[lang].order are now compiled in
+alphabetical order instead of random.
 * Fixed an issue when module loader loaded non-existing modules.
 
 ## Brunch 1.0.2 (March 28, 2012)
