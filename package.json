@@ -16,7 +16,7 @@
     "type": "MIT",
     "url": "http://github.com/brunch/brunch/raw/master/LICENSE"
   }],
-  "main": "./lib",
+  "main": "./lib/brunch",
   "bin": {
     "brunch": "./bin/brunch"
   },
