@@ -50,7 +50,7 @@ module.exports = class FileWriter extends EventEmitter
         map[path].push file
     Object.keys(map).map (generatedFilePath) =>
       sourceFiles = map[generatedFilePath]
-      fullPath = sysPath.join @config.buildPath, generatedFilePath
+      fullPath = sysPath.join @config.pathes.build, generatedFilePath
       file = new GeneratedFile fullPath, sourceFiles, @config
       minifiers
         .filter (minifier) ->

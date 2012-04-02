@@ -2,7 +2,6 @@ async = require 'async'
 {exec, spawn} = require 'child_process'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
-{ncp} = require 'ncp'
 rimraf = require 'rimraf'
 sysPath = require 'path'
 helpers = require './helpers'
@@ -10,17 +9,20 @@ logger = require './logger'
 fs_utils = require './fs_utils'
 
 install = (rootPath, callback = (->)) ->
-  # Remove git metadata.
+  prevDir = process.cwd()
+  logger.info 'Installing packages...'
+  process.chdir rootPath
+  # Install node packages.
+  exec 'npm install', (error, stdout, stderr) ->
+    process.chdir prevDir
+    return callback stderr.toString() if error?
+    callback null, stdout
+
+# Remove git metadata and run npm install.
+removeAndInstall = (rootPath, callback) ->
   rimraf (sysPath.join rootPath, '.git'), (error) ->
     return logger.error error if error?
-    prevDir = process.cwd()
-    logger.info 'Installing packages...'
-    process.chdir rootPath
-    # Install node packages.
-    exec 'npm install', (error, stdout, stderr) ->
-      process.chdir prevDir
-      return callback stderr.toString() if error?
-      callback null, stdout
+    install rootPath, callback
 
 create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
@@ -31,10 +33,10 @@ create = (options, callback = (->)) ->
     logger.log 'debug', "Copying skeleton from #{skeletonPath}"
 
     copyDirectory = (from) ->
-      ncp from, rootPath, (error) ->
+      fs_utils.copyIfExists from, rootPath, (error) ->
         return logger.error error if error?
         logger.info 'Created brunch directory layout'
-        install rootPath, callback
+        removeAndInstall rootPath, callback
 
     mkdirp rootPath, (parseInt 755, 8), (error) ->
       return logger.error error if error?
@@ -47,7 +49,7 @@ create = (options, callback = (->)) ->
     exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
       return logger.error "Git clone error: #{stderr.toString()}" if error?
       logger.info 'Created brunch directory layout'
-      install rootPath, callback
+      removeAndInstall rootPath, callback
 
   sysPath.exists rootPath, (exists) ->
     return logger.error "Directory '#{rootPath}' already exists" if exists
@@ -70,21 +72,16 @@ watch = (persistent, options, callback = (->)) ->
   return callback() unless config?
 
   if persistent
-    config.server ?= {}
     config.server.run = yes if options.server
     config.server.port = options.port if options.port
 
   {rootPath} = config
-  config.buildPath ?= sysPath.join rootPath, 'public'
-  config.server ?= {}
-  config.server.port ?= 3333
-  assetPath = sysPath.join rootPath, 'app', 'assets'
+
   ignored = (path) ->
-    helpers.startsWith(path, assetPath) or
+    helpers.startsWith(path, config.pathes.assets) or
     helpers.startsWith(sysPath.basename(path), '_')
 
-  if persistent and config.server.run
-    helpers.startServer config.server.port, config.buildPath, config
+  helpers.startServer config if persistent and config.server.run
   directories = ['app', 'vendor'].map sysPath.join.bind(null, rootPath)
 
   fileList = new fs_utils.SourceFileList
@@ -118,9 +115,9 @@ watch = (persistent, options, callback = (->)) ->
       .on('change', addToFileList.bind(null, no))
       .on('remove', removeFromFileList)
     fileList.on 'resetTimer', -> writer.write fileList
+
     writer.on 'write', (result) ->
-      assetPath = sysPath.join rootPath, 'app', 'assets'
-      ncp assetPath, config.buildPath, (error) ->
+      fs_utils.copyIfExists config.pathes.assets, config.pathes.build, (error) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
@@ -155,8 +152,6 @@ scaffold = (rollback, options, callback = (->)) ->
     (fullPath, data, callback) -> destroyFile fullPath, callback
   else
     generateFile
-  appPath = sysPath.join config.rootPath, 'app'
-  testPath = sysPath.join config.rootPath, 'test', 'unit'
 
   languageType = switch type
     when 'collection', 'model', 'router', 'view' then 'javascript'
@@ -181,7 +176,7 @@ scaffold = (rollback, options, callback = (->)) ->
 extension '#{extension}'"
 
   initFile = (parentDir, callback) ->
-    fullPath = sysPath.join appPath, parentDir, "#{name}.#{extension}"
+    fullPath = sysPath.join config.pathes.app, parentDir, "#{name}.#{extension}"
     helpers.loadPlugins config, (error, plugins) ->
       plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
       generator = plugin?.generators?[config.framework or 'backbone']?[type]
@@ -197,7 +192,8 @@ extension '#{extension}'"
   # We'll additionally generate tests for 'script' languages.
   initTests = (parentDir, callback) ->
     return callback() unless languageType is 'javascript'
-    fullPath = sysPath.join testPath, parentDir, "#{name}.#{extension}"
+    unitTestPath = sysPath.join config.pathes.test, 'unit'
+    fullPath = sysPath.join unitTestPath, parentDir, "#{name}.#{extension}"
     data = ''
     generateOrDestroyFile fullPath, data, callback
 

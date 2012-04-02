@@ -37,22 +37,41 @@ startDefaultServer = (port, path, callback) ->
     res.render 'index.html'
   server.listen parseInt port, 10
   server.on 'listening', callback
-  logger.info "application started on http://0.0.0.0:#{port}."
+  logger.info "application started on http://localhost:#{port}/"
 
-exports.startServer = (port, buildPath, config, callback = (->)) ->
-  if config.server?.path
+exports.startServer = (config, callback = (->)) ->
+  if config.server.path
     try
-      server = require sysPath.resolve config.server.path
-      server.startServer port, buildPath, callback
+      server = require sysPath.resolve config.pathes.server
+      server.startServer config.server.port, config.pathes.build, callback
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer port, buildPath, callback
+    startDefaultServer config.server.port, config.pathes.build, callback
+
+setConfigDefaults = (config) ->
+  join = (parent, name) =>
+    sysPath.join config.pathes[parent], name
+  config.pathes ?= {}
+  config.pathes.root ?= config.rootPath ? '.'
+  config.pathes.build ?= config.buildPath ? join 'root', 'public'
+  config.pathes.app ?= join 'root', 'app'
+  config.pathes.assets ?= join 'app', 'assets'
+  config.pathes.test ?= join 'root', 'test'
+  config.pathes.vendor ?= join 'root', 'vendor'
+  config.server ?= {}
+  config.server.path ?= null
+  config.server.port ?= 3333
+  config.server.run ?= no
+  # Alias deprecated config params.
+  config.rootPath = config.pathes.root
+  config.buildPath = config.pathes.build
+  config
 
 exports.loadConfig = (configPath = 'config') ->
   try
     {config} = require sysPath.resolve configPath
-    config.rootPath ?= '.'
+    setConfigDefaults config
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
     config = null
