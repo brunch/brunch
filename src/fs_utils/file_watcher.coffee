@@ -5,8 +5,6 @@ common = require './common'
 logger = require '../logger'
 
 # Watches files & directories for changes.
-# Uses old node.js API (fs.watchFile) because fs.watch doesn't
-# work correctly on all platforms.
 #
 # Emitted events: `change`, `remove`.
 # 
@@ -23,11 +21,12 @@ module.exports = class FileWatcher extends EventEmitter
 
   constructor: ->
     @watched = {}
+    @watchers = []
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
 
-  # Private: Watch file for changes with fs.watchFile.
+  # Private: Watch file for changes with fs.watchFile or fs.watch.
   # 
   # item     - string, path to file or directory.
   # callback - function that will be executed on fs change.
@@ -39,9 +38,12 @@ module.exports = class FileWatcher extends EventEmitter
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
-    fs.watchFile item, persistent: yes, interval: 100, (curr, prev) =>
-      if curr.mtime.getTime() isnt prev.mtime.getTime()
+    if process.platform is 'win32'
+      @watchers.push fs.watch item, persistent: yes, =>
         callback? item
+    else
+      fs.watchFile item, persistent: yes, interval: 100, (curr, prev) =>
+        callback? item if curr.mtime.getTime() isnt prev.mtime.getTime()
 
   # Private: Emit `change` event once and watch file to emit it in the future
   # once the file is changed.
@@ -127,6 +129,8 @@ module.exports = class FileWatcher extends EventEmitter
   # Public: Remove all listeners from watched files.
   # Returns an instance of FileWatcher for chaning.
   close: ->
+    @watchers.forEach (watcher) =>
+      watcher.close()
     Object.keys(@watched).forEach (directory) =>
       @watched[directory].forEach (file) =>
         fs.unwatchFile sysPath.join directory, file

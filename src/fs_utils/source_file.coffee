@@ -26,7 +26,10 @@ module.exports = class SourceFile
     else
       if @type in ['javascript', 'template'] and !(/^vendor/.test @path)
         moduleName = JSON.stringify(
-          @path.replace(/^app\//, '').replace(/\.\w*$/, '')
+          @path
+            .replace(/\\/g, '/')
+            .replace(/^app\//, '')
+            .replace(/\.\w*$/, '')
         )
         """
         (this.require.define({
