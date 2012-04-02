@@ -84,7 +84,7 @@ exports.loadPlugins = (config, callback) ->
     deps = Object.keys (JSON.parse data).dependencies
     plugins = deps
       .map (dependency) ->
-        require "#{rootPath}/node_modules/#{dependency}"
+        require sysPath.join rootPath, 'node_modules', dependency
       .filter (plugin) ->
         (plugin::)? and plugin::brunchPlugin
       .map (plugin) ->
