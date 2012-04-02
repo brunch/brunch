@@ -1,5 +1,5 @@
 ## Brunch 1.1.0 (unreleased)
-* Fixed loading of non-coffeescript configs.
+* Node.js API now mirrors CLI api.
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
     Usage: `brunch build --config ios_config`.
@@ -7,13 +7,18 @@
     * Param `--template` in `brunch new` has been renamed to `--skeleton`.
     `--skeleton` supports relative / absolute path and git repo URLs.
     Also, git metadata is automatically removed in cloned / copied projects.
-* Node.js API now mirrors CLI api.
-* Module loader now throws real exceptions instead of strings when module
-wasn't found.
-* Scripts that are not in the config[lang].order are now compiled in
-alphabetical order instead of random.
-* Fixed an issue when module loader loaded non-existing modules.
-* Fixed an issue when module loader cached same modules more than once.
+* Improved config API:
+    * `buildPath` is now deprecated, `pathes.build` is used instead of it.
+    * Added `pathes.app`, `pathes.root`, `pathes.assets`, `pathes.test`,
+    `pathes.vendor`.
+    * Scripts that are not in the config[lang].order are now compiled in
+    alphabetical order instead of random.
+* Improved module loader:
+    * Real exceptions are now throwed instead of strings when module
+    wasn't found.
+    * Fixed an issue when loader cached same modules more than once.
+    * Fixed an issue when loader loaded non-existing modules.
+* Fixed loading of non-coffeescript configs.
 
 ## Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
