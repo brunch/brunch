@@ -21,8 +21,8 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "postinstall": "./node_modules/coffee-script/bin/coffee -o lib/ src/",
-    "test": "./node_modules/mocha/bin/mocha --reporter spec"
+    "postinstall": "node setup.js compile",
+    "test": "node setup.js test"
   },
   "engines": {
     "node": "~0.6.10"
@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "mocha": "0.14.0",
-    "expect.js": "0.1.2",
-    "zombie": "0.12.7"
+    "expect.js": "0.1.2"
   }
 }
