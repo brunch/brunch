@@ -1,3 +1,6 @@
+## Brunch 1.0.3 (April 3, 2012)
+* Dotfiles from assets dir are prevented to be copied to build dir.
+
 ## Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
 * Changed recommended framework in `test/spec` to Mocha.

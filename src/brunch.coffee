@@ -71,9 +71,10 @@ watchApplication = (persistent, rootPath, config, callback) ->
       .on('change', addToFileList no)
       .on('remove', removeFromFileList)
     fileList.on 'resetTimer', -> writer.write fileList
+    valid = (path) -> not watcher.invalid.test sysPath.basename path
     writer.on 'write', (result) ->
       assetPath = sysPath.join rootPath, 'app', 'assets'
-      ncp assetPath, config.buildPath, (error) ->
+      ncp assetPath, config.buildPath, filter: valid, (error) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
