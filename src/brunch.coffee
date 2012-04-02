@@ -33,7 +33,7 @@ create = (options, callback = (->)) ->
     logger.log 'debug', "Copying skeleton from #{skeletonPath}"
 
     copyDirectory = (from) ->
-      fs_utils.copyIfExists from, rootPath, (error) ->
+      fs_utils.copyIfExists from, rootPath, no, (error) ->
         return logger.error error if error?
         logger.info 'Created brunch directory layout'
         removeAndInstall rootPath, callback
@@ -117,7 +117,8 @@ watch = (persistent, options, callback = (->)) ->
     fileList.on 'resetTimer', -> writer.write fileList
 
     writer.on 'write', (result) ->
-      fs_utils.copyIfExists config.pathes.assets, config.pathes.build, (error) ->
+      copyIfExists = fs_utils.copyIfExists
+      copyIfExists config.pathes.assets, config.pathes.build, yes, (error) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"

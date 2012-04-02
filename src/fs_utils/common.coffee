@@ -30,7 +30,8 @@ exports.invalid = invalid = /^(\.|#)/
 valid = (path) ->
   not invalid.test(sysPath.basename path)
 
-exports.copyIfExists = (source, destination, callback) ->
+exports.copyIfExists = (source, destination, filter = yes, callback) ->
+  options = if filter then {filter: valid} else {}
   sysPath.exists source, (exists) ->
     return callback() unless exists
-    ncp source, destination, filter: valid, callback
+    ncp source, destination, options, callback
