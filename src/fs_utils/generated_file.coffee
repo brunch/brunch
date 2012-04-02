@@ -12,13 +12,6 @@ requireDefinition = '''
     var cache = {};
     var __hasProp = ({}).hasOwnProperty;
 
-    var getModule = function(path) {
-      var dirIndex;
-      if (__hasProp.call(modules, path)) return modules[path];
-      dirIndex = expand(path, './index');
-      if (__hasProp.call(modules, dirIndex)) return modules[dirIndex];
-    };
-
     var expand = function(root, name) {
       var results = [], parts, part;
       if (/^\\.\\.?(\\/|$)/.test(name)) {
@@ -37,26 +30,37 @@ requireDefinition = '''
       return results.join('/');
     };
 
+    var getFullPath = function(path, fromCache) {
+      var store = fromCache ? cache : modules;
+      var dirIndex;
+      if (__hasProp.call(store, path)) return path;
+      dirIndex = expand(path, './index');
+      if (__hasProp.call(store, dirIndex)) return dirIndex;
+    };
+    
+    var cacheModule = function(name, path, contentFn) {
+      var module = {id: path, exports: {}};
+      try {
+        cache[path] = module.exports;
+        contentFn(module.exports, function(name) {
+          return require(name, dirname(path));
+        }, module);
+        cache[path] = module.exports;
+      } catch (err) {
+        delete cache[path];
+        throw err;
+      }
+      return cache[path];
+    };
+
     var require = function(name, root) {
       var path = expand(root, name);
-      var dirIndex = expand(path, './index');
-      var module, loader;
+      var fullPath;
 
-      if (__hasProp.call(cache, name)) {
-        return cache[name];
-      } else if (loader = getModule(path)) {
-        module = {id: name, exports: {}};
-        try {
-          cache[name] = module.exports;
-          loader(module.exports, function(name) {
-            return require(name, dirname(path));
-          }, module);
-          cache[name] = module.exports;
-          return cache[name];
-        } catch (err) {
-          delete cache[name];
-          throw err;
-        }
+      if (fullPath = getFullPath(path, true)) {
+        return cache[fullPath];
+      } else if (fullPath = getFullPath(path, false)) {
+        return cacheModule(name, fullPath, modules[fullPath]);
       } else {
         throw new Error("Cannot find module '" + name + "'");
       }

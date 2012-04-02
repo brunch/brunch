@@ -13,6 +13,7 @@ wasn't found.
 * Scripts that are not in the config[lang].order are now compiled in
 alphabetical order instead of random.
 * Fixed an issue when module loader loaded non-existing modules.
+* Fixed an issue when module loader cached same modules more than once.
 
 ## Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
