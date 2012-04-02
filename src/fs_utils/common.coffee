@@ -1,5 +1,6 @@
 fs = require 'fs'
 mkdirp = require 'mkdirp'
+{ncp} = require 'ncp'
 sysPath = require 'path'
 
 # Creates file if it doesn't exist and writes data to it.
@@ -22,3 +23,8 @@ exports.writeFile = (path, data, callback) ->
       return callback error if error?
       write (error) ->
         callback error, path, data
+
+exports.copyIfExists = (from, to, callback) ->
+  sysPath.exists from, (exists) ->
+    return callback() unless exists
+    ncp from, to, callback

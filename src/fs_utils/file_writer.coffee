@@ -2,11 +2,11 @@ async = require 'async'
 {EventEmitter} = require 'events'
 sysPath = require 'path'
 helpers = require '../helpers'
-{GeneratedFile} = require './generated_file'
+GeneratedFile = require './generated_file'
 logger = require '../logger'
 
 # A bridge between `GeneratedFile` and `SourceFileList`.
-class exports.FileWriter extends EventEmitter
+module.exports = class FileWriter extends EventEmitter
   # * config  - parsed app config
   # * plugins - hashmap of plugins from package.json.
   constructor: (@config, @plugins) ->

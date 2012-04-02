@@ -4,7 +4,7 @@ sysPath = require 'path'
 pluginHelperCounter = 0
 
 # A file that will be compiled by brunch.
-class exports.SourceFile
+module.exports = class SourceFile
   constructor: (@path, @compiler) ->
     @type = @compiler.type
     @data = ''

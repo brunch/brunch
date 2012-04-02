@@ -1,10 +1,10 @@
 {EventEmitter} = require 'events'
-{SourceFile} = require './source_file'
+SourceFile = require './source_file'
 logger = require '../logger'
 
 # A list of `fs_utils.SourceFile` with some additional methods
 # used to simplify file reading / removing.
-class exports.SourceFileList extends EventEmitter
+module.exports = class SourceFileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
   RESET_TIME: 100

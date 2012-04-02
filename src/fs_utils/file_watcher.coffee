@@ -16,7 +16,7 @@ logger = require '../logger'
 #     .on('change', (path) -> console.log 'File', path, 'was added / changed')
 #     .on('remove', (path) -> console.log 'File', path, 'was removed')
 # 
-class exports.FileWatcher extends EventEmitter
+module.exports = class FileWatcher extends EventEmitter
   # RegExp that would filter invalid files (dotfiles, emacs caches etc).
   invalid: /^(\.|#)/
 
