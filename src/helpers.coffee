@@ -66,6 +66,21 @@ setConfigDefaults = (config) ->
   # Alias deprecated config params.
   config.rootPath = config.pathes.root
   config.buildPath = config.pathes.build
+
+  if process.platform is 'win32'
+    changePath = (string) -> string.split('/').join('\\')
+    files = config.files or {}
+    Object.keys(files).forEach (language) ->
+      lang = files[language] or {}
+      order = lang.order or {}
+      Object.keys(order).forEach (orderKey) ->
+        lang[orderKey] = lang.orderKey.map changePath
+      switch toString.call lang.joinTo
+        when '[object String]'
+          lang.joinTo = changePath lang.joinTo
+        when '[object Object]'
+          Object.keys(lang.joinTo).forEach (joinToKey) ->
+            lang.joinTo[joinToKey]
   config
 
 exports.loadConfig = (configPath = 'config') ->
