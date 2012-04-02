@@ -19,6 +19,7 @@
     * Fixed an issue when loader cached same modules more than once.
     * Fixed an issue when loader loaded non-existing modules.
 * Fixed loading of non-coffeescript configs.
+* Dotfiles from assets dir are prevented to be copied to build dir.
 
 ## Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
