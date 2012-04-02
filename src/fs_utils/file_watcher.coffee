@@ -1,6 +1,7 @@
 {EventEmitter} = require 'events'
 fs = require 'fs'
 sysPath = require 'path'
+common = require './common'
 logger = require '../logger'
 
 # Watches files & directories for changes.
@@ -17,8 +18,8 @@ logger = require '../logger'
 #     .on('remove', (path) -> console.log 'File', path, 'was removed')
 # 
 module.exports = class FileWatcher extends EventEmitter
-  # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-  invalid: /^(\.|#)/
+  # Files that wouldn't be watched.
+  invalid: common.invalid
 
   constructor: ->
     @watched = {}
