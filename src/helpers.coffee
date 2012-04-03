@@ -72,7 +72,6 @@ exports.loadConfig = (configPath = 'config') ->
   try
     {config} = require sysPath.resolve configPath
     setConfigDefaults config
-    Object.freeze config
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
     config = null
