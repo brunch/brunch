@@ -1,4 +1,5 @@
 ## Brunch 1.1.0 (unreleased)
+* Added windows support.
 * Node.js API now mirrors CLI api.
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
