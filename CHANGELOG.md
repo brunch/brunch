@@ -15,7 +15,7 @@
     * Scripts that are not in the config[lang].order are now compiled in
     alphabetical order instead of random.
 * Improved module loader:
-    * Real exceptions are now throwed instead of strings when module
+    * Real exceptions are now thrown instead of strings when module
     wasn't found.
     * Fixed an issue when loader cached same modules more than once.
     * Fixed an issue when loader loaded non-existing modules.
