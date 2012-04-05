@@ -1,6 +1,5 @@
 # Brunch
-A lightweight approach to building HTML5 applications with emphasis on 
-elegance and simplicity.
+HTML5 applications made easy.
 
 ## Getting started
 You'll need [node.js](http://nodejs.org/) 0.6.10+. Type:
@@ -29,7 +28,6 @@ and run test suite via
 ## Contact
 - Website: [brunch.io](http://brunch.io).
 - Project twitter: [@brunch](http://twitter.com/brunch)
-- IRC: #brunch @ Freenode
 
 ## License
 Brunch is released under the MIT License (see LICENSE for details).
