@@ -40,7 +40,7 @@ create = (options, callback = (->)) ->
 
     mkdirp rootPath, (parseInt 755, 8), (error) ->
       return logger.error error if error?
-      sysPath.exists skeletonPath, (exists) ->
+      fs_utils.exists skeletonPath, (exists) ->
         return logger.error "Skeleton '#{skeleton}' doesn't exist" unless exists
         copyDirectory skeletonPath
 
@@ -51,7 +51,7 @@ create = (options, callback = (->)) ->
       logger.info 'Created brunch directory layout'
       removeAndInstall rootPath, callback
 
-  sysPath.exists rootPath, (exists) ->
+  fs_utils.exists rootPath, (exists) ->
     return logger.error "Directory '#{rootPath}' already exists" if exists
     if /(https?|git)(:\/\/|@)/.test skeleton
       cloneSkeleton skeleton, callback
@@ -99,6 +99,7 @@ watch = (persistent, options, callback = (->)) ->
 
     removeFromFileList = (path) ->
       return fileList.resetTimer() if ignored path
+      logger.log 'debug', "File '#{path}' was removed"
       fileList.remove path
 
     plugins.forEach (plugin) ->
@@ -131,7 +132,7 @@ generateFile = (path, data, callback) ->
   write = ->
     logger.info "create #{path}"
     fs.writeFile path, data, callback
-  sysPath.exists parentDir, (exists) ->
+  fs_utils.exists parentDir, (exists) ->
     return write() if exists
     logger.info "create #{parentDir}"
     mkdirp parentDir, (parseInt 755, 8), (error) ->

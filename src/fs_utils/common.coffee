@@ -3,6 +3,8 @@ mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
 
+exports.exists = fs.exists or sysPath.exists
+
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
 #
