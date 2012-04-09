@@ -6,14 +6,17 @@ var mode = process.argv[2];
 var execute = function(pathParts, params, callback) {
   if (callback == null) callback = function() {};
   var path = sysPath.join.apply(null, pathParts);
-  exec('node ' + path + ' ' + params, function(error, stdout, stderr) {
-    if (error != null) return console.error('Error', error);
-    callback(error, stdout);
-  })
+  var command = 'node ' + path + ' ' + params;
+  console.log('Executing', command);
+  exec(command, function(error, stdout, stderr) {
+    if (error != null) return process.stderr.write('Error', stderr.toString());
+    process.stdout.write(stdout.toString());
+  });
 };
 
-if (mode === 'compile') {
+if (mode === 'postinstall') {
   execute(['node_modules', 'coffee-script', 'bin', 'coffee'], '-o lib/ src/');
 } else if (mode === 'test') {
-  execute(['node_modules', 'mocha', 'bin', 'mocha'], '--reporter spec');
+  execute(['node_modules', 'mocha', 'bin', 'mocha'],
+    '--compilers coffee:coffee-script --require test/common.coffee --colors');
 }
