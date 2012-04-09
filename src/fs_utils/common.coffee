@@ -25,13 +25,13 @@ exports.writeFile = (path, data, callback) ->
         callback error, path, data
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-exports.invalid = invalid = /^(\.|#)/
+ignoredRe = /^(\.|#)/
 
-valid = (path) ->
-  not invalid.test(sysPath.basename path)
+exports.ignored = ignored = (path) ->
+  ignoredRe.test(sysPath.basename path)
 
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
-  options = if filter then {filter: valid} else {}
+  options = if filter then {filter: ((path) -> not ignored path)} else {}
   sysPath.exists source, (exists) ->
     return callback() unless exists
     ncp source, destination, options, callback
