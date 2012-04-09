@@ -1,30 +1,38 @@
 {EventEmitter} = require 'events'
 fs = require 'fs'
 sysPath = require 'path'
-common = require './common'
-logger = require '../logger'
 
 # Watches files & directories for changes.
 #
-# Emitted events: `change`, `remove`.
+# Emitted events: `change`, `unlink`.
 # 
 # Examples
 # 
-#   watcher = (new FileWatcher)
+#   watcher = (new FSWatcher)
 #     .add(directories)
 #     .on('change', (path) -> console.log 'File', path, 'was added / changed')
-#     .on('remove', (path) -> console.log 'File', path, 'was removed')
+#     .on('unlink', (path) -> console.log 'File', path, 'was removed')
 # 
-module.exports = class FileWatcher extends EventEmitter
+class FSWatcher extends EventEmitter
   # Files that wouldn't be watched.
-  invalid: common.invalid
 
-  constructor: ->
+  constructor: (files, @options) ->
     @watched = {}
     @watchers = []
+    @add(files)
+    @options.persistent ?= no
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
+
+  _ignored: (path) ->
+    tester = @options.ignore
+    if typeof tester is 'function'
+      tester path
+    else if typeof tester?.test is 'function'
+      tester.test(path)
+    else
+      no
 
   # Private: Watch file for changes with fs.watchFile or fs.watch.
   # 
@@ -38,11 +46,14 @@ module.exports = class FileWatcher extends EventEmitter
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
+    # @watchers.push fs.watch item, persistent: yes, =>
+    #   callback? item
     if process.platform is 'win32'
-      @watchers.push fs.watch item, persistent: yes, =>
+      @watchers.push fs.watch item, persistent: @options.persistent, =>
         callback? item
     else
-      fs.watchFile item, persistent: yes, interval: 100, (curr, prev) =>
+      options = persistent: @options.persistent, interval: 100
+      fs.watchFile item, options, (curr, prev) =>
         callback? item if curr.mtime.getTime() isnt prev.mtime.getTime()
 
   # Private: Emit `change` event once and watch file to emit it in the future
@@ -66,7 +77,7 @@ module.exports = class FileWatcher extends EventEmitter
   _handleDir: (directory) ->
     read = (directory) =>
       fs.readdir directory, (error, current) =>
-        return logger.error error if error?
+        return @emit 'error', error if error?
         return unless current
         previous = @_getWatchedDir directory
 
@@ -76,7 +87,7 @@ module.exports = class FileWatcher extends EventEmitter
           .filter (file) =>
             file not in current
           .forEach (file) =>
-            @emit 'remove', sysPath.join directory, file
+            @emit 'unlink', sysPath.join directory, file
 
         # Files that present in current directory snapshot
         # but absent in previous are added to watch list and
@@ -97,13 +108,13 @@ module.exports = class FileWatcher extends EventEmitter
   # Returns nothing.
   _handle: (item) =>
     # Don't handle invalid files, dotfiles etc.
-    return if @invalid.test sysPath.basename item
+    return if @_ignored item
     # Get the canonicalized absolute pathname.
     fs.realpath item, (error, path) =>
-      return logger.error error if error?
+      return @emit 'error', error if error?
       # Get file info, check is it file, directory or something else.
       fs.stat item, (error, stats) =>
-        return logger.error error if error?
+        return @emit 'error', error if error?
         @_handleFile item if stats.isFile()
         @_handleDir item if stats.isDirectory()
 
@@ -115,19 +126,20 @@ module.exports = class FileWatcher extends EventEmitter
   # 
   #   add ['app', 'vendor']
   # 
-  # Returns an instance of FileWatcher for chaning.
+  # Returns an instance of FSWatcher for chaning.
   add: (files) ->
+    files = [files] unless Array.isArray(files)
     files.forEach @_handle
     this
 
   # Public: Call EventEmitter's event listening function.
-  # Returns an instance of FileWatcher for chaning.
+  # Returns an instance of FSWatcher for chaning.
   on: ->
     super
     this
 
   # Public: Remove all listeners from watched files.
-  # Returns an instance of FileWatcher for chaning.
+  # Returns an instance of FSWatcher for chaning.
   close: ->
     @watchers.forEach (watcher) =>
       watcher.close()
@@ -136,3 +148,6 @@ module.exports = class FileWatcher extends EventEmitter
         fs.unwatchFile sysPath.join directory, file
     @watched = {}
     this
+
+module.exports = spectate = (files, options = {}) ->
+  new FSWatcher(files, options)

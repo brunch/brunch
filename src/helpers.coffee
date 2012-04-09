@@ -49,7 +49,29 @@ exports.startServer = (config, callback = (->)) ->
   else
     startDefaultServer config.server.port, config.pathes.build, callback
 
-setConfigDefaults = (config) ->
+exports.replaceSlashes = replaceSlashes = (config) ->
+  changePath = (string) -> string.replace(/\//g, '\\')
+  files = config.files or {}
+  Object.keys(files).forEach (language) ->
+    lang = files[language] or {}
+    order = lang.order or {}
+
+    # Modify order.
+    Object.keys(order).forEach (orderKey) ->
+      lang.order[orderKey] = lang.order[orderKey].map changePath
+
+    # Modify join configuration.
+    switch toString.call lang.joinTo
+      when '[object String]'
+        lang.joinTo = changePath lang.joinTo
+      when '[object Object]'
+        newJoinTo = {}
+        Object.keys(lang.joinTo).forEach (joinToKey) ->
+          newJoinTo[changePath joinToKey] = lang.joinTo[joinToKey]
+        lang.joinTo = newJoinTo
+  config
+
+exports.setConfigDefaults = setConfigDefaults = (config) ->
   join = (parent, name) =>
     sysPath.join config.pathes[parent], name
   config.pathes ?= {}
@@ -66,6 +88,8 @@ setConfigDefaults = (config) ->
   # Alias deprecated config params.
   config.rootPath = config.pathes.root
   config.buildPath = config.pathes.build
+
+  replaceSlashes config if process.platform is 'win32'
   config
 
 exports.loadConfig = (configPath = 'config') ->
@@ -82,11 +106,14 @@ exports.loadPlugins = (config, callback) ->
   fs.readFile (sysPath.join rootPath, 'package.json'), (error, data) ->
     return callback error if error?
     deps = Object.keys (JSON.parse data).dependencies
-    plugins = deps
-      .map (dependency) ->
-        require "#{rootPath}/node_modules/#{dependency}"
-      .filter (plugin) ->
-        (plugin::)? and plugin::brunchPlugin
-      .map (plugin) ->
-        new plugin config
-    callback null, plugins
+    try
+      plugins = deps
+        .map (dependency) ->
+          require "#{rootPath}/node_modules/#{dependency}"
+        .filter (plugin) ->
+          (plugin::)? and plugin::brunchPlugin
+        .map (plugin) ->
+          new plugin config
+    catch err
+      error = err
+    callback error, plugins

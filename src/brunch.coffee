@@ -111,12 +111,14 @@ watch = (persistent, options, callback = (->)) ->
       includePathes.forEach addToFileList.bind(null, yes)
 
     writer = new fs_utils.FileWriter config, plugins
-    watcher = (new fs_utils.FileWatcher)
-      .add(directories)
+    watcher = fs_utils.spectate directories, {
+      persistent: yes, ignore: fs_utils.ignored
+    }
+    watcher
       .on('change', addToFileList.bind(null, no))
-      .on('remove', removeFromFileList)
-    fileList.on 'resetTimer', -> writer.write fileList
+      .on('unlink', removeFromFileList)
 
+    fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       copyIfExists = fs_utils.copyIfExists
       copyIfExists config.pathes.assets, config.pathes.build, yes, (error) ->
