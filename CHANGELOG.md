@@ -9,9 +9,9 @@
     `--skeleton` supports relative / absolute path and git repo URLs.
     Also, git metadata is automatically removed in cloned / copied projects.
 * Improved config API:
-    * `buildPath` is now deprecated, `pathes.build` is used instead of it.
-    * Added `pathes.app`, `pathes.root`, `pathes.assets`, `pathes.test`,
-    `pathes.vendor`.
+    * `buildPath` is now deprecated, `paths.build` is used instead of it.
+    * Added `paths.app`, `paths.root`, `paths.assets`, `paths.test`,
+    `paths.vendor`.
     * Scripts that are not in the config[lang].order are now compiled in
     alphabetical order instead of random.
 * Improved module loader:

@@ -42,12 +42,12 @@ startDefaultServer = (port, path, callback) ->
 exports.startServer = (config, callback = (->)) ->
   if config.server.path
     try
-      server = require sysPath.resolve config.pathes.server
-      server.startServer config.server.port, config.pathes.build, callback
+      server = require sysPath.resolve config.paths.server
+      server.startServer config.server.port, config.paths.build, callback
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.pathes.build, callback
+    startDefaultServer config.server.port, config.paths.build, callback
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
@@ -71,31 +71,33 @@ exports.replaceSlashes = replaceSlashes = (config) ->
         lang.joinTo = newJoinTo
   config
 
-exports.setConfigDefaults = setConfigDefaults = (config) ->
+exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
-    sysPath.join config.pathes[parent], name
-  config.pathes ?= {}
-  config.pathes.root ?= config.rootPath ? '.'
-  config.pathes.build ?= config.buildPath ? join 'root', 'public'
-  config.pathes.app ?= join 'root', 'app'
-  config.pathes.assets ?= join 'app', 'assets'
-  config.pathes.test ?= join 'root', 'test'
-  config.pathes.vendor ?= join 'root', 'vendor'
+    sysPath.join config.paths[parent], name
+  config.paths ?= {}
+  config.paths.root ?= config.rootPath ? '.'
+  config.paths.build ?= config.buildPath ? join 'root', 'public'
+  config.paths.app ?= join 'root', 'app'
+  config.paths.config = configPath ? join 'root', 'config'
+  config.paths.assets ?= join 'app', 'assets'
+  config.paths.test ?= join 'root', 'test'
+  config.paths.vendor ?= join 'root', 'vendor'
   config.server ?= {}
   config.server.path ?= null
   config.server.port ?= 3333
   config.server.run ?= no
   # Alias deprecated config params.
-  config.rootPath = config.pathes.root
-  config.buildPath = config.pathes.build
+  config.rootPath = config.paths.root
+  config.buildPath = config.paths.build
 
   replaceSlashes config if process.platform is 'win32'
   config
 
 exports.loadConfig = (configPath = 'config') ->
+  fullPath = sysPath.resolve configPath
   try
-    {config} = require sysPath.resolve configPath
-    setConfigDefaults config
+    {config} = require fullPath
+    setConfigDefaults config, fullPath
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
     config = null
