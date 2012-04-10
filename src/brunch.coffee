@@ -38,7 +38,7 @@ create = (options, callback = (->)) ->
         logger.info 'Created brunch directory layout'
         removeAndInstall rootPath, callback
 
-    mkdirp rootPath, (parseInt 755, 8), (error) ->
+    mkdirp rootPath, 0o755, (error) ->
       return logger.error error if error?
       fs_utils.exists skeletonPath, (exists) ->
         return logger.error "Skeleton '#{skeleton}' doesn't exist" unless exists
@@ -140,7 +140,7 @@ generateFile = (path, data, callback) ->
   fs_utils.exists parentDir, (exists) ->
     return write() if exists
     logger.info "create #{parentDir}"
-    mkdirp parentDir, (parseInt 755, 8), (error) ->
+    mkdirp parentDir, 0o755, (error) ->
       return logger.error if error?
       write()
 
