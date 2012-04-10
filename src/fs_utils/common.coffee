@@ -3,7 +3,6 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
-watchit = require 'watchit'
 spectate = require './spectate'
 
 exports.exists = fs.exists or sysPath.exists
@@ -35,25 +34,13 @@ ignoredRe = /^(\.|#)/
 exports.ignored = ignored = (path) ->
   ignoredRe.test(sysPath.basename path)
 
-exports.watch = do ->
+exports.watch = (paths, callback) ->
   watchOptions =
     ignored: ignored,
     include: yes,
     recurse: yes,
     persistent: yes
-
-  newWatch = (paths, callback) ->
-    paths = [paths] unless Array.isArray(paths)
-    watchers = paths.map (path) ->
-      watchit path, watchOptions, callback
-    {
-      close: -> watchers.forEach (watcher) -> watcher.close()
-    }
-
-  oldWatch = (paths, callback) ->
-    spectate paths, watchOptions, callback
-
-  oldWatch
+  spectate paths, watchOptions, callback
 
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
   options = if filter then {filter: ((path) -> not ignored path)} else {}
