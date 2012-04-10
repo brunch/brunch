@@ -53,10 +53,7 @@ exports.watch = do ->
   oldWatch = (paths, callback) ->
     spectate paths, watchOptions, callback
 
-  if process.platform is 'win32'
-    newWatch
-  else
-    oldWatch
+  oldWatch
 
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
   options = if filter then {filter: ((path) -> not ignored path)} else {}
