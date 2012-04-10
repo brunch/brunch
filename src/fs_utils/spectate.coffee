@@ -26,7 +26,7 @@ class FSWatcher extends EventEmitter
     @watched[directory] ?= []
 
   _ignored: (path) ->
-    tester = @options.ignore
+    tester = @options.ignored
     if typeof tester is 'function'
       tester path
     else if typeof tester?.test is 'function'
@@ -149,5 +149,7 @@ class FSWatcher extends EventEmitter
     @watched = {}
     this
 
-module.exports = spectate = (files, options = {}) ->
+module.exports = spectate = (files, options = {}, callback = (->)) ->
   new FSWatcher(files, options)
+    .on('change', callback.bind(null, 'change'))
+    .on('unlink', callback.bind(null, 'unlink'))
