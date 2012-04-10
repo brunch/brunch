@@ -4,6 +4,7 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 rimraf = require 'rimraf'
 sysPath = require 'path'
+watchit = require 'watchit'
 helpers = require './helpers'
 logger = require './logger'
 fs_utils = require './fs_utils'
@@ -111,12 +112,19 @@ watch = (persistent, options, callback = (->)) ->
       includePathes.forEach addToFileList.bind(null, yes)
 
     writer = new fs_utils.FileWriter config, plugins
-    watcher = fs_utils.spectate directories, {
-      persistent: yes, ignore: fs_utils.ignored
+    watchOptions = {
+      ignored: fs_utils.ignored,
+      include: yes,
+      recurse: yes,
+      persistent: yes
     }
-    watcher
-      .on('change', addToFileList.bind(null, no))
-      .on('unlink', removeFromFileList)
+    watchers = directories.map (directory) ->
+      watchit directory, watchOptions, (event, path) ->
+        switch event
+          when 'success', 'change'
+            addToFileList no, path
+          when 'unlink'
+            removeFromFileList path
 
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
@@ -125,9 +133,10 @@ watch = (persistent, options, callback = (->)) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
-        watcher.close() unless persistent
+        unless persistent
+          watchers.forEach (watcher) ->
+            watcher.close()
         callback null, result
-    watcher
 
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
