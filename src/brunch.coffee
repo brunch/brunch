@@ -95,7 +95,7 @@ watch = (persistent, options, callback = (->)) ->
     start = null
     addToFileList = (isPluginHelper, path) ->
       start = Date.now()
-      logger.log 'debug', "File '#{path}' was changed"
+      # logger.log 'debug', "File '#{path}' was changed"
       return fileList.resetTimer() if ignored path
       compiler = plugins.filter(isCompilerFor.bind(null, path))[0]
       return unless compiler
@@ -103,7 +103,7 @@ watch = (persistent, options, callback = (->)) ->
 
     removeFromFileList = (path) ->
       return fileList.resetTimer() if ignored path
-      logger.log 'debug', "File '#{path}' was removed"
+      # logger.log 'debug', "File '#{path}' was removed"
       fileList.remove path
 
     plugins.forEach (plugin) ->
@@ -115,20 +115,13 @@ watch = (persistent, options, callback = (->)) ->
       includePathes.forEach addToFileList.bind(null, yes)
 
     writer = new fs_utils.FileWriter config, plugins
-    watchOptions = {
-      ignored: fs_utils.ignored,
-      include: yes,
-      recurse: yes,
-      persistent: yes
-    }
-    console.log 123, watchedFiles
-    watchers = watchedFiles.map (directory) ->
-      watchit directory, watchOptions, (event, path) ->
-        switch event
-          when 'success', 'change'
-            addToFileList no, path
-          when 'unlink'
-            removeFromFileList path
+    watcher = fs_utils.watch watchedFiles, (event, path) ->
+      logger.log 'debug', "File '#{path}' received event #{event}"
+      switch event
+        when 'success', 'change'
+          addToFileList no, path
+        when 'unlink'
+          removeFromFileList path
 
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
@@ -137,9 +130,7 @@ watch = (persistent, options, callback = (->)) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.log 'debug', "compilation time: #{Date.now() - start}ms"
-        unless persistent
-          watchers.forEach (watcher) ->
-            watcher.close()
+        watcher.close() unless persistent
         callback null, result
 
 generateFile = (path, data, callback) ->

@@ -93,7 +93,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   replaceSlashes config if process.platform is 'win32'
   config
 
-exports.loadConfig = (configPath = 'config') ->
+exports.loadConfig = (configPath = 'config.coffee') ->
   fullPath = sysPath.resolve configPath
   try
     {config} = require fullPath

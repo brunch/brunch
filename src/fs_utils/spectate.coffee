@@ -14,11 +14,8 @@ sysPath = require 'path'
 #     .on('unlink', (path) -> console.log 'File', path, 'was removed')
 # 
 class FSWatcher extends EventEmitter
-  # Files that wouldn't be watched.
-
   constructor: (files, @options) ->
     @watched = {}
-    @watchers = []
     @add(files)
     @options.persistent ?= no
 
@@ -26,7 +23,7 @@ class FSWatcher extends EventEmitter
     @watched[directory] ?= []
 
   _ignored: (path) ->
-    tester = @options.ignore
+    tester = @options.ignored
     if typeof tester is 'function'
       tester path
     else if typeof tester?.test is 'function'
@@ -46,15 +43,9 @@ class FSWatcher extends EventEmitter
     # Prevent memory leaks.
     return if basename in parent
     parent.push basename
-    # @watchers.push fs.watch item, persistent: yes, =>
-    #   callback? item
-    if process.platform is 'win32'
-      @watchers.push fs.watch item, persistent: @options.persistent, =>
-        callback? item
-    else
-      options = persistent: @options.persistent, interval: 100
-      fs.watchFile item, options, (curr, prev) =>
-        callback? item if curr.mtime.getTime() isnt prev.mtime.getTime()
+    options = persistent: @options.persistent, interval: 100
+    fs.watchFile item, options, (curr, prev) =>
+      callback? item if curr.mtime.getTime() isnt prev.mtime.getTime()
 
   # Private: Emit `change` event once and watch file to emit it in the future
   # once the file is changed.
@@ -108,6 +99,7 @@ class FSWatcher extends EventEmitter
   # Returns nothing.
   _handle: (item) =>
     # Don't handle invalid files, dotfiles etc.
+    # logger.info "Ignored #{item}: #{@_ignored item}"
     return if @_ignored item
     # Get the canonicalized absolute pathname.
     fs.realpath item, (error, path) =>
@@ -141,13 +133,13 @@ class FSWatcher extends EventEmitter
   # Public: Remove all listeners from watched files.
   # Returns an instance of FSWatcher for chaning.
   close: ->
-    @watchers.forEach (watcher) =>
-      watcher.close()
     Object.keys(@watched).forEach (directory) =>
       @watched[directory].forEach (file) =>
         fs.unwatchFile sysPath.join directory, file
     @watched = {}
     this
 
-module.exports = spectate = (files, options = {}) ->
+module.exports = spectate = (files, options = {}, callback = (->)) ->
   new FSWatcher(files, options)
+    .on('change', callback.bind(null, 'change'))
+    .on('unlink', callback.bind(null, 'unlink'))
