@@ -22,12 +22,21 @@ exports.extend = extend = (object, properties) ->
     object[key] = properties[key]
   object
 
+recursiveExtend = (object, properties) ->
+  Object.keys(properties).forEach (key) ->
+    value = properties[key]
+    if typeof value is 'object' and value?
+      recursiveExtend object[key], properties[key]
+    else
+      object[key] = properties[key]
+  object
+
 exports.deepFreeze = deepFreeze = (object) ->
   Object.keys(Object.freeze(object))
     .map (key) ->
       object[key]
     .filter (value) ->
-      typeof value is object and not Object.isFrozen(value)
+      typeof value is 'object' and value? and not Object.isFrozen(value)
     .forEach(deepFreeze)
   object
 
@@ -95,10 +104,26 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.rootPath = config.paths.root
   config.buildPath = config.paths.build
 
+  # config.paths        ?= {}
+  # config.paths.root   ?= config.rootPath ? '.'
+  # config.paths.build  ?= config.buildPath ? join 'root', 'public'
+  # config.paths.app    ?= join 'root', 'app'
+  # config.paths.config  = configPath ? join 'root', 'config'
+  # config.paths.assets ?= join 'app', 'assets'
+  # config.paths.test   ?= join 'root', 'test'
+  # config.paths.vendor ?= join 'root', 'vendor'
+  # config.server       ?= {}
+  # config.server.path  ?= null
+  # config.server.port  ?= 3333
+  # config.server.run   ?= no
+  # # Alias deprecated config params.
+  # config.rootPath      = config.paths.root
+  # config.buildPath     = config.paths.build
+
   replaceSlashes config if process.platform is 'win32'
   config
 
-exports.loadConfig = (configPath = 'config.coffee') ->
+exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
   require.extensions['.coffee'] ?= (module, filename) ->
     content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
     module._compile content, filename
@@ -106,11 +131,12 @@ exports.loadConfig = (configPath = 'config.coffee') ->
   fullPath = sysPath.resolve configPath
   try
     {config} = require fullPath
-    setConfigDefaults config, fullPath
-    deepFreeze config
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
-    config = null
+    throw new Error()
+  setConfigDefaults config, fullPath
+  recursiveExtend config, options
+  deepFreeze config
   config
 
 exports.loadPlugins = (config, callback) ->
