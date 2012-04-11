@@ -26,6 +26,15 @@ exports.extend = extend = (object, properties) ->
     object[key] = properties[key]
   object
 
+exports.deepFreeze = deepFreeze = (object) ->
+  Object.keys(Object.freeze(object))
+    .map (key) ->
+      object[key]
+    .filter (value) ->
+      typeof value is object and not Object.isFrozen(value)
+    .forEach(deepFreeze)
+  object
+
 startDefaultServer = (port, path, callback) ->
   server = express.createServer()
   server.configure ->
@@ -98,6 +107,7 @@ exports.loadConfig = (configPath = 'config.coffee') ->
   try
     {config} = require fullPath
     setConfigDefaults config, fullPath
+    deepFreeze config
   catch error
     logger.error "couldn\'t load config #{configPath}. #{error}"
     config = null
@@ -107,7 +117,7 @@ exports.loadPlugins = (config, callback) ->
   rootPath = sysPath.resolve config.rootPath
   fs.readFile (sysPath.join rootPath, 'package.json'), (error, data) ->
     return callback error if error?
-    deps = Object.keys (JSON.parse data).dependencies
+    deps = Object.keys JSON.parse(data).dependencies
     try
       plugins = deps
         .map (dependency) ->
