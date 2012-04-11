@@ -1,8 +1,7 @@
 common = require './common'
-FileWriter = require './file_writer'
 helpers = require '../helpers'
 SourceFileList = require './source_file_list'
-spectate = require './spectate'
+watch = require './watch'
+write = require './write'
 
-classes = {FileWriter, SourceFileList, spectate}
-module.exports = helpers.extend common, classes
+module.exports = helpers.extend common, {write, SourceFileList, watch}

@@ -32,47 +32,57 @@ module.exports = watch = (persistent, options, callback = (->)) ->
     sysPath.join(config.paths.root, 'package.json')
   ]
 
-  fileList = new fs_utils.SourceFileList
-
   helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
+    fileList = new fs_utils.SourceFileList ignored
     start = null
     addToFileList = (isPluginHelper, path) ->
       start = Date.now()
-      return fileList.resetTimer() if ignored path
       compiler = plugins.filter(isCompilerFor.bind(null, path))[0]
-      return unless compiler
       fileList.add {path, compiler, isPluginHelper}
 
     removeFromFileList = (path) ->
-      return fileList.resetTimer() if ignored path
       fileList.remove path
 
-    plugins.forEach (plugin) ->
-      return unless plugin.include?
-      includePathes = if typeof plugin.include is 'function'
-        plugin.include()
-      else
-        plugin.include
-      includePathes.forEach addToFileList.bind(null, yes)
+    plugins
+      .map (plugin) ->
+        paths = plugin.include
+        if typeof paths is 'function'
+          paths()
+        else
+          paths
+      .filter (paths) ->
+        paths?
+      .forEach (paths) ->
+        paths.forEach (path) ->
+          addToFileList.bind(null, yes)
 
-    watcher = fs_utils.watch watchedFiles, (event, path) ->
-      logger.debug "File '#{path}' received event #{event}"
-      switch event
-        when 'success', 'change'
+    # plugins.forEach (plugin) ->
+    #   return unless plugin.include?
+    #   includePaths = if typeof plugin.include is 'function'
+    #     plugin.include()
+    #   else
+    #     plugin.include
+    #   includePaths.forEach addToFileList.bind(null, yes)
+
+    watcher = fs_utils.watch(watchedFiles)
+      .on 'all', (event, path) ->
+        logger.debug "File '#{path}' received event '#{event}'"
+      .on('add', addToFileList.bind(null, no))
+      .on 'change', (path) ->
+        if path is config.paths.config
+          # Reload app.
+        else
           addToFileList no, path
-        when 'unlink'
-          removeFromFileList path
-        when 'error'
-          logger.error path
+      .on('unlink', removeFromFileList)
+      .on('error', logger.error)
 
-    writer = new fs_utils.FileWriter config, plugins
-    fileList.on 'resetTimer', -> writer.write fileList
-    writer.on 'write', (result) ->
-      copyIfExists = fs_utils.copyIfExists
-      copyIfExists config.paths.assets, config.paths.build, yes, (error) ->
-        logger.error "Asset compilation failed: #{error}" if error?
-        logger.info "compiled."
-        logger.debug "compilation time: #{Date.now() - start}ms"
-        watcher.close() unless persistent
-        callback null, result
+    fileList.on 'ready', ->
+      fs_utils.write fileList, config, plugins, (error, result) ->
+        copyIfExists = fs_utils.copyIfExists
+        copyIfExists config.paths.assets, config.paths.build, yes, (error) ->
+          logger.error "Asset compilation failed: #{error}" if error?
+          logger.info "compiled."
+          logger.debug "compilation time: #{Date.now() - start}ms"
+          watcher.close() unless persistent
+          callback null, result

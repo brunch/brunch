@@ -1,6 +1,7 @@
 {EventEmitter} = require 'events'
 fs = require 'fs'
 sysPath = require 'path'
+common = require './common'
 
 # Watches files & directories for changes.
 #
@@ -19,20 +20,18 @@ class FSWatcher extends EventEmitter
   constructor: (files, @options) ->
     @watched = {}
     @watchers = []
-    @add(files)
     @options.persistent ?= no
+    @_ignored = switch toString.call(options.ignored)
+      when '[object RegExp]'
+        (string) -> options.ignored.test(string)
+      when '[object Function]'
+        options.ignored
+      else
+        (-> no)
+    @add(files)
 
   _getWatchedDir: (directory) ->
     @watched[directory] ?= []
-
-  _ignored: (path) ->
-    tester = @options.ignored
-    if typeof tester is 'function'
-      tester path
-    else if typeof tester?.test is 'function'
-      tester.test(path)
-    else
-      no
 
   # Private: Watch file for changes with fs.watchFile or fs.watch.
   # 
@@ -54,7 +53,7 @@ class FSWatcher extends EventEmitter
     else
       options = persistent: @options.persistent, interval: 100
       fs.watchFile item, options, (curr, prev) =>
-        callback? item if curr.mtime.getTime() isnt prev.mtime.getTime()
+        callback item if curr.mtime.getTime() isnt prev.mtime.getTime()
 
   # Private: Emit `change` event once and watch file to emit it in the future
   # once the file is changed.
@@ -63,10 +62,9 @@ class FSWatcher extends EventEmitter
   # 
   # Returns nothing.
   _handleFile: (file) ->
-    emit = (file) =>
+    @_watch file, (file) =>
       @emit 'change', file
-    emit file
-    @_watch file, emit
+    @emit 'add', file
 
   # Private: Read directory to add / remove files from `@watched` list
   # and re-read it on change.
@@ -82,16 +80,19 @@ class FSWatcher extends EventEmitter
         previous = @_getWatchedDir directory
 
         # Files that absent in current directory snapshot
-        # but present in previous emit `remove` event.
+        # but present in previous emit `remove` event
+        # and are removed from @watched[directory].
         previous
           .filter (file) =>
             file not in current
           .forEach (file) =>
-            @emit 'unlink', sysPath.join directory, file
+            path = sysPath.join directory, file
+            previous.splice(previous.indexOf(file), 1)
+            @emit 'unlink', path
 
         # Files that present in current directory snapshot
         # but absent in previous are added to watch list and
-        # emit `change` event.
+        # emit `add` event.
         current
           .filter (file) ->
             file not in previous
@@ -120,7 +121,7 @@ class FSWatcher extends EventEmitter
 
   # Public: Adds directories / files for tracking.
   # 
-  # * files - array of strings (file pathes).
+  # * files - array of strings (file paths).
   # 
   # Examples
   # 
@@ -130,6 +131,17 @@ class FSWatcher extends EventEmitter
   add: (files) ->
     files = [files] unless Array.isArray(files)
     files.forEach @_handle
+    this
+
+  # Public: Emit event. Delegates to superclass & also emits 'all' event.
+  # 
+  # * event   - event name.
+  # * args... - event arguments.
+  # 
+  # Returns an instance of FSWatcher for chaning. 
+  emit: (event, args...) ->
+    super 'all', event, args...
+    super
     this
 
   # Public: Call EventEmitter's event listening function.
@@ -149,7 +161,12 @@ class FSWatcher extends EventEmitter
     @watched = {}
     this
 
-module.exports = spectate = (files, options = {}, callback = (->)) ->
+module.exports = watch = (files, options) ->
+  unless callback?
+    callback = options
+    options =
+      ignored: common.ignored
+      include: yes
+      recurse: yes
+      persistent: yes
   new FSWatcher(files, options)
-    .on('change', callback.bind(null, 'change'))
-    .on('unlink', callback.bind(null, 'unlink'))

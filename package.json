@@ -18,7 +18,7 @@
   }],
   "main": "./lib/index",
   "bin": {
-    "brunch": "./bin/brunchcoffee"
+    "brunch": "./bin/brunch"
   },
   "scripts": {
     "postinstall": "node setup.js postinstall",

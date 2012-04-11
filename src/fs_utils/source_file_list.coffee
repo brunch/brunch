@@ -9,14 +9,21 @@ module.exports = class SourceFileList extends EventEmitter
   # as a one compilation.
   RESET_TIME: 100
 
-  constructor: ->
+  constructor: (ignored) ->
     @files = []
+    @ignored = switch toString.call(ignored)
+      when '[object RegExp]'
+        (string) -> ignored.test(string)
+      when '[object Function]'
+        ignored
+      else
+        (-> no)
 
   # Called every time any file was changed.
   # Emits `resetTimer` event after `RESET_TIME`.
   resetTimer: =>
     clearTimeout @timer if @timer?
-    @timer = setTimeout (=> @emit 'resetTimer'), @RESET_TIME
+    @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
 
   getByPath: (path) ->
     (@files.filter (file) -> file.path is path)[0]
@@ -25,6 +32,8 @@ module.exports = class SourceFileList extends EventEmitter
   # it will use it.
   add: (params) ->
     {path, compiler, isPluginHelper} = params
+    return @resetTimer() if @ignored path
+    return unless compiler
     file = (@getByPath path)
     unless file
       file = new SourceFile path, compiler
@@ -40,6 +49,7 @@ module.exports = class SourceFileList extends EventEmitter
 
   # Removes file from list.
   remove: (path) ->
+    return @resetTimer() if @ignored path
     removed = @getByPath path
     @files = @files.filter (file) -> file isnt removed
     @resetTimer()

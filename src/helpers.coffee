@@ -63,10 +63,10 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 
     # Modify order.
     Object.keys(order).forEach (orderKey) ->
-      lang.order[orderKey] = lang.order[orderKey].map changePath
+      lang.order[orderKey] = lang.order[orderKey].map(changePath)
 
     # Modify join configuration.
-    switch toString.call lang.joinTo
+    switch toString.call(lang.joinTo)
       when '[object String]'
         lang.joinTo = changePath lang.joinTo
       when '[object Object]'

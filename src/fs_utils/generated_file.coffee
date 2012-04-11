@@ -191,10 +191,10 @@ module.exports = class GeneratedFile
   # Returns string.
   _joinSourceFiles: ->
     files = @sourceFiles
-    pathes = files.map (file) -> file.path
+    paths = files.map (file) -> file.path
     order = @_extractOrder files, @config
-    sourceFiles = (sortByConfig pathes, order).map (file) ->
-      files[pathes.indexOf file]
+    sourceFiles = (sortByConfig paths, order).map (file) ->
+      files[paths.indexOf file]
     data = ''
     data += requireDefinition if @type is 'javascript'
     data += sourceFiles.map((file) -> file.data).join('')
