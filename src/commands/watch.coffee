@@ -57,7 +57,7 @@ module.exports = watch = (persistent, options, callback = (->)) ->
       includePathes.forEach addToFileList.bind(null, yes)
 
     watcher = fs_utils.watch watchedFiles, (event, path) ->
-      logger.log 'debug', "File '#{path}' received event #{event}"
+      logger.debug "File '#{path}' received event #{event}"
       switch event
         when 'success', 'change'
           addToFileList no, path
@@ -73,6 +73,6 @@ module.exports = watch = (persistent, options, callback = (->)) ->
       copyIfExists config.paths.assets, config.paths.build, yes, (error) ->
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
-        logger.log 'debug', "compilation time: #{Date.now() - start}ms"
+        logger.debug "compilation time: #{Date.now() - start}ms"
         watcher.close() unless persistent
         callback null, result

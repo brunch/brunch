@@ -52,7 +52,7 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
   else
     "#{helpers.pluralize type}"
 
-  logger.log 'debug', "Initializing file of type '#{languageType}' with 
+  logger.debug "Initializing file of type '#{languageType}' with 
 extension '#{extension}'"
 
   initFile = (parentDir, callback) ->

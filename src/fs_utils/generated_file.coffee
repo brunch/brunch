@@ -220,7 +220,7 @@ module.exports = class GeneratedFile
   # Returns nothing.
   write: (callback) ->
     files = (@sourceFiles.map (file) -> file.path).join(', ')
-    logger.log 'debug', "Writing files '#{files}' to '#{@path}'"
+    logger.debug "Writing files '#{files}' to '#{@path}'"
     @_minify @_joinSourceFiles(), (error, data) =>
       return callback error if error?
       common.writeFile @path, data, callback

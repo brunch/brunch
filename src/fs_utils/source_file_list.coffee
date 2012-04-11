@@ -32,7 +32,7 @@ module.exports = class SourceFileList extends EventEmitter
       @files = @files.concat [file]
     compilerName = file.compiler.constructor.name
     file.compile (error, result) =>
-      logger.log 'debug', "Compiled file '#{file.path}'"
+      logger.debug "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{compilerName} failed in '#{file.path}' -- 
 #{error}"

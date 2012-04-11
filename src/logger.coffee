@@ -16,6 +16,9 @@ class ConsoleGrowlTransport extends winston.transports.Console
     notify =>
       @super.log.apply this, args
 
+  debug: (msg) ->
+    @log 'debug', msg
+
 module.exports = logger = new winston.Logger transports: [
   new ConsoleGrowlTransport {
     colorize: 'true',
