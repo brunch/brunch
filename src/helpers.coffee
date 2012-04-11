@@ -4,10 +4,6 @@ fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
 
-require.extensions['.coffee'] ?= (module, filename) ->
-  content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
-  module._compile content, filename
-
 # A simple function that will return pluralized form of word.
 exports.pluralize = (word) ->
   word + 's'
@@ -103,6 +99,10 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config
 
 exports.loadConfig = (configPath = 'config.coffee') ->
+  require.extensions['.coffee'] ?= (module, filename) ->
+    content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
+    module._compile content, filename
+
   fullPath = sysPath.resolve configPath
   try
     {config} = require fullPath

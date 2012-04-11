@@ -16,9 +16,9 @@
     "type": "MIT",
     "url": "http://github.com/brunch/brunch/raw/master/LICENSE"
   }],
-  "main": "./lib/brunch",
+  "main": "./lib/index",
   "bin": {
-    "brunch": "./bin/brunch"
+    "brunch": "./bin/brunchcoffee"
   },
   "scripts": {
     "postinstall": "node setup.js postinstall",

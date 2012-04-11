@@ -1,7 +1,7 @@
 argumentum = require 'argumentum'
 fs = require 'fs'
 sysPath = require 'path'
-brunch = require './brunch'
+commands = require './commands'
 helpers = require './helpers'
 logger = require './logger'
 
@@ -32,7 +32,7 @@ commandLineConfig =
         skeleton:
           abbr: 's'
           help: 'path to / git URL of application skeleton (template).'
-      callback: brunch.new
+      callback: commands.new
 
     build:
       abbr: 'b'
@@ -43,7 +43,7 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: brunch.build
+      callback: commands.build
 
     watch:
       abbr: 'w'
@@ -63,7 +63,7 @@ commandLineConfig =
           help: 'if a `server` option was specified, define on which port 
 the server would run'
           metavar: 'PORT'
-      callback: brunch.watch
+      callback: commands.watch
 
     generate:
       abbr: 'g'
@@ -88,7 +88,7 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: brunch.generate
+      callback: commands.generate
 
     destroy:
       abbr: 'd'
@@ -113,7 +113,7 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-      callback: brunch.destroy
+      callback: commands.destroy
 
   options:
     version:
