@@ -94,7 +94,6 @@ watch = (persistent, options, callback = (->)) ->
     start = null
     addToFileList = (isPluginHelper, path) ->
       start = Date.now()
-      # logger.log 'debug', "File '#{path}' was changed"
       return fileList.resetTimer() if ignored path
       compiler = plugins.filter(isCompilerFor.bind(null, path))[0]
       return unless compiler
@@ -102,7 +101,6 @@ watch = (persistent, options, callback = (->)) ->
 
     removeFromFileList = (path) ->
       return fileList.resetTimer() if ignored path
-      # logger.log 'debug', "File '#{path}' was removed"
       fileList.remove path
 
     plugins.forEach (plugin) ->
@@ -113,7 +111,6 @@ watch = (persistent, options, callback = (->)) ->
         plugin.include
       includePathes.forEach addToFileList.bind(null, yes)
 
-    writer = new fs_utils.FileWriter config, plugins
     watcher = fs_utils.watch watchedFiles, (event, path) ->
       logger.log 'debug', "File '#{path}' received event #{event}"
       switch event
@@ -121,7 +118,10 @@ watch = (persistent, options, callback = (->)) ->
           addToFileList no, path
         when 'unlink'
           removeFromFileList path
+        when 'error'
+          logger.error path
 
+    writer = new fs_utils.FileWriter config, plugins
     fileList.on 'resetTimer', -> writer.write fileList
     writer.on 'write', (result) ->
       copyIfExists = fs_utils.copyIfExists
