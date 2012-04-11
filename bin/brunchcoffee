@@ -3,5 +3,5 @@
 path = require('path');
 fs = require('fs');
 
-src = path.join(path.dirname(fs.realpathSync(__filename)), '../src');
-require(path.join(src, 'command')).run();
+src = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'src');
+require(path.join(src, 'cli')).run();
