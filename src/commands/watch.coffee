@@ -54,16 +54,7 @@ module.exports = watch = (persistent, options, callback = (->)) ->
       .filter (paths) ->
         paths?
       .forEach (paths) ->
-        paths.forEach (path) ->
-          addToFileList.bind(null, yes)
-
-    # plugins.forEach (plugin) ->
-    #   return unless plugin.include?
-    #   includePaths = if typeof plugin.include is 'function'
-    #     plugin.include()
-    #   else
-    #     plugin.include
-    #   includePaths.forEach addToFileList.bind(null, yes)
+        paths.forEach(addToFileList.bind(null, yes))
 
     watcher = fs_utils.watch(watchedFiles)
       .on 'all', (event, path) ->
