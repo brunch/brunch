@@ -36,7 +36,7 @@ getJoinConfig = (config) ->
   Object.freeze(joinConfig)
 
 getGeneratedFilesPaths = (sourceFile, joinConfig) ->
-  sourceFileJoinConfig = joinConfig[helpers.pluralize sourceFile.type]
+  sourceFileJoinConfig = joinConfig[helpers.pluralize sourceFile.type] or {}
   Object.keys(sourceFileJoinConfig).filter (generatedFilePath) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path

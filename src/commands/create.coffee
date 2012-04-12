@@ -54,3 +54,5 @@ module.exports = create = (options, callback = (->)) ->
       cloneSkeleton skeleton, callback
     else
       copySkeleton skeleton, callback
+
+module.exports.install = install
