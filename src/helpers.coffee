@@ -52,6 +52,7 @@ startDefaultServer = (port, path, callback) ->
   server.listen parseInt port, 10
   server.on 'listening', callback
   logger.info "application started on http://localhost:#{port}/"
+  server
 
 exports.startServer = (config, callback = (->)) ->
   if config.server.path
@@ -93,6 +94,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.paths.build ?= config.buildPath ? join 'root', 'public'
   config.paths.app ?= join 'root', 'app'
   config.paths.config = configPath ? join 'root', 'config'
+  config.paths.packageConfig ?= join 'root', 'package.json'
   config.paths.assets ?= join 'app', 'assets'
   config.paths.test ?= join 'root', 'test'
   config.paths.vendor ?= join 'root', 'vendor'
@@ -103,23 +105,6 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   # Alias deprecated config params.
   config.rootPath = config.paths.root
   config.buildPath = config.paths.build
-
-  # config.paths        ?= {}
-  # config.paths.root   ?= config.rootPath ? '.'
-  # config.paths.build  ?= config.buildPath ? join 'root', 'public'
-  # config.paths.app    ?= join 'root', 'app'
-  # config.paths.config  = configPath ? join 'root', 'config'
-  # config.paths.assets ?= join 'app', 'assets'
-  # config.paths.test   ?= join 'root', 'test'
-  # config.paths.vendor ?= join 'root', 'vendor'
-  # config.server       ?= {}
-  # config.server.path  ?= null
-  # config.server.port  ?= 3333
-  # config.server.run   ?= no
-  # # Alias deprecated config params.
-  # config.rootPath      = config.paths.root
-  # config.buildPath     = config.paths.build
-
   replaceSlashes config if process.platform is 'win32'
   config
 
@@ -141,7 +126,7 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
 
 exports.loadPlugins = (config, callback) ->
   rootPath = sysPath.resolve config.rootPath
-  fs.readFile (sysPath.join rootPath, 'package.json'), (error, data) ->
+  fs.readFile config.paths.packageConfig, (error, data) ->
     return callback error if error?
     deps = Object.keys JSON.parse(data).dependencies
     try
