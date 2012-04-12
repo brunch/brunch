@@ -14,12 +14,14 @@
     `paths.vendor`.
     * Scripts that are not in the config[lang].order are now compiled in
     alphabetical order instead of random.
+    * Made optional presence of almost all config params.
 * Improved module loader:
     * Real exceptions are now thrown instead of strings when module
     wasn't found.
     * Fixed an issue when loader cached same modules more than once.
     * Fixed an issue when loader loaded non-existing modules.
 * Fixed loading of non-coffeescript configs.
+* Made optional existence of paths.app, paths.vendor and so on.
 
 ## Brunch 1.0.3 (April 3, 2012)
 * Dotfiles from assets dir are prevented to be copied to build dir.
