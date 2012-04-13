@@ -130,8 +130,7 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
   try
     {config} = require fullPath
   catch error
-    logger.error "couldn\'t load config #{configPath}. #{error}"
-    throw new Error()
+    throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
   recursiveExtend config, options
   deepFreeze config

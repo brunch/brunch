@@ -5,7 +5,8 @@
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
     Usage: `brunch build --config ios_config`.
-    * Removed `--output` param in `brunch build` and `brunch watch` commands.
+    * Brought back `--minify` param in `brunch build` and `brunch watch`.
+    * Deprecated `--output` param in `brunch build` and `brunch watch`.
     * Param `--template` in `brunch new` has been renamed to `--skeleton`.
     `--skeleton` supports relative / absolute path and git repo URLs.
     Also, git metadata is automatically removed in cloned / copied projects.

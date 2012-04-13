@@ -43,6 +43,10 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        minify:
+          abbr: 'm'
+          flag: yes
+          help: 'minify result scripts / styles'
       callback: commands.build
 
     watch:
@@ -54,6 +58,10 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        minify:
+          abbr: 'm'
+          flag: yes
+          help: 'minify result scripts / styles'
         server:
           abbr: 's'
           flag: yes

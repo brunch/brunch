@@ -31,6 +31,7 @@ getPluginIncludes = (plugins) ->
 class BrunchWatcher
   constructor: (@persistent, @options, @onCompile) ->
     params = {}
+    params.minify = yes if options.minify
     if persistent
       params.server = {}
       params.server.run = yes if options.server
@@ -120,6 +121,5 @@ module.exports = watch = (persistent, options, callback = (->)) ->
   deprecated = (param) ->
     if options[param]
       logger.warning "--#{param} is deprecated. Use config option."
-  deprecated 'minify'
   deprecated 'output'
   new BrunchWatcher(persistent, options, callback).watch()
