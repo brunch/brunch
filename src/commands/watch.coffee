@@ -117,4 +117,9 @@ class BrunchWatcher
       reWatch()
 
 module.exports = watch = (persistent, options, callback = (->)) ->
+  deprecated = (param) ->
+    if options[param]
+      logger.warning "--#{param} is deprecated. Use config option."
+  deprecated 'minify'
+  deprecated 'output'
   new BrunchWatcher(persistent, options, callback).watch()
