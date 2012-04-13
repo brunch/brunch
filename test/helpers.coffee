@@ -7,6 +7,7 @@ describe 'helpers', ->
       win = require './fixtures/win_config'
       console.log 148, (helpers.replaceSlashes unix.config).files.javascripts.joinTo
       expect(helpers.replaceSlashes unix.config).to.eql win.config
+
   describe '#startsWith()', ->
     it 'should work correctly', ->
       expect(helpers.startsWith 'abc', 'abc').to.equal yes

@@ -16,7 +16,7 @@ module.exports = create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
 
   copySkeleton = (skeletonPath) ->
-    skeletonDir = sysPath.join __dirname, '..', 'skeletons'
+    skeletonDir = sysPath.join __dirname, '..', '..', 'skeletons'
     skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
     logger.debug "Copying skeleton from #{skeletonPath}"
 

@@ -76,7 +76,6 @@ class BrunchWatcher
           logger.debug "File '#{path}' received event '#{event}'"
         .on('add', @addToFileList.bind(this, no))
         .on 'change', (path) =>
-          @start = Date.now()
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
@@ -93,7 +92,7 @@ class BrunchWatcher
         logger.error "Asset compilation failed: #{error}" if error?
         logger.info "compiled."
         logger.debug "compilation time: #{Date.now() - @start}ms"
-        watcher.close() unless @persistent
+        @watcher.close() unless @persistent
         @onCompile null, result
 
   watch: ->
