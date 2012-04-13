@@ -100,6 +100,8 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
+  if config.buildPath
+    logger.warning 'config.buildPath is deprecated. Use config.paths.build.'
   config.paths ?= {}
   config.paths.root ?= config.rootPath ? '.'
   config.paths.build ?= config.buildPath ? join 'root', 'public'
