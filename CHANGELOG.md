@@ -1,6 +1,7 @@
 ## Brunch 1.1.0 (unreleased)
 * Added windows support.
-* Node.js API now mirrors CLI api.
+* Added node.js 0.7 / 0.8 support.
+* `brunch watch` now also watches config & `package.json`.
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
     Usage: `brunch build --config ios_config`.
@@ -22,6 +23,7 @@
     * Fixed an issue when loader loaded non-existing modules.
 * Fixed loading of non-coffeescript configs.
 * Made optional existence of paths.app, paths.vendor and so on.
+* Node.js API now mirrors CLI api.
 
 ## Brunch 1.0.3 (April 3, 2012)
 * Dotfiles from assets dir are prevented to be copied to build dir.
