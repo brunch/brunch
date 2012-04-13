@@ -2,24 +2,15 @@
 mkdirp = require 'mkdirp'
 rimraf = require 'rimraf'
 sysPath = require 'path'
+helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
-
-install = (rootPath, callback = (->)) ->
-  prevDir = process.cwd()
-  logger.info 'Installing packages...'
-  process.chdir rootPath
-  # Install node packages.
-  exec 'npm install', (error, stdout, stderr) ->
-    process.chdir prevDir
-    return callback stderr.toString() if error?
-    callback null, stdout
 
 # Remove git metadata and run npm install.
 removeAndInstall = (rootPath, callback) ->
   rimraf (sysPath.join rootPath, '.git'), (error) ->
     return logger.error error if error?
-    install rootPath, callback
+    helpers.install rootPath, callback
 
 module.exports = create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
@@ -54,5 +45,3 @@ module.exports = create = (options, callback = (->)) ->
       cloneSkeleton skeleton, callback
     else
       copySkeleton skeleton, callback
-
-module.exports.install = install

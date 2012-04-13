@@ -1,3 +1,4 @@
+{exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'
 fs = require 'fs'
@@ -30,6 +31,16 @@ recursiveExtend = (object, properties) ->
     else
       object[key] = properties[key]
   object
+
+exports.install = install = (rootPath, callback = (->)) ->
+  prevDir = process.cwd()
+  logger.info 'Installing packages...'
+  process.chdir rootPath
+  # Install node packages.
+  exec 'npm install', (error, stdout, stderr) ->
+    process.chdir prevDir
+    return callback stderr.toString() if error?
+    callback null, stdout
 
 exports.deepFreeze = deepFreeze = (object) ->
   Object.keys(Object.freeze(object))
@@ -128,7 +139,7 @@ exports.loadPlugins = (config, callback) ->
   rootPath = sysPath.resolve config.rootPath
   fs.readFile config.paths.packageConfig, (error, data) ->
     return callback error if error?
-    deps = Object.keys JSON.parse(data).dependencies
+    deps = Object.keys(JSON.parse(data).dependencies)
     try
       plugins = deps
         .map (dependency) ->
