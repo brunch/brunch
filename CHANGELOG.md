@@ -22,6 +22,13 @@
     wasn't found.
     * Fixed an issue when loader cached same modules more than once.
     * Fixed an issue when loader loaded non-existing modules.
+* Greatly improved default skeleton architecture:
+    * All collections are now in `models`
+    * `routers` has been replaced with `lib/router`
+    * No more global variable for application bootstrapper, it can be loaded
+    with `require 'application'`.
+    * Switched default templates to Handlebars. Handlebars.js is a nice
+    mustache-compatible template engine that supports helpers (lib/view_helper).
 * Fixed loading of non-coffeescript configs.
 * Made optional existence of paths.app, paths.vendor and so on.
 * Node.js API now mirrors CLI api.
