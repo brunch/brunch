@@ -57,12 +57,12 @@ class BrunchWatcher
       @plugins = plugins
       callback error
 
-  addToFileList: (isPluginHelper, path) ->
+  addToFileList: (isPluginHelper, path) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
     @fileList.add {path, compiler, isPluginHelper}
 
-  removeFromFileList: (path) ->
+  removeFromFileList: (path) =>
     @start = Date.now()
     @fileList.remove path
 
