@@ -1,6 +1,8 @@
 ## Brunch 1.1.0 (unreleased)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.
+* Added support for chain compilation. For example, if `_user.styl` changes
+and `main.styl` depends on it, `main.styl` will be recompiled too.
 * `brunch watch` now also watches config & `package.json`.
 * Improved command line API:
     * Added optional `--config` param to all commands expect `brunch new`.
