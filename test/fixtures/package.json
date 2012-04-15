@@ -1,0 +1,33 @@
+{
+  "author": "Your Name",
+  "name": "package-name",
+  "description": "Package description",
+  "version": "0.0.1",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": "~0.6.10"
+  },
+  "scripts": {
+    "start": "brunch watch --server"
+  },
+  "dependencies": {
+    "javascript-brunch": "1.0.x || 1.1.x",
+    "coffee-script-brunch": "1.0.x || 1.1.x",
+
+    "css-brunch": "1.0.x || 1.1.x",
+    "stylus-brunch": "1.0.x || 1.1.x",
+
+    "handlebars-brunch": "1.0.x || 1.1.x",
+
+    "uglify-js-brunch": "1.0.x || 1.1.x",
+    "clean-css-brunch": "1.0.x || 1.1.x"
+  },
+  "devDependencies": {
+    "mocha": "0.14.0",
+    "expect.js": "0.1.2"
+  }
+}

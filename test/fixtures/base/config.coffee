@@ -1,1 +1,0 @@
-exports.a = {b: 1}

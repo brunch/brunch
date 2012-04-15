@@ -1,4 +1,0 @@
-dependencies:
-  - console-helper.js
-
-buildPath: 'public/app'
