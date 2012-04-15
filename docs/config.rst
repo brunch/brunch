@@ -12,7 +12,14 @@ Brunch uses configuration file (``config.coffee`` or ``config.js``) located in t
 * ``public`` key: path to build directory that would contain output.
 * Other valid keys: ``assets``, ``test``, ``app``, ``vendor``, ``root``.
 
-Examples: ``'../../deploy'``, ``'build'``, ``'/Users/john/web'``.
+Example:
+
+::
+
+    paths:
+      public: '../deploy'
+      assets: '../../static'
+      test: 'spec'
 
 ``files``
 =========
