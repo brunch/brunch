@@ -26,5 +26,8 @@ module.exports = logger = new winston.Logger transports: [
   }
 ]
 
+levels = winston.levels
+
 debug = process.env.BRUNCH_DEBUG is '1'
-logger.setLevels winston.config.syslog.levels unless debug
+delete levels.debug unless debug
+logger.setLevels levels
