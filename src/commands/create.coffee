@@ -14,7 +14,7 @@ removeAndInstall = (rootPath, callback) ->
 
 module.exports = create = (options, callback = (->)) ->
   if options.template
-    logger.warning "--template is deprecated. Use --skeleton."
+    logger.warn "--template is deprecated. Use --skeleton."
     options.skeleton = options.template
   {rootPath, skeleton} = options
 
