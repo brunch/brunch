@@ -49,7 +49,7 @@ class BrunchWatcher
     watchedButIgnored = (path) =>
       helpers.startsWith(path, @config.paths.assets) or
       helpers.startsWith(sysPath.basename(path), '_')
-    @fileList = new fs_utils.SourceFileList watchedButIgnored
+    @fileList = new fs_utils.SourceFileList watchedButIgnored, @config
 
   initPlugins: (callback) ->
     helpers.loadPlugins @config, (error, plugins) =>
@@ -57,10 +57,11 @@ class BrunchWatcher
       @plugins = plugins
       callback error
 
-  changeFileList: (isPluginHelper, path) =>
+  changeFileList: (path, isHelper = no) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    @fileList.emit 'change', {path, compiler, isPluginHelper}
+    return unless compiler
+    @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
     @start = Date.now()
@@ -75,14 +76,14 @@ class BrunchWatcher
       @watcher = fs_utils.watch(watchedFiles)
         .on 'all', (event, path) =>
           logger.debug "File '#{path}' received event '#{event}'"
-        .on('add', @changeFileList.bind(this, no))
+        .on('add', @changeFileList)
         .on 'change', (path) =>
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
             @reload yes
           else
-            @changeFileList no, path
+            @changeFileList path, no
         .on('unlink', @removeFromFileList)
         .on('error', logger.error)
 
@@ -100,7 +101,7 @@ class BrunchWatcher
     @initServer()
     @initPlugins =>
       @initFileList()
-      getPluginIncludes(@plugins).forEach(@changeFileList.bind(this, yes))
+      getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
       @initWatcher()
       @fileList.on 'ready', @compile
 

@@ -164,7 +164,7 @@ module.exports = class GeneratedFile
   # config      - parsed application config.
   # 
   constructor: (@path, @sourceFiles, @config) ->    
-    @type = if (@sourceFiles.some (file) -> file.type is 'javascript')
+    @type = if @sourceFiles.some((file) -> file.type is 'javascript')
       'javascript'
     else
       'stylesheet'

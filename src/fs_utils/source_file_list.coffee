@@ -1,5 +1,6 @@
 {EventEmitter} = require 'events'
 SourceFile = require './source_file'
+helpers = require '../helpers'
 logger = require '../logger'
 
 # A list of `fs_utils.SourceFile` with some additional methods
@@ -9,7 +10,7 @@ module.exports = class SourceFileList extends EventEmitter
   # as a one compilation.
   RESET_TIME: 100
 
-  constructor: (ignored) ->
+  constructor: (ignored, @config) ->
     @files = []
     @_ignored = switch toString.call(ignored)
       when '[object RegExp]'
@@ -19,7 +20,7 @@ module.exports = class SourceFileList extends EventEmitter
       else
         -> no
     @on 'change', @_change
-    @on 'unlink', @_remove
+    @on 'unlink', @_unlink
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
@@ -42,28 +43,25 @@ module.exports = class SourceFileList extends EventEmitter
     file.compile (error) =>
       logger.debug "Compiled file '#{file.path}'"
       if error?
-        compilerName = file.compiler.constructor.name
-        return logger.error "#{compilerName} failed in '#{file.path}' -- 
+        return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
 #{error}"
       @_compileDependentFiles file.path
       @resetTimer()
 
-  # Adds new file to list. If file with params.path exists in @files,
-  # it will use it.
-  _change: (params) =>
-    {path, compiler} = params
-    return @_compileDependentFiles path if @_ignored path
-    return unless compiler
-    file = @_getByPath path
-    unless file
-      file = new SourceFile path, compiler
-      file.isPluginHelper = params.isPluginHelper
-      @files = @files.concat [file]
-    @_compile file
+  _add: (path, compiler, isHelper) ->
+    isVendor = helpers.startsWith(path, @config.paths.vendor)
+    file = new SourceFile path, compiler, isHelper, isVendor
+    @files.push file
+    file
 
-  # Removes file from list.
-  _remove: (path) =>
+  _change: (path, compiler, isHelper) =>
     return @_compileDependentFiles path if @_ignored path
-    removed = @_getByPath path
-    @files = @files.filter (file) -> file isnt removed
+    file = @_getByPath path
+    @_compile file ? @_add path, compiler, isHelper
+    @resetTimer()
+
+  _unlink: (path) =>
+    return @_compileDependentFiles path if @_ignored path
+    file = @_getByPath path
+    @files.splice(@files.indexOf(file), 1)
     @resetTimer()
