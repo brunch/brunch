@@ -28,9 +28,10 @@
     * No more global variable for application bootstrapper, it can be loaded
     with `require 'application'`.
     * Switched default templates to Handlebars. Handlebars.js is a nice
-    mustache-compatible template engine that supports helpers (lib/view_helper).
+    mustache-compatible template engine that supports helpers
+    (`lib/view_helper`).
 * Fixed loading of non-coffeescript configs.
-* Made optional existence of paths.app, paths.vendor and so on.
+* Made optional existence of `app` & `vendor` directories.
 * Node.js API now mirrors command line api.
 
 ## Brunch 1.0.3 (April 3, 2012)
