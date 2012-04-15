@@ -36,7 +36,8 @@
     "rimraf": "2.0.1",
     "growl": "1.5.0",
     "express": "2.5.8",
-    "winston": "0.5.11"
+    "date-utils": "1.2.10",
+    "ansi-color": "0.2.1"
   },
   "devDependencies": {
     "mocha": "1.0.1",

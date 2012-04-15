@@ -1,33 +1,41 @@
+color = require 'ansi-color'
 growl = require 'growl'
-winston = require 'winston'
+require 'date-utils'
 
-class ConsoleGrowlTransport extends winston.transports.Console
-  constructor: ->
-    super
-    @super = ConsoleGrowlTransport.__super__
+colors =
+  error: 'red'
+  warn: 'yellow'
+  info: 'green'
+  debug: 'blue'
 
-  log: (level, msg, meta, callback) ->
-    args = arguments
-    notify = (notifyCallback) ->
-      if level is 'error'
-        growl msg, title: 'Brunch error', notifyCallback
+getInfo = (level) ->
+  date = new Date().toFormat('DD MMM HH:MM:SS')
+  lvl = color.set level, colors[level]
+  "#{date} - #{lvl}:"
+
+logger =
+  isDebug: process.env.BRUNCH_DEBUG is '1'
+
+  log: (level, args...) ->
+    info = getInfo level
+    process.nextTick ->
+      if level is 'error' or level is 'warn'
+        console.error info, args...
       else
-        notifyCallback()
-    notify =>
-      @super.log.apply this, args
+        console.log info, args...
 
-  debug: (msg) ->
-    @log 'debug', msg
+  error: ->
+    growl [arguments...].join(' '), title: 'Brunch error'
+    @log 'error', arguments...
 
-module.exports = logger = new winston.Logger transports: [
-  new ConsoleGrowlTransport {
-    colorize: 'true',
-    timestamp: 'true'
-  }
-]
+  warn: ->
+    @log 'warn', arguments...
 
-levels = winston.levels
+  info: ->
+    @log 'info', arguments...
 
-debug = process.env.BRUNCH_DEBUG is '1'
-delete levels.debug unless debug
-logger.setLevels levels
+  debug: ->
+    if @isDebug
+      @log 'debug', arguments...
+
+module.exports = Object.freeze(logger)
