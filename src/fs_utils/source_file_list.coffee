@@ -11,45 +11,49 @@ module.exports = class SourceFileList extends EventEmitter
 
   constructor: (ignored) ->
     @files = []
-    @ignored = switch toString.call(ignored)
+    @_ignored = switch toString.call(ignored)
       when '[object RegExp]'
         (string) -> ignored.test(string)
       when '[object Function]'
         ignored
       else
-        (-> no)
+        -> no
+    @on 'change', @_change
+    @on 'unlink', @_remove
 
   # Called every time any file was changed.
-  # Emits `resetTimer` event after `RESET_TIME`.
+  # Emits `ready` event after `RESET_TIME`.
   resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
 
-  getByPath: (path) ->
-    (@files.filter (file) -> file.path is path)[0]
+  _getByPath: (path) ->
+    @files.filter((file) -> file.path is path)[0]
 
-  # Adds new file to list. If file with params.path exists in @files,
-  # it will use it.
-  add: (params) ->
-    {path, compiler, isPluginHelper} = params
-    return @resetTimer() if @ignored path
-    return unless compiler
-    file = (@getByPath path)
-    unless file
-      file = new SourceFile path, compiler
-      file.isPluginHelper = isPluginHelper
-      @files = @files.concat [file]
-    compilerName = file.compiler.constructor.name
-    file.compile (error, result) =>
+  _compile: (file) ->
+    file.compile (error) =>
       logger.debug "Compiled file '#{file.path}'"
       if error?
+        compilerName = file.compiler.constructor.name
         return logger.error "#{compilerName} failed in '#{file.path}' -- 
 #{error}"
       @resetTimer()
 
+  # Adds new file to list. If file with params.path exists in @files,
+  # it will use it.
+  _change: (params) =>
+    {path, compiler} = params
+    return @resetTimer() if (@_ignored path) or not compiler
+    file = @_getByPath path
+    unless file
+      file = new SourceFile path, compiler
+      file.isPluginHelper = params.isPluginHelper
+      @files = @files.concat [file]
+    @_compile file
+
   # Removes file from list.
-  remove: (path) ->
-    return @resetTimer() if @ignored path
-    removed = @getByPath path
+  _remove: (path) =>
+    return @resetTimer() if @_ignored path
+    removed = @_getByPath path
     @files = @files.filter (file) -> file isnt removed
     @resetTimer()

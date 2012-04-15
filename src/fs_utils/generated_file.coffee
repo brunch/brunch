@@ -219,7 +219,7 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    files = (@sourceFiles.map (file) -> file.path).join(', ')
+    files = @sourceFiles.map((file) -> file.path).join(', ')
     logger.debug "Writing files '#{files}' to '#{@path}'"
     @_minify @_joinSourceFiles(), (error, data) =>
       return callback error if error?

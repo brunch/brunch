@@ -57,14 +57,14 @@ class BrunchWatcher
       @plugins = plugins
       callback error
 
-  addToFileList: (isPluginHelper, path) =>
+  changeFileList: (isPluginHelper, path) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    @fileList.add {path, compiler, isPluginHelper}
+    @fileList.emit 'change', {path, compiler, isPluginHelper}
 
   removeFromFileList: (path) =>
     @start = Date.now()
-    @fileList.remove path
+    @fileList.emit 'unlink', path
 
   initWatcher: (callback) ->
     watched = [
@@ -75,14 +75,14 @@ class BrunchWatcher
       @watcher = fs_utils.watch(watchedFiles)
         .on 'all', (event, path) =>
           logger.debug "File '#{path}' received event '#{event}'"
-        .on('add', @addToFileList.bind(this, no))
+        .on('add', @changeFileList.bind(this, no))
         .on 'change', (path) =>
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
             @reload yes
           else
-            @addToFileList no, path
+            @changeFileList no, path
         .on('unlink', @removeFromFileList)
         .on('error', logger.error)
 
@@ -100,7 +100,7 @@ class BrunchWatcher
     @initServer()
     @initPlugins =>
       @initFileList()
-      getPluginIncludes(@plugins).forEach(@addToFileList.bind(this, yes))
+      getPluginIncludes(@plugins).forEach(@changeFileList.bind(this, yes))
       @initWatcher()
       @fileList.on 'ready', @compile
 
