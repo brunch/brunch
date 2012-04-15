@@ -69,11 +69,11 @@ exports.startServer = (config, callback = (->)) ->
   if config.server.path
     try
       server = require sysPath.resolve config.paths.server
-      server.startServer config.server.port, config.paths.build, callback
+      server.startServer config.server.port, config.paths.public, callback
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.paths.build, callback
+    startDefaultServer config.server.port, config.paths.public, callback
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
@@ -101,10 +101,10 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
   if config.buildPath
-    logger.warn 'config.buildPath is deprecated. Use config.paths.build.'
+    logger.warn 'config.buildPath is deprecated. Use config.paths.public.'
   config.paths ?= {}
   config.paths.root ?= config.rootPath ? '.'
-  config.paths.build ?= config.buildPath ? join 'root', 'public'
+  config.paths.public ?= config.buildPath ? join 'root', 'public'
   config.paths.app ?= join 'root', 'app'
   config.paths.config = configPath ? join 'root', 'config'
   config.paths.packageConfig ?= join 'root', 'package.json'
@@ -117,7 +117,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.server.run ?= no
   # Alias deprecated config params.
   config.rootPath = config.paths.root
-  config.buildPath = config.paths.build
+  config.buildPath = config.paths.public
   replaceSlashes config if process.platform is 'win32'
   config
 

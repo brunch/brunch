@@ -29,6 +29,8 @@ Brunch language is a CoffeeScript class that has ``brunchPlugin`` property. It w
 * ``type``: `(required in compilers & minifiers, string)`
 * ``extension``: `(required in compilers, string)`
 * ``compile(data, path, callback)``: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments ``error`` and ``result``.
+* ``getDependencies(data, path, callback)``: `(required in compilers, function)` would be called every time brunch sees change in application source code. Used as chain compilation rule. For example, if `_user.styl` changes
+and `main.styl` depends on it, `main.styl` will be recompiled too. To know this, brunch needs to receive an array of dependent files from the function.
 * ``minify(data, path, callback)``: `(required in minifiers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be minified, path is path to the file and callback is a function that will be executed on compilation with arguments ``error`` and ``result``.
 
 Example:

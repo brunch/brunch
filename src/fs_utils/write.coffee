@@ -52,7 +52,7 @@ getFiles = (fileList, config, minifiers) ->
 
   Object.keys(map).map (generatedFilePath) =>
     sourceFiles = map[generatedFilePath]
-    fullPath = sysPath.join config.paths.build, generatedFilePath
+    fullPath = sysPath.join config.paths.public, generatedFilePath
     file = new GeneratedFile fullPath, sourceFiles, config
     minifiers
       .filter (minifier) ->

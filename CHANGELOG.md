@@ -1,4 +1,4 @@
-## Brunch 1.1.0 (unreleased)
+## Brunch 1.1.0 (April 15, 2012)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.
 * Added support for chain compilation. For example, if `_user.styl` changes
@@ -13,7 +13,7 @@ and `main.styl` depends on it, `main.styl` will be recompiled too.
     `--skeleton` supports relative / absolute path and git repo URLs.
     Also, git metadata is automatically removed in cloned / copied projects.
 * Improved config API:
-    * `buildPath` is now deprecated, `paths.build` is used instead of it.
+    * `buildPath` is now deprecated, `paths.public` is used instead of it.
     * Added `paths.app`, `paths.root`, `paths.assets`, `paths.test`,
     `paths.vendor`.
     * Scripts that are not in the config[lang].order are now compiled in

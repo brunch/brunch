@@ -6,41 +6,47 @@ Command line API
 Create new brunch project. Options:
 
 * ``rootPath``: (required) name of project directory that would be created
-* ``-t PATH_TO_TEMPLATE --template PATH_TO_TEMPLATE``: path to project, contents of which will be copied to new .
+* ``-s PATH_TO_SKELETON, --skeleton PATH_TO_SKELETON``: path or
+git repo address of project, contents of which will be copied to new dir.
+
+`.git` directory is automatically removed when copying.
 
 Short-cut: ``brunch n``.
 
 Examples:
 
-* ``brunch new twitter -t ~/brunch-templates/simple``
+* ``brunch n twitter -s ~/brunch-templates/simple``
+* ``brunch n twitter -s git://github.com/paulmillr/brunch-with-chaplin.git``
 
 ``brunch build``
 ----------------
 Build a brunch project. Options:
 
-* ``-o DIRECTORY, --output DIRECTORY``: build path (deprecated, use config)
+* ``-m, --minify``: minify the result js & css files? Analog of ``minify`` option in config file.
+* ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
 
 Short-cut: ``brunch b``.
 
 Examples:
 
-* ``brunch build -o .``: would build application and place results to current directory.
+* ``brunch b -c ios_config -m``: would load ios_config.(js,coffee), build application and minify the output.
 
 ``brunch watch``
 ----------------
 Watch brunch directory and rebuild if something changed. Options:
 
-* ``-o DIRECTORY, --output DIRECTORY``: build path (deprecated, use config)
 * ``-s, --server``: run a simple http server that would server `output` dir
 * ``-p PORT, --port PORT``: if a `server` option was specified, define on which port the server would run
+* ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
+* ``-m, --minify``: minify the result js & css files? Analog of ``minify`` option in config file.
 
 Short-cut: ``brunch w``.
 
 Examples:
 
-* ``brunch watch``: simply watch current directory &amp; compile the output to `build` directory.
-* ``brunch watch --output . --server``: watch current directory, compile the output to current directory and run a webserver that would work on current directory.
-* ``brunch watch --output /tmp --server --port 8841``: watch current directory, compile the output to ``/tmp`` and run a webserver that would work on ``/tmp`` on port :8841.
+* ``brunch w``: simply watch current directory &amp; compile the output to ``build`` directory.
+* ``brunch w -s``: watch current project and run a webserver that would work on ``public`` directory (by default).
+* ``brunch w -s -p 8841 -m``: watch current project and run a webserver that would work on ``public`` directory (by default). Also, auto-minify files.
 
 ``brunch generate <type> <name>``
 ---------------------------------
