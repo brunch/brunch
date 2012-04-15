@@ -30,20 +30,30 @@ module.exports = class SourceFileList extends EventEmitter
   _getByPath: (path) ->
     @files.filter((file) -> file.path is path)[0]
 
-  _compile: (file) ->
+  _compileDependentFiles: (path) ->
+    @files
+      .filter (dependent) =>
+        dependent.dependencies.length
+      .filter (dependent) =>
+        path in dependent.dependencies
+      .forEach(@_compile)
+
+  _compile: (file) =>
     file.compile (error) =>
       logger.debug "Compiled file '#{file.path}'"
       if error?
         compilerName = file.compiler.constructor.name
         return logger.error "#{compilerName} failed in '#{file.path}' -- 
 #{error}"
+      @_compileDependentFiles file.path
       @resetTimer()
 
   # Adds new file to list. If file with params.path exists in @files,
   # it will use it.
   _change: (params) =>
     {path, compiler} = params
-    return @resetTimer() if (@_ignored path) or not compiler
+    return @_compileDependentFiles path if @_ignored path
+    return unless compiler
     file = @_getByPath path
     unless file
       file = new SourceFile path, compiler
@@ -53,7 +63,7 @@ module.exports = class SourceFileList extends EventEmitter
 
   # Removes file from list.
   _remove: (path) =>
-    return @resetTimer() if @_ignored path
+    return @_compileDependentFiles path if @_ignored path
     removed = @_getByPath path
     @files = @files.filter (file) -> file isnt removed
     @resetTimer()

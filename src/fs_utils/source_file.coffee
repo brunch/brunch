@@ -9,6 +9,7 @@ module.exports = class SourceFile
     @type = @compiler.type
     @data = ''
     @isPluginHelper = no
+    @dependencies = []
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -27,7 +28,7 @@ module.exports = class SourceFile
       if @type in ['javascript', 'template'] and !(/^vendor/.test @path)
         moduleName = JSON.stringify(
           @path
-            .replace(/\\/g, '/')
+            .replace(new RegExp('\\\\', 'g'), '/')
             .replace(/^app\//, '')
             .replace(/\.\w*$/, '')
         )
@@ -45,7 +46,14 @@ module.exports = class SourceFile
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
     fs.readFile @path, (error, data) =>
-      return callback error if error?
-      @compiler.compile data.toString(), @path, (error, result) =>
-        @data = @_wrap result if result?
-        callback error, result
+      return callback "Read error: #{error}" if error?
+      fileContent = data.toString()
+      getDeps = @compiler.getDependencies or (data, path, callback) ->
+        callback(null, [])
+      @compiler.compile fileContent, @path, (error, result) =>
+        return callback "Compile error: #{error}" if error?
+        getDeps fileContent, @path, (error, dependencies) =>
+          return callback "GetDeps error: #{error}" if error?
+          @dependencies = dependencies
+          @data = @_wrap result if result?
+          callback error, @data
