@@ -195,6 +195,8 @@ module.exports = class GeneratedFile
     order = @_extractOrder files, @config
     sourceFiles = (sortByConfig paths, order).map (file) ->
       files[paths.indexOf file]
+    sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
+    logger.debug "Writing files '#{sortedPaths}' to '#{@path}'"
     data = ''
     data += requireDefinition if @type is 'javascript'
     data += sourceFiles.map((file) -> file.data).join('')
@@ -219,8 +221,6 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    files = @sourceFiles.map((file) -> file.path).join(', ')
-    logger.debug "Writing files '#{files}' to '#{@path}'"
     @_minify @_joinSourceFiles(), (error, data) =>
       return callback error if error?
       common.writeFile @path, data, callback
