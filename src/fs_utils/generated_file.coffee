@@ -84,6 +84,7 @@ requireDefinition = '''
     };
   }
 }).call(this);
+
 '''
 
 sortAlphabetically = (a, b) ->
