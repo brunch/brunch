@@ -10,6 +10,7 @@ requireDefinition = '''
   if (!this.require) {
     var modules = {};
     var cache = {};
+    var amdModules = {};
     var __hasProp = ({}).hasOwnProperty;
 
     var expand = function(root, name) {
@@ -57,6 +58,11 @@ requireDefinition = '''
       var path = expand(root, name);
       var fullPath;
 
+      if (__hasProp.call(amdModules, name)) {
+        delete amdModules[name];
+        delete cache[name];
+      }
+
       if (fullPath = getFullPath(path, true)) {
         return cache[fullPath];
       } else if (fullPath = getFullPath(path, false)) {
@@ -74,16 +80,48 @@ requireDefinition = '''
       return require(name, '');
     };
 
-    this.require.brunch = true;
-    this.require.define = function(bundle) {
+    var defineModule = function(name, fn) {
+      return modules[name] = fn;
+    };
+
+    var defineModules = function(bundle) {
       for (var key in bundle) {
         if (__hasProp.call(bundle, key)) {
-          modules[key] = bundle[key];
+          defineModule(key, bundle[key]);
         }
       }
     };
+
+    var defineAMD = function(name, deps, fn) {
+      var loadedDeps = [];
+      for (var i = 0, length = deps.length; i < length; i++) {
+        loadedDeps.push(require(deps[i]));
+      }
+      var module = function(exports, require, module) {
+        module.exports = fn.apply(this, loadedDeps);
+      };
+      defineModule(name, module);
+      amdModules[name] = module;
+    };
+
+    this.define = function(bundle) {
+      if (typeof bundle === 'object') {
+        defineModules(bundle);
+      } else if (arguments[2] == null) {
+        defineModule(arguments[0], arguments[1]);
+      } else {
+        defineAMD.apply(this, arguments);
+      }
+    };
+
+    this.require.define = this.define;
+    this.define.brunch = true;
+    this.define.amd = {
+      jQuery: true
+    };
   }
 }).call(this);
+
 
 '''
 
