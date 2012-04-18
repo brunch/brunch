@@ -1,4 +1,6 @@
 (function(/*! Brunch !*/) {
+  'use strict';
+
   if (!this.require) {
     var modules = {};
     var cache = {};

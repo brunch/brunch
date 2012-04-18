@@ -1,3 +1,7 @@
+## Brunch 1.1.1 (unreleased)
+* Fixed incorrect date in brunch logger.
+* Fixed an error when requiring custom server script.
+
 ## Brunch 1.1.0 (April 15, 2012)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.

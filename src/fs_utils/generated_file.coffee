@@ -11,7 +11,8 @@ getRequireDefinition = (callback) ->
   path = sysPath.join __dirname, '..', '..', 'vendor', 'require_definition.js'
   fs.readFile path, (error, result) ->
     return logger.error error if error?
-    callback null, result.toString()
+    requireDefinitionCache = result.toString()
+    callback null, requireDefinitionCache
 
 sortAlphabetically = (a, b) ->
   if a < b
