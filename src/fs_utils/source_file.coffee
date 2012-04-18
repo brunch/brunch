@@ -24,23 +24,20 @@ module.exports = class SourceFile
   # 
   # Returns a wrapped string.
   _wrap: (data) ->
-    if !@isHelper and @type in ['javascript', 'template']
+    if !@isHelper and !@isVendor and @type in ['javascript', 'template']
       moduleName = JSON.stringify(
         @path
           .replace(new RegExp('\\\\', 'g'), '/')
           .replace(/^app\//, '')
-          .replace(/^vendor\/scripts\//, '')
           .replace(/\.\w*$/, '')
       )
-      definition = """
-define({#{moduleName}: function(require, exports, module, define) {
-#{data}
-return module.exports;
-}});\n"""
-      if @isVendor
-        definition += "require(#{moduleName});\n"
-      definition += '\n'
-      definition
+      """
+      (this.require.define({
+        #{moduleName}: function(exports, require, module) {
+          #{data}
+        }
+      }));\n
+      """
     else
       data
 
