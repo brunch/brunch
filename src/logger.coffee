@@ -9,7 +9,7 @@ colors =
   debug: 'blue'
 
 getInfo = (level) ->
-  date = new Date().toFormat('DD MMM HH:MM:SS')
+  date = new Date().toFormat('DD MMM HH24:MI:SS')
   lvl = color.set level, colors[level]
   "#{date} - #{lvl}:"
 
