@@ -68,7 +68,7 @@ startDefaultServer = (port, path, callback) ->
 exports.startServer = (config, callback = (->)) ->
   if config.server.path
     try
-      server = require sysPath.resolve config.paths.server
+      server = require sysPath.resolve config.server.path
       server.startServer config.server.port, config.paths.public, callback
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
