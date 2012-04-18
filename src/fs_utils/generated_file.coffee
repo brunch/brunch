@@ -1,129 +1,17 @@
+fs = require 'fs'
+sysPath = require 'path'
 common = require './common'
 helpers = require '../helpers'
 logger = require '../logger'
 
 # The definition would be added on top of every filewriter .js file.
-requireDefinition = '''
-(function(/*! Brunch !*/) {
-  'use strict';
-
-  if (!this.require) {
-    var modules = {};
-    var cache = {};
-    var amdModules = {};
-    var __hasProp = ({}).hasOwnProperty;
-
-    var expand = function(root, name) {
-      var results = [], parts, part;
-      if (/^\\.\\.?(\\/|$)/.test(name)) {
-        parts = [root, name].join('/').split('/');
-      } else {
-        parts = name.split('/');
-      }
-      for (var i = 0, length = parts.length; i < length; i++) {
-        part = parts[i];
-        if (part == '..') {
-          results.pop();
-        } else if (part != '.' && part != '') {
-          results.push(part);
-        }
-      }
-      return results.join('/');
-    };
-
-    var getFullPath = function(path, fromCache) {
-      var store = fromCache ? cache : modules;
-      var dirIndex;
-      if (__hasProp.call(store, path)) return path;
-      dirIndex = expand(path, './index');
-      if (__hasProp.call(store, dirIndex)) return dirIndex;
-    };
-    
-    var cacheModule = function(name, path, contentFn) {
-      var module = {id: path, exports: {}};
-      try {
-        cache[path] = module.exports;
-        contentFn(module.exports, function(name) {
-          return require(name, dirname(path));
-        }, module);
-        cache[path] = module.exports;
-      } catch (err) {
-        delete cache[path];
-        throw err;
-      }
-      return cache[path];
-    };
-
-    var require = function(name, root) {
-      var path = expand(root, name);
-      var fullPath;
-
-      if (__hasProp.call(amdModules, name)) {
-        delete amdModules[name];
-        delete cache[name];
-      }
-
-      if (fullPath = getFullPath(path, true)) {
-        return cache[fullPath];
-      } else if (fullPath = getFullPath(path, false)) {
-        return cacheModule(name, fullPath, modules[fullPath]);
-      } else {
-        throw new Error("Cannot find module '" + name + "'");
-      }
-    };
-
-    var dirname = function(path) {
-      return path.split('/').slice(0, -1).join('/');
-    };
-
-    this.require = function(name) {
-      return require(name, '');
-    };
-
-    var defineModule = function(name, fn) {
-      return modules[name] = fn;
-    };
-
-    var defineModules = function(bundle) {
-      for (var key in bundle) {
-        if (__hasProp.call(bundle, key)) {
-          defineModule(key, bundle[key]);
-        }
-      }
-    };
-
-    var defineAMD = function(name, deps, fn) {
-      var loadedDeps = [];
-      for (var i = 0, length = deps.length; i < length; i++) {
-        loadedDeps.push(require(deps[i]));
-      }
-      var module = function(exports, require, module) {
-        module.exports = fn.apply(this, loadedDeps);
-      };
-      defineModule(name, module);
-      amdModules[name] = module;
-    };
-
-    this.define = function(bundle) {
-      if (typeof bundle === 'object') {
-        defineModules(bundle);
-      } else if (arguments[2] == null) {
-        defineModule(arguments[0], arguments[1]);
-      } else {
-        defineAMD.apply(this, arguments);
-      }
-    };
-
-    this.require.define = this.define;
-    this.define.brunch = true;
-    this.define.amd = {
-      jQuery: true
-    };
-  }
-}).call(this);
-
-
-'''
+requireDefinitionCache = null
+getRequireDefinition = (callback) ->
+  return callback null, requireDefinitionCache if requireDefinitionCache?
+  path = sysPath.join __dirname, '..', '..', 'vendor', 'require_definition.js'
+  fs.readFile path, (error, result) ->
+    return logger.error error if error?
+    callback null, result.toString()
 
 sortAlphabetically = (a, b) ->
   if a < b
@@ -228,7 +116,7 @@ module.exports = class GeneratedFile
   # Private: Collect content from a list of files and wrap it with
   # require.js module definition if needed.
   # Returns string.
-  _joinSourceFiles: ->
+  _joinSourceFiles: (callback) ->
     files = @sourceFiles
     paths = files.map (file) -> file.path
     order = @_extractOrder files, @config
@@ -237,9 +125,15 @@ module.exports = class GeneratedFile
     sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
     logger.debug "Writing files '#{sortedPaths}' to '#{@path}'"
     data = ''
-    data += requireDefinition if @type is 'javascript'
-    data += sourceFiles.map((file) -> file.data).join('')
-    data
+    joinFiles = (data) ->
+      data += sourceFiles.map((file) -> file.data).join('')
+      callback null, data
+    if @type is 'javascript'
+      getRequireDefinition (error, requireDefinition) =>
+        data += requireDefinition
+        joinFiles data
+    else
+      joinFiles data
 
   # Private: minify data.
   # 
@@ -260,6 +154,8 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    @_minify @_joinSourceFiles(), (error, data) =>
+    @_joinSourceFiles (error, joined) =>
       return callback error if error?
-      common.writeFile @path, data, callback
+      @_minify joined, (error, data) =>
+        return callback error if error?
+        common.writeFile @path, data, callback

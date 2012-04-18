@@ -33,9 +33,10 @@ module.exports = class SourceFile
           .replace(/\.\w*$/, '')
       )
       definition = """
-define(#{moduleName}, function(exports, require, module) {
+define({#{moduleName}: function(require, exports, module, define) {
 #{data}
-});\n"""
+return module.exports;
+}});\n"""
       if @isVendor
         definition += "require(#{moduleName});\n"
       definition += '\n'
