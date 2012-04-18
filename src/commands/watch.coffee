@@ -46,10 +46,7 @@ class BrunchWatcher
       @server = helpers.startServer @config
 
   initFileList: ->
-    watchedButIgnored = (path) =>
-      helpers.startsWith(path, @config.paths.assets) or
-      helpers.startsWith(sysPath.basename(path), '_')
-    @fileList = new fs_utils.SourceFileList watchedButIgnored, @config
+    @fileList = new fs_utils.SourceFileList @config
 
   initPlugins: (callback) ->
     helpers.loadPlugins @config, (error, plugins) =>
@@ -60,7 +57,6 @@ class BrunchWatcher
   changeFileList: (path, isHelper = no) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    return unless compiler
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>

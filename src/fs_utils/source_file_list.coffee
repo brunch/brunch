@@ -1,4 +1,5 @@
 {EventEmitter} = require 'events'
+sysPath = require 'path'
 SourceFile = require './source_file'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -10,21 +11,21 @@ module.exports = class SourceFileList extends EventEmitter
   # as a one compilation.
   RESET_TIME: 100
 
-  constructor: (ignored, @config) ->
+  constructor: (@config) ->
     @files = []
-    @_ignored = switch toString.call(ignored)
-      when '[object RegExp]'
-        (string) -> ignored.test(string)
-      when '[object Function]'
-        ignored
-      else
-        -> no
     @on 'change', @_change
     @on 'unlink', @_unlink
 
+  # Files that are not really app files.
+  _ignored: (path) ->
+    paths = @config.paths
+    helpers.startsWith(path, paths.assets) or
+    helpers.startsWith(sysPath.basename(path), '_') or
+    path in [paths.config, paths.packageConfig]
+
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
-  resetTimer: =>
+  _resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
 
@@ -38,6 +39,7 @@ module.exports = class SourceFileList extends EventEmitter
       .filter (dependent) =>
         path in dependent.dependencies
       .forEach(@_compile)
+    @_resetTimer()
 
   _compile: (file) =>
     file.compile (error) =>
@@ -46,7 +48,7 @@ module.exports = class SourceFileList extends EventEmitter
         return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
 #{error}"
       @_compileDependentFiles file.path
-      @resetTimer()
+      @_resetTimer()
 
   _add: (path, compiler, isHelper) ->
     isVendor = helpers.startsWith(path, @config.paths.vendor)
@@ -55,13 +57,13 @@ module.exports = class SourceFileList extends EventEmitter
     file
 
   _change: (path, compiler, isHelper) =>
-    return @_compileDependentFiles path if @_ignored path
+    return @_compileDependentFiles path if @_ignored path or not compiler
     file = @_getByPath path
     @_compile file ? @_add path, compiler, isHelper
-    @resetTimer()
+    @_resetTimer()
 
   _unlink: (path) =>
     return @_compileDependentFiles path if @_ignored path
     file = @_getByPath path
     @files.splice(@files.indexOf(file), 1)
-    @resetTimer()
+    @_resetTimer()
