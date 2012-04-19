@@ -1,4 +1,5 @@
 ## Brunch 1.1.1 (unreleased)
+* Fixed compiling of `package.json`, `config` and watching of assets.
 * Fixed incorrect date in brunch logger.
 * Fixed an error when requiring custom server script.
 
