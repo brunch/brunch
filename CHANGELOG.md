@@ -1,3 +1,6 @@
+## Brunch 1.1.2 (unreleased)
+* Fixed compiling of invalid files (`.rb`, `.png` etc).
+
 ## Brunch 1.1.1 (April 19, 2012)
 * Fixed compiling of `package.json`, `config` and watching of assets.
 * Fixed incorrect date in brunch logger.
