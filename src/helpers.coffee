@@ -100,7 +100,7 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
-  if config.buildPath
+  if config.buildPath?
     logger.warn 'config.buildPath is deprecated. Use config.paths.public.'
   config.paths ?= {}
   config.paths.root ?= config.rootPath ? '.'
@@ -127,6 +127,7 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
     module._compile content, filename
 
   fullPath = sysPath.resolve configPath
+  delete require.cache[fullPath]
   try
     {config} = require fullPath
   catch error

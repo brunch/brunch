@@ -1,4 +1,5 @@
 ## Brunch 1.1.2 (unreleased)
+* Fixed `buildPath is deprecated` warning on new configs.
 * Fixed compiling of invalid files (`.rb`, `.png` etc).
 
 ## Brunch 1.1.1 (April 19, 2012)
