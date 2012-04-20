@@ -5,8 +5,9 @@ logger = require '../logger'
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
   constructor: (@path, @compiler, @isHelper = no, @isVendor = no) ->
-    logger.debug "Initializing fs_utils.SourceFile: 
-#{JSON.stringify({@path, @isHelper, @isVendor})}"
+    logger.debug "Initializing fs_utils.SourceFile:", {
+      @path, @isHelper, @isVendor
+    }
     @type = @compiler.type
     @data = ''
     @dependencies = []
