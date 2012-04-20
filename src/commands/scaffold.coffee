@@ -1,9 +1,111 @@
+async = require 'async'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
+
+flatten = (array) ->
+  array.reduce (acc, elem) ->
+    acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
+  , []
+
+categories =
+  backbone:
+    controllerTest: 'javascripts'
+    controller: 'javascripts'
+    modelTest: 'javascripts'
+    model: 'javascripts'
+    template: 'templates'
+    style: 'stylesheets'
+    viewTest: 'javascripts'
+    view: 'javascripts'
+
+generators = (config, generator) ->
+  backbone:
+    # What generates what:
+    # controller: controller, controllerTest
+    # model: model, modelTest
+    # view: view, viewTest, style, template
+    # scaffold: controller, model, view
+    controllerTest: (name) ->
+      [sysPath.join(
+        config.paths.test, 'controllers', "#{name}_controller_test"
+      )]
+
+    controller: (name) ->
+      [sysPath.join(
+        config.paths.app, 'controllers', "#{name}_controller"
+      )].concat(generator('controllerTest', name))
+
+    modelTest: (name) ->
+      [sysPath.join(config.paths.test, 'models', "#{name}_test")]
+
+    model: (name) ->
+      [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
+        generator('modelTest', name)
+      )
+
+    template: (name) ->
+      [sysPath.join(config.paths.app, 'views', 'templates', "#{name}")]
+
+    style: (name) ->
+      [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
+
+    viewTest: (name) ->
+      [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
+
+    view: (name) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
+        generator('viewTest', name),
+        generator('template', name),
+        generator('style', name)
+      )
+
+    scaffold: (name) ->
+      generator('controller', name).concat(
+        generator('model', name), generator('view', name)
+      )
+
+getGenerator = (config, plugins) ->
+  framework = config.framework or 'backbone'
+
+  getExtension = (type) ->
+    category = categories[framework]?[type]
+    if category?
+      config.files[category]?.defaultExtension ? ''
+    else
+      ''
+
+  generatorMap = null
+  getGeneratorMap = ->
+    generatorMap ?= generators config, generator
+
+  generator = (type, name) ->
+    extension = getExtension type
+    plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
+    dataGenerator = plugin?.generators?[framework]?[type]
+    data = if dataGenerator?
+      if typeof dataGenerator is 'function'
+        dataGenerator name, type
+      else
+        dataGenerator
+    else
+      ''
+    getPaths = getGeneratorMap()[framework]?[type]
+    paths = (getPaths? name) or []
+    nonStrings = paths.filter (path) -> typeof path isnt 'string'
+    strings = paths
+      .filter (path) ->
+        typeof path is 'string'
+      .map (path) ->
+        path + ".#{extension}"
+      .map (path) ->
+        {type, extension, path, data}
+    strings.concat(nonStrings)
+
+  generator
 
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
@@ -12,7 +114,7 @@ generateFile = (path, data, callback) ->
     fs.writeFile path, data, callback
   fs_utils.exists parentDir, (exists) ->
     return write() if exists
-    logger.info "create #{parentDir}"
+    logger.info "init #{parentDir}"
     mkdirp parentDir, 0o755, (error) ->
       return logger.error if error?
       write()
@@ -28,55 +130,16 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
   config = helpers.loadConfig configPath
   return callback() unless config?
 
-  generateOrDestroyFile = if rollback
-    (fullPath, data, callback) -> destroyFile fullPath, callback
-  else
-    generateFile
+  generateOrDestroyFile = (file, callback) ->
+    if rollback
+      destroyFile file.path, callback
+    else
+      generateFile file.path, file.data, callback
 
-  languageType = switch type
-    when 'collection', 'model', 'router', 'view' then 'javascript'
-    when 'style' then 'stylesheet'
-    else type
-
-  configSection = config.files[helpers.pluralize languageType]
-
-  extension = configSection?.defaultExtension ? switch languageType
-    when 'javascript' then 'coffee'
-    when 'stylesheet' then 'styl'
-    when 'template' then 'eco'
-    else ''
-
-  name += "_#{type}" if type in ['router', 'view']
-  parentDir ?= if languageType is 'template'
-    sysPath.join 'views', "#{helpers.pluralize type}"
-  else
-    "#{helpers.pluralize type}"
-
-  logger.debug "Initializing file of type '#{languageType}' with 
-extension '#{extension}'"
-
-  initFile = (parentDir, callback) ->
-    fullPath = sysPath.join config.paths.app, parentDir, "#{name}.#{extension}"
-    helpers.loadPlugins config, (error, plugins) ->
-      plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
-      generator = plugin?.generators?[config.framework or 'backbone']?[type]
-      data = if generator?
-        if typeof generator is 'function'
-          generator name
-        else
-          generator
-      else
-        ''
-      generateOrDestroyFile fullPath, data, callback
-
-  # We'll additionally generate tests for 'script' languages.
-  initTests = (parentDir, callback) ->
-    return callback() unless languageType is 'javascript'
-    unitTestPath = sysPath.join config.paths.test, 'unit'
-    fullPath = sysPath.join unitTestPath, parentDir, "#{name}.#{extension}"
-    data = ''
-    generateOrDestroyFile fullPath, data, callback
-
-  initFile parentDir, ->
-    initTests parentDir, ->
-      callback()
+  helpers.loadPlugins config, (error, plugins) ->
+    return logger.error error if error?
+    generator = getGenerator config, plugins
+    files = generator type, name
+    async.forEach files, generateOrDestroyFile, (error) ->
+      return logger.error error if error?
+      callback null, files
