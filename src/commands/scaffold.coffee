@@ -102,7 +102,9 @@ getGenerator = (config, plugins) ->
       .map (path) ->
         path + ".#{extension}"
       .map (path) ->
-        {type, extension, path, data}
+        file = {type, extension, path, data}
+        logger.info "Generating", file
+        file
     strings.concat(nonStrings)
 
   generator
