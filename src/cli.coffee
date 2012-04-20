@@ -11,10 +11,6 @@ exports.readPackageVersion = readPackageVersion = ->
   content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
   (JSON.parse content).version
 
-generatorChoices = [
-  'collection', 'model', 'router', 'style', 'template', 'view'
-]
-
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'
@@ -79,8 +75,7 @@ the server would run'
       options:
         type:
           position: 1
-          help: 'generator type'
-          choices: generatorChoices
+          help: 'generator type. Usually one of: controller, model, view.'
           required: yes
         name:
           position: 2
@@ -104,8 +99,7 @@ the server would run'
       options:
         type:
           position: 1
-          help: 'generator type'
-          choices: generatorChoices
+          help: 'generator type. Usually one of: controller, model, view.'
           required: yes
         name:
           position: 2
