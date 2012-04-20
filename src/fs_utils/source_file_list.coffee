@@ -57,7 +57,7 @@ module.exports = class SourceFileList extends EventEmitter
     file
 
   _change: (path, compiler, isHelper) =>
-    return @_compileDependentFiles path if @_ignored path or not compiler
+    return @_compileDependentFiles path if (@_ignored path) or not compiler
     file = @_getByPath path
     @_compile file ? @_add path, compiler, isHelper
     @_resetTimer()
