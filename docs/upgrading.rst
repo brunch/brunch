@@ -5,7 +5,7 @@ Upgrading brunch
 Upgrading to 1.1
 ================
 
-* Change ``buildPath: ...`` in ``config.coffee`` to ``paths: build: ...``
+* Change ``buildPath: ...`` in ``config.coffee`` to ``paths: public: ...``
 * Update ``package.json`` packages versions from ``1.0.x`` to ``1.0.x || 1.1.x``
 
 Upgrading to 1.0
