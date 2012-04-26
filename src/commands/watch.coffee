@@ -1,4 +1,5 @@
 async = require 'async'
+chokidar = require 'chokidar'
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -69,7 +70,7 @@ class BrunchWatcher
       @config.paths.config, @config.paths.packageConfig
     ]
     async.filter watched, fs_utils.exists, (watchedFiles) =>
-      @watcher = fs_utils.watch(watchedFiles)
+      @watcher = chokidar.watch(watchedFiles, ignored: fs_utils.ignored, persistent: yes)
         .on 'all', (event, path) =>
           logger.debug "File '#{path}' received event '#{event}'"
         .on('add', @changeFileList)

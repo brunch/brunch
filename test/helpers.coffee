@@ -5,7 +5,6 @@ describe 'helpers', ->
     it 'should replace slashes with backslashes in config', ->
       unix = require './fixtures/unix_config'
       win = require './fixtures/win_config'
-      console.log 148, (helpers.replaceSlashes unix.config).files.javascripts.joinTo
       expect(helpers.replaceSlashes unix.config).to.eql win.config
 
   describe '#startsWith()', ->
