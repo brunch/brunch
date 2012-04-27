@@ -86,12 +86,16 @@ class BrunchWatcher
   compile: =>
     paths = @config.paths
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
-      fs_utils.copyIfExists paths.assets, paths.public, yes, (error) =>
-        logger.error "Asset compilation failed: #{error}" if error?
-        logger.info "compiled."
-        logger.debug "compilation time: #{Date.now() - @start}ms"
-        @watcher.close() unless @persistent
-        @onCompile null, result
+      assetError = null
+      assetPaths = if paths.assets instanceof Array then paths.assets else [paths.assets]
+      assetPaths.map (assetPath) ->
+        fs_utils.copyIfExists assetPath, paths.public, yes, (error) => assetError = error if assetError?
+
+      logger.error "Asset compilation failed: #{assetError}" if assetError?
+      logger.info "compiled."
+      logger.debug "compilation time: #{Date.now() - @start}ms"
+      @watcher.close() unless @persistent
+      @onCompile null, result
 
   watch: ->
     @initServer()
