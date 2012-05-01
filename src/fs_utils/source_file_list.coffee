@@ -19,13 +19,21 @@ module.exports = class SourceFileList extends EventEmitter
   # Files that are not really app files.
   _ignored: (path) ->
     paths = @config.paths
-    isInAssets = false
+    # Allow us to specify what paths are ignored in the config
+    if paths.ignored
+      if paths.ignored instanceof Array
+        for test in paths.ignored
+          return true if path.match(test)
+      else
+        paths.ignored.call(this, path)
+    else
+      isInAssets = false
 
-    isInAssets ||= helpers.startsWith(path, assetPath) for assetPath in paths.assets
+      isInAssets ||= helpers.startsWith(path, assetPath) for assetPath in paths.assets
 
-    isInAssets or
-    helpers.startsWith(sysPath.basename(path), '_') or
-    path in [paths.config, paths.packageConfig]
+      isInAssets or
+      helpers.startsWith(sysPath.basename(path), '_') or
+      path in [paths.config, paths.packageConfig]
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
