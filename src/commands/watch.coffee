@@ -87,7 +87,7 @@ class BrunchWatcher
   compile: =>
     paths = @config.paths
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
-      assets = path.assets.concat()
+      assets = paths.assets.concat()
       copyAssets = (error) =>
         if error?
           logger.error "Asset compilation failed: #{error}"
