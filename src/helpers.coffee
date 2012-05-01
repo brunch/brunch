@@ -53,27 +53,25 @@ exports.deepFreeze = deepFreeze = (object) ->
 
 startDefaultServer = (port, path, callback) ->
   server = express.createServer()
-  server.configure ->
-    server.use express.static path
-    server.set 'views', path
-    server.set 'view options', layout: no
-    server.register '.html', compile: (str, options) -> (locals) -> str
-  server.get '/', (req, res) ->
-    res.render 'index.html'
+  server.use express.static path
+  server.all '/*', (request, response) ->
+    response.sendfile sysPath.join path, 'index.html'
   server.listen parseInt port, 10
   server.on 'listening', callback
-  logger.info "application started on http://localhost:#{port}/"
   server
 
 exports.startServer = (config, callback = (->)) ->
+  onListening = ->
+    logger.info "application started on http://localhost:#{config.server.port}/"
+    callback()
   if config.server.path
     try
       server = require sysPath.resolve config.server.path
-      server.startServer config.server.port, config.paths.public, callback
+      server.startServer config.server.port, config.paths.public, onListening
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.paths.public, callback
+    startDefaultServer config.server.port, config.paths.public, onListening
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')

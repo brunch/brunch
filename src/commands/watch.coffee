@@ -1,5 +1,4 @@
 async = require 'async'
-chokidar = require 'chokidar'
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -30,9 +29,10 @@ getPluginIncludes = (plugins) ->
     , []
 
 class BrunchWatcher
-  constructor: (@persistent, @options, @onCompile) ->
+  constructor: (@persistent, @options, @_onCompile) ->
     params = {}
     params.minify = yes if options.minify
+    params.persistent = persistent
     if persistent
       params.server = {}
       params.server.run = yes if options.server
@@ -71,7 +71,7 @@ class BrunchWatcher
     ].concat(@config.paths.assets)
 
     async.filter watched, fs_utils.exists, (watchedFiles) =>
-      @watcher = chokidar.watch(watchedFiles, ignored: fs_utils.ignored, persistent: yes)
+      @watcher = fs_utils.watch(watchedFiles)
         .on 'all', (event, path) =>
           logger.debug "File '#{path}' received event '#{event}'"
         .on('add', @changeFileList)
@@ -84,6 +84,14 @@ class BrunchWatcher
             @changeFileList path, no
         .on('unlink', @removeFromFileList)
         .on('error', logger.error)
+
+  onCompile: (result) =>
+    @_onCompile result
+    @plugins
+      .filter (plugin) ->
+        typeof plugin.onCompile is 'function'
+      .forEach (plugin) ->
+        plugin.onCompile result
 
   compile: =>
     paths = @config.paths
