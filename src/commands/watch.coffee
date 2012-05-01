@@ -68,7 +68,8 @@ class BrunchWatcher
     watched = [
       @config.paths.app, @config.paths.vendor,
       @config.paths.config, @config.paths.packageConfig
-    ]
+    ].concat(@config.paths.assets)
+
     async.filter watched, fs_utils.exists, (watchedFiles) =>
       @watcher = chokidar.watch(watchedFiles, ignored: fs_utils.ignored, persistent: yes)
         .on 'all', (event, path) =>
@@ -87,16 +88,18 @@ class BrunchWatcher
   compile: =>
     paths = @config.paths
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
-      assetError = null
-      assetPaths = if paths.assets instanceof Array then paths.assets else [paths.assets]
-      assetPaths.map (assetPath) ->
-        fs_utils.copyIfExists assetPath, paths.public, yes, (error) => assetError = error if assetError?
-
-      logger.error "Asset compilation failed: #{assetError}" if assetError?
-      logger.info "compiled."
-      logger.debug "compilation time: #{Date.now() - @start}ms"
-      @watcher.close() unless @persistent
-      @onCompile null, result
+      assets = paths.assets.concat()
+      copyAssets = (error) =>
+        if error?
+          logger.error "Asset compilation failed: #{error}"
+        else if assets.length == 0
+          logger.info "compiled."
+          logger.debug "compilation time: #{Date.now() - @start}ms"
+          @watcher.close() unless @persistent
+          @onCompile null, result
+        else
+          fs_utils.copyIfExists assets.shift(), paths.public, yes, copyAssets
+      copyAssets()
 
   watch: ->
     @initServer()
