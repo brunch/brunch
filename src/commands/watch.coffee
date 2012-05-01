@@ -68,7 +68,8 @@ class BrunchWatcher
     watched = [
       @config.paths.app, @config.paths.vendor,
       @config.paths.config, @config.paths.packageConfig
-    ]
+    ].concat(@config.paths.assets)
+
     async.filter watched, fs_utils.exists, (watchedFiles) =>
       @watcher = fs_utils.watch(watchedFiles)
         .on 'all', (event, path) =>
@@ -95,12 +96,18 @@ class BrunchWatcher
   compile: =>
     paths = @config.paths
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
-      fs_utils.copyIfExists paths.assets, paths.public, yes, (error) =>
-        logger.error "Asset compilation failed: #{error}" if error?
-        logger.info "compiled."
-        logger.debug "compilation time: #{Date.now() - @start}ms"
-        @watcher.close() unless @persistent
-        @onCompile result
+      assets = paths.assets.concat()
+      copyAssets = (error) =>
+        if error?
+          logger.error "Asset compilation failed: #{error}"
+        else if assets.length == 0
+          logger.info "compiled."
+          logger.debug "compilation time: #{Date.now() - @start}ms"
+          @watcher.close() unless @persistent
+          @onCompile null, result
+        else
+          fs_utils.copyIfExists assets.shift(), paths.public, yes, copyAssets
+      copyAssets()
 
   watch: ->
     @initServer()
