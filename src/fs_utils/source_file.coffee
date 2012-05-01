@@ -29,7 +29,7 @@ module.exports = class SourceFile
       moduleName = JSON.stringify(
         @path
           .replace(new RegExp('\\\\', 'g'), '/')
-          .replace(/^app\//, '')
+          .replace(/^app\/|^(\.+\/)+/g, '')
           .replace(/\.\w*$/, '')
       )
       """
