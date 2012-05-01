@@ -29,9 +29,10 @@ getPluginIncludes = (plugins) ->
     , []
 
 class BrunchWatcher
-  constructor: (@persistent, @options, @onCompile) ->
+  constructor: (@persistent, @options, @_onCompile) ->
     params = {}
     params.minify = yes if options.minify
+    params.persistent = persistent
     if persistent
       params.server = {}
       params.server.run = yes if options.server
@@ -83,6 +84,14 @@ class BrunchWatcher
         .on('unlink', @removeFromFileList)
         .on('error', logger.error)
 
+  onCompile: (result) =>
+    @_onCompile result
+    @plugins
+      .filter (plugin) ->
+        typeof plugin.onCompile is 'function'
+      .forEach (plugin) ->
+        plugin.onCompile result
+
   compile: =>
     paths = @config.paths
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
@@ -91,7 +100,7 @@ class BrunchWatcher
         logger.info "compiled."
         logger.debug "compilation time: #{Date.now() - @start}ms"
         @watcher.close() unless @persistent
-        @onCompile null, result
+        @onCompile result
 
   watch: ->
     @initServer()
