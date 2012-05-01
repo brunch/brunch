@@ -106,7 +106,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.paths.app ?= join 'root', 'app'
   config.paths.config = configPath ? join 'root', 'config'
   config.paths.packageConfig ?= join 'root', 'package.json'
-  config.paths.assets ?= join 'app', 'assets'
+  config.paths.assets ?= [ join 'app', 'assets' ]
   config.paths.test ?= join 'root', 'test'
   config.paths.vendor ?= join 'root', 'vendor'
   config.server ?= {}
@@ -132,6 +132,10 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
   recursiveExtend config, options
+
+  # for backwards compatibility, we convert assets paths specified as a string into an Array
+  config.paths.assets = [ config.paths.assets ] if !Array.isArray config.paths.assets
+
   deepFreeze config
   config
 
