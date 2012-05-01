@@ -67,7 +67,8 @@ class BrunchWatcher
     watched = [
       @config.paths.app, @config.paths.vendor,
       @config.paths.config, @config.paths.packageConfig
-    ]
+    ].concat(@config.paths.assets)
+
     async.filter watched, fs_utils.exists, (watchedFiles) =>
       @watcher = fs_utils.watch(watchedFiles)
         .on 'all', (event, path) =>

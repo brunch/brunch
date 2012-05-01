@@ -19,7 +19,11 @@ module.exports = class SourceFileList extends EventEmitter
   # Files that are not really app files.
   _ignored: (path) ->
     paths = @config.paths
-    helpers.startsWith(path, paths.assets) or
+    isInAssets = false
+
+    isInAssets ||= helpers.startsWith(path, assetPath) for assetPath in paths.assets
+
+    isInAssets or
     helpers.startsWith(sysPath.basename(path), '_') or
     path in [paths.config, paths.packageConfig]
 
