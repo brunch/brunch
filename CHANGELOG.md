@@ -1,3 +1,8 @@
+## Brunch 1.2.0 (unreleased)
+* Improved plugin API:
+    * Added support for `onCompile` method.
+    It allows to create great & simple live browser reloaders.
+
 ## Brunch 1.1.2 (April 20, 2012)
 * Fixed `buildPath is deprecated` warning on new configs.
 * Fixed compiling of invalid files (`.rb`, `.png` etc).
