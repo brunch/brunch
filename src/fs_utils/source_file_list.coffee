@@ -57,7 +57,7 @@ module.exports = class SourceFileList extends EventEmitter
   _add: (path, compiler, isHelper) ->
     isVendor = false
     isVendor ||= helpers.startsWith(path, vendorPath) for vendorPath in @config.paths.vendor
-    file = new SourceFile path, compiler, isHelper, isVendor
+    file = new SourceFile @config.paths.app, path, compiler, isHelper, isVendor
     @files.push file
     file
 
