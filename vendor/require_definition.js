@@ -1,7 +1,8 @@
 (function(/*! Brunch !*/) {
   'use strict';
 
-  if (!this.require) {
+  if (!this.BrunchRequire) {
+    var self = this;
     var modules = {};
     var cache = {};
     var __hasProp = ({}).hasOwnProperty;
@@ -64,11 +65,16 @@
       return path.split('/').slice(0, -1).join('/');
     };
 
-    this.require = function(name) {
+    var prevRequire = this.require;
+    this.require = this.BrunchRequire = function(name) {
       return require(name, '');
     };
 
     this.require.brunch = true;
+    this.require.noConflict = function(){
+      self.require = prevRequire;
+      return self.BrunchRequire;
+    }
     this.require.define = function(bundle) {
       for (var key in bundle) {
         if (__hasProp.call(bundle, key)) {
@@ -76,5 +82,10 @@
         }
       }
     };
+
+    // handle CommonJS loading style
+    if ( typeof module === 'object' ) {
+      module.exports = this;
+    }
   }
 }).call(this);
