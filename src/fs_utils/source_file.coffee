@@ -4,7 +4,7 @@ logger = require '../logger'
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (@path, @compiler, @isHelper = no, @isVendor = no) ->
+  constructor: (@appPaths, @path, @compiler, @isHelper = no, @isVendor = no) ->
     logger.debug "Initializing fs_utils.SourceFile:", {
       @path, @isHelper, @isVendor
     }
@@ -29,7 +29,7 @@ module.exports = class SourceFile
       moduleName = JSON.stringify(
         @path
           .replace(new RegExp('\\\\', 'g'), '/')
-          .replace(/^app\/|^(\.+\/)+/g, '')
+          .replace(new RegExp('^' + @appPaths.join('/|^').replace(/([\/.])/g, '\\$1') + '\\/'), '')
           .replace(/\.\w*$/, '')
       )
       """
