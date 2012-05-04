@@ -100,8 +100,9 @@ class BrunchWatcher
       fs_utils.copyIfExists assetPath, paths.public, yes, callback
 
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
+      return logger.error "Write failed: #{error}" if error?
       async.forEach paths.assets, copyAssets, (error) =>
-        return logger.error "Asset compilation failed: #{error}" if error?
+        return logger.error "Asset copying failed: #{error}" if error?
         logger.info "compiled."
         logger.debug "compilation time: #{Date.now() - @start}ms"
         @watcher.close() unless @persistent

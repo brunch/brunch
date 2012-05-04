@@ -67,5 +67,5 @@ module.exports = write = (fileList, config, plugins, callback) ->
   files = getFiles fileList, config, minifiers
   writeFile = (file, callback) -> file.write callback
   async.forEach files, writeFile, (error, results) ->
-    return callback "write error. #{error}" if error?
+    return callback error if error?
     callback null, results
