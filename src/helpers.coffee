@@ -12,6 +12,12 @@ exports.pluralize = (word) ->
 exports.startsWith = (string, substring) ->
   string.indexOf(substring) is 0
 
+ensureArray = (object) ->
+  if Array.isArray object
+    object
+  else
+    [object]
+
 # Extends the object with properties from another object.
 # Example
 #   
@@ -106,7 +112,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.paths.app ?= join 'root', 'app'
   config.paths.config = configPath ? join 'root', 'config'
   config.paths.packageConfig ?= join 'root', 'package.json'
-  config.paths.assets ?= [ join 'app', 'assets' ]
+  config.paths.assets ?= [(join 'app', 'assets')]
   config.paths.test ?= join 'root', 'test'
   config.paths.vendor ?= join 'root', 'vendor'
   config.server ?= {}
@@ -116,6 +122,10 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   # Alias deprecated config params.
   config.rootPath = config.paths.root
   config.buildPath = config.paths.public
+
+  # Mangle types.
+  config.paths.assets = ensureArray config.paths.assets
+
   replaceSlashes config if process.platform is 'win32'
   config
 
@@ -132,10 +142,6 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
   recursiveExtend config, options
-
-  # for backwards compatibility, we convert assets paths specified as a string into an Array
-  config.paths.assets = [ config.paths.assets ] if !Array.isArray config.paths.assets
-
   deepFreeze config
   config
 

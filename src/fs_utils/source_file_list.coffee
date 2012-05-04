@@ -21,17 +21,15 @@ module.exports = class SourceFileList extends EventEmitter
     paths = @config.paths
     # Allow us to specify what paths are ignored in the config
     if paths.ignored
-      if paths.ignored instanceof Array
-        for test in paths.ignored
-          return true if path.match(test)
-      else
+      if Array.isArray paths.ignored
+        paths.ignored.some((test) -> path.match(test))
+      else if typeof paths.ignored is 'function'
         paths.ignored.call(this, path)
+      else
+        no
     else
-      isInAssets = false
-
-      isInAssets ||= helpers.startsWith(path, assetPath) for assetPath in paths.assets
-
-      isInAssets or
+      # Check if path is located in any of assets directories.
+      paths.assets.some((assetPath) -> helpers.startsWith path, assetPath) or
       helpers.startsWith(sysPath.basename(path), '_') or
       path in [paths.config, paths.packageConfig]
 

@@ -50,7 +50,7 @@ module.exports = class SourceFile
       return callback "Read error: #{error}" if error?
       fileContent = data.toString()
       getDeps = @compiler.getDependencies or (data, path, callback) ->
-        callback(null, [])
+        callback null, []
       @compiler.compile fileContent, @path, (error, result) =>
         return callback "Compile error: #{error}" if error?
         getDeps fileContent, @path, (error, dependencies) =>
