@@ -92,7 +92,7 @@ Examples: ``true``, ``false``.
 
 `Optional, object`: contains params of webserver that runs on ``brunch watch --server``.
 
-* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.runServer`` function.
+* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function.
 * ``port``: (optional) port on which server will run
 * ``run``: should the server be launched with ``brunch watch``?
 
