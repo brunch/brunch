@@ -177,27 +177,27 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
+
   if config.buildPath?
     logger.warn 'config.buildPath is deprecated. Use config.paths.public.'
-  config.paths ?= {}
-  config.paths.root ?= config.rootPath ? '.'
-  config.paths.public ?= config.buildPath ? join 'root', 'public'
-  config.paths.app ?= join 'root', 'app'
-  config.paths.config = configPath ? join 'root', 'config'
-  config.paths.packageConfig ?= join 'root', 'package.json'
-  config.paths.assets ?= [(join 'app', 'assets')]
-  config.paths.test ?= join 'root', 'test'
-  config.paths.vendor ?= join 'root', 'vendor'
-  config.server ?= {}
-  config.server.path ?= null
-  config.server.port ?= 3333
-  config.server.run ?= no
-  # Alias deprecated config params.
-  config.rootPath = config.paths.root
-  config.buildPath = config.paths.public
 
+  paths                = config.paths     ?= {}
+  paths.root          ?= config.rootPath  ? '.'
+  paths.public        ?= config.buildPath ? join 'root', 'public'
+  paths.app           ?= join 'root', 'app'
+  paths.config         = configPath       ? join 'root', 'config'
+  paths.packageConfig ?= join 'root', 'package.json'
+  paths.assets        ?= [join 'app', 'assets']
+  paths.test          ?= join 'root', 'test'
+  paths.vendor        ?= join 'root', 'vendor'
+  config.server       ?= {}
+  config.server.port  ?= 3333
+  config.server.run   ?= no
+  # Alias deprecated config params.
+  config.rootPath      = config.paths.root
+  config.buildPath     = config.paths.public
   # Mangle types.
-  config.paths.assets = ensureArray config.paths.assets
+  config.paths.assets  = ensureArray config.paths.assets
 
   replaceSlashes config if process.platform is 'win32'
   config
