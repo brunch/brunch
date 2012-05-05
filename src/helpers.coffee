@@ -58,8 +58,9 @@ sortAlphabetically = (a, b) ->
 # If item path starts with 'vendor', it has bigger priority.
 # TODO: check for config.vendorPath
 sortByVendor = (config, a, b) ->
-  aIsVendor = exports.startsWith a, config.vendorPaths
-  bIsVendor = exports.startsWith b, config.vendorPaths
+  vendor = config.vendorPaths.slice().sort(sortAlphabetically)
+  aIsVendor = vendor.some((path) -> exports.startsWith a, path)
+  bIsVendor = vendor.some((path) -> exports.startsWith b, path)
   if aIsVendor and not bIsVendor
     -1
   else if not aIsVendor and bIsVendor
@@ -111,7 +112,11 @@ sortByBefore = (config, a, b) ->
 # Returns new sorted array.
 exports.sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
-    files.slice().sort (a, b) -> sortByBefore config, a, b
+    cfg =
+      before: config.before ? [] 
+      after: config.after ? []
+      vendorPaths: config.vendorPaths ? []
+    files.slice().sort (a, b) -> sortByBefore cfg, a, b
   else
     files
 

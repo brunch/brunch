@@ -8,6 +8,35 @@ describe 'helpers', ->
       expect(helpers.replaceSlashes unix.config).to.eql win.config
 
   describe '#sortByConfig()', ->
+    it 'should files by config.before', ->
+      files = ['backbone.js', 'jquery.js', 'underscore.js']
+      config =
+        before: ['jquery.js', 'underscore.js', 'backbone.js']
+      expect(helpers.sortByConfig files, config).to.eql config.before
+
+    it 'should files by config.after', ->
+      files = ['helper-1.js', 'backbone.js', 'helper-2.js']
+      config =
+        after: ['helper-1.js', 'helper-2.js']
+      expect(helpers.sortByConfig files, config).to.eql [
+        'backbone.js', 'helper-1.js', 'helper-2.js'
+      ]
+      
+    it 'should files by config.vendor', ->
+      files = ['vendor/backbone.js', 'jquery.js', 'meh/underscore.js']
+      config =
+        vendorPaths: ['vendor', 'meh']
+      expect(helpers.sortByConfig files, config).to.eql [
+        'meh/underscore.js', 'vendor/backbone.js', 'jquery.js'
+      ]
+      
+    it 'should files alphabetically', ->
+      files = ['z', 'e', 'a', 'd', 'c', 's', 'z']
+      config = {}
+      expect(helpers.sortByConfig files, config).to.eql [
+        'a', 'c', 'd', 'e', 's', 'z', 'z'
+      ]
+      
     it 'should sort files by config correctly', ->
       files = [
         'a',
