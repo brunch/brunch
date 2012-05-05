@@ -1,4 +1,5 @@
-## Brunch 1.2.0 (unreleased)
+# Brunch 1.2.0 (unreleased)
+* Added pushState support to the built-in webserver.
 * Improved config API:
     * Added `paths.ignored` param that redefines
     paths ignored by brunch.
@@ -7,16 +8,16 @@
     * Added support for `onCompile` method.
     It allows to create great & simple live browser reloaders.    
 
-## Brunch 1.1.2 (April 20, 2012)
+# Brunch 1.1.2 (April 20, 2012)
 * Fixed `buildPath is deprecated` warning on new configs.
 * Fixed compiling of invalid files (`.rb`, `.png` etc).
 
-## Brunch 1.1.1 (April 19, 2012)
+# Brunch 1.1.1 (April 19, 2012)
 * Fixed compiling of `package.json`, `config` and watching of assets.
 * Fixed incorrect date in brunch logger.
 * Fixed an error when requiring custom server script.
 
-## Brunch 1.1.0 (April 15, 2012)
+# Brunch 1.1.0 (April 15, 2012)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.
 * Added support for chain compilation. For example, if `_user.styl` changes
@@ -54,18 +55,18 @@ and `main.styl` depends on it, `main.styl` will be recompiled too.
 * Made optional existence of `app` & `vendor` directories.
 * Node.js API now mirrors command line api.
 
-## Brunch 1.0.3 (April 3, 2012)
+# Brunch 1.0.3 (April 3, 2012)
 * Dotfiles from assets dir are prevented to be copied to build dir.
 
-## Brunch 1.0.2 (March 28, 2012)
+# Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
 * Changed recommended framework in `test/spec` to Mocha.
 
-## Brunch 1.0.1 (March 26, 2012)
+# Brunch 1.0.1 (March 26, 2012)
 * Updated dependencies.
 * Fixed permissions issue with `app/assets` folder.
 
-## Brunch 1.0.0 (March 14, 2012)
+# Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 
 `vendor.js`.
@@ -93,10 +94,10 @@ by compiler (but not by watcher).
 * Added debugging mode. You can enable it by prepending `BRUNCH_DEBUG=1 ` to
 brunch command.
 
-## Brunch 0.9.1 (February 21, 2012)
+# Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
 
-## Brunch 0.9.0 (January 10, 2012)
+# Brunch 0.9.0 (January 10, 2012)
 * Added new API for plugins.
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,
