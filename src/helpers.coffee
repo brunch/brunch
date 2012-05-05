@@ -38,6 +38,83 @@ recursiveExtend = (object, properties) ->
       object[key] = properties[key]
   object
 
+exports.deepFreeze = deepFreeze = (object) ->
+  Object.keys(Object.freeze(object))
+    .map (key) ->
+      object[key]
+    .filter (value) ->
+      typeof value is 'object' and value? and not Object.isFrozen(value)
+    .forEach(deepFreeze)
+  object
+
+sortAlphabetically = (a, b) ->
+  if a < b
+    -1
+  else if a > b
+    1
+  else
+    0
+
+# If item path starts with 'vendor', it has bigger priority.
+# TODO: check for config.vendorPath
+sortByVendor = (config, a, b) ->
+  aIsVendor = exports.startsWith a, config.vendorPaths
+  bIsVendor = exports.startsWith b, config.vendorPaths
+  if aIsVendor and not bIsVendor
+    -1
+  else if not aIsVendor and bIsVendor
+    1
+  else
+    # All conditions were false, we don't care about order of
+    # these two items.
+    sortAlphabetically a, b
+
+# Items wasn't found in config.before, try to find then in
+# config.after.
+# Item that config.after contains would have lower sorting index.
+sortByAfter = (config, a, b) ->
+  indexOfA = config.after.indexOf a
+  indexOfB = config.after.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    1
+  else if not hasA and hasB
+    -1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByVendor config, a, b
+
+# Try to find items in config.before.
+# Item that config.after contains would have bigger sorting index.
+sortByBefore = (config, a, b) ->
+  indexOfA = config.before.indexOf a
+  indexOfB = config.before.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    -1
+  else if not hasA and hasB
+    1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByAfter config, a, b
+
+# Sorts by pattern.
+# 
+# Examples
+#
+#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
+#     before: ['a.coffee'], after: ['b.coffee']
+#   # => ['a.coffee', 'c.coffee', 'b.coffee']
+# 
+# Returns new sorted array.
+exports.sortByConfig = (files, config) ->
+  if toString.call(config) is '[object Object]'
+    files.slice().sort (a, b) -> sortByBefore config, a, b
+  else
+    files
+
 exports.install = install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   logger.info 'Installing packages...'
@@ -47,15 +124,6 @@ exports.install = install = (rootPath, callback = (->)) ->
     process.chdir prevDir
     return callback stderr.toString() if error?
     callback null, stdout
-
-exports.deepFreeze = deepFreeze = (object) ->
-  Object.keys(Object.freeze(object))
-    .map (key) ->
-      object[key]
-    .filter (value) ->
-      typeof value is 'object' and value? and not Object.isFrozen(value)
-    .forEach(deepFreeze)
-  object
 
 startDefaultServer = (port, path, callback) ->
   server = express.createServer()
