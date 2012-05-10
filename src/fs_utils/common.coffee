@@ -30,7 +30,7 @@ exports.writeFile = (path, data, callback) ->
         callback error, path, data
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-ignoredRe = /^(\.|#)/
+ignoredRe = /(^(\.|#)|__$)/;
 
 exports.ignored = ignored = (path) ->
   ignoredRe.test(sysPath.basename path)
