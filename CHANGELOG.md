@@ -6,7 +6,10 @@
     * `paths.assets` can now be an array of paths.
 * Improved plugin API:
     * Added support for `onCompile` method.
-    It allows to create great & simple live browser reloaders.    
+    It allows to create great & simple live browser reloaders.   
+* Files that end with two underscores (e.g. `a.js__`) are now ignored by
+watcher and compiler because they're created by some IDEs.
+* Files in `vendor` directory are now sorted correctly, before `app` files.
 
 # Brunch 1.1.2 (April 20, 2012)
 * Fixed `buildPath is deprecated` warning on new configs.
