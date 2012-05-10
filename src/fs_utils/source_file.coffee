@@ -9,13 +9,13 @@ module.exports = class SourceFile
       @path, @isHelper, @isVendor
     }
     @type = @compiler.type
-    @data = ''
-    @dependencies = []
+    @cache = Object.seal({data: '', dependencies: []})
     @compilerName = @compiler.constructor.name
     if isHelper
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
+    Object.freeze(this)
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -46,15 +46,15 @@ module.exports = class SourceFile
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
     realPath = if @isHelper then @realPath else @path
-    fs.readFile realPath, (error, data) =>
+    fs.readFile realPath, (error, buffer) =>
       return callback "Read error: #{error}" if error?
-      fileContent = data.toString()
+      fileContent = buffer.toString()
       getDeps = @compiler.getDependencies or (data, path, callback) ->
         callback null, []
       @compiler.compile fileContent, @path, (error, result) =>
         return callback "Compile error: #{error}" if error?
         getDeps fileContent, @path, (error, dependencies) =>
           return callback "GetDeps error: #{error}" if error?
-          @dependencies = dependencies
-          @data = @_wrap result if result?
+          @cache.dependencies = dependencies
+          @cache.data = @_wrap result if result?
           callback error, @data

@@ -42,7 +42,7 @@ getGeneratedFilesPaths = (sourceFile, joinConfig) ->
     checker sourceFile.path
 
 getFiles = (fileList, config, minifiers) ->
-  joinConfig = getJoinConfig config   
+  joinConfig = getJoinConfig config
   map = {}
   fileList.files.forEach (file) =>
     paths = getGeneratedFilesPaths file, joinConfig

@@ -45,9 +45,9 @@ module.exports = class SourceFileList extends EventEmitter
   _compileDependentFiles: (path) ->
     @files
       .filter (dependent) =>
-        dependent.dependencies.length
+        dependent.cache.dependencies.length
       .filter (dependent) =>
-        path in dependent.dependencies
+        path in dependent.cache.dependencies
       .forEach(@_compile)
     @_resetTimer()
 

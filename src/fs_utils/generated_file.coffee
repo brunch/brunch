@@ -59,7 +59,7 @@ module.exports = class GeneratedFile
     logger.debug "Joining files '#{sortedPaths}' to '#{@path}'"
     data = ''
     joinFiles = (data) ->
-      data += sourceFiles.map((file) -> file.data).join('')
+      data += sourceFiles.map((file) -> file.cache.data).join('')
       callback null, data
     if @type is 'javascript'
       getRequireDefinition (error, requireDefinition) =>
