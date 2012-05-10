@@ -54,7 +54,7 @@ module.exports = class GeneratedFile
     sourceFiles = helpers.sortByConfig(paths, order).map (file) ->
       files[paths.indexOf file]
     sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
-    logger.debug "Writing files '#{sortedPaths}' to '#{@path}'"
+    logger.debug "Joining files '#{sortedPaths}' to '#{@path}'"
     data = ''
     joinFiles = (data) ->
       data += sourceFiles.map((file) -> file.data).join('')

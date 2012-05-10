@@ -3,6 +3,7 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
+logger = require '../logger'
 
 exports.exists = fs.exists or sysPath.exists
 
@@ -19,6 +20,7 @@ exports.exists = fs.exists or sysPath.exists
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 # 
 exports.writeFile = (path, data, callback) ->
+  logger.debug "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?
