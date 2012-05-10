@@ -21,11 +21,13 @@ module.exports = class GeneratedFile
   # sourceFiles - array of `fs_utils.SourceFile`-s.
   # config      - parsed application config.
   # 
-  constructor: (@path, @sourceFiles, @config) ->    
+  constructor: (@path, @sourceFiles, @config, minifiers) ->    
     @type = if @sourceFiles.some((file) -> file.type is 'javascript')
       'javascript'
     else
       'stylesheet'
+    @minifier = minifiers.filter((minifier) => minifier.type is @type)[0]
+    Object.freeze(this)
 
   _extractOrder: (files, config) ->
     types = files.map (file) -> helpers.pluralize file.type

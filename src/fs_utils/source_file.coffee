@@ -25,7 +25,7 @@ module.exports = class SourceFile
   # 
   # Returns a wrapped string.
   _wrap: (data) ->
-    if !@isHelper and !@isVendor and @type in ['javascript', 'template']
+    if not @isHelper and not @isVendor and @type in ['javascript', 'template']
       moduleName = JSON.stringify(
         @path
           .replace(new RegExp('\\\\', 'g'), '/')

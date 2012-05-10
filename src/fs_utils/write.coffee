@@ -53,13 +53,7 @@ getFiles = (fileList, config, minifiers) ->
   Object.keys(map).map (generatedFilePath) =>
     sourceFiles = map[generatedFilePath]
     fullPath = sysPath.join config.paths.public, generatedFilePath
-    file = new GeneratedFile fullPath, sourceFiles, config
-    minifiers
-      .filter (minifier) ->
-        minifier.type is file.type
-      .forEach (minifier) ->
-        file.minifier = minifier
-    file
+    new GeneratedFile fullPath, sourceFiles, config, minifiers
 
 # * plugins - hashmap of plugins from package.json.
 module.exports = write = (fileList, config, plugins, callback) ->
