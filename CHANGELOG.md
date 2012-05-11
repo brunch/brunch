@@ -2,20 +2,19 @@
 * Greatly improved `brunch generate`:
     * User can now define his own generators in `config.generators`.
     * Default generators are now:
-        * `controllerTest`, `modelTest`, `viewTest`
-        * `template`, `style`
+        * `controllerTest`, `modelTest`, `viewTest`, `template`, `style`
         * `controller` (generates `controllerTest` too)
         * `model` (generates `modelTest` too)
         * `view` (generates `template`, `style` & `viewTest` too)
         * `scaffold` (generates `controller`, `model`, `view` and their generators)
-* Added pushState support to the built-in webserver.
 * Improved config API:
     * Added `paths.ignored` param that redefines
     paths ignored by brunch.
     * `paths.assets` can now be an array of paths.
 * Improved plugin API:
     * Added support for `onCompile` method.
-    It allows to create great & simple live browser reloaders.   
+    It allows to create great & simple live browser reloaders.
+* Added pushState support to the built-in webserver.
 * Files that end with two underscores (e.g. `a.js__`) are now ignored by
 watcher and compiler because they're created by some IDEs.
 * Files in `vendor` directory are now sorted correctly, before `app` files.
