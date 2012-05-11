@@ -9,13 +9,17 @@ module.exports = class SourceFile
       @path, @isHelper, @isVendor
     }
     @type = @compiler.type
-    @cache = Object.seal({data: '', dependencies: []})
     @compilerName = @compiler.constructor.name
     if isHelper
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
+    @cache = Object.seal({data: '', dependencies: []})
     Object.freeze(this)
+
+  _getDependencies: (data, path, callback) ->
+    fn = @compiler.getDependencies or (-> callback null, [])
+    fn data, path, callback
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -49,12 +53,10 @@ module.exports = class SourceFile
     fs.readFile realPath, (error, buffer) =>
       return callback "Read error: #{error}" if error?
       fileContent = buffer.toString()
-      getDeps = @compiler.getDependencies or (data, path, callback) ->
-        callback null, []
       @compiler.compile fileContent, @path, (error, result) =>
         return callback "Compile error: #{error}" if error?
-        getDeps fileContent, @path, (error, dependencies) =>
+        @_getDependencies fileContent, @path, (error, dependencies) =>
           return callback "GetDeps error: #{error}" if error?
           @cache.dependencies = dependencies
           @cache.data = @_wrap result if result?
-          callback error, @data
+          callback null, @cache.data

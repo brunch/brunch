@@ -57,16 +57,12 @@ module.exports = class GeneratedFile
       files[paths.indexOf file]
     sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
     logger.debug "Joining files '#{sortedPaths}' to '#{@path}'"
-    data = ''
-    joinFiles = (data) ->
-      data += sourceFiles.map((file) -> file.cache.data).join('')
-      callback null, data
+    joined = sourceFiles.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
       getRequireDefinition (error, requireDefinition) =>
-        data += requireDefinition
-        joinFiles data
+        callback null, requireDefinition + joined
     else
-      joinFiles data
+      callback null, joined
 
   # Private: minify data.
   # 
