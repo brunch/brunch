@@ -2,12 +2,12 @@
 * Greatly improved `brunch generate`:
     * User can now define his own generators in `config.generators`.
     * Default generators are now:
-        * controllerTest, modelTest, viewTest
-        * template, style
-        * controller (generates controllerTest too)
-        * model (generates modelTest too)
-        * view (generates template, style & viewTest too)
-        * scaffold (generates controller, model, view and their generators)
+        * `controllerTest`, `modelTest`, `viewTest`
+        * `template`, `style`
+        * `controller` (generates `controllerTest` too)
+        * `model` (generates `modelTest` too)
+        * `view` (generates `template`, `style` & `viewTest` too)
+        * `scaffold` (generates `controller`, `model`, `view` and their generators)
 * Added pushState support to the built-in webserver.
 * Improved config API:
     * Added `paths.ignored` param that redefines
