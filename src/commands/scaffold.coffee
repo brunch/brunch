@@ -13,6 +13,14 @@ flatten = (array) ->
 
 categories =
   backbone:
+    modelTest: 'javascripts'
+    model: 'javascripts'
+    template: 'templates'
+    style: 'stylesheets'
+    viewTest: 'javascripts'
+    view: 'javascripts'
+
+  chaplin:
     controllerTest: 'javascripts'
     controller: 'javascripts'
     modelTest: 'javascripts'
@@ -22,8 +30,44 @@ categories =
     viewTest: 'javascripts'
     view: 'javascripts'
 
+frameworkChocies = ->
+  Object.keys(categories).join(', ')
+
+generatorChoices = (framework) ->
+  Object.keys(categories[framework] or {}).join(', ')
+
 generators = (config, generator) ->
   backbone:
+    modelTest: (name) ->
+      [sysPath.join(config.paths.test, 'models', "#{name}_test")]
+
+    model: (name) ->
+      [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
+        generator('modelTest', name)
+      )
+
+    template: (name) ->
+      [sysPath.join(config.paths.app, 'views', 'templates', "#{name}")]
+
+    style: (name) ->
+      [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
+
+    viewTest: (name) ->
+      [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
+
+    view: (name) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
+        generator('viewTest', name),
+        generator('template', name),
+        generator('style', name)
+      )
+
+    scaffold: (name) ->
+      generator('controller', name).concat(
+        generator('model', name), generator('view', name)
+      )
+
+  chaplin:
     # What generates what:
     # controller: controller, controllerTest
     # model: model, modelTest
@@ -71,11 +115,17 @@ generators = (config, generator) ->
 getGenerator = (config, plugins) ->
   framework = config.framework or 'backbone'
 
+  unless categories[framework]?
+    return logger.error "Framework #{framework} isn't supported. Use one of: 
+#{frameworkChocies()}"
+
   getExtension = (type) ->
     category = categories[framework]?[type]
     if category?
       config.files[category]?.defaultExtension ? ''
     else
+      logger.error "Generator #{type} isn't supported. Use one of: 
+#{generatorChoices(framework)}."
       ''
 
   generatorMap = null
@@ -83,16 +133,24 @@ getGenerator = (config, plugins) ->
     generatorMap ?= generators config, generator
 
   generator = (type, name) ->
+    configGenerator = config.generators?[type]
+    getData = (item) ->
+      if typeof item is 'function'
+        item name, type
+      else
+        item
+
     extension = getExtension type
     plugin = plugins.filter((plugin) -> plugin.extension is extension)[0]
     dataGenerator = plugin?.generators?[framework]?[type]
-    data = if dataGenerator?
-      if typeof dataGenerator is 'function'
-        dataGenerator name, type
-      else
-        dataGenerator
+
+    data = if configGenerator?
+      getData configGenerator
+    else if dataGenerator?
+      getData dataGenerator
     else
       ''
+
     getPaths = getGeneratorMap()[framework]?[type]
     paths = (getPaths? name) or []
     nonStrings = paths.filter (path) -> typeof path isnt 'string'
