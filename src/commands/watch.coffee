@@ -72,7 +72,8 @@ class BrunchWatcher
     ].concat(@config.paths.assets)
 
     async.filter watched, fs_utils.exists, (watchedFiles) =>
-      @watcher = chokidar.watch(watchedFiles, fs_utils.ignored)
+      ignored = fs_utils.ignored
+      @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
         .on 'all', (event, path) =>
           logger.debug "File '#{path}' received event '#{event}'"
         .on('add', @changeFileList)
