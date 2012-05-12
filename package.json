@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.2.0-pre",
+  "version": "1.2.0",
   "keywords": ["backbone", "coffeescript", "jst", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",

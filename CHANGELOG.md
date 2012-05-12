@@ -1,4 +1,4 @@
-# Brunch 1.2.0 (unreleased)
+# Brunch 1.2.0 (May 12, 2012)
 * Greatly improved `brunch generate`:
     * User can now define his own generators in `config.generators`.
     * Default generators are now:

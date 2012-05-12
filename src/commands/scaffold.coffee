@@ -19,6 +19,7 @@ categories =
     style: 'stylesheets'
     viewTest: 'javascripts'
     view: 'javascripts'
+    scaffold: 'javascripts'
 
   chaplin:
     controllerTest: 'javascripts'
@@ -29,6 +30,7 @@ categories =
     style: 'stylesheets'
     viewTest: 'javascripts'
     view: 'javascripts'
+    scaffold: 'javascripts'
 
 frameworkChocies = ->
   Object.keys(categories).join(', ')
@@ -63,8 +65,8 @@ generators = (config, generator) ->
       )
 
     scaffold: (name) ->
-      generator('controller', name).concat(
-        generator('model', name), generator('view', name)
+      generator('model', name).concat(
+        generator('view', name)
       )
 
   chaplin:
