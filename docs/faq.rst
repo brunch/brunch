@@ -46,11 +46,3 @@ Why do you use these languages in default skeletons?
 * `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
 * `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / `:`s), unlike less / sass; b) its mixins are transparent. If you're writing ``border-radius`` in stylus with ``nib``, it's automatically expanded to all vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
 * `Handlebars` templates are used because they are logic-less / compatible with Mustache (that has implementations in many languages) and have nice helpers system. If you're a fan of clear syntax, you might like `Jade` instead, which is much clearer than `HAML`.
-
-Why is AMD used in Brunch 1.2+?
--------------------------------
-
-CommonJS is great, but sadly it's 
-
-* It's mostly backwards-compatible with CommonJS modules implying that brunch already wraps files in closures.
-* Many modules like jQuery .
