@@ -17,21 +17,18 @@ module.exports = class SourceFileList extends EventEmitter
     @on 'unlink', @_unlink
 
   # Files that are not really app files.
-  _ignored: (path) ->
-    paths = @config.paths
-    # Allow us to specify what paths are ignored in the config
-    if paths.ignored
-      if Array.isArray paths.ignored
-        paths.ignored.some((test) -> path.match(test))
-      else if typeof paths.ignored is 'function'
-        paths.ignored.call(this, path)
+  _ignored: (path, test = @config.paths.ignored) ->
+    switch toString.call(test)
+      when '[object RegExp]'
+        path.match test
+      when '[object Function]'
+        test path
+      when '[object String]'
+        path is test
+      when '[object Array]'
+        test.some((subTest) => @_ignored path, subTest)
       else
         no
-    else
-      # Check if path is located in any of assets directories.
-      paths.assets.some((assetPath) -> helpers.startsWith path, assetPath) or
-      helpers.startsWith(sysPath.basename(path), '_') or
-      path in [paths.config, paths.packageConfig]
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.

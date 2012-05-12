@@ -190,6 +190,10 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.assets        ?= [join 'app', 'assets']
   paths.test          ?= join 'root', 'test'
   paths.vendor        ?= join 'root', 'vendor'
+  paths.ignored       ?= (path) ->
+    paths.assets.some((assetPath) -> exports.startsWith path, assetPath) or
+    exports.startsWith(sysPath.basename(path), '_') or
+    path in [paths.config, paths.packageConfig]
   config.server       ?= {}
   config.server.port  ?= 3333
   config.server.run   ?= no
