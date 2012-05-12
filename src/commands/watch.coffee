@@ -74,17 +74,20 @@ class BrunchWatcher
     async.filter watched, fs_utils.exists, (watchedFiles) =>
       ignored = fs_utils.ignored
       @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
-        .on 'all', (event, path) =>
-          logger.debug "File '#{path}' received event '#{event}'"
-        .on('add', @changeFileList)
+        .on 'add', (path) =>
+          logger.debug "File '#{path}' received event 'add'"
+          @changeFileList path
         .on 'change', (path) =>
+          logger.debug "File '#{path}' received event 'change'"
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
             @reload yes
           else
             @changeFileList path, no
-        .on('unlink', @removeFromFileList)
+        .on 'unlink', (path) =>
+          logger.debug "File '#{path}' received event 'unlink'"
+          @removeFromFileList path
         .on('error', logger.error)
 
   onCompile: (result) =>
