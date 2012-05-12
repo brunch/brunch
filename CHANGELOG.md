@@ -1,3 +1,7 @@
+# Brunch 1.2.1 (May 12, 2012)
+* Fixed persistence of process with `brunch watch` (without server).
+* Fixed watching of files on windows.
+
 # Brunch 1.2.0 (May 12, 2012)
 * Greatly improved `brunch generate`:
     * User can now define his own generators in `config.generators`.
