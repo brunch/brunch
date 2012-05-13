@@ -1,6 +1,6 @@
 async = require 'async'
 sysPath = require 'path'
-helpers = require '../helpers'
+inflection = require 'inflection'
 GeneratedFile = require './generated_file'
 logger = require '../logger'
 
@@ -36,7 +36,7 @@ getJoinConfig = (config) ->
   Object.freeze(joinConfig)
 
 getGeneratedFilesPaths = (sourceFile, joinConfig) ->
-  sourceFileJoinConfig = joinConfig[helpers.pluralize sourceFile.type] or {}
+  sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
   Object.keys(sourceFileJoinConfig).filter (generatedFilePath) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path

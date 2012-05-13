@@ -1,4 +1,5 @@
 fs = require 'fs'
+inflection = require 'inflection'
 sysPath = require 'path'
 common = require './common'
 helpers = require '../helpers'
@@ -30,7 +31,7 @@ module.exports = class GeneratedFile
     Object.freeze(this)
 
   _extractOrder: (files, config) ->
-    types = files.map (file) -> helpers.pluralize file.type
+    types = files.map (file) -> inflection.pluralize file.type
     Object.keys(config.files)
       .filter (key) ->
         key in types
