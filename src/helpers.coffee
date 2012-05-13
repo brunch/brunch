@@ -5,9 +5,65 @@ fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
 
-# A simple function that will return pluralized form of word.
+# Pluralization rules.
+# Original author: TJ Holowaychuk.
+pluralRules = [
+  [/(m)an$/gi, '$1en'],
+  [/(pe)rson$/gi, '$1ople'],
+  [/(child)$/gi, '$1ren'],
+  [/^(ox)$/gi, '$1en'],
+  [/(ax|test)is$/gi, '$1es'],
+  [/(octop|vir)us$/gi, '$1i'],
+  [/(alias|status)$/gi, '$1es'],
+  [/(bu)s$/gi, '$1ses'],
+  [/(buffal|tomat|potat)o$/gi, '$1oes'],
+  [/([ti])um$/gi, '$1a'],
+  [/sis$/gi, 'ses'],
+  [/(?:([^f])fe|([lr])f)$/gi, '$1$2ves'],
+  [/(hive)$/gi, '$1s'],
+  [/([^aeiouy]|qu)y$/gi, '$1ies'],
+  [/(x|ch|ss|sh)$/gi, '$1es'],
+  [/(matr|vert|ind)ix|ex$/gi, '$1ices'],
+  [/([m|l])ouse$/gi, '$1ice'],
+  [/(quiz)$/gi, '$1zes'],
+  [/s$/gi, 's'],
+  [/$/gi, 's']
+]
+
+uncountables = [
+  'advice',
+  'energy',
+  'excretion',
+  'digestion',
+  'cooperation',
+  'health',
+  'justice',
+  'labour',
+  'machinery',
+  'equipment',
+  'information',
+  'pollution',
+  'sewage',
+  'paper',
+  'money',
+  'species',
+  'series',
+  'rain',
+  'rice',
+  'fish',
+  'sheep',
+  'moose',
+  'deer',
+  'news'
+]
+
+# Function that will return pluralized form of word.
 exports.pluralize = (word) ->
-  word + 's'
+  rule = pluralRules.filter((rule) -> word.match rule[0])[0]
+  if word not in uncountables and rule
+    word.replace rule[0], rule[1]
+  else
+    word
 
 exports.startsWith = (string, substring) ->
   string.indexOf(substring) is 0
