@@ -15,6 +15,8 @@ categories =
   backbone:
     modelTest: 'javascripts'
     model: 'javascripts'
+    collectionTest: 'javascripts'
+    collection: 'javascripts'
     template: 'templates'
     style: 'stylesheets'
     viewTest: 'javascripts'
@@ -26,6 +28,8 @@ categories =
     controller: 'javascripts'
     modelTest: 'javascripts'
     model: 'javascripts'
+    collectionTest: 'javascripts'
+    collection: 'javascripts'
     template: 'templates'
     style: 'stylesheets'
     viewTest: 'javascripts'
@@ -48,6 +52,14 @@ generators = (config, generator) ->
         generator('modelTest', name)
       )
 
+    collectionTest: (name) ->
+      [sysPath.join(config.paths.test, 'models', "#{helpers.pluralize name}_test")]
+
+    collection: (name) ->
+      [sysPath.join(config.paths.app, 'models', "#{helpers.pluralize name}")].concat(
+        generator('collectionTest', name)
+      )
+
     template: (name) ->
       [sysPath.join(config.paths.app, 'views', 'templates', "#{name}")]
 
@@ -66,6 +78,7 @@ generators = (config, generator) ->
 
     scaffold: (name) ->
       generator('model', name).concat(
+        generator('collection', name),
         generator('view', name)
       )
 
@@ -93,6 +106,14 @@ generators = (config, generator) ->
         generator('modelTest', name)
       )
 
+    collectionTest: (name) ->
+      [sysPath.join(config.paths.test, 'models', "#{helpers.pluralize name}_test")]
+
+    collection: (name) ->
+      [sysPath.join(config.paths.app, 'models', "#{helpers.pluralize name}")].concat(
+        generator('collectionTest', name)
+      )
+
     template: (name) ->
       [sysPath.join(config.paths.app, 'views', 'templates', "#{name}")]
 
@@ -111,7 +132,9 @@ generators = (config, generator) ->
 
     scaffold: (name) ->
       generator('controller', name).concat(
-        generator('model', name), generator('view', name)
+        generator('model', name),
+        generator('collection', name),
+        generator('view', name)
       )
 
 getGenerator = (config, plugins) ->
