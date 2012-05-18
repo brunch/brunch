@@ -1,5 +1,6 @@
 async = require 'async'
 fs = require 'fs'
+inflection = require 'inflection'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 helpers = require '../helpers'
@@ -34,6 +35,8 @@ categories =
     style: 'stylesheets'
     viewTest: 'javascripts'
     view: 'javascripts'
+    collectionViewTest: 'javascripts'
+    collectionView: 'javascripts'
     scaffold: 'javascripts'
 
 frameworkChocies = ->
@@ -44,20 +47,20 @@ generatorChoices = (framework) ->
 
 generators = (config, generator) ->
   backbone:
-    modelTest: (name) ->
+    modelTest: (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{name}_test")]
 
-    model: (name) ->
+    model: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
-        generator('modelTest', name)
+        generator('modelTest', name, pluralName)
       )
 
-    collectionTest: (name) ->
-      [sysPath.join(config.paths.test, 'models', "#{helpers.pluralize name}_test")]
+    collectionTest: (name, pluralName) ->
+      [sysPath.join(config.paths.test, 'models', "#{pluralName}_test")]
 
-    collection: (name) ->
-      [sysPath.join(config.paths.app, 'models', "#{helpers.pluralize name}")].concat(
-        generator('collectionTest', name)
+    collection: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'models', "#{pluralName}")].concat(
+        generator('collectionTest', name, pluralName)
       )
 
     template: (name) ->
@@ -66,52 +69,46 @@ generators = (config, generator) ->
     style: (name) ->
       [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
 
-    viewTest: (name) ->
+    viewTest: (name, pluralName) ->
       [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
 
-    view: (name) ->
+    view: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
-        generator('viewTest', name),
+        generator('viewTest', name, pluralName),
         generator('template', name),
         generator('style', name)
       )
 
-    scaffold: (name) ->
-      generator('model', name).concat(
-        generator('collection', name),
-        generator('view', name)
+    scaffold: (name, pluralName) ->
+      generator('model', name, pluralName).concat(
+        generator('view', name, pluralName),
       )
 
   chaplin:
-    # What generates what:
-    # controller: controller, controllerTest
-    # model: model, modelTest
-    # view: view, viewTest, style, template
-    # scaffold: controller, model, view
-    controllerTest: (name) ->
+    controllerTest: (name, pluralName) ->
       [sysPath.join(
-        config.paths.test, 'controllers', "#{name}_controller_test"
+        config.paths.test, 'controllers', "#{pluralName}_controller_test"
       )]
 
-    controller: (name) ->
+    controller: (name, pluralName) ->
       [sysPath.join(
-        config.paths.app, 'controllers', "#{name}_controller"
-      )].concat(generator('controllerTest', name))
+        config.paths.app, 'controllers', "#{pluralName}_controller"
+      )].concat(generator('controllerTest', name, pluralName))
 
-    modelTest: (name) ->
+    modelTest: (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{name}_test")]
 
-    model: (name) ->
+    model: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
-        generator('modelTest', name)
+        generator('modelTest', name, pluralName)
       )
 
-    collectionTest: (name) ->
-      [sysPath.join(config.paths.test, 'models', "#{helpers.pluralize name}_test")]
+    collectionTest: (name, pluralName) ->
+      [sysPath.join(config.paths.test, 'models', "#{pluralName}_test")]
 
-    collection: (name) ->
-      [sysPath.join(config.paths.app, 'models', "#{helpers.pluralize name}")].concat(
-        generator('collectionTest', name)
+    collection: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'models', "#{pluralName}")].concat(
+        generator('collectionTest', name, pluralName)
       )
 
     template: (name) ->
@@ -120,21 +117,31 @@ generators = (config, generator) ->
     style: (name) ->
       [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
 
-    viewTest: (name) ->
+    viewTest: (name, pluralName) ->
       [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
 
-    view: (name) ->
+    view: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
-        generator('viewTest', name),
+        generator('viewTest', name, pluralName),
         generator('template', name),
         generator('style', name)
       )
 
-    scaffold: (name) ->
-      generator('controller', name).concat(
-        generator('model', name),
-        generator('collection', name),
-        generator('view', name)
+    collectionViewTest: (name, pluralName) ->
+      [sysPath.join(config.paths.test, 'views', "#{pluralName}_view_test")]
+
+    collectionView: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'views', "#{pluralName}_view")].concat(
+        generator('collectionViewTest', name, pluralName),
+        generator('template', pluralName),
+        generator('style', pluralName)
+      )
+
+    scaffold: (name, pluralName) ->
+      generator('controller', name, pluralName).concat(
+        generator('model', name, pluralName),
+        generator('view', name, pluralName),
+        generator('collectionView', name, pluralName)
       )
 
 getGenerator = (config, plugins) ->
@@ -157,11 +164,11 @@ getGenerator = (config, plugins) ->
   getGeneratorMap = ->
     generatorMap ?= generators config, generator
 
-  generator = (type, name) ->
+  generator = (type, name, pluralName) ->
     configGenerator = config.generators?[type]
     getData = (item) ->
       if typeof item is 'function'
-        item name, type
+        item name, pluralName
       else
         item
 
@@ -177,7 +184,7 @@ getGenerator = (config, plugins) ->
       ''
 
     getPaths = getGeneratorMap()[framework]?[type]
-    paths = (getPaths? name) or []
+    paths = (getPaths? name, pluralName) or []
     nonStrings = paths.filter (path) -> typeof path isnt 'string'
     strings = paths
       .filter (path) ->
@@ -186,7 +193,7 @@ getGenerator = (config, plugins) ->
         path + ".#{extension}"
       .map (path) ->
         file = {type, extension, path, data}
-        logger.debug "Generating", file
+        logger.debug "Scaffolding", file
         file
     strings.concat(nonStrings)
 
@@ -211,7 +218,11 @@ destroyFile = (path, callback) ->
     callback error
 
 module.exports = scaffold = (rollback, options, callback = (->)) ->
-  {type, name, parentDir, configPath} = options
+  {type, name, pluralName, parentDir, configPath} = options
+  unless pluralName?
+    pluralName = inflection.pluralize name
+    if name is pluralName
+      return logger.error "Plural form must be declared for '#{name}'"
   config = helpers.loadConfig configPath
   return callback() unless config?
 
@@ -224,7 +235,7 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
   helpers.loadPlugins config, (error, plugins) ->
     return logger.error error if error?
     generator = getGenerator config, plugins
-    files = generator type, name
+    files = generator type, name, pluralName
     async.forEach files, generateOrDestroyFile, (error) ->
       return logger.error error if error?
       callback null, files

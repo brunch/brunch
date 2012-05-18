@@ -81,6 +81,9 @@ the server would run'
           position: 2
           help: 'generator class name / filename'
           required: yes
+        pluralName:
+          help: 'plural name of file (e.g. feed)'
+          full: 'plural'
         parentDir:
           abbr: 'p'
           help: 'path to generated file directory'
@@ -105,6 +108,9 @@ the server would run'
           position: 2
           help: 'generator class name / filename'
           required: yes
+        pluralName:
+          help: 'plural name of file (e.g. feed)'
+          full: 'plural'
         parentDir:
           abbr: 'p'
           help: 'path to generated file directory'

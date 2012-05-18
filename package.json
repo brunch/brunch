@@ -38,7 +38,8 @@
     "growl": "1.5.0",
     "express": "2.5.8",
     "date-utils": "1.2.10",
-    "ansi-color": "0.2.1"
+    "ansi-color": "0.2.1",
+    "inflection": "1.2.0"
   },
   "devDependencies": {
     "mocha": "1.0.1",
