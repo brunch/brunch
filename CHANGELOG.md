@@ -7,6 +7,8 @@ instead of you.
 `brunch g scaffold`, because it's not needed most of the time. Because it
 works only with plural, it should be generated in singular form:
 `brunch g collection user` instead of `brunch g collection users`.
+* Added `collectionView` generator to `brunch generate` for Chaplin users.
+It doesn't generate corresponding `template`.
 
 # Brunch 1.2.1 (May 12, 2012)
 * Fixed persistence of process with `brunch watch` (without server).

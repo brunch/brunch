@@ -133,7 +133,6 @@ generators = (config, generator) ->
     collectionView: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{pluralName}_view")].concat(
         generator('collectionViewTest', name, pluralName),
-        generator('template', pluralName),
         generator('style', pluralName)
       )
 
