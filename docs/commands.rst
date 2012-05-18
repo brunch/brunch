@@ -50,18 +50,42 @@ Examples:
 
 ``brunch generate <type> <name>``
 ---------------------------------
-Generate model, view or route for current project. Options:
+Generate file for current project. Options:
 
-* ``type``: (required) generator type. One of: collection, model, router, style, template, view.
+* ``type``: (required) generator type.
 * ``name``: (required) generator class name / filename.
 * ``-p PATH_TO_DIRECTORY --path PATH_TO_DIRECTORY``: path to directory in which file will be created. Useful if you prefer non-standard directory structure.
+* ``--plural FORM``: plural form of ``<name>``.
+
+Content of generated file depends on plugins and ``config.generators`` setting in config.
+
+Generator types for ``config.framework = 'backbone'``:
+
+* ``model``
+* ``collection`` (uses plural version)
+* ``template``
+* ``style``
+* ``view`` (also generates ``template`` & ``style``)
+* ``scaffold`` (generates ``model`` & ``view``)
+
+Generator types for ``config.framework = 'chaplin'``:
+
+* ``controller`` (uses plural version)
+* ``model``
+* ``collection`` (uses plural version)
+* ``template``
+* ``style``
+* ``view`` (also generates ``template`` & ``style``)
+* ``collectionView`` (uses plural version, also generates ``style``)
+* ``scaffold`` (generates ``controller``, ``model`` & ``view``)
 
 Short-cut: ``brunch g``.
 
-Examples: 
+Examples:
 
-* ``brunch generate collection user_list``: would generate file ``app/collections/user_list.coffee`` with class ``UserList`` and a unit-test ``test/unit/collections/user_list.coffee``.
-* ``brunch g model post -p app/twitter/models``: would generate file ``app/twitter/models/post.coffee`` with class ``Post`` and a unit-test ``test/unit/twitter/models/post.coffee``.
+* ``brunch generate model user``: would generate file ``app/models/user.coffee`` with class ``User`` and a unit-test ``test/models/user.coffee``.
+* ``brunch generate collection user``:  would generate file ``app/models/users.coffee`` with class ``Users`` and a unit-test ``test/models/users.coffee``.
+* ``brunch generate scaffold news --plural feed``: would generate file ``app/models/feed.coffee`` with class ``Feed`` and a unit-test ``test/models/feed.coffee``.
 
 ``brunch destroy <type> <name>``
 --------------------------------
