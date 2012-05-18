@@ -81,7 +81,6 @@ generators = (config, generator) ->
 
     scaffold: (name, pluralName) ->
       generator('model', name, pluralName).concat(
-        generator('collection', name, pluralName),
         generator('view', name, pluralName),
       )
 
@@ -141,7 +140,6 @@ generators = (config, generator) ->
     scaffold: (name, pluralName) ->
       generator('controller', name, pluralName).concat(
         generator('model', name, pluralName),
-        generator('collection', name, pluralName),
         generator('view', name, pluralName),
         generator('collectionView', name, pluralName)
       )
