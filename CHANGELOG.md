@@ -1,3 +1,13 @@
+# Brunch 1.2.2 (unreleased)
+* Disabled caching in built-in webserver.
+* Added `--plural` option to `brunch generate`. Plural version of generator
+name is used in controllers and collections. By default, brunch does pluralizing
+instead of you.
+* Added `collection` generator to `brunch generate`. It is not included in
+`brunch g scaffold`, because it's not needed most of the time. Because it
+works only with plural, it should be generated in singular form:
+`brunch g collection user` instead of `brunch g collection users`.
+
 # Brunch 1.2.1 (May 12, 2012)
 * Fixed persistence of process with `brunch watch` (without server).
 * Fixed watching of files on windows.
