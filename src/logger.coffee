@@ -15,6 +15,7 @@ getInfo = (level) ->
 
 logger =
   isDebug: process.env.BRUNCH_DEBUG is '1'
+  isBench: process.env.BRUNCH_BENCH is '1'
 
   log: (level, args...) ->
     info = getInfo level
@@ -37,5 +38,9 @@ logger =
   debug: ->
     if logger.isDebug
       logger.log 'debug', arguments...
+
+  bench: ->
+    if logger.isBench
+      logger.log 'info', arguments...
 
 module.exports = Object.freeze(logger)

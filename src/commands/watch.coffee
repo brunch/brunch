@@ -105,10 +105,11 @@ class BrunchWatcher
 
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
       return logger.error "Write failed: #{error}" if error?
+      logger.bench "write time: #{Date.now() - @start}ms"
       async.forEach paths.assets, copyAssets, (error) =>
         return logger.error "Asset copying failed: #{error}" if error?
         logger.info "compiled."
-        logger.debug "compilation time: #{Date.now() - @start}ms"
+        logger.bench "compilation time: #{Date.now() - @start}ms"
         @watcher.close() unless @persistent
         @onCompile result
 
