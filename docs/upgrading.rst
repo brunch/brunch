@@ -2,11 +2,18 @@
 Upgrading brunch
 ****************
 
+Upgrading to 1.2
+================
+
+* Update ``package.json`` brunch plugins versions to ``> 1.0 < 1.3``
+* Run ``npm install``
+
 Upgrading to 1.1
 ================
 
 * Change ``buildPath: ...`` in ``config.coffee`` to ``paths: public: ...``
-* Update ``package.json`` packages versions from ``1.0.x`` to ``1.0.x || 1.1.x``
+* Update ``package.json`` brunch plugins versions to ``> 1.0 < 1.2``
+* Run ``npm install``
 
 Upgrading to 1.0
 ================

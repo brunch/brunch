@@ -9,13 +9,17 @@ module.exports = class SourceFile
       @path, @isHelper, @isVendor
     }
     @type = @compiler.type
-    @data = ''
-    @dependencies = []
     @compilerName = @compiler.constructor.name
     if isHelper
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
+    @cache = Object.seal({data: '', dependencies: []})
+    Object.freeze(this)
+
+  _getDependencies: (data, path, callback) ->
+    fn = @compiler.getDependencies or (-> callback null, [])
+    fn data, path, callback
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -25,7 +29,7 @@ module.exports = class SourceFile
   # 
   # Returns a wrapped string.
   _wrap: (data) ->
-    if !@isHelper and !@isVendor and @type in ['javascript', 'template']
+    if not @isHelper and not @isVendor and @type in ['javascript', 'template']
       moduleName = JSON.stringify(
         @path
           .replace(new RegExp('\\\\', 'g'), '/')
@@ -51,15 +55,13 @@ module.exports = class SourceFile
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
     realPath = if @isHelper then @realPath else @path
-    fs.readFile realPath, (error, data) =>
+    fs.readFile realPath, (error, buffer) =>
       return callback "Read error: #{error}" if error?
-      fileContent = data.toString()
-      getDeps = @compiler.getDependencies or (data, path, callback) ->
-        callback(null, [])
+      fileContent = buffer.toString()
       @compiler.compile fileContent, @path, (error, result) =>
         return callback "Compile error: #{error}" if error?
-        getDeps fileContent, @path, (error, dependencies) =>
+        @_getDependencies fileContent, @path, (error, dependencies) =>
           return callback "GetDeps error: #{error}" if error?
-          @dependencies = dependencies
-          @data = @_wrap result if result?
-          callback error, @data
+          @cache.dependencies = dependencies
+          @cache.data = @_wrap result if result?
+          callback null, @cache.data

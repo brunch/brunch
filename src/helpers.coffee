@@ -5,12 +5,14 @@ fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
 
-# A simple function that will return pluralized form of word.
-exports.pluralize = (word) ->
-  word + 's'
-
 exports.startsWith = (string, substring) ->
   string.indexOf(substring) is 0
+
+ensureArray = (object) ->
+  if Array.isArray object
+    object
+  else
+    [object]
 
 # Extends the object with properties from another object.
 # Example
@@ -32,6 +34,88 @@ recursiveExtend = (object, properties) ->
       object[key] = properties[key]
   object
 
+exports.deepFreeze = deepFreeze = (object) ->
+  Object.keys(Object.freeze(object))
+    .map (key) ->
+      object[key]
+    .filter (value) ->
+      typeof value is 'object' and value? and not Object.isFrozen(value)
+    .forEach(deepFreeze)
+  object
+
+sortAlphabetically = (a, b) ->
+  if a < b
+    -1
+  else if a > b
+    1
+  else
+    0
+
+# If item path starts with 'vendor', it has bigger priority.
+# TODO: check for config.vendorPath
+sortByVendor = (config, a, b) ->
+  vendor = config.vendorPaths.slice().sort(sortAlphabetically)
+  aIsVendor = vendor.some((path) -> exports.startsWith a, path)
+  bIsVendor = vendor.some((path) -> exports.startsWith b, path)
+  if aIsVendor and not bIsVendor
+    -1
+  else if not aIsVendor and bIsVendor
+    1
+  else
+    # All conditions were false, we don't care about order of
+    # these two items.
+    sortAlphabetically a, b
+
+# Items wasn't found in config.before, try to find then in
+# config.after.
+# Item that config.after contains would have lower sorting index.
+sortByAfter = (config, a, b) ->
+  indexOfA = config.after.indexOf a
+  indexOfB = config.after.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    1
+  else if not hasA and hasB
+    -1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByVendor config, a, b
+
+# Try to find items in config.before.
+# Item that config.after contains would have bigger sorting index.
+sortByBefore = (config, a, b) ->
+  indexOfA = config.before.indexOf a
+  indexOfB = config.before.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    -1
+  else if not hasA and hasB
+    1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByAfter config, a, b
+
+# Sorts by pattern.
+# 
+# Examples
+#
+#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
+#     before: ['a.coffee'], after: ['b.coffee']
+#   # => ['a.coffee', 'c.coffee', 'b.coffee']
+# 
+# Returns new sorted array.
+exports.sortByConfig = (files, config) ->
+  if toString.call(config) is '[object Object]'
+    cfg =
+      before: config.before ? [] 
+      after: config.after ? []
+      vendorPaths: config.vendorPaths ? []
+    files.slice().sort (a, b) -> sortByBefore cfg, a, b
+  else
+    files
+
 exports.install = install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   logger.info 'Installing packages...'
@@ -42,17 +126,11 @@ exports.install = install = (rootPath, callback = (->)) ->
     return callback stderr.toString() if error?
     callback null, stdout
 
-exports.deepFreeze = deepFreeze = (object) ->
-  Object.keys(Object.freeze(object))
-    .map (key) ->
-      object[key]
-    .filter (value) ->
-      typeof value is 'object' and value? and not Object.isFrozen(value)
-    .forEach(deepFreeze)
-  object
-
 startDefaultServer = (port, path, callback) ->
   server = express.createServer()
+  server.use (request, response, next) ->
+    response.header 'Cache-Control', 'no-cache'
+    next()
   server.use express.static path
   server.all '/*', (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
@@ -98,24 +176,32 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
+
   if config.buildPath?
     logger.warn 'config.buildPath is deprecated. Use config.paths.public.'
-  config.paths ?= {}
-  config.paths.root ?= config.rootPath ? '.'
-  config.paths.public ?= config.buildPath ? join 'root', 'public'
-  config.paths.app ?= join 'root', 'app'
-  config.paths.config = configPath ? join 'root', 'config'
-  config.paths.packageConfig ?= join 'root', 'package.json'
-  config.paths.assets ?= [ join 'app', 'assets' ]
-  config.paths.test ?= join 'root', 'test'
-  config.paths.vendor ?= join 'root', 'vendor'
-  config.server ?= {}
-  config.server.path ?= null
-  config.server.port ?= 3333
-  config.server.run ?= no
+
+  paths                = config.paths     ?= {}
+  paths.root          ?= config.rootPath  ? '.'
+  paths.public        ?= config.buildPath ? join 'root', 'public'
+  paths.app           ?= join 'root', 'app'
+  paths.config         = configPath       ? join 'root', 'config'
+  paths.packageConfig ?= join 'root', 'package.json'
+  paths.assets        ?= [join 'app', 'assets']
+  paths.test          ?= join 'root', 'test'
+  paths.vendor        ?= join 'root', 'vendor'
+  paths.ignored       ?= (path) ->
+    paths.assets.some((assetPath) -> exports.startsWith path, assetPath) or
+    exports.startsWith(sysPath.basename(path), '_') or
+    path in [paths.config, paths.packageConfig]
+  config.server       ?= {}
+  config.server.port  ?= 3333
+  config.server.run   ?= no
   # Alias deprecated config params.
-  config.rootPath = config.paths.root
-  config.buildPath = config.paths.public
+  config.rootPath      = config.paths.root
+  config.buildPath     = config.paths.public
+  # Mangle types.
+  config.paths.assets  = ensureArray config.paths.assets
+
   replaceSlashes config if process.platform is 'win32'
   config
 
@@ -132,10 +218,6 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
   recursiveExtend config, options
-
-  # for backwards compatibility, we convert assets paths specified as a string into an Array
-  config.paths.assets = [ config.paths.assets ] if !Array.isArray config.paths.assets
-
   deepFreeze config
   config
 

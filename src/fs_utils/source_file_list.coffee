@@ -17,23 +17,18 @@ module.exports = class SourceFileList extends EventEmitter
     @on 'unlink', @_unlink
 
   # Files that are not really app files.
-  _ignored: (path) ->
-    paths = @config.paths
-    # Allow us to specify what paths are ignored in the config
-    if paths.ignored
-      if paths.ignored instanceof Array
-        for test in paths.ignored
-          return true if path.match(test)
+  _ignored: (path, test = @config.paths.ignored) ->
+    switch toString.call(test)
+      when '[object RegExp]'
+        path.match test
+      when '[object Function]'
+        test path
+      when '[object String]'
+        path is test
+      when '[object Array]'
+        test.some((subTest) => @_ignored path, subTest)
       else
-        paths.ignored.call(this, path)
-    else
-      isInAssets = false
-
-      isInAssets ||= helpers.startsWith(path, assetPath) for assetPath in paths.assets
-
-      isInAssets or
-      helpers.startsWith(sysPath.basename(path), '_') or
-      path in [paths.config, paths.packageConfig]
+        no
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
@@ -47,9 +42,9 @@ module.exports = class SourceFileList extends EventEmitter
   _compileDependentFiles: (path) ->
     @files
       .filter (dependent) =>
-        dependent.dependencies.length
+        dependent.cache.dependencies.length
       .filter (dependent) =>
-        path in dependent.dependencies
+        path in dependent.cache.dependencies
       .forEach(@_compile)
     @_resetTimer()
 

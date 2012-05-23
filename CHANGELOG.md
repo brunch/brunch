@@ -1,18 +1,50 @@
-## Brunch 1.2.0 (unreleased)
+# Brunch 1.2.2 (unreleased)
+* Disabled caching in built-in webserver.
+* Added `--plural` option to `brunch generate`. Plural version of generator
+name is used in controllers and collections. By default, brunch does pluralizing
+instead of you.
+* Added `collection` generator to `brunch generate`. It is not included in
+`brunch g scaffold`, because it's not needed most of the time. Because it
+works only with plural, it should be generated in singular form:
+`brunch g collection user` instead of `brunch g collection users`.
+* Added `collectionView` generator to `brunch generate` for Chaplin users.
+It doesn't generate corresponding `template`.
+
+# Brunch 1.2.1 (May 12, 2012)
+* Fixed persistence of process with `brunch watch` (without server).
+* Fixed watching of files on windows.
+
+# Brunch 1.2.0 (May 12, 2012)
+* Greatly improved `brunch generate`:
+    * User can now define his own generators in `config.generators`.
+    * Default generators are now:
+        * `controllerTest`, `modelTest`, `viewTest`, `template`, `style`
+        * `controller` (generates `controllerTest` too)
+        * `model` (generates `modelTest` too)
+        * `view` (generates `template`, `style` & `viewTest` too)
+        * `scaffold` (generates `controller`, `model`, `view` and their generators)
+* Improved config API:
+    * Added `paths.ignored` param that redefines
+    paths ignored by brunch.
+    * `paths.assets` can now be an array of paths.
 * Improved plugin API:
     * Added support for `onCompile` method.
     It allows to create great & simple live browser reloaders.
+* Added pushState support to the built-in webserver.
+* Files that end with two underscores (e.g. `a.js__`) are now ignored by
+watcher and compiler because they're created by some IDEs.
+* Files in `vendor` directory are now sorted correctly, before `app` files.
 
-## Brunch 1.1.2 (April 20, 2012)
+# Brunch 1.1.2 (April 20, 2012)
 * Fixed `buildPath is deprecated` warning on new configs.
 * Fixed compiling of invalid files (`.rb`, `.png` etc).
 
-## Brunch 1.1.1 (April 19, 2012)
+# Brunch 1.1.1 (April 19, 2012)
 * Fixed compiling of `package.json`, `config` and watching of assets.
 * Fixed incorrect date in brunch logger.
 * Fixed an error when requiring custom server script.
 
-## Brunch 1.1.0 (April 15, 2012)
+# Brunch 1.1.0 (April 15, 2012)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.
 * Added support for chain compilation. For example, if `_user.styl` changes
@@ -50,18 +82,18 @@ and `main.styl` depends on it, `main.styl` will be recompiled too.
 * Made optional existence of `app` & `vendor` directories.
 * Node.js API now mirrors command line api.
 
-## Brunch 1.0.3 (April 3, 2012)
+# Brunch 1.0.3 (April 3, 2012)
 * Dotfiles from assets dir are prevented to be copied to build dir.
 
-## Brunch 1.0.2 (March 28, 2012)
+# Brunch 1.0.2 (March 28, 2012)
 * Removed `Cakefile` from default template.
 * Changed recommended framework in `test/spec` to Mocha.
 
-## Brunch 1.0.1 (March 26, 2012)
+# Brunch 1.0.1 (March 26, 2012)
 * Updated dependencies.
 * Fixed permissions issue with `app/assets` folder.
 
-## Brunch 1.0.0 (March 14, 2012)
+# Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and 
 `vendor.js`.
@@ -89,10 +121,10 @@ by compiler (but not by watcher).
 * Added debugging mode. You can enable it by prepending `BRUNCH_DEBUG=1 ` to
 brunch command.
 
-## Brunch 0.9.1 (February 21, 2012)
+# Brunch 0.9.1 (February 21, 2012)
 * Updated brunch-extensions to 0.2.2.
 
-## Brunch 0.9.0 (January 10, 2012)
+# Brunch 0.9.0 (January 10, 2012)
 * Added new API for plugins.
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,

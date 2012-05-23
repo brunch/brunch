@@ -1,6 +1,6 @@
 async = require 'async'
 sysPath = require 'path'
-helpers = require '../helpers'
+inflection = require 'inflection'
 GeneratedFile = require './generated_file'
 logger = require '../logger'
 
@@ -36,13 +36,13 @@ getJoinConfig = (config) ->
   Object.freeze(joinConfig)
 
 getGeneratedFilesPaths = (sourceFile, joinConfig) ->
-  sourceFileJoinConfig = joinConfig[helpers.pluralize sourceFile.type] or {}
+  sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
   Object.keys(sourceFileJoinConfig).filter (generatedFilePath) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path
 
 getFiles = (fileList, config, minifiers) ->
-  joinConfig = getJoinConfig config   
+  joinConfig = getJoinConfig config
   map = {}
   fileList.files.forEach (file) =>
     paths = getGeneratedFilesPaths file, joinConfig
@@ -53,13 +53,7 @@ getFiles = (fileList, config, minifiers) ->
   Object.keys(map).map (generatedFilePath) =>
     sourceFiles = map[generatedFilePath]
     fullPath = sysPath.join config.paths.public, generatedFilePath
-    file = new GeneratedFile fullPath, sourceFiles, config
-    minifiers
-      .filter (minifier) ->
-        minifier.type is file.type
-      .forEach (minifier) ->
-        file.minifier = minifier
-    file
+    new GeneratedFile fullPath, sourceFiles, config, minifiers
 
 # * plugins - hashmap of plugins from package.json.
 module.exports = write = (fileList, config, plugins, callback) ->
@@ -67,5 +61,5 @@ module.exports = write = (fileList, config, plugins, callback) ->
   files = getFiles fileList, config, minifiers
   writeFile = (file, callback) -> file.write callback
   async.forEach files, writeFile, (error, results) ->
-    return callback "write error. #{error}" if error?
+    return callback error if error?
     callback null, results

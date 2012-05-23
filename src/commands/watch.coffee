@@ -1,4 +1,5 @@
 async = require 'async'
+chokidar = require 'chokidar'
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -71,18 +72,22 @@ class BrunchWatcher
     ].concat(@config.paths.assets)
 
     async.filter watched, fs_utils.exists, (watchedFiles) =>
-      @watcher = fs_utils.watch(watchedFiles)
-        .on 'all', (event, path) =>
-          logger.debug "File '#{path}' received event '#{event}'"
-        .on('add', @changeFileList)
+      ignored = fs_utils.ignored
+      @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
+        .on 'add', (path) =>
+          logger.debug "File '#{path}' received event 'add'"
+          @changeFileList path
         .on 'change', (path) =>
+          logger.debug "File '#{path}' received event 'change'"
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
             @reload yes
           else
             @changeFileList path, no
-        .on('unlink', @removeFromFileList)
+        .on 'unlink', (path) =>
+          logger.debug "File '#{path}' received event 'unlink'"
+          @removeFromFileList path
         .on('error', logger.error)
 
   onCompile: (result) =>
@@ -95,19 +100,17 @@ class BrunchWatcher
 
   compile: =>
     paths = @config.paths
+    copyAssets = (assetPath, callback) =>
+      fs_utils.copyIfExists assetPath, paths.public, yes, callback
+
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
-      assets = paths.assets.concat()
-      copyAssets = (error) =>
-        if error?
-          logger.error "Asset compilation failed: #{error}"
-        else if assets.length == 0
-          logger.info "compiled."
-          logger.debug "compilation time: #{Date.now() - @start}ms"
-          @watcher.close() unless @persistent
-          @onCompile null, result
-        else
-          fs_utils.copyIfExists assets.shift(), paths.public, yes, copyAssets
-      copyAssets()
+      return logger.error "Write failed: #{error}" if error?
+      async.forEach paths.assets, copyAssets, (error) =>
+        return logger.error "Asset copying failed: #{error}" if error?
+        logger.info "compiled."
+        logger.debug "compilation time: #{Date.now() - @start}ms"
+        @watcher.close() unless @persistent
+        @onCompile result
 
   watch: ->
     @initServer()

@@ -10,7 +10,9 @@ Brunch uses configuration file (``config.coffee`` or ``config.js``) located in t
 `Optional, object`: ``paths`` contains application paths to key directories. Paths are simple strings.
 
 * ``public`` key: path to build directory that would contain output.
-* Other valid keys: ``assets``, ``test``, ``app``, ``vendor``, ``root``.
+* ``ignored`` key: string, regExp, function or array of them. Will check against files that would be ignored by brunch compilator.
+* ``assets`` key: path OR array of paths to asset files.
+* Other valid keys, but not recommended to use: ``test``, ``app``, ``vendor``, ``root``.
 
 Example:
 
@@ -18,7 +20,7 @@ Example:
 
     paths:
       public: '../deploy'
-      assets: '../../static'
+      ignored: 'vendor/styles/bootstrap'
       test: 'spec'
 
 ``files``
@@ -69,6 +71,24 @@ Example:
         defaultExtension: 'eco'
         joinTo: 'javascripts/app.js'
 
+``generators``
+==============
+
+`Optional, object`: contains templates that would be used with ``brunch generate`` command. For example, if there is ``generators.model`` and you execute ``brunch generate model twitter_user``, brunch will call / load ``generators.model``. This param is optional and by default it uses some predefined templates. Template could be:
+
+a) A string.
+b) A function, that will take name, entered in ``brunch generate``.
+
+Example:
+
+::
+
+    generators:
+      # formatClassName is a custom function that converts
+      # aaa_bbb_ccc to AaaBbbCcc
+      model: (name) -> 'class #{formatClassName name} extends Backbone.Model'
+      view: fs.readFileSync sysPath.join __dirname, 'generators', 'view'
+
 ``framework``
 =============
 
@@ -76,7 +96,7 @@ Example:
 
 Default value is ``'backbone'``.
 
-Examples: ``'backbone'``, ``'ember'``, ``'batman'``.
+Examples: ``'backbone'``, ``'chaplin'``, ``'ember'``, ``'batman'``.
 
 ``minify``
 ==========
@@ -92,7 +112,7 @@ Examples: ``true``, ``false``.
 
 `Optional, object`: contains params of webserver that runs on ``brunch watch --server``.
 
-* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.runServer`` function.
+* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function.
 * ``port``: (optional) port on which server will run
 * ``run``: should the server be launched with ``brunch watch``?
 
