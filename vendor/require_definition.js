@@ -15,9 +15,9 @@
       }
       for (var i = 0, length = parts.length; i < length; i++) {
         part = parts[i];
-        if (part === '..') {
+        if (part == '..') {
           results.pop();
-        } else if (part !== '.' && part !== '') {
+        } else if (part != '.' && part != '') {
           results.push(part);
         }
       }
@@ -36,9 +36,9 @@
       var module = {id: path, exports: {}};
       try {
         cache[path] = module.exports;
-        contentFn(function(name) {
+        contentFn(module.exports, function(name) {
           return require(name, dirname(path));
-        }, module.exports, module);
+        }, module);
         cache[path] = module.exports;
       } catch (err) {
         delete cache[path];
@@ -69,9 +69,12 @@
     };
 
     this.require.brunch = true;
-    this.require.define = function(key, module) {
-      modules[key] = module;
+    this.require.define = function(bundle) {
+      for (var key in bundle) {
+        if (__hasProp.call(bundle, key)) {
+          modules[key] = bundle[key];
+        }
+      }
     };
-    this.define = this.require.define;
   }
 }).call(this);

@@ -6,9 +6,12 @@ logger = require '../logger'
 
 # The definition would be added on top of every filewriter .js file.
 requireDefinitionCache = null
-getRequireDefinition = (callback) ->
+getRequireDefinition = (isAMD, callback) ->
   return callback null, requireDefinitionCache if requireDefinitionCache?
-  path = sysPath.join __dirname, '..', '..', 'vendor', 'require_definition.js'
+  if isAMD
+    path = sysPath.join __dirname, '..', '..', 'vendor', 'almond.js'
+  else
+    path = sysPath.join __dirname, '..', '..', 'vendor', 'require_definition.js'
   fs.readFile path, (error, result) ->
     return logger.error error if error?
     requireDefinitionCache = result.toString()
@@ -125,12 +128,13 @@ module.exports = class GeneratedFile
       files[paths.indexOf file]
     sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
     logger.debug "Writing files '#{sortedPaths}' to '#{@path}'"
+    isAMD = @config.amd || no
     data = ''
     joinFiles = (data) ->
       data += sourceFiles.map((file) -> file.data).join('')
       callback null, data
     if @type is 'javascript'
-      getRequireDefinition (error, requireDefinition) =>
+      getRequireDefinition isAMD, (error, requireDefinition) =>
         data += requireDefinition
         joinFiles data
     else
