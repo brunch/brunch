@@ -49,7 +49,7 @@
 
     var require = function(name, root) {
       var path = expand(root, name);
-      var fullPath = getFullPath(path, true);
+      var fullPath;
 
       if (fullPath = getFullPath(path, true)) {
         return cache[fullPath];
