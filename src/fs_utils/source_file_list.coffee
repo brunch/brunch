@@ -59,7 +59,7 @@ module.exports = class SourceFileList extends EventEmitter
 
   _add: (path, compiler, isHelper) ->
     isVendor = helpers.startsWith(path, @config.paths.vendor)
-    isAMD = @config.amd || no
+    isAMD = !!@config.amd
     file = new SourceFile path, compiler, isHelper, isVendor, isAMD
     @files.push file
     file

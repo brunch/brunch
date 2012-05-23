@@ -9,10 +9,8 @@ logger = require '../logger'
 requireDefinitionCache = null
 getRequireDefinition = (isAMD, callback) ->
   return callback null, requireDefinitionCache if requireDefinitionCache?
-  if isAMD
-    path = sysPath.join __dirname, '..', '..', 'vendor', 'almond.js'
-  else
-    path = sysPath.join __dirname, '..', '..', 'vendor', 'require_definition.js'
+  vendorPath = sysPath.join __dirname, '..', '..', 'vendor'
+  path = sysPath.join vendorPath, (if isAMD then 'almond.js' else 'require_definition.js')
   fs.readFile path, (error, result) ->
     return logger.error error if error?
     requireDefinitionCache = result.toString()
@@ -60,7 +58,7 @@ module.exports = class GeneratedFile
     sourceFiles = helpers.sortByConfig(paths, order).map (file) ->
       files[paths.indexOf file]
     sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
-    isAMD = @config.amd || no
+    isAMD = !!@config.amd
     logger.debug "Joining files '#{sortedPaths}' to '#{@path}'"
     joined = sourceFiles.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
