@@ -33,11 +33,7 @@ module.exports = class SourceFile
           .replace(/\.\w*$/, '')
       )
       """
-      (this.require.define({
-        #{moduleName}: function(exports, require, module) {
-          #{data}
-        }
-      }));\n
+      (this.define(#{moduleName}, function(require, exports, module) { #{data} }));\n
       """
     else
       data
