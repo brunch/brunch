@@ -1,4 +1,4 @@
-# Brunch 1.2.2 (unreleased)
+# Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
 * Assets are copied one-by-one on change, instead of copying the whole
 assets directory. This improves watcher performance by about 25%+.
