@@ -8,9 +8,7 @@ assets directory. This improves watcher performance by about 25%+.
     name is used in controllers and collections. By default, brunch does pluralizing
     instead of you.
     * Added `collection` generator to `brunch generate`. It is not included in
-    `brunch g scaffold`, because it's not needed most of the time. Because it
-    works only with plural, it should be generated in singular form:
-    `brunch g collection user` instead of `brunch g collection users`.
+    `brunch g scaffold`, because it's not needed most of the time.
     * Added `collectionView` generator to `brunch generate` for Chaplin users.
     It doesn't generate corresponding `template`.
 * If `package.json` or `config.coffee` were removed during the watching,
