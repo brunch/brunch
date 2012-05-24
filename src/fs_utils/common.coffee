@@ -3,6 +3,7 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 sysPath = require 'path'
+util = require 'util'
 logger = require '../logger'
 
 exports.exists = fs.exists or sysPath.exists
@@ -35,8 +36,23 @@ ignoredRe = /(^(\.|#)|__$)/;
 exports.ignored = ignored = (path) ->
   ignoredRe.test(sysPath.basename path)
 
+exports.copy = (source, destination, callback) ->
+  return callback() if ignored source
+  copy = (error) ->
+    return logger.error error if error?
+    input = fs.createReadStream source
+    output = fs.createWriteStream destination
+    util.pump input, output, callback
+  parentDir = sysPath.dirname(destination)
+  exports.exists parentDir, (exists) ->
+    if exists
+      copy()
+    else
+      mkdirp parentDir, copy
+
+# Recursive copy.
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
   options = if filter then {filter: ((path) -> not ignored path)} else {}
-  sysPath.exists source, (exists) ->
+  exports.exists source, (exists) ->
     return callback() unless exists
     ncp source, destination, options, callback

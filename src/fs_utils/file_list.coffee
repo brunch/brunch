@@ -1,18 +1,19 @@
 {EventEmitter} = require 'events'
-sysPath = require 'path'
+Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
 logger = require '../logger'
 
 # A list of `fs_utils.SourceFile` with some additional methods
 # used to simplify file reading / removing.
-module.exports = class SourceFileList extends EventEmitter
+module.exports = class FileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
   RESET_TIME: 100
 
   constructor: (@config) ->
     @files = []
+    @assets = []
     @on 'change', @_change
     @on 'unlink', @_unlink
 
@@ -30,6 +31,9 @@ module.exports = class SourceFileList extends EventEmitter
       else
         no
 
+  _isAsset: (path) ->
+    @config.paths.assets.some((dir) -> helpers.startsWith(path, dir))
+
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
   _resetTimer: =>
@@ -39,13 +43,17 @@ module.exports = class SourceFileList extends EventEmitter
   _getByPath: (path) ->
     @files.filter((file) -> file.path is path)[0]
 
+  _getAssetByPath: (path) ->
+    @assets.filter((file) -> file.path is path)[0]
+
   _compileDependentFiles: (path) ->
-    @files
-      .filter (dependent) =>
-        dependent.cache.dependencies.length
-      .filter (dependent) =>
-        path in dependent.cache.dependencies
-      .forEach(@_compile)
+    unless @_isAsset path
+      @files
+        .filter (dependent) =>
+          dependent.cache.dependencies.length
+        .filter (dependent) =>
+          path in dependent.cache.dependencies
+        .forEach(@_compile)
     @_resetTimer()
 
   _compile: (file) =>
@@ -57,20 +65,37 @@ module.exports = class SourceFileList extends EventEmitter
       @_compileDependentFiles file.path
       @_resetTimer()
 
+  _copy: (asset) =>
+    asset.copy (error) =>
+      logger.debug "Copied asset '#{asset.path}'"
+      if error?
+        return logger.error "Copying of '#{asset.path}' failed -- #{error}"
+      @_resetTimer()
+
   _add: (path, compiler, isHelper) ->
     isVendor = helpers.startsWith(path, @config.paths.vendor)
     file = new SourceFile path, compiler, isHelper, isVendor
     @files.push file
     file
 
+  _addAsset: (path) ->
+    file = new Asset path, @config
+    @assets.push file
+    file
+
   _change: (path, compiler, isHelper) =>
-    return @_compileDependentFiles path if (@_ignored path) or not compiler
-    file = @_getByPath path
-    @_compile file ? @_add path, compiler, isHelper
+    return @_compileDependentFiles path if @_ignored path
+    if @_isAsset path
+      @_copy (@_getAssetByPath(path) ? @_addAsset path)
+    else
+      @_compile (@_getByPath(path) ? @_add path, compiler, isHelper)
     @_resetTimer()
 
   _unlink: (path) =>
     return @_compileDependentFiles path if @_ignored path
-    file = @_getByPath path
-    @files.splice(@files.indexOf(file), 1)
+    if @_isAsset path
+      @assets.splice(@assets.indexOf(pat), 1)
+    else
+      file = @_getByPath path
+      @files.splice(@files.indexOf(file), 1)
     @_resetTimer()

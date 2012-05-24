@@ -1,4 +1,6 @@
 # Brunch 1.2.2 (unreleased)
+* Assets are copied one-by-one on change, instead of copying the whole
+assets directory. This improves watcher performance for about 25%+.
 * Disabled caching in built-in webserver.
 * Added `--plural` option to `brunch generate`. Plural version of generator
 name is used in controllers and collections. By default, brunch does pluralizing

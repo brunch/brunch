@@ -47,23 +47,27 @@ module.exports = class GeneratedFile
         }
       , {before: [], after: [], vendorPaths: config.paths.vendor}
 
+  _sort: (files) ->
+    paths = files.map (file) -> file.path
+    indexes = {}
+    files.forEach (file, index) -> indexes[file.path] = file
+    order = @_extractOrder files, @config
+    helpers.sortByConfig(paths, order).map (path) ->
+      indexes[path]
+
   # Private: Collect content from a list of files and wrap it with
   # require.js module definition if needed.
   # Returns string.
-  _joinSourceFiles: (callback) ->
-    files = @sourceFiles
-    paths = files.map (file) -> file.path
-    order = @_extractOrder files, @config
-    sourceFiles = helpers.sortByConfig(paths, order).map (file) ->
-      files[paths.indexOf file]
-    sortedPaths = sourceFiles.map((file) -> file.path).join(', ')
-    logger.debug "Joining files '#{sortedPaths}' to '#{@path}'"
-    joined = sourceFiles.map((file) -> file.cache.data).join('')
+  _join: (files, callback) ->
+    logger.debug "Joining files '#{files.map((file) -> file.path).join(', ')}'
+ to '#{@path}'"
+    joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
       getRequireDefinition (error, requireDefinition) =>
-        callback null, requireDefinition + joined
+        callback error, requireDefinition + joined
     else
-      callback null, joined
+      process.nextTick =>
+        callback null, joined
 
   # Private: minify data.
   # 
@@ -84,7 +88,7 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    @_joinSourceFiles (error, joined) =>
+    @_join (@_sort @sourceFiles), (error, joined) =>
       return callback error if error?
       @_minify joined, (error, data) =>
         return callback error if error?
