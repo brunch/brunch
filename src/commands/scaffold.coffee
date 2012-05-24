@@ -218,9 +218,11 @@ destroyFile = (path, callback) ->
 
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
-  unless pluralName?
-    pluralName = inflection.pluralize name
-    if name is pluralName
+  pluralName = inflection.pluralize name, pluralName
+  if name is pluralName
+    if type in ['controller', 'collection', 'scaffold']
+      name = inflection.singularize pluralName
+    else
       return logger.error "Plural form must be declared for '#{name}'"
   config = helpers.loadConfig configPath
   return callback() unless config?
