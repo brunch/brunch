@@ -1,16 +1,22 @@
 # Brunch 1.2.2 (unreleased)
+* Brunch now outputs compilation time.
 * Assets are copied one-by-one on change, instead of copying the whole
-assets directory. This improves watcher performance for about 25%+.
+assets directory. This improves watcher performance by about 25%+.
 * Disabled caching in built-in webserver.
-* Added `--plural` option to `brunch generate`. Plural version of generator
-name is used in controllers and collections. By default, brunch does pluralizing
-instead of you.
-* Added `collection` generator to `brunch generate`. It is not included in
-`brunch g scaffold`, because it's not needed most of the time. Because it
-works only with plural, it should be generated in singular form:
-`brunch g collection user` instead of `brunch g collection users`.
-* Added `collectionView` generator to `brunch generate` for Chaplin users.
-It doesn't generate corresponding `template`.
+* Improved `brunch generate`:
+    * Added `--plural` option to `brunch generate`. Plural version of generator
+    name is used in controllers and collections. By default, brunch does pluralizing
+    instead of you.
+    * Added `collection` generator to `brunch generate`. It is not included in
+    `brunch g scaffold`, because it's not needed most of the time. Because it
+    works only with plural, it should be generated in singular form:
+    `brunch g collection user` instead of `brunch g collection users`.
+    * Added `collectionView` generator to `brunch generate` for Chaplin users.
+    It doesn't generate corresponding `template`.
+* If `package.json` or `config.coffee` were removed during the watching,
+brunch process will exit.
+* Maximum time between changes of two files that will be considered
+as a one compilation changed from 100ms to 65ms.
 
 # Brunch 1.2.1 (May 12, 2012)
 * Fixed persistence of process with `brunch watch` (without server).
