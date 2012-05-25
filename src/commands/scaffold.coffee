@@ -218,7 +218,10 @@ destroyFile = (path, callback) ->
 
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
-  pluralName = inflection.pluralize name, pluralName
+  pluralName = if type in ['controller', 'collection']
+    name
+  else
+    inflection.pluralize name, pluralName
   if name is pluralName
     if type in ['controller', 'collection', 'scaffold']
       name = inflection.singularize pluralName
