@@ -84,10 +84,11 @@ module.exports = class FileList extends EventEmitter
     file
 
   _change: (path, compiler, isHelper) =>
-    return @_compileDependentFiles path if (@_ignored path) or not compiler
+    return @_compileDependentFiles path if (@_ignored path)
     if @_isAsset path
       @_copy (@_getAssetByPath(path) ? @_addAsset path)
     else
+      return @_compileDependentFiles path unless compiler
       @_compile (@_getByPath(path) ? @_add path, compiler, isHelper)
     @_resetTimer()
 
