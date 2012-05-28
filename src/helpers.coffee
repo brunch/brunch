@@ -132,6 +132,8 @@ startDefaultServer = (port, path, callback) ->
     response.header 'Cache-Control', 'no-cache'
     next()
   server.use express.static path
+  server.all '/test/*', (request, response) ->
+    response.sendfile sysPath.normalize request.url.substr(1)
   server.all '/*', (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
   server.listen parseInt port, 10
