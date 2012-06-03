@@ -42,10 +42,5 @@ class BrunchTestRunner
       process.exit if failures > 0 then 1 else 0
 
 module.exports = test = (options) ->
-  # TODO: call watch() directly
-  # but this somehow exits the process and
-  # doesn't wait for callbacks
-
-  child = require('child_process').fork path.join(__dirname, '..', '..', 'bin', 'brunch'), ['build']
-  child.on 'exit', ->
+  watch yes, options, ->
     new BrunchTestRunner options
