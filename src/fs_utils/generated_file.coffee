@@ -64,7 +64,10 @@ module.exports = class GeneratedFile
     joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
       getRequireDefinition (error, requireDefinition) =>
-        callback error, requireDefinition + joined
+        if @path == sysPath.join @config.paths.public, 'javascripts', 'tests.js'
+          callback error, requireDefinition + joined + "\n" + "this.require('test/initialize');"
+        else
+          callback error, requireDefinition + joined
     else
       process.nextTick =>
         callback null, joined

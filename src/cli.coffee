@@ -123,6 +123,17 @@ the server would run'
           full: 'config'
       callback: commands.destroy
 
+    test:
+      abbr: 't'
+      help: 'Run all tests for the current project'
+      options:
+        configPath:
+          abbr: 'c'
+          help: 'path to config file'
+          metavar: 'CONFIG'
+          full: 'config'
+      callback: commands.test
+      
   options:
     version:
       abbr: 'v'

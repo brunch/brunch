@@ -1,6 +1,7 @@
 create = require './create'
 scaffold = require './scaffold'
 watch = require './watch'
+test = require './test'
 
 module.exports = {
   new: create
@@ -8,4 +9,5 @@ module.exports = {
   watch: watch.bind(null, yes)
   generate: scaffold.bind(null, no)
   destroy: scaffold.bind(null, yes)
+  test: test
 }
