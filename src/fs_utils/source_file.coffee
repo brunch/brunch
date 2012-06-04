@@ -44,7 +44,7 @@ module.exports = class SourceFile
       }));\n
       """
     else
-      data
+      "#{data};\n"
 
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
