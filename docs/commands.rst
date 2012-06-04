@@ -35,7 +35,7 @@ Examples:
 ----------------
 Watch brunch directory and rebuild if something changed. Options:
 
-* ``-s, --server``: run a simple http server that would server `output` dir
+* ``-s, --server``: run a simple http server that would server `output` dir in ``/`` and `test` dir in ``/test/``
 * ``-p PORT, --port PORT``: if a `server` option was specified, define on which port the server would run
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
 * ``-m, --minify``: minify the result js & css files? Analog of ``minify`` option in config file.

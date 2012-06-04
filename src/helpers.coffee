@@ -186,9 +186,9 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.app           ?= join 'root', 'app'
   paths.config         = configPath       ? join 'root', 'config'
   paths.packageConfig ?= join 'root', 'package.json'
-  paths.assets        ?= [join 'app', 'assets']
   paths.test          ?= join 'root', 'test'
   paths.vendor        ?= join 'root', 'vendor'
+  paths.assets        ?= [join(paths.app, 'assets'), join(paths.test, 'assets')]
   paths.ignored       ?= (path) ->
     exports.startsWith(sysPath.basename(path), '_') or
     path in [paths.config, paths.packageConfig]
