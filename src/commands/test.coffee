@@ -1,5 +1,5 @@
 fs = require 'fs'
-path = require 'path'
+sysPath = require 'path'
 async = require 'async'
 jsdom = require 'jsdom'
 Mocha = require 'mocha'
@@ -10,51 +10,39 @@ watch = require './watch'
 class BrunchTestRunner
   constructor: (options) ->
     @config = helpers.loadConfig options.configPath
-    @setup_jsdom @start_mocha
+    @setupJsDom @startMocha
     
-  read_testfiles: (callback) ->
-    html_filename     = path.join @config.paths.public, 'index.html'
-    vendorjs_filename = path.join @config.paths.public, 'javascripts', 'vendor.js'
-    appjs_filename    = path.join @config.paths.public, 'javascripts', 'app.js'
-    
-    async.parallel
-      html: (callback) ->
-        fs.readFile html_filename, callback
-      vendorjs: (callback) ->
-        fs.readFile vendorjs_filename, callback
-      appjs: (callback) ->
-        fs.readFile appjs_filename, callback
-    , (err, results) ->
-      if err
-        console.log err
-        process.exit 1
+  readTestFiles: (callback) ->
+    getPublicPath = (subPaths...) ->
+      sysPath.join @config.paths.public, subPaths...
+    files = [
+      getPublicPath('index.html'),
+      getPublicPath('javascripts', 'vendor.js'),
+      getPublicPath('javascripts', 'app.js')
+    ]
+    async.map files, fs.readFile, callback
 
-      callback results
-    
-  setup_jsdom: (callback) ->
-    @read_testfiles (files) ->
+  setupJsDom: (callback) ->
+    @readTestFiles (error, files) ->
+      throw error if error?
       jsdom.env
         html: files.html.toString(),
         src: [
           files.vendorjs.toString(),
           files.appjs.toString()
         ],
-        done: (err, window) ->
-          if err
-            console.log err
-            process.exit 1
-
+        done: (error, window) ->
+          throw error if error?
           callback window
 
-  start_mocha: (window) =>
+  startMocha: (window) =>
     global.app = window
     global.expect = chai.expect
 
-    mocha = new Mocha
+    mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
-    mocha.addFile path.join @config.paths.public, 'javascripts', 'tests.js'
-
+    mocha.addFile sysPath.join @config.paths.public, 'javascripts', 'tests.js'
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
 
