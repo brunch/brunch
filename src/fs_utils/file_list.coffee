@@ -40,20 +40,19 @@ module.exports = class FileList extends EventEmitter
     clearTimeout @timer if @timer?
     @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
 
-  _getByPath: (path) ->
+  _findByPath: (path) ->
     @files.filter((file) -> file.path is path)[0]
 
-  _getAssetByPath: (path) ->
+  _findAssetByPath: (path) ->
     @assets.filter((file) -> file.path is path)[0]
 
   _compileDependentFiles: (path) ->
-    unless @_isAsset path
-      @files
-        .filter (dependent) =>
-          dependent.cache.dependencies.length
-        .filter (dependent) =>
-          path in dependent.cache.dependencies
-        .forEach(@_compile)
+    @files
+      .filter (dependent) =>
+        dependent.cache.dependencies.length
+      .filter (dependent) =>
+        path in dependent.cache.dependencies
+      .forEach(@_compile)
     @_resetTimer()
 
   _compile: (file) =>
@@ -84,19 +83,19 @@ module.exports = class FileList extends EventEmitter
     file
 
   _change: (path, compiler, isHelper) =>
-    return @_compileDependentFiles path if (@_ignored path)
     if @_isAsset path
-      @_copy (@_getAssetByPath(path) ? @_addAsset path)
+      @_copy (@_findAssetByPath(path) ? @_addAsset path)
+    else if @_ignored(path) or not compiler
+      @_compileDependentFiles path
     else
-      return @_compileDependentFiles path unless compiler
-      @_compile (@_getByPath(path) ? @_add path, compiler, isHelper)
-    @_resetTimer()
+      @_compile (@_findByPath(path) ? @_add path, compiler, isHelper)
 
   _unlink: (path) =>
-    return @_compileDependentFiles path if @_ignored path
     if @_isAsset path
       @assets.splice(@assets.indexOf(path), 1)
+    else if @_ignored path
+      @_compileDependentFiles path
     else
-      file = @_getByPath path
+      file = @_findByPath path
       @files.splice(@files.indexOf(file), 1)
     @_resetTimer()
