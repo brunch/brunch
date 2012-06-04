@@ -1,3 +1,12 @@
+# Brunch 1.3.0 (unreleased)
+* Added experimental testing support (thanks to Andreas Gerstmayr):
+    * `brunch test` (or `brunch t`) is used to run all tests in CLI env.
+    * `test` directory is now watched. Add `'javascripts/tests.js': /^test/`
+    to `config.javascripts.joinTo` in `config.coffee` to compile them.
+* Fixed watching of non-compiled files in `app`.
+* Semicolon is now added after every compiled vendor library because of
+some libs that break with brunch. Hello, Zepto!
+
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
 * Assets are copied one-by-one on change, instead of copying the whole
