@@ -39,11 +39,10 @@
     "express": "2.5.8",
     "date-utils": "1.2.10",
     "ansi-color": "0.2.1",
-    "inflection": "1.2.0"
-  },
-  "devDependencies": {
+    "inflection": "1.2.0",
     "mocha": "1.1.0",
     "jsdom": "0.2.14",
     "chai": "1.0.3"
-  }
+  },
+  "devDependencies": {}
 }
