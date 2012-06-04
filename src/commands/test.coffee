@@ -1,5 +1,6 @@
 fs = require 'fs'
 path = require 'path'
+async = require 'async'
 jsdom = require 'jsdom'
 Mocha = require 'mocha'
 chai = require 'chai'
@@ -11,23 +12,39 @@ class BrunchTestRunner
     @config = helpers.loadConfig options.configPath
     @setup_jsdom @start_mocha
     
+  read_testfiles: (callback) ->
+    html_filename     = path.join @config.paths.public, 'index.html'
+    vendorjs_filename = path.join @config.paths.public, 'javascripts', 'vendor.js'
+    appjs_filename    = path.join @config.paths.public, 'javascripts', 'app.js'
+    
+    async.parallel
+      html: (callback) ->
+        fs.readFile html_filename, callback
+      vendorjs: (callback) ->
+        fs.readFile vendorjs_filename, callback
+      appjs: (callback) ->
+        fs.readFile appjs_filename, callback
+    , (err, results) ->
+      if err
+        console.log err
+        process.exit 1
+
+      callback results
+    
   setup_jsdom: (callback) ->
-    html = fs.readFileSync path.join @config.paths.public, 'index.html'
-    vendorjs = fs.readFileSync path.join @config.paths.public, 'javascripts', 'vendor.js'
-    appjs = fs.readFileSync path.join @config.paths.public, 'javascripts', 'app.js'
+    @read_testfiles (files) ->
+      jsdom.env
+        html: files.html.toString(),
+        src: [
+          files.vendorjs.toString(),
+          files.appjs.toString()
+        ],
+        done: (err, window) ->
+          if err
+            console.log err
+            process.exit 1
 
-    jsdom.env
-      html: html.toString(),
-      src: [
-        vendorjs.toString(),
-        appjs.toString()
-      ],
-      done: (err, window) ->
-        if err
-          console.log err
-          process.exit 1
-
-        callback window
+          callback window
 
   start_mocha: (window) =>
     global.app = window
