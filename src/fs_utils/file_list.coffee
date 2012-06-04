@@ -95,7 +95,7 @@ module.exports = class FileList extends EventEmitter
   _unlink: (path) =>
     return @_compileDependentFiles path if @_ignored path
     if @_isAsset path
-      @assets.splice(@assets.indexOf(pat), 1)
+      @assets.splice(@assets.indexOf(path), 1)
     else
       file = @_getByPath path
       @files.splice(@files.indexOf(file), 1)
