@@ -12,8 +12,8 @@ class BrunchTestRunner
     @config = helpers.loadConfig options.configPath
     @setupJsDom @startMocha
     
-  readTestFiles: (callback) ->
-    getPublicPath = (subPaths...) ->
+  readTestFiles: (callback) =>
+    getPublicPath = (subPaths...) =>
       sysPath.join @config.paths.public, subPaths...
     files = [
       getPublicPath('index.html'),
@@ -22,14 +22,15 @@ class BrunchTestRunner
     ]
     async.map files, fs.readFile, callback
 
-  setupJsDom: (callback) ->
+  setupJsDom: (callback) =>
     @readTestFiles (error, files) ->
       throw error if error?
+      [html, vendorjs, appjs] = files
       jsdom.env
-        html: files.html.toString(),
+        html: html.toString(),
         src: [
-          files.vendorjs.toString(),
-          files.appjs.toString()
+          vendorjs.toString(),
+          appjs.toString()
         ],
         done: (error, window) ->
           throw error if error?
