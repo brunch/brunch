@@ -26,7 +26,7 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        path is sysPath.normalize test
+        helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
       when '[object Array]'
         test.some((subTest) => @_ignored path, sysPath.normalize(subTest))
       else
