@@ -31,7 +31,7 @@ module.exports = class GeneratedFile
     else
       'stylesheet'
     @minifier = minifiers.filter((minifier) => minifier.type is @type)[0]
-    @isTestsFile = @type is 'javascript' and /tests.js$/.test @path
+    @isTestsFile = @type is 'javascript' and /tests\.js$/.test @path
     Object.freeze(this)
 
   _extractOrder: (files, config) ->
