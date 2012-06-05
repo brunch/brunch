@@ -43,9 +43,10 @@ module.exports = class GeneratedFile
         array or= {}
         {
           before: memo.before.concat(array.before or []),
-          after: memo.after.concat(array.after or [])
+          after: memo.after.concat(array.after or []),
+          vendorPaths: [config.paths.vendor]
         }
-      , {before: [], after: [], vendorPaths: config.paths.vendor}
+      , {before: [], after: []}
 
   _sort: (files) ->
     paths = files.map (file) -> file.path
