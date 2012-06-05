@@ -44,7 +44,10 @@ module.exports = class SourceFile
       }));\n
       """
     else
-      "#{data};\n"
+      if @type in ['javascript', 'template']
+        "#{data};\n"
+      else
+        data
 
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
