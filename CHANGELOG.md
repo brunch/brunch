@@ -6,6 +6,8 @@
 * Fixed watching of non-compiled files in `app`.
 * Semicolon is now added after every compiled vendor library because of
 some libs that break with brunch. Hello, Zepto!
+* Styles in `vendor` directory are now sorted correctly, before `app` files.
+* Fixed `options.ignored` on windows.
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
