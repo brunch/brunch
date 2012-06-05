@@ -3,6 +3,7 @@ Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
 logger = require '../logger'
+sysPath = require 'path'
 
 # A list of `fs_utils.SourceFile` with some additional methods
 # used to simplify file reading / removing.
@@ -25,9 +26,9 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        path is test
+        path is sysPath.normalize test
       when '[object Array]'
-        test.some((subTest) => @_ignored path, subTest)
+        test.some((subTest) => @_ignored path, sysPath.normalize(subTest))
       else
         no
 
