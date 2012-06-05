@@ -5,8 +5,8 @@ helpers = require '../helpers'
 logger = require '../logger'
 sysPath = require 'path'
 
-# A list of `fs_utils.SourceFile` with some additional methods
-# used to simplify file reading / removing.
+# A list of `fs_utils.SourceFile` or `fs_utils.Asset`
+# with some additional methods used to simplify file reading / removing.
 module.exports = class FileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
