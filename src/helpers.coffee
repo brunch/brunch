@@ -126,7 +126,7 @@ exports.install = install = (rootPath, callback = (->)) ->
     return callback stderr.toString() if error?
     callback null, stdout
 
-startDefaultServer = (port, path, callback, base='') ->
+startDefaultServer = (port, path, callback, base = '') ->
   server = express.createServer()
   server.use (request, response, next) ->
     response.header 'Cache-Control', 'no-cache'
