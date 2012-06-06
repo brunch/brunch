@@ -4,6 +4,7 @@ async = require 'async'
 jsdom = require 'jsdom'
 Mocha = require 'mocha'
 chai = require 'chai'
+sinon = require 'sinon'
 helpers = require '../helpers'
 watch = require './watch'
 
@@ -44,6 +45,7 @@ class BrunchTestRunner
   startMocha: (window) =>
     global.window = window
     global.expect = chai.expect
+    global.sinon = sinon
 
     mocha = new Mocha()
     # TODO: configurable reporter and interface
