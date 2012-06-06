@@ -101,3 +101,11 @@ Examples:
 
 * ``brunch destroy collection user_list``: would remove file ``app/collections/user_list.coffee`` with class ``UserList`` and a unit-test ``test/unit/collections/user_list.coffee``.
 * ``brunch d model post -p app/twitter/models``: would remove file ``app/twitter/models/post.coffee`` with class ``Post`` and a unit-test ``test/unit/twitter/models/post.coffee``.
+
+``brunch test``
+---------------
+Run tests on the current project. Options:
+
+* ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
+
+Short-cut: ``brunch t``.
