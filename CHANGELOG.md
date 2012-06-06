@@ -6,6 +6,8 @@
 * Fixed watching of non-compiled files in `app`.
 * Semicolon is now added after every compiled vendor library because of
 some libs that break with brunch. Hello, Zepto!
+* Added support for `config.server.base`, which determines base URL from which 
+to serve the app. The default value is empty string.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
 * Fixed `options.ignored` on windows.
 
