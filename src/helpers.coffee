@@ -238,7 +238,10 @@ exports.loadPlugins = (config, callback) ->
       error = err
     callback error, plugins
 
+cachedTestFiles = null
 exports.findTestFiles = (config) ->
+  return cachedTestFiles if cachedTestFiles?
+  
   files = []
 
   for file, lookupPath of config.files.javascripts.joinTo
@@ -246,4 +249,4 @@ exports.findTestFiles = (config) ->
     if exports.startsWith lookupPathStartsWith, config.paths.test
       files.push sysPath.join config.paths.public, file
 
-  files
+  cachedTestFiles = files

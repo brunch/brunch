@@ -15,7 +15,7 @@ class BrunchTestRunner
     if @testFiles.length > 0
       @setupJsDom @startMocha
     else
-       throw new Error("Can't find file containing tests.")
+      throw new Error("Can't find file containing tests.")
 
   readTestFiles: (callback) =>
     getPublicPath = (subPaths...) =>
@@ -48,7 +48,7 @@ class BrunchTestRunner
     mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
-    for file in @testFiles
+    @testFiles.forEach (file) ->
       mocha.addFile file
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
