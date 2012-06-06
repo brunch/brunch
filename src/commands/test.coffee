@@ -37,9 +37,9 @@ class BrunchTestRunner
           callback window
 
   startMocha: (window) =>
-    global.app = window
+    global.window = window
     global.expect = chai.expect
-
+    
     mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
