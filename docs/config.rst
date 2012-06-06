@@ -114,6 +114,7 @@ Examples: ``true``, ``false``.
 
 * ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function.
 * ``port``: (optional) port on which server will run
+* ``base``: (optional) base URL from which to serve the app
 * ``run``: should the server be launched with ``brunch watch``?
 
 Example:
@@ -123,4 +124,5 @@ Example:
     server:
       path: 'server.coffee'
       port: 6832
+      base: '/myapp'
       run: yes
