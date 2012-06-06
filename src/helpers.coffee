@@ -126,7 +126,7 @@ exports.install = install = (rootPath, callback = (->)) ->
     return callback stderr.toString() if error?
     callback null, stdout
 
-startDefaultServer = (port, path, callback, base = '') ->
+startDefaultServer = (port, path, base, callback) ->
   server = express.createServer()
   server.use (request, response, next) ->
     response.header 'Cache-Control', 'no-cache'
@@ -149,7 +149,7 @@ exports.startServer = (config, callback = (->)) ->
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.paths.public, onListening, config.server.base
+    startDefaultServer config.server.port, config.paths.public, config.server.base, onListening
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
