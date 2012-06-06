@@ -237,3 +237,13 @@ exports.loadPlugins = (config, callback) ->
     catch err
       error = err
     callback error, plugins
+
+exports.findTestFiles = (config) ->
+  files = []
+
+  for file, lookupPath of config.files.javascripts.joinTo
+    lookupPathStartsWith = lookupPath.toString().substring(2)
+    if exports.startsWith lookupPathStartsWith, config.paths.test
+      files.push sysPath.join config.paths.public, file
+
+  files

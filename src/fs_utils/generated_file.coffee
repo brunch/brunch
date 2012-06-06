@@ -31,7 +31,7 @@ module.exports = class GeneratedFile
     else
       'stylesheet'
     @minifier = minifiers.filter((minifier) => minifier.type is @type)[0]
-    @isTestsFile = @type is 'javascript' and /tests\.js$/.test @path
+    @isTestFile = @path in helpers.findTestFiles @config
     Object.freeze(this)
 
   _extractOrder: (files, config) ->
@@ -81,7 +81,7 @@ module.exports = class GeneratedFile
  to '#{@path}'"
     joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
-      if @isTestsFile
+      if @isTestFile
         getTestRequireDefinition (error, requireDefinition) =>
           callback error, requireDefinition + joined + '\n' + @_loadTestFiles(files)
       else

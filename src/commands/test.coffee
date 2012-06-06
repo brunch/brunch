@@ -10,8 +10,13 @@ watch = require './watch'
 class BrunchTestRunner
   constructor: (options) ->
     @config = helpers.loadConfig options.configPath
-    @setupJsDom @startMocha
-    
+    @testFiles = helpers.findTestFiles @config
+
+    if @testFiles.length > 0
+      @setupJsDom @startMocha
+    else
+       throw new Error("Can't find file containing tests.")
+
   readTestFiles: (callback) =>
     getPublicPath = (subPaths...) =>
       sysPath.join @config.paths.public, subPaths...
@@ -39,11 +44,12 @@ class BrunchTestRunner
   startMocha: (window) =>
     global.window = window
     global.expect = chai.expect
-    
+
     mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
-    mocha.addFile sysPath.join @config.paths.public, 'javascripts', 'tests.js'
+    for file in @testFiles
+      mocha.addFile file
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
 
