@@ -28,7 +28,7 @@ module.exports = class FileList extends EventEmitter
       when '[object String]'
         helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
       when '[object Array]'
-        test.some((subTest) => @_ignored path, sysPath.normalize(subTest))
+        test.some((subTest) => @_ignored path, subTest)
       else
         no
 
