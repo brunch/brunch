@@ -243,10 +243,8 @@ exports.findTestFiles = (config) ->
   return cachedTestFiles if cachedTestFiles?
   
   files = []
-
-  for file, lookupPath of config.files.javascripts.joinTo
-    lookupPathStartsWith = lookupPath.toString().substring(2)
-    if exports.startsWith lookupPathStartsWith, config.paths.test
-      files.push sysPath.join config.paths.public, file
-
+  Object.keys(config.files.javascripts.joinTo).forEach (generatedFile) ->
+    if exports.startsWith generatedFile, sysPath.normalize('test/')
+      files.push sysPath.join(config.paths.public, generatedFile)
+      
   cachedTestFiles = files
