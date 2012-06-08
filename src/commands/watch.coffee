@@ -39,6 +39,7 @@ class BrunchWatcher
       params.server.run = yes if options.server
       params.server.port = options.port if options.port
     @config = helpers.loadConfig options.configPath, params
+    @changedFiles = {}
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -58,10 +59,13 @@ class BrunchWatcher
 
   changeFileList: (path, isHelper = no) =>
     @start = Date.now()
-    compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    @fileList.emit 'change', path, compiler, isHelper
+    compilers = @plugins.filter(isCompilerFor.bind(null, path))
+    types = compilers.filter((cmp)-> cmp.type?)
+    @changedFiles[path] = if types.length is 0 then false else types[0].type
+    @fileList.emit 'change', path, compilers[0], isHelper
 
   removeFromFileList: (path) =>
+    if not @changedFiles[path]? then @changedFiles[path] = false
     @start = Date.now()
     @fileList.emit 'unlink', path
 
@@ -88,20 +92,20 @@ class BrunchWatcher
         .on 'unlink', (path) =>
           logger.debug "File '#{path}' received event 'unlink'"
           if path in [@config.paths.config, @config.paths.packageConfig]
-            logger.info "Detected removal of config.coffee / package.json.
- Exiting."
+            logger.info "Detected removal of config.coffee / package.json.\nExiting."
             process.exit(0)
           else
             @removeFromFileList path
         .on('error', logger.error)
 
   onCompile: (result) =>
-    @_onCompile result
+    @_onCompile @changedFiles
     @plugins
       .filter (plugin) ->
         typeof plugin.onCompile is 'function'
-      .forEach (plugin) ->
-        plugin.onCompile result
+      .forEach (plugin) =>
+        plugin.onCompile @changedFiles
+    @changedFiles = []
 
   compile: =>
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
