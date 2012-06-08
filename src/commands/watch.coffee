@@ -58,12 +58,13 @@ class BrunchWatcher
       callback error
 
   changeFileList: (path, isHelper = no) =>
+    if @changedFiles.indexOf(path) is -1 then @changedFiles.push path
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    if @changedFiles.indexOf(path) is -1 then @changedFiles.push path
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
+    if @changedFiles.indexOf(path) is -1 then @changedFiles.push path
     @start = Date.now()
     @fileList.emit 'unlink', path
 
