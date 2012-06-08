@@ -39,6 +39,7 @@ class BrunchWatcher
       params.server.run = yes if options.server
       params.server.port = options.port if options.port
     @config = helpers.loadConfig options.configPath, params
+    @changedFiles = []
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -59,6 +60,7 @@ class BrunchWatcher
   changeFileList: (path, isHelper = no) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
+    if @changedFiles.indexOf(path) is -1 then @changedFiles.push path
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
@@ -96,12 +98,13 @@ class BrunchWatcher
         .on('error', logger.error)
 
   onCompile: (result) =>
-    @_onCompile result
+    @_onCompile @changedFiles
     @plugins
       .filter (plugin) ->
         typeof plugin.onCompile is 'function'
-      .forEach (plugin) ->
-        plugin.onCompile result
+      .forEach (plugin) =>
+        plugin.onCompile @changedFiles
+    @changedFiles = []
 
   compile: =>
     fs_utils.write @fileList, @config, @plugins, (error, result) =>
