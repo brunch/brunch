@@ -13,7 +13,7 @@ module.exports = class Asset
     )[0]
     @relativePath = sysPath.relative directory, @path
     @destinationPath = sysPath.join config.paths.public, @relativePath
-    logger.debug "Initializing fs_utils.Asset", {
+    logger.debug 'info', "Initializing fs_utils.Asset", {
       @path, @relativePath, @destinationPath
     }
     Object.freeze this

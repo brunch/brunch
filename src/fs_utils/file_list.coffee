@@ -60,7 +60,7 @@ module.exports = class FileList extends EventEmitter
 
   _compile: (file) =>
     file.compile (error) =>
-      logger.debug "Compiled file '#{file.path}'"
+      logger.debug 'info', "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
 #{error}"
@@ -69,7 +69,7 @@ module.exports = class FileList extends EventEmitter
 
   _copy: (asset) =>
     asset.copy (error) =>
-      logger.debug "Copied asset '#{asset.path}'"
+      logger.debug 'info', "Copied asset '#{asset.path}'"
       if error?
         return logger.error "Copying of '#{asset.path}' failed -- #{error}"
       @_resetTimer()

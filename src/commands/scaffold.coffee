@@ -209,7 +209,7 @@ getGenerator = (config, plugins) ->
         path + ".#{extension}"
       .map (path) ->
         file = {type, extension, path, data}
-        logger.debug "Scaffolding", file
+        logger.debug 'info', "Scaffolding", file
         file
     strings.concat(nonStrings)
 

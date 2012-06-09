@@ -23,7 +23,7 @@ module.exports = create = (options, callback = (->)) ->
   copySkeleton = (skeletonPath) ->
     skeletonDir = sysPath.join __dirname, '..', '..', 'skeletons'
     skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
-    logger.debug "Copying skeleton from #{skeletonPath}"
+    logger.debug 'info', "Copying skeleton from #{skeletonPath}"
 
     copyDirectory = (from) ->
       fs_utils.copyIfExists from, rootPath, no, (error) ->
@@ -38,7 +38,7 @@ module.exports = create = (options, callback = (->)) ->
         copyDirectory skeletonPath
 
   cloneSkeleton = (URL) ->
-    logger.debug "Cloning skeleton from git URL #{URL}"
+    logger.debug 'info', "Cloning skeleton from git URL #{URL}"
     exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
       return logger.error "Git clone error: #{stderr.toString()}" if error?
       logger.info 'Created brunch directory layout'

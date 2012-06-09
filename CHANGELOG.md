@@ -22,6 +22,8 @@ to serve the app. The default value is empty string.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
 * Only generated files that depend on changed in current compilation files
 are written now. Before, brunch was writing all files each time.
+* Debug mode now has logger namespaces. Usage:
+`BRUNCH_DEBUG=<ns> brunch <command>` where `<ns>` is: `watcher`, `writer`, `*`. 
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.

@@ -16,7 +16,20 @@ getInfo = (level) ->
   "#{date} - #{lvl}:"
 
 logger =
-  isDebug: process.env.BRUNCH_DEBUG is '1'
+  isDebug: Boolean process.env.BRUNCH_DEBUG
+  debugNamespace: do ->
+    namespace = process.env.BRUNCH_DEBUG
+    if namespace
+      if namespace is '*'
+        '*'
+      else
+        namespace.split(',')
+    else
+      []
+
+  matchesDebugNamespace: (current) ->
+    namespace = logger.debugNamespace
+    namespace is '*' or current in namespace
 
   log: (level, args...) ->
     info = getInfo level
@@ -26,18 +39,18 @@ logger =
       else
         console.log info, args...
 
-  error: ->
-    growl [arguments...].join(' '), title: 'Brunch error'
-    logger.log 'error', arguments...
+  error: (args...) ->
+    growl args.join(' '), title: 'Brunch error'
+    logger.log 'error', args...
 
-  warn: ->
-    logger.log 'warn', arguments...
+  warn: (args...) ->
+    logger.log 'warn', args...
 
-  info: ->
-    logger.log 'info', arguments...
+  info: (args...) ->
+    logger.log 'info', args...
 
-  debug: ->
-    if logger.isDebug
-      logger.log 'debug', arguments...
+  debug: (namespace, args...) ->
+    if logger.isDebug and logger.matchesDebugNamespace namespace
+      logger.log 'debug', args...
 
 module.exports = Object.freeze(logger)

@@ -23,7 +23,7 @@ exports.exists = fs.exists or sysPath.exists
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 # 
 exports.writeFile = (path, data, callback) ->
-  logger.debug "Writing file '#{path}'"
+  logger.debug 'writer', "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?

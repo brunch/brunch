@@ -119,10 +119,10 @@ class BrunchWatcher
       ignored = fs_utils.ignored
       @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
         .on 'add', (path) =>
-          logger.debug "File '#{path}' received event 'add'"
+          logger.debug 'watcher', "File '#{path}' received event 'add'"
           @changeFileList path, no
         .on 'change', (path) =>
-          logger.debug "File '#{path}' received event 'change'"
+          logger.debug 'watcher', "File '#{path}' received event 'change'"
           if path is @config.paths.config
             @reload no
           else if path is @config.paths.packageConfig
@@ -130,7 +130,7 @@ class BrunchWatcher
           else
             @changeFileList path, no
         .on 'unlink', (path) =>
-          logger.debug "File '#{path}' received event 'unlink'"
+          logger.debug 'watcher', "File '#{path}' received event 'unlink'"
           if path in [@config.paths.config, @config.paths.packageConfig]
             logger.info "Detected removal of config.coffee / package.json.
  Exiting."

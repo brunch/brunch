@@ -79,7 +79,7 @@ module.exports = class GeneratedFile
   # require.js module definition if needed.
   # Returns string.
   _join: (files, callback) ->
-    logger.debug "Joining files '#{files.map((file) -> file.path).join(', ')}'
+    logger.debug 'writer', "Joining files '#{files.map((file) -> file.path).join(', ')}'
  to '#{@path}'"
     joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
