@@ -16,7 +16,7 @@ module.exports = class SourceFile
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
-    @cache = Object.seal({data: '', dependencies: []})
+    @cache = Object.seal({data: '', dependencies: [], compilationTime: null})
     Object.freeze(this)
 
   _getDependencies: (data, path, callback) ->
@@ -64,4 +64,5 @@ module.exports = class SourceFile
           return callback "GetDeps error: #{error}" if error?
           @cache.dependencies = dependencies
           @cache.data = @_wrap result if result?
+          @cache.compilationTime = Date.now()
           callback null, @cache.data

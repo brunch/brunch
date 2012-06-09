@@ -23,6 +23,50 @@ getPluginIncludes = (plugins) ->
     .filter((paths) -> paths?)
     .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
 
+makeUniversalChecker = (item) ->
+  switch toString.call(item)
+    when '[object RegExp]'
+      (string) -> item.test string
+    when '[object Function]'
+      item
+    else
+      throw new Error("Config.files item #{item} is invalid.
+Use RegExp or Function.")
+
+listToObj = (acc, elem) ->
+  acc[elem[0]] = elem[1]
+  acc
+
+# Converts `config.files[...].joinTo` to one format.
+# config.files[type].joinTo can be a string, a map of {str: regexp} or a map
+# of {str: function}.
+# Example output:
+# 
+# {
+#   javascripts: {'javascripts/app.js': checker},
+#   templates: {'javascripts/app.js': checker2}
+# }
+# 
+getJoinConfig = (config) ->
+  types = Object.keys(config.files)
+  result = types
+    .map (type) =>
+      config.files[type].joinTo
+    .map (joinTo) =>
+      if typeof joinTo is 'string'
+        object = {}
+        object[joinTo] = /.+/
+        object
+      else
+        joinTo
+    .map (joinTo, index) =>
+      makeChecker = (generatedFilePath) =>
+        [generatedFilePath, makeUniversalChecker(joinTo[generatedFilePath])]
+      subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
+      [types[index], subConfig]
+    .reduce(listToObj, {})
+  Object.freeze(result)
+
 class BrunchWatcher
   constructor: (@persistent, @options, @_onCompile) ->
     params = {}
@@ -36,6 +80,8 @@ class BrunchWatcher
       params.server.run = yes if options.server
       params.server.port = options.port if options.port
     @config = helpers.loadConfig options.configPath, params
+    @joinConfig = getJoinConfig @config
+    @changedFiles = Object.create(null)
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -56,6 +102,7 @@ class BrunchWatcher
   changeFileList: (path, isHelper = no) =>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
+    @changedFiles
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
@@ -91,6 +138,7 @@ class BrunchWatcher
           else
             @removeFromFileList path
         .on('error', logger.error)
+      callback()
 
   onCompile: (result) =>
     @_onCompile result
@@ -101,7 +149,7 @@ class BrunchWatcher
         plugin.onCompile result
 
   compile: =>
-    fs_utils.write @fileList, @config, @plugins, (error, result) =>
+    fs_utils.write @fileList, @config, @joinConfig, @plugins, @start, (error, result) =>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
       @watcher.close() unless @persistent
@@ -112,8 +160,8 @@ class BrunchWatcher
     @initPlugins =>
       @initFileList()
       getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
-      @initWatcher()
-      @fileList.on 'ready', @compile
+      @initWatcher =>
+        @fileList.on 'ready', @compile
 
   close: ->
     @server?.close()
