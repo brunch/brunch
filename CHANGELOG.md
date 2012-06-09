@@ -20,6 +20,8 @@ You can override public path with it.
 to serve the app. The default value is empty string.
 * Fixed `config.paths.ignored` on windows.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
+* Only generated files that depend on changed in current compilation files
+are written now. Before, brunch was writing all files each time.
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
