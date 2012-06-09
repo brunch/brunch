@@ -1,3 +1,5 @@
+'use strict'
+
 {exec} = require 'child_process'
 mkdirp = require 'mkdirp'
 rimraf = require 'rimraf'

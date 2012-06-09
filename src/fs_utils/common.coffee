@@ -1,3 +1,5 @@
+'use strict'
+
 fs = require 'fs'
 {EventEmitter} = require 'events'
 mkdirp = require 'mkdirp'

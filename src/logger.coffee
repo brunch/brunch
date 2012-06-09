@@ -1,3 +1,5 @@
+'use strict'
+
 color = require 'ansi-color'
 growl = require 'growl'
 require 'date-utils'

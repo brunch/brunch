@@ -1,3 +1,5 @@
+'use strict'
+
 {EventEmitter} = require 'events'
 Asset = require './asset'
 SourceFile = require './source_file'

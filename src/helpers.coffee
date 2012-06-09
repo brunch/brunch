@@ -1,3 +1,5 @@
+'use strict'
+
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'

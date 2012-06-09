@@ -1,3 +1,5 @@
+'use strict'
+
 async = require 'async'
 chokidar = require 'chokidar'
 sysPath = require 'path'

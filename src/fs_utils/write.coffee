@@ -1,3 +1,5 @@
+'use strict'
+
 async = require 'async'
 sysPath = require 'path'
 inflection = require 'inflection'

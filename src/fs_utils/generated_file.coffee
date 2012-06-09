@@ -1,3 +1,5 @@
+'use strict'
+
 fs = require 'fs'
 inflection = require 'inflection'
 sysPath = require 'path'

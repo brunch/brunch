@@ -1,3 +1,5 @@
+'use strict'
+
 argumentum = require 'argumentum'
 fs = require 'fs'
 sysPath = require 'path'

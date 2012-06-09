@@ -1,3 +1,5 @@
+'use strict'
+
 create = require './create'
 scaffold = require './scaffold'
 watch = require './watch'

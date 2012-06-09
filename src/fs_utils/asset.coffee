@@ -1,3 +1,5 @@
+'use strict'
+
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'

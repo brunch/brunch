@@ -1,3 +1,5 @@
+'use strict'
+
 fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
