@@ -1,5 +1,7 @@
 # Brunch 1.3.0 (unreleased)
 * Added testing support (thanks to Andreas Gerstmayr):
+    * [Mocha](http://visionmedia.github.com/mocha/) is used as test engine.
+    It's a feature-rich, flexible and fun.
     * `brunch test` (or `brunch t`) is used to run all tests in CLI env.
     * `test` directory is now watched. Add `'javascripts/tests.js': /^test/`
     to `config.javascripts.joinTo` in `config.coffee` to compile them.
