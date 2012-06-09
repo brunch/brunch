@@ -8,14 +8,18 @@
 * File watcher improvements:
     * Vim backup files are now ignored by watcher.
     * Fixed watching of non-compiled files in `app`.
+* Changed `onCompile` plugin API. Now it receives an array of
+`fs_utils.GeneratedFile`. This makes it very rich and allows to build smarter
+reloaders. For example, the ones that reload browser tabs only on stylesheet
+change.
 * Semicolon is now added after every compiled vendor library because of
 some libs that break with brunch. Hello, Zepto!
 * Brought back `--public (-o)` option to `brunch build` and `brunch watch`.
 You can override public path with it.
 * Added support for `config.server.base`, which determines base URL from which 
 to serve the app. The default value is empty string.
+* Fixed `config.paths.ignored` on windows.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
-* Fixed `options.ignored` on windows.
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
