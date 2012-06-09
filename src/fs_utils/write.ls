@@ -19,18 +19,18 @@ getJoinConfig = (config) ->
   joinConfig = {}
   types = Object.keys(config.files)
   types
-    .map (type) =>
+    .map (type) ~>
       config.files[type].joinTo
-    .map (joinTo) =>
+    .map (joinTo) ~>
       if typeof joinTo is 'string'
         object = {}
         object[joinTo] = /.+/
         object
       else
         joinTo
-    .forEach (joinTo, index) =>
+    .forEach (joinTo, index) ~>
       cloned = {}
-      Object.keys(joinTo).forEach (generatedFilePath) =>
+      Object.keys(joinTo).forEach (generatedFilePath) ~>
         cloned[generatedFilePath] = makeChecker joinTo[generatedFilePath]
       joinConfig[types[index]] = cloned
   Object.freeze(joinConfig)
@@ -44,13 +44,13 @@ getGeneratedFilesPaths = (sourceFile, joinConfig) ->
 getFiles = (fileList, config, minifiers) ->
   joinConfig = getJoinConfig config
   map = {}
-  fileList.files.forEach (file) =>
+  fileList.files.forEach (file) ~>
     paths = getGeneratedFilesPaths file, joinConfig
-    paths.forEach (path) =>
+    paths.forEach (path) ~>
       map[path] ?= []
       map[path].push file
 
-  Object.keys(map).map (generatedFilePath) =>
+  Object.keys(map).map (generatedFilePath) ~>
     sourceFiles = map[generatedFilePath]
     fullPath = sysPath.join config.paths.public, generatedFilePath
     new GeneratedFile fullPath, sourceFiles, config, minifiers

@@ -12,7 +12,7 @@ module.exports = class FileList extends EventEmitter
   # as a one compilation.
   RESET_TIME: 65
 
-  constructor: (@config) ->
+  (@config) ->
     @files = []
     @assets = []
     @on 'change', @_change
@@ -28,7 +28,7 @@ module.exports = class FileList extends EventEmitter
       when '[object String]'
         helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
       when '[object Array]'
-        test.some((subTest) => @_ignored path, subTest)
+        test.some((subTest) ~> @_ignored path, subTest)
       else
         no
 
@@ -37,9 +37,9 @@ module.exports = class FileList extends EventEmitter
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
-  _resetTimer: =>
+  _resetTimer: ~>
     clearTimeout @timer if @timer?
-    @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
+    @timer = setTimeout (~> @emit 'ready'), @RESET_TIME
 
   _findByPath: (path) ->
     @files.filter((file) -> file.path is path)[0]
@@ -49,15 +49,15 @@ module.exports = class FileList extends EventEmitter
 
   _compileDependentFiles: (path) ->
     @files
-      .filter (dependent) =>
+      .filter (dependent) ~>
         dependent.cache.dependencies.length
-      .filter (dependent) =>
+      .filter (dependent) ~>
         path in dependent.cache.dependencies
       .forEach(@_compile)
     @_resetTimer()
 
-  _compile: (file) =>
-    file.compile (error) =>
+  _compile: (file) ~>
+    file.compile (error) ~>
       logger.debug "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
@@ -65,8 +65,8 @@ module.exports = class FileList extends EventEmitter
       @_compileDependentFiles file.path
       @_resetTimer()
 
-  _copy: (asset) =>
-    asset.copy (error) =>
+  _copy: (asset) ~>
+    asset.copy (error) ~>
       logger.debug "Copied asset '#{asset.path}'"
       if error?
         return logger.error "Copying of '#{asset.path}' failed -- #{error}"
@@ -83,7 +83,7 @@ module.exports = class FileList extends EventEmitter
     @assets.push file
     file
 
-  _change: (path, compiler, isHelper) =>
+  _change: (path, compiler, isHelper) ~>
     if @_isAsset path
       @_copy (@_findAssetByPath(path) ? @_addAsset path)
     else if @_ignored(path) or not compiler
@@ -91,7 +91,7 @@ module.exports = class FileList extends EventEmitter
     else
       @_compile (@_findByPath(path) ? @_add path, compiler, isHelper)
 
-  _unlink: (path) =>
+  _unlink: (path) ~>
     if @_isAsset path
       @assets.splice(@assets.indexOf(path), 1)
     else if @_ignored path

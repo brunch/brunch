@@ -8,12 +8,12 @@ helpers = require '../helpers'
 watch = require './watch'
 
 class BrunchTestRunner
-  constructor: (options) ->
+  (options) ->
     @config = helpers.loadConfig options.configPath
     @setupJsDom @startMocha
     
-  readTestFiles: (callback) =>
-    getPublicPath = (subPaths...) =>
+  readTestFiles: (callback) ~>
+    getPublicPath = (subPaths...) ~>
       sysPath.join @config.paths.public, subPaths...
     files = [
       getPublicPath('index.html'),
@@ -22,7 +22,7 @@ class BrunchTestRunner
     ]
     async.map files, fs.readFile, callback
 
-  setupJsDom: (callback) =>
+  setupJsDom: (callback) ~>
     @readTestFiles (error, files) ->
       throw error if error?
       [html, vendorjs, appjs] = files
@@ -36,7 +36,7 @@ class BrunchTestRunner
           throw error if error?
           callback window
 
-  startMocha: (window) =>
+  startMocha: (window) ~>
     global.window = window
     global.expect = chai.expect
     

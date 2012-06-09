@@ -25,12 +25,12 @@ module.exports = class GeneratedFile
   # sourceFiles - array of `fs_utils.SourceFile`-s.
   # config      - parsed application config.
   # 
-  constructor: (@path, @sourceFiles, @config, minifiers) ->    
+  (@path, @sourceFiles, @config, minifiers) ->    
     @type = if @sourceFiles.some((file) -> file.type is 'javascript')
       'javascript'
     else
       'stylesheet'
-    @minifier = minifiers.filter((minifier) => minifier.type is @type)[0]
+    @minifier = minifiers.filter((minifier) ~> minifier.type is @type)[0]
     @isTestsFile = @type is 'javascript' and /tests\.js$/.test @path
     Object.freeze(this)
 
@@ -82,13 +82,13 @@ module.exports = class GeneratedFile
     joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
       if @isTestsFile
-        getTestRequireDefinition (error, requireDefinition) =>
+        getTestRequireDefinition (error, requireDefinition) ~>
           callback error, requireDefinition + joined + '\n' + @_loadTestFiles(files)
       else
-        getRequireDefinition (error, requireDefinition) =>
+        getRequireDefinition (error, requireDefinition) ~>
           callback error, requireDefinition + joined
     else
-      process.nextTick =>
+      process.nextTick ~>
         callback null, joined
 
   # Private: minify data.
@@ -110,8 +110,8 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    @_join (@_sort @sourceFiles), (error, joined) =>
+    @_join (@_sort @sourceFiles), (error, joined) ~>
       return callback error if error?
-      @_minify joined, (error, data) =>
+      @_minify joined, (error, data) ~>
         return callback error if error?
         common.writeFile @path, data, callback

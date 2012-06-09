@@ -4,7 +4,7 @@ logger = require '../logger'
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (@path, @compiler, @isHelper = no, @isVendor = no) ->
+  (@path, @compiler, @isHelper = no, @isVendor = no) ->
     logger.debug "Initializing fs_utils.SourceFile:", {
       @path, @isHelper, @isVendor
     }
@@ -53,12 +53,12 @@ module.exports = class SourceFile
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
     realPath = if @isHelper then @realPath else @path
-    fs.readFile realPath, (error, buffer) =>
+    fs.readFile realPath, (error, buffer) ~>
       return callback "Read error: #{error}" if error?
       fileContent = buffer.toString()
-      @compiler.compile fileContent, @path, (error, result) =>
+      @compiler.compile fileContent, @path, (error, result) ~>
         return callback "Compile error: #{error}" if error?
-        @_getDependencies fileContent, @path, (error, dependencies) =>
+        @_getDependencies fileContent, @path, (error, dependencies) ~>
           return callback "GetDeps error: #{error}" if error?
           @cache.dependencies = dependencies
           @cache.data = @_wrap result if result?

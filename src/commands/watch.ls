@@ -9,7 +9,7 @@ isCompilerFor = (path, plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
-    ///\.#{plugin.extension}$///
+    //\.#{plugin.extension}$//
   else
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
@@ -30,7 +30,7 @@ getPluginIncludes = (plugins) ->
     , []
 
 class BrunchWatcher
-  constructor: (@persistent, @options, @_onCompile) ->
+  (@persistent, @options, @_onCompile) ->
     params = {}
     params.minify = yes if options.minify
     params.persistent = persistent
@@ -51,17 +51,17 @@ class BrunchWatcher
     @fileList = new fs_utils.FileList @config
 
   initPlugins: (callback) ->
-    helpers.loadPlugins @config, (error, plugins) =>
+    helpers.loadPlugins @config, (error, plugins) ~>
       return logger.error error if error?
       @plugins = plugins
       callback error
 
-  changeFileList: (path, isHelper = no) =>
+  changeFileList: (path, isHelper = no) ~>
     @start = Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
     @fileList.emit 'change', path, compiler, isHelper
 
-  removeFromFileList: (path) =>
+  removeFromFileList: (path) ~>
     @start = Date.now()
     @fileList.emit 'unlink', path
 
@@ -71,13 +71,13 @@ class BrunchWatcher
       @config.paths.config, @config.paths.packageConfig
     ].concat(@config.paths.assets)
 
-    async.filter watched, fs_utils.exists, (watchedFiles) =>
+    async.filter watched, fs_utils.exists, (watchedFiles) ~>
       ignored = fs_utils.ignored
       @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
-        .on 'add', (path) =>
+        .on 'add', (path) ~>
           logger.debug "File '#{path}' received event 'add'"
           @changeFileList path, no
-        .on 'change', (path) =>
+        .on 'change', (path) ~>
           logger.debug "File '#{path}' received event 'change'"
           if path is @config.paths.config
             @reload no
@@ -85,7 +85,7 @@ class BrunchWatcher
             @reload yes
           else
             @changeFileList path, no
-        .on 'unlink', (path) =>
+        .on 'unlink', (path) ~>
           logger.debug "File '#{path}' received event 'unlink'"
           if path in [@config.paths.config, @config.paths.packageConfig]
             logger.info "Detected removal of config.coffee / package.json.
@@ -95,7 +95,7 @@ class BrunchWatcher
             @removeFromFileList path
         .on('error', logger.error)
 
-  onCompile: (result) =>
+  onCompile: (result) ~>
     @_onCompile result
     @plugins
       .filter (plugin) ->
@@ -103,8 +103,8 @@ class BrunchWatcher
       .forEach (plugin) ->
         plugin.onCompile result
 
-  compile: =>
-    fs_utils.write @fileList, @config, @plugins, (error, result) =>
+  compile: ~>
+    fs_utils.write @fileList, @config, @plugins, (error, result) ~>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
       @watcher.close() unless @persistent
@@ -112,9 +112,9 @@ class BrunchWatcher
 
   watch: ->
     @initServer()
-    @initPlugins =>
+    @initPlugins ~>
       @initFileList()
-      getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
+      getPluginIncludes(@plugins).forEach((path) ~> @changeFileList path, yes)
       @initWatcher()
       @fileList.on 'ready', @compile
 
@@ -123,7 +123,7 @@ class BrunchWatcher
     @watcher.close()
 
   reload: (reInstall = no) ->
-    reWatch = =>
+    reWatch = ~>
       @close()
       @clone().watch()
     if reInstall

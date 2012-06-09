@@ -16,26 +16,26 @@ getInfo = (level) ->
 logger =
   isDebug: process.env.BRUNCH_DEBUG is '1'
 
-  log: (level, args...) ->
+  log: (level, ...args) ->
     info = getInfo level
     process.nextTick ->
       if level is 'error' or level is 'warn'
-        console.error info, args...
+        console.error info, ...args
       else
-        console.log info, args...
+        console.log info, ...args
 
   error: ->
-    growl [arguments...].join(' '), title: 'Brunch error'
-    logger.log 'error', arguments...
+    growl [...arguments].join(' '), title: 'Brunch error'
+    logger.log 'error', ...arguments
 
   warn: ->
-    logger.log 'warn', arguments...
+    logger.log 'warn', ...arguments
 
   info: ->
-    logger.log 'info', arguments...
+    logger.log 'info', ...arguments
 
   debug: ->
     if logger.isDebug
-      logger.log 'debug', arguments...
+      logger.log 'debug', ...arguments
 
 module.exports = Object.freeze(logger)
