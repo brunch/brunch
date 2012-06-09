@@ -14,11 +14,14 @@ makeChecker = (item) ->
       throw new Error("Config.files item #{item} is invalid.
 Use RegExp or Function.")
 
+listToObj = (acc, elem) ->
+  acc[elem[0]] = elem[1]
+  acc
+
 # Converts `config.files[...].joinTo` to one format.
 getJoinConfig = (config) ->
-  joinConfig = {}
   types = Object.keys(config.files)
-  types
+  result = types
     .map (type) =>
       config.files[type].joinTo
     .map (joinTo) =>
@@ -28,12 +31,15 @@ getJoinConfig = (config) ->
         object
       else
         joinTo
-    .forEach (joinTo, index) =>
-      cloned = {}
-      Object.keys(joinTo).forEach (generatedFilePath) =>
-        cloned[generatedFilePath] = makeChecker joinTo[generatedFilePath]
-      joinConfig[types[index]] = cloned
-  Object.freeze(joinConfig)
+    .map (joinTo, index) =>
+      makeJoinChecker = (generatedFilePath) =>
+        [generatedFilePath, makeChecker(joinTo[generatedFilePath])]
+      subConfig = Object.keys(joinTo)
+        .map(makeJoinChecker)
+        .reduce(listToObj, {})
+      [types[index], subConfig]
+    .reduce(listToObj, {})
+  Object.freeze(result)
 
 getGeneratedFilesPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
