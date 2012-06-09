@@ -31,6 +31,6 @@ module.exports = write = (fileList, config, joinConfig, plugins, startTime, call
   changed = files.filter (generatedFile) ->
     generatedFile.sourceFiles.some (sourceFile) ->
       sourceFile.cache.compilationTime > startTime
-  async.forEach changed, ((file) -> file.write callback), (error) ->
+  async.forEach changed, ((file, next) -> file.write next), (error) ->
     return callback error if error?
     callback null, changed
