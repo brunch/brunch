@@ -6,7 +6,7 @@ inflection = require 'inflection'
 GeneratedFile = require './generated_file'
 logger = require '../logger'
 
-makeChecker = (item) ->
+makeUniversalChecker = (item) ->
   switch toString.call(item)
     when '[object RegExp]'
       ((string) -> item.test string)
@@ -34,11 +34,9 @@ getJoinConfig = (config) ->
       else
         joinTo
     .map (joinTo, index) =>
-      makeJoinChecker = (generatedFilePath) =>
-        [generatedFilePath, makeChecker(joinTo[generatedFilePath])]
-      subConfig = Object.keys(joinTo)
-        .map(makeJoinChecker)
-        .reduce(listToObj, {})
+      makeChecker = (generatedFilePath) =>
+        [generatedFilePath, makeUniversalChecker(joinTo[generatedFilePath])]
+      subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
       [types[index], subConfig]
     .reduce(listToObj, {})
   Object.freeze(result)
