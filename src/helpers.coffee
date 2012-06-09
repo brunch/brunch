@@ -7,10 +7,13 @@ fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
 
-exports.startsWith = (string, substring) ->
+exports.startsWith = startsWith = (string, substring) ->
   string.indexOf(substring) is 0
 
-ensureArray = (object) ->
+exports.callFunctionOrPass = callFunctionOrPass = (thing) ->
+  if typeof thing is 'function' then thing() else thing
+
+exports.ensureArray = ensureArray = (object) ->
   if Array.isArray object
     object
   else

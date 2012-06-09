@@ -18,18 +18,10 @@ isCompilerFor = (path, plugin) ->
 
 getPluginIncludes = (plugins) ->
   plugins
-    .map (plugin) ->
-      paths = plugin.include
-      if typeof paths is 'function'
-        paths()
-      else
-        paths
-    .filter (paths) ->
-      paths?
-    # Flatten the array.
-    .reduce (acc, elem) ->
-      acc.concat(if Array.isArray(elem) then elem else [elem])
-    , []
+    .map((plugin) -> plugin.include)
+    .map(helpers.callFunctionOrPass)
+    .filter((paths) -> paths?)
+    .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
 
 class BrunchWatcher
   constructor: (@persistent, @options, @_onCompile) ->
