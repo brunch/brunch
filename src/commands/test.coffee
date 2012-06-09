@@ -16,7 +16,7 @@ class BrunchTestRunner
     if @testFiles.length > 0
       @setupJsDom @startMocha
     else
-      throw new Error("Can't find file containing tests.")
+      throw new Error("Can't find tests for this project.")
 
   readTestFiles: (callback) =>
     getPublicPath = (subPaths...) =>

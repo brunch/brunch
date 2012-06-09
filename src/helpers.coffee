@@ -241,10 +241,15 @@ exports.loadPlugins = (config, callback) ->
 cachedTestFiles = null
 exports.findTestFiles = (config) ->
   return cachedTestFiles if cachedTestFiles?
-  
+
   files = []
-  Object.keys(config.files.javascripts.joinTo).forEach (generatedFile) ->
+  checkJoinToConfig = (generatedFile) ->
     if exports.startsWith generatedFile, sysPath.normalize('test/')
       files.push sysPath.join(config.paths.public, generatedFile)
-      
+
+  if typeof config.files.javascripts.joinTo is 'string'
+    checkJoinToConfig config.files.javascripts.joinTo
+  else
+    Object.keys(config.files.javascripts.joinTo).forEach checkJoinToConfig
+
   cachedTestFiles = files
