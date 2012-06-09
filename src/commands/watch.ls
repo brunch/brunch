@@ -14,20 +14,21 @@ isCompilerFor = (path, plugin) ->
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
+callOrPass = (item) ->
+  if typeof item is 'function'
+    item()
+  else
+    item
+
+ensureArray = (item) ->
+  if Array.isArray(item) then item else [item]
+
 getPluginIncludes = (plugins) ->
   plugins
-    .map (plugin) ->
-      paths = plugin.include
-      if typeof paths is 'function'
-        paths()
-      else
-        paths
-    .filter (paths) ->
-      paths?
-    # Flatten the array.
-    .reduce (acc, elem) ->
-      acc.concat(if Array.isArray(elem) then elem else [elem])
-    , []
+    |> lookup 'include'
+    |> callOrPass
+    |> filter (paths) -> paths?
+    |> concatMap ensureArray
 
 class BrunchWatcher
   (@persistent, @options, @_onCompile) ->
@@ -69,7 +70,7 @@ class BrunchWatcher
     watched = [
       @config.paths.app, @config.paths.vendor, @config.paths.test,
       @config.paths.config, @config.paths.packageConfig
-    ].concat(@config.paths.assets)
+    ] +++ @config.paths.assets
 
     async.filter watched, fs_utils.exists, (watchedFiles) ~>
       ignored = fs_utils.ignored
@@ -98,10 +99,9 @@ class BrunchWatcher
   onCompile: (result) ~>
     @_onCompile result
     @plugins
-      .filter (plugin) ->
-        typeof plugin.onCompile is 'function'
-      .forEach (plugin) ->
-        plugin.onCompile result
+      |> lookup 'onCompile'
+      |> filter (callback) -> typeof callback is 'function'
+      |> each (callback) -> callback result
 
   compile: ~>
     fs_utils.write @fileList, @config, @plugins, (error, result) ~>

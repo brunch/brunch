@@ -6,9 +6,8 @@ common = require './common'
 
 module.exports = class Asset
   (@path, config) ->
-    directory = config.paths.assets.filter(
-      (dir) ~> helpers.startsWith path, dir
-    )[0]
+    isParentDirectory = (dir) -> helpers.startsWith path, dir
+    directory = config.paths.assets |> find isParentDirectory
     @relativePath = sysPath.relative directory, @path
     @destinationPath = sysPath.join config.paths.public, @relativePath
     logger.debug "Initializing fs_utils.Asset", {

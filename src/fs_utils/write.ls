@@ -19,18 +19,18 @@ getJoinConfig = (config) ->
   joinConfig = {}
   types = Object.keys(config.files)
   types
-    .map (type) ~>
+    |> map (type) ->
       config.files[type].joinTo
-    .map (joinTo) ~>
+    |> map (joinTo) ->
       if typeof joinTo is 'string'
         object = {}
         object[joinTo] = /.+/
         object
       else
         joinTo
-    .forEach (joinTo, index) ~>
+    |> forEach (joinTo, index) ->
       cloned = {}
-      Object.keys(joinTo).forEach (generatedFilePath) ~>
+      Object.keys(joinTo).forEach (generatedFilePath) ->
         cloned[generatedFilePath] = makeChecker joinTo[generatedFilePath]
       joinConfig[types[index]] = cloned
   Object.freeze(joinConfig)
@@ -57,9 +57,8 @@ getFiles = (fileList, config, minifiers) ->
 
 # * plugins - hashmap of plugins from package.json.
 module.exports = write = (fileList, config, plugins, callback) ->
-  minifiers = plugins.filter (plugin) -> !!plugin.minify
+  minifiers = plugins |> filter (plugin) -> Boolean plugin.minify
   files = getFiles fileList, config, minifiers
   writeFile = (file, callback) -> file.write callback
-  async.forEach files, writeFile, (error, results) ->
-    return callback error if error?
-    callback null, results
+  error, results <- async.forEach files, writeFile
+  callback error, results

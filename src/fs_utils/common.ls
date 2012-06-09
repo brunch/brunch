@@ -6,7 +6,7 @@ sysPath = require 'path'
 util = require 'util'
 logger = require '../logger'
 
-exports.exists = fs.exists or sysPath.exists
+exports.exists = exists = fs.exists or sysPath.exists
 
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
@@ -20,15 +20,19 @@ exports.exists = fs.exists or sysPath.exists
 # 
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 # 
-exports.writeFile = (path, data, callback) ->
+exports.writeFile = writeFile = (path, data, callback) ->
   logger.debug "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
-  write (error) ->
-    return callback null, path, data unless error?
-    mkdirp (sysPath.dirname path), 0o755, (error) ->
-      return callback error if error?
-      write (error) ->
-        callback error, path, data
+  error <- write
+  if error?
+    error <- mkdirp (sysPath.dirname path), 0o755
+    if error?
+      callback error
+    else
+      error <- write
+      callback error, path, data
+  else
+    callback null, path, data
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
 ignoredRe = /(^(\.|#)|__$)/;
@@ -37,15 +41,20 @@ exports.ignored = ignored = (path) ->
   ignoredRe.test(sysPath.basename path)
 
 exports.copy = (source, destination, callback) ->
-  return callback() if ignored source
   copy = (error) ->
-    return logger.error error if error?
-    input = fs.createReadStream source
-    output = fs.createWriteStream destination
-    util.pump input, output, callback
-  parentDir = sysPath.dirname(destination)
-  exports.exists parentDir, (exists) ->
-    if exists
+    if error?
+      logger.error error
+    else
+      input = fs.createReadStream source
+      output = fs.createWriteStream destination
+      util.pump input, output, callback
+
+  if ignored source
+    callback()
+  else
+    parentDir = sysPath.dirname(destination)
+    parentExists <- exists parentDir
+    if parentExists
       copy()
     else
       mkdirp parentDir, copy
@@ -53,6 +62,8 @@ exports.copy = (source, destination, callback) ->
 # Recursive copy.
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
   options = if filter then {filter: ((path) -> not ignored path)} else {}
-  exports.exists source, (exists) ->
-    return callback() unless exists
+  sourceExists <- exists source
+  if sourceExists
     ncp source, destination, options, callback
+  else
+    callback()

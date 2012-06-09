@@ -35,12 +35,13 @@ recursiveExtend = (object, properties) ->
   object
 
 exports.deepFreeze = deepFreeze = (object) ->
+  isFrozen = (value) ->
+    typeof value is 'object' and value? and not Object.isFrozen(value)
+
   Object.keys(Object.freeze(object))
-    .map (key) ->
-      object[key]
-    .filter (value) ->
-      typeof value is 'object' and value? and not Object.isFrozen(value)
-    .forEach(deepFreeze)
+    |> map (key) -> object[key]
+    |> filter isFrozen
+    |> each deepFreeze
   object
 
 sortAlphabetically = (a, b) ->

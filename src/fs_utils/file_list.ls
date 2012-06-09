@@ -42,34 +42,34 @@ module.exports = class FileList extends EventEmitter
     @timer = setTimeout (~> @emit 'ready'), @RESET_TIME
 
   _findByPath: (path) ->
-    @files.filter((file) -> file.path is path)[0]
+    @files |> find (file) -> file.path is path
 
   _findAssetByPath: (path) ->
-    @assets.filter((file) -> file.path is path)[0]
+    @assets |> find (file) -> file.path is path
 
   _compileDependentFiles: (path) ->
     @files
-      .filter (dependent) ~>
-        dependent.cache.dependencies.length
-      .filter (dependent) ~>
-        path in dependent.cache.dependencies
-      .forEach(@_compile)
+      |> filter (dependent) ~> not empty dependent.cache.dependencies
+      |> filter (dependent) ~> path `elem` dependent.cache.dependencies
+      |> each @_compile
     @_resetTimer()
 
   _compile: (file) ~>
-    file.compile (error) ~>
-      logger.debug "Compiled file '#{file.path}'"
-      if error?
-        return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
+    error <~ file.compile
+    if error?
+      logger.error "#{file.compilerName} failed in '#{file.path}' -- 
 #{error}"
+    else
+      logger.debug "Compiled file '#{file.path}'"
       @_compileDependentFiles file.path
       @_resetTimer()
 
   _copy: (asset) ~>
-    asset.copy (error) ~>
+    error <~ asset.copy
+    if error?
+      logger.error "Copying of '#{asset.path}' failed -- #{error}"
+    else
       logger.debug "Copied asset '#{asset.path}'"
-      if error?
-        return logger.error "Copying of '#{asset.path}' failed -- #{error}"
       @_resetTimer()
 
   _add: (path, compiler, isHelper) ->

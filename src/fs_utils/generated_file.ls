@@ -9,8 +9,10 @@ logger = require '../logger'
 # Load and cache static files, used for require_definition.js and test_require_definition.js
 _getStaticFile = async.memoize (filename, callback) ->
   path = sysPath.join __dirname, '..', '..', 'vendor', filename
-  fs.readFile path, (error, result) ->
-    return logger.error error if error?
+  error, result <- fs.readFile path
+  if error?
+    logger.error error 
+  else
     callback null, result.toString()
 
 # The definition would be added on top of every filewriter .js file.
@@ -37,20 +39,19 @@ module.exports = class GeneratedFile
   _extractOrder: (files, config) ->
     types = files.map (file) -> inflection.pluralize file.type
     Object.keys(config.files)
-      .filter (key) ->
-        key in types
+      |> filter (key) -> key `elem` types
       # Extract order value from config.
-      .map (key) ->
+      |> map (key) ->
         config.files[key].order
       # Join orders together.
-      .reduce (memo, array) ->
+      |> fold((memo, array) ->
         array or= {}
         {
-          before: memo.before.concat(array.before or []),
-          after: memo.after.concat(array.after or []),
+          before: memo.before +++ (array.before or []),
+          after: memo.after +++ (array.after or []),
           vendorPaths: [config.paths.vendor]
         }
-      , {before: [], after: []}
+      ) {before: [], after: []}
 
   _sort: (files) ->
     paths = files.map (file) -> file.path
@@ -62,16 +63,13 @@ module.exports = class GeneratedFile
 
   _loadTestFiles: (files) ->
     files
-      .map (file) ->
-        file.path
-      .filter (path) ->
-        /_test\.[a-z]+$/.test path
-      .map (path) ->
+      |> map (lookup 'path')
+      |> filter (path) -> /_test\.[a-z]+$/.test path
+      |> map (path) ->
         path = path.replace /\\/g, '/'
         path.substring 0, path.lastIndexOf '.'
-      .map (path) ->
-        "this.require('#{path}');"
-      .join '\n'
+      |> map (path) -> "this.require('#{path}');"
+      |> unlines
 
   # Private: Collect content from a list of files and wrap it with
   # require.js module definition if needed.
@@ -110,8 +108,12 @@ module.exports = class GeneratedFile
   # 
   # Returns nothing.
   write: (callback) ->
-    @_join (@_sort @sourceFiles), (error, joined) ~>
-      return callback error if error?
-      @_minify joined, (error, data) ~>
-        return callback error if error?
+    error, joined <~ @_join (@_sort @sourceFiles)
+    if error?
+      callback error
+    else
+      error, data <~ @_minify joined
+      if error?
+        callback error
+      else
         common.writeFile @path, data, callback
