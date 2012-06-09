@@ -81,7 +81,6 @@ class BrunchWatcher
       params.server.port = options.port if options.port
     @config = helpers.loadConfig options.configPath, params
     @joinConfig = getJoinConfig @config
-    @changedFiles = Object.create(null)
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -100,13 +99,12 @@ class BrunchWatcher
       callback error
 
   changeFileList: (path, isHelper = no) =>
-    @start = Date.now()
+    @start ?= Date.now()
     compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    @changedFiles
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
-    @start = Date.now()
+    @start ?= Date.now()
     @fileList.emit 'unlink', path
 
   initWatcher: (callback) ->
@@ -140,13 +138,14 @@ class BrunchWatcher
         .on('error', logger.error)
       callback()
 
-  onCompile: (result) =>
-    @_onCompile result
+  onCompile: (generatedFiles) =>
+    @_onCompile generatedFiles
     @plugins
       .filter (plugin) ->
         typeof plugin.onCompile is 'function'
       .forEach (plugin) ->
-        plugin.onCompile result
+        plugin.onCompile generatedFiles
+    @start = null
 
   compile: =>
     fs_utils.write @fileList, @config, @joinConfig, @plugins, @start, (error, result) =>
