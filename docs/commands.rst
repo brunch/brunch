@@ -24,12 +24,14 @@ Build a brunch project. Options:
 
 * ``-m, --minify``: minify the result js & css files? Analog of ``minify`` option in config file.
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
+* ``-o PUBLIC_DIR, --public PUBLIC_DIR``: path to public directory (a place to which brunch would compile files)
 
 Short-cut: ``brunch b``.
 
 Examples:
 
 * ``brunch b -c ios_config -m``: would load ios_config.(js,coffee), build application and minify the output.
+* ``brunch b -m -o /home/www/site``: build application to ``/home/www/site`` and minify output.
 
 ``brunch watch``
 ----------------
@@ -39,6 +41,7 @@ Watch brunch directory and rebuild if something changed. Options:
 * ``-p PORT, --port PORT``: if a `server` option was specified, define on which port the server would run
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
 * ``-m, --minify``: minify the result js & css files? Analog of ``minify`` option in config file.
+* ``-o PUBLIC_DIR, --public PUBLIC_DIR``: path to public directory (a place to which brunch would compile files)
 
 Short-cut: ``brunch w``.
 
@@ -46,7 +49,7 @@ Examples:
 
 * ``brunch w``: simply watch current directory &amp; compile the output to ``build`` directory.
 * ``brunch w -s``: watch current project and run a webserver that would work on ``public`` directory (by default).
-* ``brunch w -s -p 8841 -m``: watch current project and run a webserver that would work on ``public`` directory (by default). Also, auto-minify files.
+* ``brunch w -s -p 8841 -m -o /home/www/site``: watch current project, compile files in ``/home/www/site`` and run a webserver that would work on ``/home/www/site`` directory. Also, auto-minify files.
 
 ``brunch generate <type> <name>``
 ---------------------------------

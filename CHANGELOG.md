@@ -1,16 +1,19 @@
 # Brunch 1.3.0 (unreleased)
-* Added experimental testing support (thanks to Andreas Gerstmayr):
+* Added testing support (thanks to Andreas Gerstmayr):
     * `brunch test` (or `brunch t`) is used to run all tests in CLI env.
     * `test` directory is now watched. Add `'javascripts/tests.js': /^test/`
     to `config.javascripts.joinTo` in `config.coffee` to compile them.
-* Fixed watching of non-compiled files in `app`.
+* File watcher improvements:
+    * Vim backup files are now ignored by watcher.
+    * Fixed watching of non-compiled files in `app`.
 * Semicolon is now added after every compiled vendor library because of
 some libs that break with brunch. Hello, Zepto!
+* Brought back `--public (-o)` option to `brunch build` and `brunch watch`.
+You can override public path with it.
 * Added support for `config.server.base`, which determines base URL from which 
 to serve the app. The default value is empty string.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
 * Fixed `options.ignored` on windows.
-* Vim backup files are now ignored by watcher.
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
