@@ -1,13 +1,13 @@
-{EventEmitter} = require 'events'
+{Event-emitter} = require 'events'
 Asset = require './asset'
-SourceFile = require './source_file'
+Source-file = require './source_file'
 helpers = require '../helpers'
 logger = require '../logger'
-sysPath = require 'path'
+sys-path = require 'path'
 
-# A list of `fs_utils.SourceFile` or `fs_utils.Asset`
+# A list of `fs_utils.Source-file` or `fs_utils.Asset`
 # with some additional methods used to simplify file reading / removing.
-module.exports = class FileList extends EventEmitter
+module.exports = class File-list extends Event-emitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
   RESET_TIME: 65
@@ -20,49 +20,49 @@ module.exports = class FileList extends EventEmitter
 
   # Files that are not really app files.
   _ignored: (path, test = @config.paths.ignored) ->
-    switch toString.call(test)
-      when '[object RegExp]'
+    switch to-string.call(test)
+      when '[object Reg-exp]'
         path.match test
       when '[object Function]'
         test path
       when '[object String]'
-        helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
+        helpers.starts-with(sys-path.normalize(path), sys-path.normalize(test))
       when '[object Array]'
-        test.some((subTest) ~> @_ignored path, subTest)
+        test.some((sub-test) ~> @_ignored path, sub-test)
       else
         no
 
-  _isAsset: (path) ->
-    @config.paths.assets.some((dir) -> helpers.startsWith(path, dir))
+  _is-asset: (path) ->
+    @config.paths.assets.some((dir) -> helpers.starts-with(path, dir))
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
-  _resetTimer: ~>
-    clearTimeout @timer if @timer?
-    @timer = setTimeout (~> @emit 'ready'), @RESET_TIME
+  _reset-timer: ~>
+    clear-timeout @timer if @timer?
+    @timer = set-timeout (~> @emit 'ready'), @RESET_TIME
 
-  _findByPath: (path) ->
+  _find-byPath: (path) ->
     @files |> find (file) -> file.path is path
 
-  _findAssetByPath: (path) ->
+  _find-asset-byPath: (path) ->
     @assets |> find (file) -> file.path is path
 
-  _compileDependentFiles: (path) ->
+  _compile-dependent-files: (path) ->
     @files
       |> filter (dependent) ~> not empty dependent.cache.dependencies
       |> filter (dependent) ~> path `elem` dependent.cache.dependencies
       |> each @_compile
-    @_resetTimer()
+    @_reset-timer()
 
   _compile: (file) ~>
     error <~ file.compile
     if error?
-      logger.error "#{file.compilerName} failed in '#{file.path}' -- 
+      logger.error "#{file.compiler-name} failed in '#{file.path}' -- 
 #{error}"
     else
       logger.debug "Compiled file '#{file.path}'"
-      @_compileDependentFiles file.path
-      @_resetTimer()
+      @_compile-dependent-files file.path
+      @_reset-timer()
 
   _copy: (asset) ~>
     error <~ asset.copy
@@ -70,33 +70,33 @@ module.exports = class FileList extends EventEmitter
       logger.error "Copying of '#{asset.path}' failed -- #{error}"
     else
       logger.debug "Copied asset '#{asset.path}'"
-      @_resetTimer()
+      @_reset-timer()
 
-  _add: (path, compiler, isHelper) ->
-    isVendor = helpers.startsWith(path, @config.paths.vendor)
-    file = new SourceFile path, compiler, isHelper, isVendor
+  _add: (path, compiler, is-helper) ->
+    is-vendor = helpers.starts-with(path, @config.paths.vendor)
+    file = new Source-file path, compiler, is-helper, is-vendor
     @files.push file
     file
 
-  _addAsset: (path) ->
+  _add-asset: (path) ->
     file = new Asset path, @config
     @assets.push file
     file
 
-  _change: (path, compiler, isHelper) ~>
-    if @_isAsset path
-      @_copy (@_findAssetByPath(path) ? @_addAsset path)
+  _change: (path, compiler, is-helper) ~>
+    if @_is-asset path
+      @_copy (@_find-asset-byPath(path) ? @_add-asset path)
     else if @_ignored(path) or not compiler
-      @_compileDependentFiles path
+      @_compile-dependent-files path
     else
-      @_compile (@_findByPath(path) ? @_add path, compiler, isHelper)
+      @_compile (@_find-byPath(path) ? @_add path, compiler, is-helper)
 
   _unlink: (path) ~>
-    if @_isAsset path
-      @assets.splice(@assets.indexOf(path), 1)
+    if @_is-asset path
+      @assets.splice(@assets.index-of(path), 1)
     else if @_ignored path
-      @_compileDependentFiles path
+      @_compile-dependent-files path
     else
-      file = @_findByPath path
-      @files.splice(@files.indexOf(file), 1)
-    @_resetTimer()
+      file = @_find-byPath path
+      @files.splice(@files.index-of(file), 1)
+    @_reset-timer()

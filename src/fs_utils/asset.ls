@@ -1,4 +1,4 @@
-sysPath = require 'path'
+sys-path = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
 common = require './common'
@@ -6,14 +6,14 @@ common = require './common'
 
 module.exports = class Asset
   (@path, config) ->
-    isParentDirectory = (dir) -> helpers.startsWith path, dir
-    directory = config.paths.assets |> find isParentDirectory
-    @relativePath = sysPath.relative directory, @path
-    @destinationPath = sysPath.join config.paths.public, @relativePath
+    is-parent-directory = (dir) -> helpers.starts-with path, dir
+    directory = config.paths.assets |> find is-parent-directory
+    @relative-path = sys-path.relative directory, @path
+    @destination-path = sys-path.join config.paths.public, @relative-path
     logger.debug "Initializing fs_utils.Asset", {
-      @path, @relativePath, @destinationPath
+      @path, @relative-path, @destination-path
     }
     Object.freeze this
 
   copy: (callback) ->
-    common.copy @path, @destinationPath, callback
+    common.copy @path, @destination-path, callback

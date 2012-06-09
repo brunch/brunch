@@ -1,6 +1,6 @@
 common = require './common'
 helpers = require '../helpers'
-FileList = require './file_list'
+File-list = require './file_list'
 write = require './write'
 
-module.exports = helpers.extend common, {write, FileList}
+module.exports = helpers.extend common, {write, File-list}

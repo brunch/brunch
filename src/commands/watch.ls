@@ -1,11 +1,11 @@
 async = require 'async'
 chokidar = require 'chokidar'
-sysPath = require 'path'
+sys-path = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-isCompilerFor = (path, plugin) ->
+is-compiler-for = (path, plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
@@ -14,24 +14,24 @@ isCompilerFor = (path, plugin) ->
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
 
-callOrPass = (item) ->
+call-orPass = (item) ->
   if typeof item is 'function'
     item()
   else
     item
 
-ensureArray = (item) ->
-  if Array.isArray(item) then item else [item]
+ensure-array = (item) ->
+  if Array.is-array(item) then item else [item]
 
-getPluginIncludes = (plugins) ->
+get-plugin-includes = (plugins) ->
   plugins
     |> lookup 'include'
-    |> callOrPass
+    |> call-orPass
     |> filter (paths) -> paths?
-    |> concatMap ensureArray
+    |> concat-map ensure-array
 
-class BrunchWatcher
-  (@persistent, @options, @_onCompile) ->
+class Brunch-watcher
+  (@persistent, @options, @_on-compile) ->
     params = {}
     params.minify = yes if options.minify
     params.persistent = persistent
@@ -39,101 +39,101 @@ class BrunchWatcher
       params.server = {}
       params.server.run = yes if options.server
       params.server.port = options.port if options.port
-    @config = helpers.loadConfig options.configPath, params
+    @config = helpers.load-config options.config-path, params
 
   clone: ->
-    new BrunchWatcher(@persistent, @options, @onCompile)
+    new Brunch-watcher(@persistent, @options, @on-compile)
 
-  initServer: ->
+  init-server: ->
     if @persistent and @config.server.run
-      @server = helpers.startServer @config
+      @server = helpers.start-server @config
 
-  initFileList: ->
-    @fileList = new fs_utils.FileList @config
+  init-file-list: ->
+    @file-list = new fs_utils.File-list @config
 
-  initPlugins: (callback) ->
-    helpers.loadPlugins @config, (error, plugins) ~>
+  init-plugins: (callback) ->
+    helpers.load-plugins @config, (error, plugins) ~>
       return logger.error error if error?
       @plugins = plugins
       callback error
 
-  changeFileList: (path, isHelper = no) ~>
+  change-file-list: (path, is-helper = no) ~>
     @start = Date.now()
-    compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
-    @fileList.emit 'change', path, compiler, isHelper
+    compiler = @plugins.filter(is-compiler-for.bind(null, path))[0]
+    @file-list.emit 'change', path, compiler, is-helper
 
-  removeFromFileList: (path) ~>
+  remove-from-file-list: (path) ~>
     @start = Date.now()
-    @fileList.emit 'unlink', path
+    @file-list.emit 'unlink', path
 
-  initWatcher: (callback) ->
+  init-watcher: (callback) ->
     watched = [
       @config.paths.app, @config.paths.vendor, @config.paths.test,
-      @config.paths.config, @config.paths.packageConfig
+      @config.paths.config, @config.paths.package-config
     ] +++ @config.paths.assets
 
-    async.filter watched, fs_utils.exists, (watchedFiles) ~>
+    async.filter watched, fs_utils.exists, (watched-files) ~>
       ignored = fs_utils.ignored
-      @watcher = chokidar.watch(watchedFiles, {ignored, @persistent})
+      @watcher = chokidar.watch(watched-files, {ignored, @persistent})
         .on 'add', (path) ~>
           logger.debug "File '#{path}' received event 'add'"
-          @changeFileList path, no
+          @change-file-list path, no
         .on 'change', (path) ~>
           logger.debug "File '#{path}' received event 'change'"
           if path is @config.paths.config
             @reload no
-          else if path is @config.paths.packageConfig
+          else if path is @config.paths.package-config
             @reload yes
           else
-            @changeFileList path, no
+            @change-file-list path, no
         .on 'unlink', (path) ~>
           logger.debug "File '#{path}' received event 'unlink'"
-          if path in [@config.paths.config, @config.paths.packageConfig]
+          if path in [@config.paths.config, @config.paths.package-config]
             logger.info "Detected removal of config.coffee / package.json.
  Exiting."
             process.exit(0)
           else
-            @removeFromFileList path
+            @remove-from-file-list path
         .on('error', logger.error)
 
-  onCompile: (result) ~>
-    @_onCompile result
+  on-compile: (result) ~>
+    @_on-compile result
     @plugins
-      |> lookup 'onCompile'
+      |> lookup 'on-compile'
       |> filter (callback) -> typeof callback is 'function'
       |> each (callback) -> callback result
 
   compile: ~>
-    fs_utils.write @fileList, @config, @plugins, (error, result) ~>
+    fs_utils.write @file-list, @config, @plugins, (error, result) ~>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
       @watcher.close() unless @persistent
-      @onCompile result
+      @on-compile result
 
   watch: ->
-    @initServer()
-    @initPlugins ~>
-      @initFileList()
-      getPluginIncludes(@plugins).forEach((path) ~> @changeFileList path, yes)
-      @initWatcher()
-      @fileList.on 'ready', @compile
+    @init-server()
+    @init-plugins ~>
+      @init-file-list()
+      get-plugin-includes(@plugins).for-each((path) ~> @change-file-list path, yes)
+      @init-watcher()
+      @file-list.on 'ready', @compile
 
   close: ->
     @server?.close()
     @watcher.close()
 
-  reload: (reInstall = no) ->
-    reWatch = ~>
+  reload: (re-install = no) ->
+    re-watch = ~>
       @close()
       @clone().watch()
-    if reInstall
-      helpers.install @config.paths.root, reWatch
+    if re-install
+      helpers.install @config.paths.root, re-watch
     else
-      reWatch()
+      re-watch()
 
 module.exports = watch = (persistent, options, callback = (->)) ->
   deprecated = (param) ->
     if options[param]
       logger.warn "--#{param} is deprecated. Use config option."
   deprecated 'output'
-  new BrunchWatcher(persistent, options, callback).watch()
+  new Brunch-watcher(persistent, options, callback).watch()

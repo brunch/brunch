@@ -8,17 +8,17 @@ colors =
   info: 'green'
   debug: 'blue'
 
-getInfo = (level) ->
-  date = new Date().toFormat('DD MMM HH24:MI:SS')
+get-info = (level) ->
+  date = new Date().to-format('DD MMM HH24:MI:SS')
   lvl = color.set level, colors[level]
   "#{date} - #{lvl}:"
 
 logger =
-  isDebug: process.env.BRUNCH_DEBUG is '1'
+  is-debug: process.env.BRUNCH_DEBUG is '1'
 
   log: (level, ...args) ->
-    info = getInfo level
-    process.nextTick ->
+    info = get-info level
+    process.next-tick ->
       if level is 'error' or level is 'warn'
         console.error info, ...args
       else
@@ -35,7 +35,7 @@ logger =
     logger.log 'info', ...arguments
 
   debug: ->
-    if logger.isDebug
+    if logger.is-debug
       logger.log 'debug', ...arguments
 
 module.exports = Object.freeze(logger)

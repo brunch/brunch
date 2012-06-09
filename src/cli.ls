@@ -1,26 +1,26 @@
 argumentum = require 'argumentum'
 fs = require 'fs'
-sysPath = require 'path'
+sys-path = require 'path'
 commands = require './commands'
 helpers = require './helpers'
 logger = require './logger'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
-exports.readPackageVersion = readPackageVersion = ->
-  content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
+exports.read-package-version = read-package-version = ->
+  content = fs.read-file-sync sys-path.join __dirname, '..', 'package.json'
   (JSON.parse content).version
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
-commandLineConfig =
+command-line-config =
   script: 'brunch'
-  commandRequired: yes
+  command-required: yes
   commands:
     new:
       abbr: 'n'
       help: 'Create new brunch project'
       options:
-        rootPath:
+        root-path:
           position: 1
           help: 'root path of project'
           metavar: 'ROOT_PATH'
@@ -34,7 +34,7 @@ commandLineConfig =
       abbr: 'b'
       help: 'Build a brunch project'
       options:
-        configPath:
+        config-path:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
@@ -49,7 +49,7 @@ commandLineConfig =
       abbr: 'w'
       help: 'Watch brunch directory and rebuild if something changed'
       options:
-        configPath:
+        config-path:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
@@ -81,15 +81,15 @@ the server would run'
           position: 2
           help: 'generator class name / filename'
           required: yes
-        pluralName:
+        plural-name:
           help: 'plural name of file (e.g. feed)'
           full: 'plural'
-        parentDir:
+        parent-dir:
           abbr: 'p'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
           full: 'path'
-        configPath:
+        config-path:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
@@ -108,15 +108,15 @@ the server would run'
           position: 2
           help: 'generator class name / filename'
           required: yes
-        pluralName:
+        plural-name:
           help: 'plural name of file (e.g. feed)'
           full: 'plural'
-        parentDir:
+        parent-dir:
           abbr: 'p'
           help: 'path to generated file directory'
           metavar: 'DIRECTORY'
           full: 'path'
-        configPath:
+        config-path:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
@@ -127,7 +127,7 @@ the server would run'
       abbr: 't'
       help: 'Run all tests for the current project'
       options:
-        configPath:
+        config-path:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
@@ -139,8 +139,8 @@ the server would run'
       abbr: 'v'
       help: 'display brunch version'
       flag: yes
-      callback: readPackageVersion
+      callback: read-package-version
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
-  argumentum.load(commandLineConfig).parse()
+  argumentum.load(command-line-config).parse()

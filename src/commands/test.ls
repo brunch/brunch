@@ -1,5 +1,5 @@
 fs = require 'fs'
-sysPath = require 'path'
+sys-path = require 'path'
 async = require 'async'
 jsdom = require 'jsdom'
 Mocha = require 'mocha'
@@ -7,46 +7,46 @@ chai = require 'chai'
 helpers = require '../helpers'
 watch = require './watch'
 
-class BrunchTestRunner
+class Brunch-test-runner
   (options) ->
-    @config = helpers.loadConfig options.configPath
-    @setupJsDom @startMocha
+    @config = helpers.load-config options.config-path
+    @setup-jsDom @start-mocha
     
-  readTestFiles: (callback) ~>
-    getPublicPath = (subPaths...) ~>
-      sysPath.join @config.paths.public, subPaths...
+  read-test-files: (callback) ~>
+    get-public-path = (sub-paths...) ~>
+      sys-path.join @config.paths.public, sub-paths...
     files = [
-      getPublicPath('index.html'),
-      getPublicPath('javascripts', 'vendor.js'),
-      getPublicPath('javascripts', 'app.js')
+      get-public-path('index.html'),
+      get-public-path('javascripts', 'vendor.js'),
+      get-public-path('javascripts', 'app.js')
     ]
-    async.map files, fs.readFile, callback
+    async.map files, fs.read-file, callback
 
-  setupJsDom: (callback) ~>
-    @readTestFiles (error, files) ->
+  setup-jsDom: (callback) ~>
+    @read-test-files (error, files) ->
       throw error if error?
       [html, vendorjs, appjs] = files
       jsdom.env
-        html: html.toString(),
+        html: html.to-string(),
         src: [
-          vendorjs.toString(),
-          appjs.toString()
+          vendorjs.to-string(),
+          appjs.to-string()
         ],
         done: (error, window) ->
           throw error if error?
           callback window
 
-  startMocha: (window) ~>
+  start-mocha: (window) ~>
     global.window = window
     global.expect = chai.expect
     
     mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
-    mocha.addFile sysPath.join @config.paths.public, 'javascripts', 'tests.js'
+    mocha.add-file sys-path.join @config.paths.public, 'javascripts', 'tests.js'
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
 
 module.exports = test = (options) ->
   watch yes, options, ->
-    new BrunchTestRunner options
+    new Brunch-test-runner options
