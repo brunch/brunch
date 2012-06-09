@@ -10,6 +10,7 @@ some libs that break with brunch. Hello, Zepto!
 to serve the app. The default value is empty string.
 * Styles in `vendor` directory are now sorted correctly, before `app` files.
 * Fixed `options.ignored` on windows.
+* Vim backup files are now ignored by watcher.
 
 # Brunch 1.2.2 (May 24, 2012)
 * Brunch now outputs compilation time.
