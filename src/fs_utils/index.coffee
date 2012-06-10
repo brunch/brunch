@@ -1,3 +1,5 @@
+'use strict'
+
 common = require './common'
 helpers = require '../helpers'
 FileList = require './file_list'

@@ -1,12 +1,15 @@
+'use strict'
+
 {EventEmitter} = require 'events'
 async = require 'async'
 Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
 logger = require '../logger'
+sysPath = require 'path'
 
-# A list of `fs_utils.SourceFile` with some additional methods
-# used to simplify file reading / removing.
+# A list of `fs_utils.SourceFile` or `fs_utils.Asset`
+# with some additional methods used to simplify file reading / removing.
 module.exports = class FileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
@@ -30,7 +33,7 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        path is test
+        helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
       when '[object Array]'
         test.some((subTest) => @_ignored path, subTest)
       else
@@ -65,7 +68,7 @@ module.exports = class FileList extends EventEmitter
 
   _compile: (file) =>
     file.compile (error) =>
-      logger.debug "Compiled file '#{file.path}'"
+      logger.debug 'info', "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{file.compilerName} failed in '#{file.path}' --
 #{error}"
@@ -78,7 +81,7 @@ module.exports = class FileList extends EventEmitter
 
   _copy: (asset) =>
     asset.copy (error) =>
-      logger.debug "Copied asset '#{asset.path}'"
+      logger.debug 'info', "Copied asset '#{asset.path}'"
       if error?
         return logger.error "Copying of '#{asset.path}' failed -- #{error}"
       @_resetTimer()

@@ -1,3 +1,5 @@
+'use strict'
+
 argumentum = require 'argumentum'
 fs = require 'fs'
 sysPath = require 'path'
@@ -39,6 +41,10 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        publicPath:
+          abbr: 'o'
+          help: 'path to public directory'
+          full: 'public'
         minify:
           abbr: 'm'
           flag: yes
@@ -54,6 +60,10 @@ commandLineConfig =
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        publicPath:
+          abbr: 'o'
+          help: 'path to public directory'
+          full: 'public'
         minify:
           abbr: 'm'
           flag: yes

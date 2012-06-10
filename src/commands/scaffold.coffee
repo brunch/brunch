@@ -1,3 +1,5 @@
+'use strict'
+
 async = require 'async'
 fs = require 'fs'
 inflection = require 'inflection'
@@ -123,8 +125,7 @@ generators = (config, generator) ->
     view: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
         generator('viewTest', name, pluralName),
-        generator('template', name),
-        generator('style', name)
+        generator('template', name)
       )
 
     collectionViewTest: (name, pluralName) ->
@@ -132,10 +133,26 @@ generators = (config, generator) ->
 
     collectionView: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{pluralName}_view")].concat(
-        generator('collectionViewTest', name, pluralName),
-        generator('style', pluralName)
+        generator('collectionViewTest', name, pluralName)
       )
 
+    pageViewTest: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
+        generator('formViewTest', name, pluralName)
+      )
+    pageView: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
+        generator('formViewTest', name, pluralName)
+      )
+
+    formViewTest: (name, pluralName) ->
+      [sysPath.join(config.paths.test, 'views', "#{pluralName}_form_view_test")]
+
+    formView: (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
+        generator('formViewTest', name, pluralName)
+      )
+  
     scaffold: (name, pluralName) ->
       generator('controller', name, pluralName).concat(
         generator('model', name, pluralName),
@@ -192,7 +209,7 @@ getGenerator = (config, plugins) ->
         path + ".#{extension}"
       .map (path) ->
         file = {type, extension, path, data}
-        logger.debug "Scaffolding", file
+        logger.debug 'info', "Scaffolding", file
         file
     strings.concat(nonStrings)
 

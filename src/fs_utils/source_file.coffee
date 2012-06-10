@@ -1,3 +1,5 @@
+'use strict'
+
 fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
@@ -5,7 +7,7 @@ logger = require '../logger'
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
   constructor: (@path, @compiler, @isHelper = no, @isVendor = no) ->
-    logger.debug "Initializing fs_utils.SourceFile:", {
+    logger.debug 'info', "Initializing fs_utils.SourceFile:", {
       @path, @isHelper, @isVendor
     }
     @type = @compiler.type
@@ -14,7 +16,7 @@ module.exports = class SourceFile
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
-    @cache = Object.seal({data: '', dependencies: []})
+    @cache = Object.seal({data: '', dependencies: [], compilationTime: null})
     Object.freeze(this)
 
   _getDependencies: (data, path, callback) ->
@@ -44,7 +46,10 @@ module.exports = class SourceFile
       }));\n
       """
     else
-      "#{data};\n"
+      if @type in ['javascript', 'template']
+        "#{data};\n"
+      else
+        data
 
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
@@ -59,4 +64,5 @@ module.exports = class SourceFile
           return callback "GetDeps error: #{error}" if error?
           @cache.dependencies = dependencies
           @cache.data = @_wrap result if result?
+          @cache.compilationTime = Date.now()
           callback null, @cache.data

@@ -1,17 +1,25 @@
+'use strict'
+
 fs = require 'fs'
 sysPath = require 'path'
 async = require 'async'
 jsdom = require 'jsdom'
 Mocha = require 'mocha'
 chai = require 'chai'
+sinon = require 'sinon'
 helpers = require '../helpers'
 watch = require './watch'
 
 class BrunchTestRunner
   constructor: (options) ->
     @config = helpers.loadConfig options.configPath
-    @setupJsDom @startMocha
-    
+    @testFiles = helpers.findTestFiles @config
+
+    if @testFiles.length > 0
+      @setupJsDom @startMocha
+    else
+      throw new Error("Can't find tests for this project.")
+
   readTestFiles: (callback) =>
     getPublicPath = (subPaths...) =>
       sysPath.join @config.paths.public, subPaths...
@@ -37,13 +45,15 @@ class BrunchTestRunner
           callback window
 
   startMocha: (window) =>
-    global.app = window
+    global.window = window
     global.expect = chai.expect
+    global.sinon = sinon
 
     mocha = new Mocha()
     # TODO: configurable reporter and interface
     mocha.reporter('spec').ui('bdd')
-    mocha.addFile sysPath.join @config.paths.public, 'javascripts', 'tests.js'
+    @testFiles.forEach (file) ->
+      mocha.addFile file
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
 

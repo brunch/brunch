@@ -1,39 +1,9 @@
+'use strict'
+
 async = require 'async'
 sysPath = require 'path'
 inflection = require 'inflection'
 GeneratedFile = require './generated_file'
-logger = require '../logger'
-
-makeChecker = (item) ->
-  switch toString.call(item)
-    when '[object RegExp]'
-      ((string) -> item.test string)
-    when '[object Function]'
-      item
-    else
-      throw new Error("Config.files item #{item} is invalid.
-Use RegExp or Function.")
-
-# Converts `config.files[...].joinTo` to one format.
-getJoinConfig = (config) ->
-  joinConfig = {}
-  types = Object.keys(config.files)
-  types
-    .map (type) =>
-      config.files[type].joinTo
-    .map (joinTo) =>
-      if typeof joinTo is 'string'
-        object = {}
-        object[joinTo] = /.+/
-        object
-      else
-        joinTo
-    .forEach (joinTo, index) =>
-      cloned = {}
-      Object.keys(joinTo).forEach (generatedFilePath) =>
-        cloned[generatedFilePath] = makeChecker joinTo[generatedFilePath]
-      joinConfig[types[index]] = cloned
-  Object.freeze(joinConfig)
 
 getGeneratedFilesPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
@@ -41,8 +11,7 @@ getGeneratedFilesPaths = (sourceFile, joinConfig) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path
 
-getFiles = (fileList, config, minifiers) ->
-  joinConfig = getJoinConfig config
+getFiles = (fileList, config, joinConfig, minifiers) ->
   map = {}
   fileList.files.forEach (file) =>
     paths = getGeneratedFilesPaths file, joinConfig
@@ -56,19 +25,22 @@ getFiles = (fileList, config, minifiers) ->
     new GeneratedFile fullPath, sourceFiles, config, minifiers
 
 # * plugins - hashmap of plugins from package.json.
-module.exports = write = (fileList, config, plugins, callback) ->
+module.exports = write = (fileList, config, joinConfig, plugins, startTime, callback) ->
   minifiers = plugins.filter (plugin) -> !!plugin.minify
-  files = getFiles fileList, config, minifiers
   assetMap = {}
+  files = getFiles fileList, config, joinConfig, minifiers
+  changed = files.filter (generatedFile) ->
+    generatedFile.sourceFiles.some (sourceFile) ->
+      sourceFile.cache.compilationTime > startTime
 
-  writeFile = (file, callback) ->
+  writeFile = (file, next) ->
     file.write (error, digestedPath) ->
       relPath = sysPath.relative 'public', file.path
       relDigestedPath = sysPath.relative 'public', digestedPath
       assetMap[relPath] = relDigestedPath
-      callback arguments...
+      next arguments...
 
-  async.forEach files, writeFile, (error, results) ->
+  async.forEach changed, writeFile, (error) ->
     return callback error if error?
     fileList.renderAssets assetMap, ->
-      callback null, results
+      callback null, changed

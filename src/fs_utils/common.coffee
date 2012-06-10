@@ -1,3 +1,5 @@
+'use strict'
+
 fs = require 'fs'
 {EventEmitter} = require 'events'
 mkdirp = require 'mkdirp'
@@ -21,7 +23,7 @@ exports.exists = fs.exists or sysPath.exists
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 # 
 exports.writeFile = (path, data, callback) ->
-  logger.debug "Writing file '#{path}'"
+  logger.debug 'writer', "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?
@@ -31,7 +33,7 @@ exports.writeFile = (path, data, callback) ->
         callback error, path, data
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-ignoredRe = /(^(\.|#)|__$)/;
+ignoredRe = /(^[.#]|(?:__|~)$)/;
 
 exports.ignored = ignored = (path) ->
   ignoredRe.test(sysPath.basename path)

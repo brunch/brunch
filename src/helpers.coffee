@@ -1,3 +1,5 @@
+'use strict'
+
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'
@@ -6,10 +8,13 @@ sysPath = require 'path'
 crypto = require 'crypto'
 logger = require './logger'
 
-exports.startsWith = (string, substring) ->
+exports.startsWith = startsWith = (string, substring) ->
   string.indexOf(substring) is 0
 
-ensureArray = (object) ->
+exports.callFunctionOrPass = callFunctionOrPass = (thing) ->
+  if typeof thing is 'function' then thing() else thing
+
+exports.ensureArray = ensureArray = (object) ->
   if Array.isArray object
     object
   else
@@ -127,13 +132,13 @@ exports.install = install = (rootPath, callback = (->)) ->
     return callback stderr.toString() if error?
     callback null, stdout
 
-startDefaultServer = (port, path, callback) ->
+startDefaultServer = (port, path, base, callback) ->
   server = express.createServer()
   server.use (request, response, next) ->
     response.header 'Cache-Control', 'no-cache'
     next()
-  server.use express.static path
-  server.all '/*', (request, response) ->
+  server.use base, express.static path
+  server.all "#{base}/*", (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
   server.listen parseInt port, 10
   server.on 'listening', callback
@@ -150,7 +155,7 @@ exports.startServer = (config, callback = (->)) ->
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.paths.public, onListening
+    startDefaultServer config.server.port, config.paths.public, config.server.base, onListening
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
@@ -194,6 +199,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     exports.startsWith(sysPath.basename(path), '_') or
     path in [paths.config, paths.packageConfig]
   config.server       ?= {}
+  config.server.base  ?= ''
   config.server.port  ?= 3333
   config.server.run   ?= no
   # Alias deprecated config params.
@@ -237,6 +243,22 @@ exports.loadPlugins = (config, callback) ->
     catch err
       error = err
     callback error, plugins
+
+cachedTestFiles = null
+exports.findTestFiles = (config) ->
+  return cachedTestFiles if cachedTestFiles?
+
+  files = []
+  checkJoinToConfig = (generatedFile) ->
+    if exports.startsWith generatedFile, sysPath.normalize('test/')
+      files.push sysPath.join(config.paths.public, generatedFile)
+
+  if typeof config.files.javascripts.joinTo is 'string'
+    checkJoinToConfig config.files.javascripts.joinTo
+  else
+    Object.keys(config.files.javascripts.joinTo).forEach checkJoinToConfig
+
+  cachedTestFiles = files
 
 exports.digest = (data, algorithm = "md5") ->
   crypto.createHash(algorithm)
