@@ -5,6 +5,7 @@ fs = require 'fs'
 sysPath = require 'path'
 async = require 'async'
 Mocha = require 'mocha'
+fs_utils = require '../fs_utils'
 helpers = require '../helpers'
 watch = require './watch'
 
@@ -12,7 +13,7 @@ loadJsdom = ->
   showJsdomNote = ->
     console.log '\n\nIn order to run tests in a CLI/jsdom environment, you have to install jsdom.'
 
-    if os.platform() == 'win32'
+    if os.platform() is 'win32'
       console.log '\nBefore installing jsdom, you have to install the following dependencies:'
       console.log '* Python 2.7'
       console.log '* Microsoft Visual Studio or Visual C++ Express\n'
@@ -23,7 +24,7 @@ loadJsdom = ->
     console.log '\nnpm install jsdom'
     
   try
-    return require sysPath.resolve './node_modules/jsdom'
+    require sysPath.resolve './node_modules/jsdom'
   catch error
     showJsdomNote()
     process.exit 1
@@ -76,7 +77,7 @@ class BrunchTestRunner
   startTestRunner: (window) =>
     testHelpersFile = sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, 'test-helpers.coffee'
 
-    sysPath.exists testHelpersFile, (exists) =>
+    fs_utils.exists testHelpersFile, (exists) =>
       globals = exists and require(testHelpersFile) or {}
       globals.window = window
       
