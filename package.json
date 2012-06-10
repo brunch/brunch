@@ -41,9 +41,7 @@
     "ansi-color": "0.2.1",
     "inflection": "1.2.0",
     "mocha": "1.1.0",
-    "jsdom": "0.2.14",
-    "chai": "1.0.3",
-    "sinon": "1.3.4"
+    "jsdom": "0.2.14"
   },
   "devDependencies": {}
 }

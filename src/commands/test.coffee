@@ -16,7 +16,7 @@ class BrunchTestRunner
     @testFiles = helpers.findTestFiles @config
 
     if @testFiles.length > 0
-      @setupJsDom @startMocha
+      @setupJsDom @startTestRunner
     else
       throw new Error("Can't find tests for this project.")
 
@@ -44,10 +44,8 @@ class BrunchTestRunner
           throw error if error?
           callback window
 
-  startMocha: (window) =>
-    global.window = window
-    global.expect = chai.expect
-    global.sinon = sinon
+  startMocha: (globals) =>
+    helpers.extend global, globals
 
     mocha = new Mocha()
     # TODO: configurable reporter and interface
@@ -56,6 +54,15 @@ class BrunchTestRunner
       mocha.addFile file
     mocha.run (failures) ->
       process.exit if failures > 0 then 1 else 0
+      
+  startTestRunner: (window) =>
+    testHelpersFile = sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, 'test-helpers.coffee'
+
+    sysPath.exists testHelpersFile, (exists) =>
+      globals = exists and require(testHelpersFile) or {}
+      globals.window = window
+      
+      @startMocha globals
 
 module.exports = test = (options) ->
   watch yes, options, ->
