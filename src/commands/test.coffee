@@ -75,12 +75,18 @@ class BrunchTestRunner
       process.exit if failures > 0 then 1 else 0
       
   startTestRunner: (window) =>
-    testHelpersFile = sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, 'test-helpers.coffee'
+    getTestHelpersPath = (filename) =>
+      sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, filename
 
-    fs_utils.exists testHelpersFile, (exists) =>
-      globals = exists and require(testHelpersFile) or {}
+    testHelpersFiles = [
+      getTestHelpersPath 'test-helpers.coffee',
+      getTestHelpersPath 'test-helpers.js'
+    ]
+    
+    async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
+      globals = testHelpersFile and require(testHelpersFile) or {}
       globals.window = window
-      
+
       @startMocha globals
 
 module.exports = test = (options) ->
