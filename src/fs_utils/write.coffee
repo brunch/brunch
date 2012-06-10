@@ -59,7 +59,16 @@ getFiles = (fileList, config, minifiers) ->
 module.exports = write = (fileList, config, plugins, callback) ->
   minifiers = plugins.filter (plugin) -> !!plugin.minify
   files = getFiles fileList, config, minifiers
-  writeFile = (file, callback) -> file.write callback
+  assetMap = {}
+
+  writeFile = (file, callback) ->
+    file.write (error, digestedPath) ->
+      relPath = sysPath.relative 'public', file.path
+      relDigestedPath = sysPath.relative 'public', digestedPath
+      assetMap[relPath] = relDigestedPath
+      callback arguments...
+
   async.forEach files, writeFile, (error, results) ->
     return callback error if error?
-    callback null, results
+    fileList.renderAssets assetMap, ->
+      callback null, results

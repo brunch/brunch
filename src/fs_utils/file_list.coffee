@@ -1,4 +1,5 @@
 {EventEmitter} = require 'events'
+async = require 'async'
 Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
@@ -16,6 +17,10 @@ module.exports = class FileList extends EventEmitter
     @assets = []
     @on 'change', @_change
     @on 'unlink', @_unlink
+
+  renderAssets: (assetMap, callback) ->
+    @_lastUsedAssetMap = assetMap
+    async.forEach @_getRenderableAssets(), @_renderAsset, callback
 
   # Files that are not really app files.
   _ignored: (path, test = @config.paths.ignored) ->
@@ -46,6 +51,9 @@ module.exports = class FileList extends EventEmitter
   _findAssetByPath: (path) ->
     @assets.filter((file) -> file.path is path)[0]
 
+  _getRenderableAssets: ->
+    @assets.filter((asset) -> asset.isRenderable())
+
   _compileDependentFiles: (path) ->
     @files
       .filter (dependent) =>
@@ -59,10 +67,14 @@ module.exports = class FileList extends EventEmitter
     file.compile (error) =>
       logger.debug "Compiled file '#{file.path}'"
       if error?
-        return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
+        return logger.error "#{file.compilerName} failed in '#{file.path}' --
 #{error}"
       @_compileDependentFiles file.path
       @_resetTimer()
+
+  _renderAsset: (asset, callback = (->)) =>
+    return unless @_lastUsedAssetMap?
+    asset.render(assets: @_lastUsedAssetMap, callback)
 
   _copy: (asset) =>
     asset.copy (error) =>
@@ -84,7 +96,8 @@ module.exports = class FileList extends EventEmitter
 
   _change: (path, compiler, isHelper) =>
     if @_isAsset path
-      @_copy (@_findAssetByPath(path) ? @_addAsset path)
+      asset = @_findAssetByPath(path) ? @_addAsset path
+      if asset.isRenderable() then @_renderAsset asset else @_copy asset
     else if @_ignored(path) or not compiler
       @_compileDependentFiles path
     else
