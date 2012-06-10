@@ -27,10 +27,20 @@ getFiles = (fileList, config, joinConfig, minifiers) ->
 # * plugins - hashmap of plugins from package.json.
 module.exports = write = (fileList, config, joinConfig, plugins, startTime, callback) ->
   minifiers = plugins.filter (plugin) -> !!plugin.minify
+  assetMap = {}
   files = getFiles fileList, config, joinConfig, minifiers
   changed = files.filter (generatedFile) ->
     generatedFile.sourceFiles.some (sourceFile) ->
       sourceFile.cache.compilationTime > startTime
-  async.forEach changed, ((file, next) -> file.write next), (error) ->
+
+  writeFile = (file, next) ->
+    file.write (error, digestedPath) ->
+      relPath = sysPath.relative 'public', file.path
+      relDigestedPath = sysPath.relative 'public', digestedPath
+      assetMap[relPath] = relDigestedPath
+      next arguments...
+
+  async.forEach changed, writeFile, (error) ->
     return callback error if error?
-    callback null, changed
+    fileList.renderAssets assetMap, ->
+      callback null, changed
