@@ -1,14 +1,32 @@
 'use strict'
 
+os = require 'os'
 fs = require 'fs'
 sysPath = require 'path'
 async = require 'async'
-jsdom = require 'jsdom'
 Mocha = require 'mocha'
-chai = require 'chai'
-sinon = require 'sinon'
 helpers = require '../helpers'
 watch = require './watch'
+
+loadJsdom = ->
+  showJsdomNote = ->
+    console.log '\n\nIn order to run tests in a CLI/jsdom environment, you have to install jsdom.'
+
+    if os.platform() == 'win32'
+      console.log '\nBefore installing jsdom, you have to install the following dependencies:'
+      console.log '* Python 2.7'
+      console.log '* Microsoft Visual Studio or Visual C++ Express\n'
+      console.log 'Once you have installed the dependencies, enter the following in your terminal (in the current directory):'
+    else
+      console.log 'Enter the following in your terminal (in the current directory):'
+      
+    console.log '\nnpm install jsdom'
+    
+  try
+    return require sysPath.resolve './node_modules/jsdom'
+  catch error
+    showJsdomNote()
+    process.exit 1
 
 class BrunchTestRunner
   constructor: (options) ->
@@ -34,7 +52,7 @@ class BrunchTestRunner
     @readTestFiles (error, files) ->
       throw error if error?
       [html, vendorjs, appjs] = files
-      jsdom.env
+      loadJsdom().env
         html: html.toString(),
         src: [
           vendorjs.toString(),
