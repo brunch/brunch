@@ -84,7 +84,7 @@ class BrunchTestRunner
     ]
     
     async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
-      globals = testHelpersFile and require(testHelpersFile) or {}
+      globals = testHelpersFile? and require(testHelpersFile) or {}
       globals.window = window
 
       @startMocha globals
