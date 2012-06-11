@@ -11,7 +11,7 @@ isCompilerFor = (path, plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
-    ///\.#{plugin.extension}$///
+    RegExp "\\.#{plugin.extension}$"
   else
     null
   (typeof plugin.compile is 'function') and !!(pattern?.test path)
