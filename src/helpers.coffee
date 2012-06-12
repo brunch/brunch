@@ -2,7 +2,6 @@
 
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
-_ = require 'underscore'
 express = require 'express'
 fs = require 'fs'
 sysPath = require 'path'
@@ -232,7 +231,7 @@ exports.loadPlugins = (config, callback) ->
   fs.readFile config.paths.packageConfig, (error, data) ->
     return callback error if error?
     json = JSON.parse(data)
-    deps = Object.keys(_.extend(json.devDependencies, json.dependencies))
+    deps = Object.keys(extend(json.devDependencies ? {}, json.dependencies))
     try
       plugins = deps
         .map (dependency) ->
