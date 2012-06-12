@@ -230,7 +230,8 @@ exports.loadPlugins = (config, callback) ->
   rootPath = sysPath.resolve config.rootPath
   fs.readFile config.paths.packageConfig, (error, data) ->
     return callback error if error?
-    deps = Object.keys(JSON.parse(data).dependencies)
+    json = JSON.parse(data)
+    deps = Object.keys(json.dependencies or json.devDependencies)
     try
       plugins = deps
         .map (dependency) ->
