@@ -16,29 +16,31 @@ flatten = (array) ->
 
 categories =
   backbone:
-    modelTest: 'javascripts'
+    'model-test': 'javascripts'
     model: 'javascripts'
-    collectionTest: 'javascripts'
+    'collection-test': 'javascripts'
     collection: 'javascripts'
     template: 'templates'
     style: 'stylesheets'
-    viewTest: 'javascripts'
+    'view-test': 'javascripts'
     view: 'javascripts'
     scaffold: 'javascripts'
 
   chaplin:
-    controllerTest: 'javascripts'
+    'controller-test': 'javascripts'
     controller: 'javascripts'
-    modelTest: 'javascripts'
+    'model-test': 'javascripts'
     model: 'javascripts'
-    collectionTest: 'javascripts'
+    'collection-test': 'javascripts'
     collection: 'javascripts'
     template: 'templates'
     style: 'stylesheets'
-    viewTest: 'javascripts'
+    'view-test': 'javascripts'
     view: 'javascripts'
-    collectionViewTest: 'javascripts'
-    collectionView: 'javascripts'
+    'collection-view-test': 'javascripts'
+    'collection-view': 'javascripts'
+    'page-view-test': 'javascripts'
+    'page-view': 'javascripts'
     scaffold: 'javascripts'
 
 frameworkChocies = ->
@@ -49,20 +51,20 @@ generatorChoices = (framework) ->
 
 generators = (config, generator) ->
   backbone:
-    modelTest: (name, pluralName) ->
+    'model-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{name}_test")]
 
     model: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
-        generator('modelTest', name, pluralName)
+        generator('model-test', name, pluralName)
       )
 
-    collectionTest: (name, pluralName) ->
+    'collection-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{pluralName}_test")]
 
     collection: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{pluralName}")].concat(
-        generator('collectionTest', name, pluralName)
+        generator('collection-test', name, pluralName)
       )
 
     template: (name) ->
@@ -71,12 +73,12 @@ generators = (config, generator) ->
     style: (name) ->
       [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
 
-    viewTest: (name, pluralName) ->
+    'view-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
 
     view: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
-        generator('viewTest', name, pluralName),
+        generator('view-test', name, pluralName),
         generator('template', name),
         generator('style', name)
       )
@@ -87,7 +89,7 @@ generators = (config, generator) ->
       )
 
   chaplin:
-    controllerTest: (name, pluralName) ->
+    'controller-test': (name, pluralName) ->
       [sysPath.join(
         config.paths.test, 'controllers', "#{pluralName}_controller_test"
       )]
@@ -95,22 +97,22 @@ generators = (config, generator) ->
     controller: (name, pluralName) ->
       [sysPath.join(
         config.paths.app, 'controllers', "#{pluralName}_controller"
-      )].concat(generator('controllerTest', name, pluralName))
+      )].concat(generator('controller-test', name, pluralName))
 
-    modelTest: (name, pluralName) ->
+    'model-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{name}_test")]
 
     model: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{name}")].concat(
-        generator('modelTest', name, pluralName)
+        generator('model-test', name, pluralName)
       )
 
-    collectionTest: (name, pluralName) ->
+    'collection-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'models', "#{pluralName}_test")]
 
     collection: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'models', "#{pluralName}")].concat(
-        generator('collectionTest', name, pluralName)
+        generator('collection-test', name, pluralName)
       )
 
     template: (name) ->
@@ -119,45 +121,38 @@ generators = (config, generator) ->
     style: (name) ->
       [sysPath.join(config.paths.app, 'views', 'styles', "#{name}")]
 
-    viewTest: (name, pluralName) ->
+    'view-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'views', "#{name}_view_test")]
 
     view: (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{name}_view")].concat(
-        generator('viewTest', name, pluralName),
+        generator('view-test', name, pluralName),
         generator('template', name)
       )
 
-    collectionViewTest: (name, pluralName) ->
+    'collection-view-test': (name, pluralName) ->
       [sysPath.join(config.paths.test, 'views', "#{pluralName}_view_test")]
 
-    collectionView: (name, pluralName) ->
+    'collection-view': (name, pluralName) ->
       [sysPath.join(config.paths.app, 'views', "#{pluralName}_view")].concat(
-        generator('collectionViewTest', name, pluralName)
+        generator('collection-view-test', name, pluralName)
       )
 
-    pageViewTest: (name, pluralName) ->
-      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
-        generator('formViewTest', name, pluralName)
-      )
-    pageView: (name, pluralName) ->
-      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
-        generator('formViewTest', name, pluralName)
+    'page-view-test': (name, pluralName) ->
+      [sysPath.join(config.paths.test, 'views', "#{name}_page_view_test")]
+
+    'page-view': (name, pluralName) ->
+      [sysPath.join(config.paths.app, 'views', "#{name}_page_view")].concat(
+        generator('page-view-test', name, pluralName),
+        generator('template', "#{name}_page"),
+        generator('style', "#{name}_page"),
       )
 
-    formViewTest: (name, pluralName) ->
-      [sysPath.join(config.paths.test, 'views', "#{pluralName}_form_view_test")]
-
-    formView: (name, pluralName) ->
-      [sysPath.join(config.paths.app, 'views', "#{name}_form_view")].concat(
-        generator('formViewTest', name, pluralName)
-      )
-  
     scaffold: (name, pluralName) ->
       generator('controller', name, pluralName).concat(
         generator('model', name, pluralName),
         generator('view', name, pluralName),
-        generator('collectionView', name, pluralName)
+        generator('collection-view', name, pluralName)
       )
 
 getGenerator = (config, plugins) ->
