@@ -16,7 +16,9 @@ To continuously rebuild the project on every change, run `brunch watch`.
 
 To run a simple http server, execute `brunch watch --server`.
 
-## Contributing ![build status](https://secure.travis-ci.org/brunch/brunch.png?branch=master)
+## Contributing
+![build status](https://secure.travis-ci.org/brunch/brunch.png?branch=master)
+
 You can install the latest `master` version of brunch by following these
 simple steps:
 
