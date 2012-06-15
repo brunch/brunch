@@ -67,13 +67,14 @@ class BrunchTestRunner
     helpers.extend global, globals
 
     mocha = new Mocha()
-    # TODO: configurable reporter and interface
-    mocha.reporter('spec').ui('bdd')
-    @testFiles.forEach (file) ->
+    mocha
+      .reporter(@config.test?.reporter ? 'spec')
+      .ui(@config.test?.ui ? 'bdd')
+    @testFiles.forEach (file) =>
       mocha.addFile file
-    mocha.run (failures) ->
-      process.exit if failures > 0 then 1 else 0
-      
+    mocha.run (failures) =>
+      process.exit (if failures > 0 then 1 else 0)
+
   startTestRunner: (window) =>
     getTestHelpersPath = (filename) =>
       sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, filename
@@ -84,9 +85,8 @@ class BrunchTestRunner
     ]
     
     async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
-      globals = testHelpersFile? and require(testHelpersFile) or {}
+      globals = if testHelpersFile? then require(testHelpersFile) else {}
       globals.window = window
-
       @startMocha globals
 
 module.exports = test = (options) ->
