@@ -244,18 +244,17 @@ exports.loadPlugins = (config, callback) ->
       error = err
     callback error, plugins
 
+getTestFiles = (config) ->
+  isTestFile = (generatedFile) ->
+    exports.startsWith generatedFile, sysPath.normalize('test/')
+  joinPublic = (generatedFile) ->
+    sysPath.join(config.paths.public, generatedFile)
+
+  joinTo = config.files.javascripts.joinTo
+  files = if typeof joinTo is 'string' then [joinTo] else Object.keys(joinTo)
+  files.filter(isTestFile).map(joinPublic)
+
 cachedTestFiles = null
+
 exports.findTestFiles = (config) ->
-  return cachedTestFiles if cachedTestFiles?
-
-  files = []
-  checkJoinToConfig = (generatedFile) ->
-    if exports.startsWith generatedFile, sysPath.normalize('test/')
-      files.push sysPath.join(config.paths.public, generatedFile)
-
-  if typeof config.files.javascripts.joinTo is 'string'
-    checkJoinToConfig config.files.javascripts.joinTo
-  else
-    Object.keys(config.files.javascripts.joinTo).forEach checkJoinToConfig
-
-  cachedTestFiles = files
+  cachedTestFiles ?= getTestFiles config
