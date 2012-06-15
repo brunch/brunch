@@ -7,8 +7,6 @@
     to `config.javascripts.joinTo` in `config.coffee` to compile them.
 * Improved command line API:
     * Added `github://user/repo` skeleton address schema support to `brunch new`.
-    * Brought back `--public (-o)` option to `brunch build` and `brunch watch`.
-    You can override public path with it.
     * Debug mode now has logger namespaces. Usage:
     `BRUNCH_DEBUG=<ns> brunch <command>` where `<ns>` is:
     `watcher`, `writer`, `*`.
