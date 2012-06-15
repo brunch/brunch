@@ -1,4 +1,9 @@
 # Brunch 1.3.0 (unreleased)
+* Brunch with Chaplin is now the default application skeleton, that will be
+created on `brunch new <app>`. Old one is still available with
+`brunch new <app> -s github://brunch/simple-coffee-skeleton`.
+Chaplin is an awesome set of classes on top of Backbone.js that
+makes making big webapps very simple.
 * Added testing support (thanks to Andreas Gerstmayr):
     * [Mocha](http://visionmedia.github.com/mocha/) is used as test engine.
     It's a feature-rich, flexible and fun.
