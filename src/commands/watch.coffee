@@ -151,6 +151,7 @@ class BrunchWatcher
     fs_utils.write @fileList, @config, @joinConfig, @plugins, @start, (error, result) =>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
+      @start = null
       @watcher.close() unless @persistent
       @onCompile result
 
