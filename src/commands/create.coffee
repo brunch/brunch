@@ -45,12 +45,13 @@ cloneSkeleton = (address, rootPath, isGitHubUrl, callback) ->
 
 module.exports = create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
+  re = /(?:https?|git(hub)?)(?::\/\/|@)/
 
   fs_utils.exists rootPath, (exists) ->
     return logger.error "Directory '#{rootPath}' already exists" if exists
-    match = skeleton.match /(?:https?|git(hub)?)(?::\/\/|@)/
-    isGitHubUrl = Boolean match[1]
-    if match
+    isGitUrl = skeleton?.match re
+    isGitHubUrl = Boolean isGitUrl?[1]
+    if isGitUrl
       cloneSkeleton skeleton, rootPath, isGitHubUrl, callback
     else
       copySkeleton skeleton, rootPath, callback
