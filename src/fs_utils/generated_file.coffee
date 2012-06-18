@@ -69,7 +69,7 @@ module.exports = class GeneratedFile
       .filter (path) ->
         /_test\.[a-z]+$/.test path
       .map (path) ->
-        path = path.replace /\\/g, '/'
+        path = path.replace RegExp('\\\\', 'g'), '/'
         path.substring 0, path.lastIndexOf '.'
       .map (path) ->
         "this.require('#{path}');"

@@ -77,7 +77,7 @@ class BrunchTestRunner
 
   startTestRunner: (window) =>
     getTestHelpersPath = (filename) =>
-      sysPath.resolve sysPath.join @config.paths.root, @config.paths.test, filename
+      sysPath.resolve sysPath.join @config.paths.test, filename
 
     testHelpersFiles = [
       getTestHelpersPath 'test-helpers.coffee',
