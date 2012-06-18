@@ -75,7 +75,8 @@ module.exports = class FileList extends EventEmitter
       @_resetTimer()
 
   _add: (path, compiler, isHelper) ->
-    isVendor = helpers.startsWith(path, @config.paths.vendor)
+    isVendor = @config.paths.vendor.some (vendorPath) ->
+      helpers.startsWith path, vendorPath
     file = new SourceFile path, compiler, isHelper, isVendor
     @files.push file
     file

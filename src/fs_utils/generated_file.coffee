@@ -50,7 +50,7 @@ module.exports = class GeneratedFile
         {
           before: memo.before.concat(array.before or []),
           after: memo.after.concat(array.after or []),
-          vendorPaths: [config.paths.vendor]
+          vendorPaths: config.paths.vendor
         }
       , {before: [], after: []}
 

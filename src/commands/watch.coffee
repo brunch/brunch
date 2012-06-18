@@ -109,9 +109,9 @@ class BrunchWatcher
 
   initWatcher: (callback) ->
     watched = [
-      @config.paths.app, @config.paths.vendor, @config.paths.test,
+      @config.paths.app, @config.paths.test,
       @config.paths.config, @config.paths.packageConfig
-    ].concat(@config.paths.assets)
+    ].concat(@config.paths.vendor, @config.paths.assets)
 
     async.filter watched, fs_utils.exists, (watchedFiles) =>
       ignored = fs_utils.ignored
