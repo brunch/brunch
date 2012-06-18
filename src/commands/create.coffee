@@ -16,7 +16,7 @@ removeAndInstall = (rootPath, callback) ->
 
 copySkeleton = (skeletonPath, rootPath, callback) ->
   skeletonDir = sysPath.join __dirname, '..', '..', 'skeletons'
-  skeletonPath ?= sysPath.join skeletonDir, 'simple-coffee'
+  skeletonPath ?= sysPath.join skeletonDir, 'brunch-with-chaplin'
   logger.debug 'info', "Copying skeleton from #{skeletonPath}"
 
   copyDirectory = (from) ->
