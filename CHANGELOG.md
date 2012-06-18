@@ -21,7 +21,11 @@ makes making big webapps very simple.
 * Improved config API:
     * Added support for `config.server.base`, which determines base URL
     from which to serve the app. The default value is empty string.
+    * `config.paths.ignored` now doesn't need to check versus if
+    file is `config.coffee` or `package.json`, it does it automatically
+    in brunch code.
     * Fixed `config.paths.ignored` on windows.
+    * `config.paths.vendor` is now an array, but it will be soon deprecated.
 * Changed `onCompile` plugin API. Now it receives an array of
 `fs_utils.GeneratedFile`. This makes it very rich and allows to build smarter
 reloaders. For example, the ones that reload browser tabs only on stylesheet
