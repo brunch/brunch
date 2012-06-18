@@ -21,7 +21,7 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "postinstall": "node setup.js postinstall",
+    "prepublish": "coffee -o lib/ src/",
     "test": "node setup.js test"
   },
   "engines": {

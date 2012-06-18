@@ -7,4 +7,3 @@ CVS/
 *.bak
 .DS_Store
 docs/_build
-lib/
