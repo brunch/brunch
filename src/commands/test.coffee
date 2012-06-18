@@ -30,7 +30,7 @@ loadJsdom = ->
     process.exit 1
 
 class BrunchTestRunner
-  constructor: (options) ->
+  constructor: (@options) ->
     @config = helpers.loadConfig options.configPath
     @testFiles = helpers.findTestFiles @config
 
@@ -68,7 +68,7 @@ class BrunchTestRunner
 
     mocha = new Mocha()
     mocha
-      .reporter(@config.test?.reporter ? 'spec')
+      .reporter(@options.reporter or @config.test?.reporter or 'spec')
       .ui(@config.test?.ui ? 'bdd')
     @testFiles.forEach (file) =>
       mocha.addFile file

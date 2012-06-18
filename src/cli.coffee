@@ -134,6 +134,11 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        reporter:
+          abbr: 'r'
+          help: 'mocha reporter'
+          metavar: 'REPORTER'
+          full: 'reporter'
       callback: commands.test
       
   options:
