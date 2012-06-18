@@ -22,6 +22,7 @@
   },
   "scripts": {
     "prepublish": "coffee -o lib/ src/",
+    "postinstall": "node setup.js postinstall",
     "test": "node setup.js test"
   },
   "engines": {
