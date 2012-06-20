@@ -1,3 +1,8 @@
+# Brunch 1.3.1 (unreleased)
+* Added `--reporter` (`-r`) option to `brunch test` which allows to choose
+Mocha reporter.
+* Made require definition much easier for debugging.
+
 # Brunch 1.3.0 (June 19, 2012)
 * Brunch with Chaplin is now the default application skeleton, that will be
 created on `brunch new <app>`. Old one is still available with

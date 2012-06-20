@@ -138,7 +138,6 @@ the server would run'
           abbr: 'r'
           help: 'mocha reporter'
           metavar: 'REPORTER'
-          full: 'reporter'
       callback: commands.test
       
   options:
