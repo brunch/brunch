@@ -39,11 +39,11 @@ module.exports = class SourceFile
           .replace(/\.\w*$/, '')
       )
       """
-      (this.require.define({
-        #{moduleName}: function(exports, require, module) {
-          #{data}
-        }
-      }));\n
+this.require.define({
+  #{moduleName}: function(exports, require, module) {
+  #{data}
+}
+});\n\n
       """
     else
       if @type in ['javascript', 'template']
