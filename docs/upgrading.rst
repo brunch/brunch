@@ -7,20 +7,20 @@ Upgrading to 1.3
 
 * Add test files joinTo configuration to your config file. You can look at https://github.com/paulmillr/brunch-with-chaplin/blob/master/config.coffee as an example.
 * Add test files as in example https://github.com/paulmillr/brunch-with-chaplin/tree/master/test
-* Update ``package.json`` brunch plugins versions to ``>= 1.0 <= 1.3``
+* Update ``package.json`` brunch plugins versions to ``>= 1.0 < 1.4``
 * Run ``npm install``
 
 Upgrading to 1.2
 ================
 
-* Update ``package.json`` brunch plugins versions to ``>= 1.0 <= 1.2``
+* Update ``package.json`` brunch plugins versions to ``>= 1.0 < 1.3``
 * Run ``npm install``
 
 Upgrading to 1.1
 ================
 
 * Change ``buildPath: ...`` in ``config.coffee`` to ``paths: public: ...``
-* Update ``package.json`` brunch plugins versions to ``>= 1.0 <= 1.1``
+* Update ``package.json`` brunch plugins versions to ``>= 1.0 < 1.2``
 * Run ``npm install``
 
 Upgrading to 1.0
