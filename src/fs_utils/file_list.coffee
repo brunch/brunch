@@ -37,7 +37,10 @@ module.exports = class FileList extends EventEmitter
         no
 
   _isAsset: (path) ->
-    @config.paths.assets.some((dir) -> helpers.startsWith(path, dir))
+    @config.paths.assets.some((dir) -> helpers.startsWith path, dir)
+
+  _isVendor: (path) ->
+    @config.paths.vendor.some((dir) -> helpers.startsWith path, dir)
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
@@ -77,8 +80,7 @@ module.exports = class FileList extends EventEmitter
       @_resetTimer()
 
   _add: (path, compiler, isHelper) ->
-    isVendor = @config.paths.vendor.some (vendorPath) ->
-      helpers.startsWith path, vendorPath
+    isVendor = @_isVendor path
     file = new SourceFile path, compiler, isHelper, isVendor
     @files.push file
     file
