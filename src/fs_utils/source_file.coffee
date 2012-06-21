@@ -38,12 +38,11 @@ module.exports = class SourceFile
           .replace(/^app\//, '')
           .replace(/\.\w*$/, '')
       )
+      indentedData = data.replace(/\n(?!\n)/g, '\n  ')
       """
-window.require.define({
-  #{moduleName}: function(exports, require, module) {
-#{data}
-}
-});\n\n
+window.require.define({#{moduleName}: function(exports, require, module) {
+  #{indentedData}
+}});\n\n
       """
     else
       if @type in ['javascript', 'template']

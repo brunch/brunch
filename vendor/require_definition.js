@@ -73,3 +73,4 @@
   globals.require.define = define;
   globals.require.brunch = true;
 })();
+
