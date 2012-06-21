@@ -138,6 +138,12 @@ the server would run'
           abbr: 'r'
           help: 'mocha reporter'
           metavar: 'REPORTER'
+          choices: [
+            'spec', 'dot', 'min', 'markdown',
+            'tap', 'landing', 'list', 'progress',
+            'json', 'doc', 'xunit', 'teamcity',
+            'html'
+          ]
       callback: commands.test
       
   options:
