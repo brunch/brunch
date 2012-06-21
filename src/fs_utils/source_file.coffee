@@ -39,7 +39,7 @@ module.exports = class SourceFile
           .replace(/\.\w*$/, '')
       )
       """
-require.define({
+window.require.define({
   #{moduleName}: function(exports, require, module) {
 #{data}
 }
