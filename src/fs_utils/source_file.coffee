@@ -46,7 +46,7 @@ window.require.define({#{moduleName}: function(exports, require, module) {
       """
     else
       if @type in ['javascript', 'template']
-        "#{data};\n"
+        "#{data};\n\n"
       else
         data
 
