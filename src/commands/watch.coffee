@@ -163,7 +163,6 @@ class BrunchWatcher
       @initFileList()
       getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
       @initWatcher =>
-        console.log Object.keys(require.extensions)
         @fileList.on 'ready', @compile
 
   close: ->
