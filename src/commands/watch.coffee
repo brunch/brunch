@@ -70,17 +70,16 @@ getJoinConfig = (config) ->
 class BrunchWatcher
   constructor: (@persistent, @options, @_onCompile) ->
     params = {}
-    params.minify = Boolean options.minify
+    params.minify = Boolean @options.minify
     params.persistent = persistent
-    if options.publicPath
+    if @options.publicPath
       params.paths = {}
-      params.paths.public = options.publicPath
+      params.paths.public = @options.publicPath
     if persistent
       params.server = {}
-      params.server.run = yes if options.server
-      params.server.port = options.port if options.port
-    @config = helpers.loadConfig options.configPath, params
-    @joinConfig = getJoinConfig @config
+      params.server.run = yes if @options.server
+      params.server.port = @options.port if @options.port
+    @configParams = params
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -156,11 +155,15 @@ class BrunchWatcher
       @onCompile result
 
   watch: ->
-    @initServer()
-    @initPlugins =>
+    helpers.loadPackages @options, (error, packages) =>
+      @config = helpers.loadConfig @options.configPath, @configParams
+      @joinConfig = getJoinConfig @config
+      @plugins = helpers.getPlugins packages, @config
+      @initServer()
       @initFileList()
       getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
       @initWatcher =>
+        console.log Object.keys(require.extensions)
         @fileList.on 'ready', @compile
 
   close: ->

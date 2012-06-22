@@ -215,11 +215,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   replaceSlashes config if process.platform is 'win32'
   config
 
-exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
-  require.extensions['.coffee'] ?= (module, filename) ->
-    content = coffeescript.compile fs.readFileSync filename, 'utf8', {filename}
-    module._compile content, filename
-
+exports.loadConfig = (configPath = 'config', options = {}) ->
   fullPath = sysPath.resolve configPath
   delete require.cache[fullPath]
   try
@@ -231,23 +227,25 @@ exports.loadConfig = (configPath = 'config.coffee', options = {}) ->
   deepFreeze config
   config
 
-exports.loadPlugins = (config, callback) ->
-  rootPath = sysPath.resolve config.rootPath
-  fs.readFile config.paths.packageConfig, (error, data) ->
+exports.loadPackages = (rootPath, callback) ->
+  rootPath = sysPath.resolve rootPath
+  nodeModules = "#{rootPath}/node_modules"
+  fs.readFile sysPath.join(rootPath, 'package.json'), (error, data) ->
     return callback error if error?
     json = JSON.parse(data)
     deps = Object.keys(extend(json.devDependencies ? {}, json.dependencies))
     try
-      plugins = deps
-        .map (dependency) ->
-          require "#{rootPath}/node_modules/#{dependency}"
-        .filter (plugin) ->
-          (plugin::)? and plugin::brunchPlugin
-        .map (plugin) ->
-          new plugin config
+      plugins = deps.map (dependency) -> require "#{nodeModules}/#{dependency}"
     catch err
       error = err
     callback error, plugins
+
+exports.getPlugins = (packages, config) ->
+  packages
+    .filter (plugin) ->
+      (plugin::)? and plugin::brunchPlugin
+    .map (plugin) ->
+      new plugin config
 
 getTestFiles = (config) ->
   isTestFile = (generatedFile) ->

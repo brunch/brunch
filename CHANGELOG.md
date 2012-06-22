@@ -1,4 +1,5 @@
 # Brunch 1.3.1 (unreleased)
+* Config can now be in any language you use in app (e.g. livescript).
 * Added `--reporter` (`-r`) option to `brunch test` which allows to choose
 Mocha reporter.
 * Made require definition much easier for debugging.
