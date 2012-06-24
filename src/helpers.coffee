@@ -249,7 +249,9 @@ exports.getPlugins = (packages, config) ->
 
 getTestFiles = (config) ->
   isTestFile = (generatedFile) ->
-    exports.startsWith(generatedFile, sysPath.normalize('test/')) and generatedFile.lastIndexOf('vendor') == -1
+    exports.startsWith(generatedFile, sysPath.normalize('test/')) and
+    generatedFile.lastIndexOf('vendor') is -1
+
   joinPublic = (generatedFile) ->
     sysPath.join(config.paths.public, generatedFile)
 

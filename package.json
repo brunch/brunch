@@ -31,16 +31,16 @@
   "dependencies": {
     "coffee-script": "1.3.3",
     "argumentum": "0.6.0",
+    "chokidar": "0.3.0",
     "async": "0.1.22",
-    "chokidar": "0.2.6",
     "mkdirp": "0.3.3",
     "ncp": "0.2.6",
-    "rimraf": "2.0.1",
-    "growl": "1.5.0",
-    "express": "2.5.9",
-    "date-utils": "1.2.10",
+    "rimraf": "2.0.2",
+    "growl": "1.5.1",
+    "express": "2.5.10",
+    "date-utils": "1.2.11",
     "ansi-color": "0.2.1",
-    "inflection": "1.2.0",
+    "inflection": "1.2.1",
     "mocha": "1.2.0"
   },
   "devDependencies": {}
