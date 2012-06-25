@@ -128,7 +128,10 @@ exports.install = install = (rootPath, callback = (->)) ->
   # Install node packages.
   exec 'npm install', (error, stdout, stderr) ->
     process.chdir prevDir
-    return callback stderr.toString() if error?
+    if error?
+      log = stderr.toString()
+      logger.error log
+      return callback log
     callback null, stdout
 
 startDefaultServer = (port, path, base, callback) ->
