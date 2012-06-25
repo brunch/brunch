@@ -156,6 +156,7 @@ class BrunchWatcher
 
   watch: ->
     helpers.loadPackages @options, (error, packages) =>
+      return logger.error error if error?
       @config = helpers.loadConfig @options.configPath, @configParams
       @joinConfig = getJoinConfig @config
       @plugins = helpers.getPlugins packages, @config

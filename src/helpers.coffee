@@ -185,9 +185,6 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   joinRoot = (name) ->
     join 'root', name
 
-  if config.buildPath?
-    logger.warn 'config.buildPath is deprecated. Use config.paths.public.'
-
   paths                = config.paths     ?= {}
   paths.root          ?= config.rootPath  ? '.'
   paths.public        ?= config.buildPath ? joinRoot 'public'
