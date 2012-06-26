@@ -67,19 +67,24 @@ getJoinConfig = (config) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
+propIsFunction = (prop) -> (object) ->
+  typeof object[prop] is 'function'
+
+generateParams = (persistent, options) ->
+  params = {}
+  params.minify = Boolean options.minify
+  params.persistent = persistent
+  if options.publicPath
+    params.paths = {}
+    params.paths.public = options.publicPath
+  if persistent
+    params.server = {}
+    params.server.run = yes if options.server
+    params.server.port = options.port if options.port
+
 class BrunchWatcher
   constructor: (@persistent, @options, @_onCompile) ->
-    params = {}
-    params.minify = Boolean @options.minify
-    params.persistent = persistent
-    if @options.publicPath
-      params.paths = {}
-      params.paths.public = @options.publicPath
-    if persistent
-      params.server = {}
-      params.server.run = yes if @options.server
-      params.server.port = @options.port if @options.port
-    @configParams = params
+    @configParams = generateParams @persistent, @options
 
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
@@ -87,15 +92,6 @@ class BrunchWatcher
   initServer: ->
     if @persistent and @config.server.run
       @server = helpers.startServer @config
-
-  initFileList: ->
-    @fileList = new fs_utils.FileList @config
-
-  initPlugins: (callback) ->
-    helpers.loadPlugins @config, (error, plugins) =>
-      return logger.error error if error?
-      @plugins = plugins
-      callback error
 
   changeFileList: (path, isHelper = no) =>
     @start ?= Date.now()
@@ -139,15 +135,11 @@ class BrunchWatcher
 
   onCompile: (generatedFiles) =>
     @_onCompile generatedFiles
-    @plugins
-      .filter (plugin) ->
-        typeof plugin.onCompile is 'function'
-      .forEach (plugin) ->
-        plugin.onCompile generatedFiles
+    @callbacks.forEach (plugin) => plugin.onCompile generatedFiles
     @start = null
 
   compile: =>
-    fs_utils.write @fileList, @config, @joinConfig, @plugins, @start, (error, result) =>
+    fs_utils.write @fileList, @config, @joinConfig, @minifiers, @start, (error, result) =>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
       @start = null
@@ -157,11 +149,13 @@ class BrunchWatcher
   watch: ->
     helpers.loadPackages @options, (error, packages) =>
       return logger.error error if error?
-      @config = helpers.loadConfig @options.configPath, @configParams
+      @config     = helpers.loadConfig @options.configPath, @configParams
       @joinConfig = getJoinConfig @config
-      @plugins = helpers.getPlugins packages, @config
+      @plugins    = helpers.getPlugins packages, @config
+      @callbacks  = @plugins.filter(propIsFunction 'onCompile')
+      @minifiers  = @plugins.filter(propIsFunction 'minify')
+      @fileList   = new fs_utils.FileList @config
       @initServer()
-      @initFileList()
       getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
       @initWatcher =>
         @fileList.on 'ready', @compile
@@ -180,4 +174,6 @@ class BrunchWatcher
       reWatch()
 
 module.exports = watch = (persistent, options, callback = (->)) ->
-  new BrunchWatcher(persistent, options, callback).watch()
+  watcher = new BrunchWatcher(persistent, options, callback)
+  watcher.watch()
+  watcher

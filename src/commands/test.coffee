@@ -30,8 +30,7 @@ loadJsdom = ->
     process.exit 1
 
 class BrunchTestRunner
-  constructor: (@options) ->
-    @config = helpers.loadConfig options.configPath
+  constructor: (@config, @options) ->
     @testFiles = helpers.findTestFiles @config
 
     if @testFiles.length > 0
@@ -90,5 +89,5 @@ class BrunchTestRunner
       @startMocha globals
 
 module.exports = test = (options) ->
-  watch yes, options, ->
-    new BrunchTestRunner options
+  watcher = watch yes, options, ->
+    new BrunchTestRunner watcher.config, options
