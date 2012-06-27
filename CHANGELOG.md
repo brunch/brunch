@@ -1,3 +1,6 @@
+# Brunch 1.3.2 (June 27, 2012)
+* Fixed `brunch test` on new projects.
+
 # Brunch 1.3.1 (June 22, 2012)
 * Config can now be in any language you use in app (e.g. livescript).
 * Added `--reporter` (`-r`) option to `brunch test` which allows to choose
