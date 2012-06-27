@@ -81,6 +81,7 @@ generateParams = (persistent, options) ->
     params.server = {}
     params.server.run = yes if options.server
     params.server.port = options.port if options.port
+  params
 
 class BrunchWatcher
   constructor: (@persistent, @options, @_onCompile) ->
