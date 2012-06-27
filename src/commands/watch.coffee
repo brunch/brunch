@@ -7,14 +7,12 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-isCompilerFor = (path, plugin) ->
+isCompilerFor = (path) -> (plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
     RegExp "\\.#{plugin.extension}$"
-  else
-    null
-  (typeof plugin.compile is 'function') and !!(pattern?.test path)
+  pattern.test(path)
 
 getPluginIncludes = (plugins) ->
   plugins
@@ -89,13 +87,9 @@ class BrunchWatcher
   clone: ->
     new BrunchWatcher(@persistent, @options, @onCompile)
 
-  initServer: ->
-    if @persistent and @config.server.run
-      @server = helpers.startServer @config
-
   changeFileList: (path, isHelper = no) =>
     @start ?= Date.now()
-    compiler = @plugins.filter(isCompilerFor.bind(null, path))[0]
+    compiler = @compilers.filter(isCompilerFor path)[0]
     @fileList.emit 'change', path, compiler, isHelper
 
   removeFromFileList: (path) =>
@@ -151,12 +145,16 @@ class BrunchWatcher
       return logger.error error if error?
       @config     = helpers.loadConfig @options.configPath, @configParams
       @joinConfig = getJoinConfig @config
-      @plugins    = helpers.getPlugins packages, @config
-      @callbacks  = @plugins.filter(propIsFunction 'onCompile')
-      @minifiers  = @plugins.filter(propIsFunction 'minify')
+      plugins     = helpers.getPlugins packages, @config
+      @compilers  = plugins.filter (plugin) ->
+        propIsFunction('compile')(plugin) and
+        Boolean (plugin.pattern or plugin.extension)
+      @callbacks  = plugins.filter(propIsFunction 'onCompile')
+      @minifiers  = plugins.filter(propIsFunction 'minify')
       @fileList   = new fs_utils.FileList @config
-      @initServer()
-      getPluginIncludes(@plugins).forEach((path) => @changeFileList path, yes)
+      if @persistent and @config.server.run
+        @server   = helpers.startServer @config
+      getPluginIncludes(plugins).forEach((path) => @changeFileList path, yes)
       @initWatcher =>
         @fileList.on 'ready', @compile
 
