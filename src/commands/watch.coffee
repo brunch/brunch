@@ -12,6 +12,8 @@ isCompilerFor = (path) -> (plugin) ->
     plugin.pattern
   else if plugin.extension
     RegExp "\\.#{plugin.extension}$"
+  else
+    /$.^/
   pattern.test(path)
 
 getPluginIncludes = (plugins) ->
@@ -136,7 +138,6 @@ class BrunchWatcher
     fs_utils.write @fileList, @config, @joinConfig, @minifiers, @start, (error, result) =>
       return logger.error "Write failed: #{error}" if error?
       logger.info "compiled in #{Date.now() - @start}ms"
-      @start = null
       @watcher.close() unless @persistent
       @onCompile result
 
@@ -146,9 +147,7 @@ class BrunchWatcher
       @config     = helpers.loadConfig @options.configPath, @configParams
       @joinConfig = getJoinConfig @config
       plugins     = helpers.getPlugins packages, @config
-      @compilers  = plugins.filter (plugin) ->
-        propIsFunction('compile')(plugin) and
-        Boolean (plugin.pattern or plugin.extension)
+      @compilers  = plugins.filter(propIsFunction 'compile')
       @callbacks  = plugins.filter(propIsFunction 'onCompile')
       @minifiers  = plugins.filter(propIsFunction 'minify')
       @fileList   = new fs_utils.FileList @config
