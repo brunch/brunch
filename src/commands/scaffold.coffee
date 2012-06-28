@@ -239,8 +239,6 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
       name = inflection.singularize pluralName
     else
       return logger.error "Plural form must be declared for '#{name}'"
-  config = helpers.loadConfig configPath
-  return callback() unless config?
 
   generateOrDestroyFile = (file, callback) ->
     if rollback
@@ -248,8 +246,12 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     else
       generateFile file.path, file.data, callback
 
-  helpers.loadPlugins config, (error, plugins) ->
+  helpers.loadPackages '.', (error, packages) ->
     return logger.error error if error?
+    config = helpers.loadConfig configPath
+    return callback() unless config?
+    plugins = helpers.getPlugins packages, config
+
     generator = getGenerator config, plugins
     files = generator type, name, pluralName
     async.forEach files, generateOrDestroyFile, (error) ->
