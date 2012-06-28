@@ -148,7 +148,7 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
     return logger.error "Write failed: #{error}" if error?
     logger.info "compiled in #{Date.now() - startTime}ms"
     watcher.close() unless config.persistent
-    callback 
+    callback generatedFiles
 
 # Restart brunch watcher.
 #
