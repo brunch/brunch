@@ -19,6 +19,8 @@ module.exports = class FileList extends EventEmitter
     @assets = []
     @on 'change', @_change
     @on 'unlink', @_unlink
+    @compiling = []
+    @copying = []
 
   # Files that are not really app files.
   _ignored: (path, test = @config.paths.ignored) ->
@@ -46,7 +48,12 @@ module.exports = class FileList extends EventEmitter
   # Emits `ready` event after `RESET_TIME`.
   _resetTimer: =>
     clearTimeout @timer if @timer?
-    @timer = setTimeout (=> @emit 'ready'), @RESET_TIME
+    @timer = setTimeout =>
+      if @compiling.length is 0 and @copying.length is 0
+        @emit 'ready'
+      else
+        @_resetTimer()
+    , @RESET_TIME
 
   _findByPath: (path) ->
     @files.filter((file) -> file.path is path)[0]
@@ -61,10 +68,11 @@ module.exports = class FileList extends EventEmitter
       .filter (dependent) =>
         path in dependent.cache.dependencies
       .forEach(@_compile)
-    @_resetTimer()
 
   _compile: (file) =>
+    @compiling.push(file)
     file.compile (error) =>
+      @compiling.splice @compiling.indexOf(file), 1
       logger.debug 'info', "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{file.compilerName} failed in '#{file.path}' -- 
@@ -73,7 +81,9 @@ module.exports = class FileList extends EventEmitter
       @_resetTimer()
 
   _copy: (asset) =>
+    @copying.push asset
     asset.copy (error) =>
+      @copying.splice @copying.indexOf(asset), 1
       logger.debug 'info', "Copied asset '#{asset.path}'"
       if error?
         return logger.error "Copying of '#{asset.path}' failed -- #{error}"
