@@ -9,22 +9,34 @@ fs_utils = require '../fs_utils'
 helpers = require '../helpers'
 watch = require './watch'
 
-loadJsdom = ->
-  showJsdomNote = ->
-    console.log '\n\nIn order to run tests in a CLI/jsdom environment, you have to install jsdom.'
-
+showJsdomNote = ->
+  osMessage = ->
     if os.platform() is 'win32'
-      console.log '\nBefore installing jsdom, you have to install the following dependencies:'
-      console.log '* Python 2.7'
-      console.log '* Microsoft Visual Studio or Visual C++ Express\n'
-      console.log 'Once you have installed the dependencies, enter the following in your terminal (in the current directory):'
+      """
+\nBefore installing jsdom, you have to install the following dependencies:
+* Python 2.7
+* Microsoft Visual Studio or Visual C++ Express\n
+Once you have installed the dependencies, enter the following in your terminal (in the current directory):
+"""
     else
-      console.log 'Enter the following in your terminal (in the current directory):'
-      
-    console.log '\nnpm install jsdom'
-    
+      "In order to run tests in a CLI/jsdom environment, you have to install jsdom."
+
+  console.log """
+
+
+#{osMessage()}
+
+a) Install jsdom for all system packages (recommended):
+  * Execute `npm install -g jsdom`
+  * Add the parent dir of jsdom to NODE_PATH environment var,
+  like `export NODE_PATH=/usr/local/lib/node_modules`
+b) Install jsdom locally for this project:
+  * Execute `npm install jsdom`
+"""
+
+loadJsdom = ->
   try
-    require sysPath.resolve './node_modules/jsdom'
+    require 'jsdom'
   catch error
     showJsdomNote()
     process.exit 1
