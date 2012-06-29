@@ -1,3 +1,10 @@
+# Brunch 1.3.3 (June 29, 2012)
+* Added node.js 0.8 and 0.9 support.
+* `jsdom`, required for `brunch test` can now be installed once
+for all apps via `npm install -g jsdom`. You'll need to have its
+parent dir in `NODE_MODULES` env variable.
+* Fixed `compiled in` timer and `brunch generate` bugs.
+
 # Brunch 1.3.2 (June 27, 2012)
 * Fixed `brunch test` on new projects.
 
