@@ -2,7 +2,7 @@
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
   "version": "1.3.2",
-  "keywords": ["backbone", "coffeescript", "chaplin", "jquery", "zepto", "framework", "brunch", "stylus", "eco", "underscore"],
+  "keywords": ["assembler", "builder", "stack", "chaplin", "backbone", "ember", "html5"],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
   "repository": {
@@ -26,7 +26,7 @@
     "test": "node setup.js test"
   },
   "engines": {
-    "node": "~0.6.10 || 0.7 || 0.8"
+    "node": "~0.6.10 || 0.8 || 0.9"
   },
   "dependencies": {
     "coffee-script": "1.3.x",

@@ -9,7 +9,7 @@
     "url": ""
   },
   "engines": {
-    "node": "~0.6.10"
+    "node": "~0.6.10 || 0.8 || 0.9"
   },
   "scripts": {
     "start": "brunch watch --server"
@@ -28,6 +28,6 @@
   },
   "devDependencies": {
     "mocha": "0.14.0",
-    "expect.js": "0.1.2"
+    "chai": "1.1.0"
   }
 }
