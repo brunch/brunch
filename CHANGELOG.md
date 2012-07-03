@@ -1,6 +1,7 @@
 # Brunch 1.4.0 (unreleased)
-* Added new phenomenally simplified scaffolding:
-    1. Create `generators/` directory in your brunch application.
+* Added new phenomenally simplified scaffolder:
+    1. Create `generators/` directory in your brunch application
+    (directory name is customizable by `config.paths.generators`).
     2. Place generator there in a way that mirrors generated file path.
     For example, if you want `brunch generate <generator-name>`
     to create new file in `app/views/styles`, you'll need to create
@@ -17,14 +18,14 @@
     * Conventions are configurable via `config.conventions[name]`.
     Convention can be a function.
 * Removed support for:
-    * Removed support for `config.files[lang].defaultExtension`.
+    * `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.
-    * Removed support for `config.framework`. It's not needed because
-    all generators are local to your application.
-    * Removed support for `config.generators`.
+    * `config.framework`, `config.generators`. It's not needed because
+    all generators are local to your application and because
+    brunch now has `generators/` directory.
     * Array type of `paths.vendor` / `paths.assets`. They're replaced by
     conventions.
-    * All these deprecations will now alert a warning.
+* Fixed `require_definition` in <IE9.
 
 # Brunch 1.3.3 (June 29, 2012)
 * Added node.js 0.8 and 0.9 support.
