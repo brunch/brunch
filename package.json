@@ -35,6 +35,7 @@
     "async": "0.1.x",
     "mkdirp": "0.3.x",
     "ncp": "0.2.x",
+    "walk": "2.2.x",
     "rimraf": "2.0.x",
     "growl": "1.5.x",
     "express": "2.5.x",

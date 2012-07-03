@@ -1,3 +1,22 @@
+# Brunch 1.4.0 (unreleased)
+* Added new phenomenally simplified scaffolding:
+    1. Create `generators/` directory in your brunch application.
+    2. Place generator there in a way that mirrors generated file path.
+    For example, if you want `brunch generate <generator-name>`
+    to create new file in `app/views/styles`, you'll need to create
+    `generators/app/views/styles/<generator-name>.<extension>`.
+    `brunch generate --path PARENT-DIR` is still supported for custom paths.
+    3. Generator relations (e.g. create `model-test` for every `model`) are
+    now customizable & supported via `config.generatorsRelations`.
+    Example: `generatorsRelations: {model: ['model-test']}`.
+* Because of new scaffolding API, a lot of things is now not needed:
+    * Removed support for `config.files[lang].defaultExtension`.
+    Brunch will automatically detect extension from your generator file name.
+    * Removed support for `config.framework`. It's not needed because
+    all generators are local to your application.
+    * Removed support for `config.generators`.
+    * All these deprecations will now alert a warning.
+
 # Brunch 1.3.3 (June 29, 2012)
 * Added node.js 0.8 and 0.9 support.
 * `jsdom`, required for `brunch test` can now be installed once

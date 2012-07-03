@@ -197,6 +197,8 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.test          ?= apps[1]
   paths.vendor        ?= [apps[2], join('test', 'vendor')]
 
+  paths.generators    ?= joinRoot 'generators'
+
   paths.assets        ?= [join('app', 'assets'), join('test', 'assets')]
   paths.ignored       ?= (path) -> startsWith sysPath.basename(path), '_'
 
