@@ -6,15 +6,25 @@ logger = require '../logger'
 common = require './common'
 {ncp} = require 'ncp'
 
+# 'app/assets/thing/thing2.html'
+# ['app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html']
+# 
+getAssetDirectory = (path, convention) ->
+  splitted = path.split(common.sep)
+  splitted
+    .map (part, index) ->
+      previous = if index is 0 then '' else splitted[index - 1] + common.sep
+      current = part + common.sep
+      previous + current
+    .filter(convention)[0]
+
 module.exports = class Asset
   constructor: (@path, config) ->
-    directory = config.paths.assets.filter(
-      (dir) => helpers.startsWith path, dir
-    )[0]
+    directory = getAssetDirectory @path, config.conventions.assets
     @relativePath = sysPath.relative directory, @path
     @destinationPath = sysPath.join config.paths.public, @relativePath
-    logger.debug 'info', "Initializing fs_utils.Asset", {
-      @path, @relativePath, @destinationPath
+    logger.debug 'asset', "Initializing fs_utils.Asset", {
+      @path, directory, @relativePath, @destinationPath
     }
     Object.freeze this
 

@@ -44,5 +44,7 @@
     "inflection": "1.2.x",
     "mocha": "1.2.x"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "1.1.x"
+  }
 }

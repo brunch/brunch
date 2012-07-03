@@ -25,7 +25,7 @@ describe 'helpers', ->
     it 'should files by config.vendor', ->
       files = ['vendor/backbone.js', 'jquery.js', 'meh/underscore.js']
       config =
-        vendorPaths: ['vendor', 'meh']
+        vendorConvention: (path) -> /^(meh|vendor)/.test(path)
       expect(helpers.sortByConfig files, config).to.eql [
         'meh/underscore.js', 'vendor/backbone.js', 'jquery.js'
       ]
@@ -55,7 +55,7 @@ describe 'helpers', ->
       config =
         before: ['vendor/1', 'vendor/2', 'vendor/3', 'vendor/4', 'vendor/5']
         after: ['b']
-        vendorPaths: ['vendor']
+        vendorConvention: (path) -> /vendor\//.test(path)
  
       expect(helpers.sortByConfig files, config).to.eql [
         'vendor/1',

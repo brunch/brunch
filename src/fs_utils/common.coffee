@@ -9,6 +9,7 @@ util = require 'util'
 logger = require '../logger'
 
 exports.exists = fs.exists or sysPath.exists
+exports.sep = sysPath.sep or (if process.platform is 'win32' then '\\' else '/')
 
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.

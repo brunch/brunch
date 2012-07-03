@@ -36,7 +36,7 @@ module.exports = class SourceFile
         @path
           .replace(new RegExp('\\\\', 'g'), '/')
           .replace(/^app\//, '')
-          .replace(/\.\w*$/, '')
+          .replace(/\.\w+$/, '')
       )
       indentedData = data.replace(/\n(?!\n)/g, '\n  ')
       """

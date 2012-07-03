@@ -48,10 +48,9 @@ module.exports = class GeneratedFile
         array or= {}
         {
           before: memo.before.concat(array.before or []),
-          after: memo.after.concat(array.after or []),
-          vendorPaths: config.paths.vendor
+          after: memo.after.concat(array.after or [])
         }
-      , {before: [], after: []}
+      , {before: [], after: [], vendorConvention: config.conventions.vendor}
 
   _sort: (files) ->
     paths = files.map (file) -> file.path
@@ -65,8 +64,8 @@ module.exports = class GeneratedFile
     files
       .map (file) ->
         file.path
-      .filter (path) ->
-        /_test\.[a-z]+$/.test path
+      .filter (path) =>
+        @config.conventions.tests path
       .map (path) ->
         path = path.replace RegExp('\\\\', 'g'), '/'
         path.substring 0, path.lastIndexOf '.'

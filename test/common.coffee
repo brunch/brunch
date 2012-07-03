@@ -1,1 +1,1 @@
-global.expect = require('expect.js');
+global.expect = require('chai').expect;

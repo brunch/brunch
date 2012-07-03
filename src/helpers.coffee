@@ -57,11 +57,9 @@ sortAlphabetically = (a, b) ->
     0
 
 # If item path starts with 'vendor', it has bigger priority.
-# TODO: check for config.vendorPath
 sortByVendor = (config, a, b) ->
-  vendor = config.vendorPaths.slice().sort(sortAlphabetically)
-  aIsVendor = vendor.some((path) -> exports.startsWith a, path)
-  bIsVendor = vendor.some((path) -> exports.startsWith b, path)
+  aIsVendor = config.vendorConvention a
+  bIsVendor = config.vendorConvention b
   if aIsVendor and not bIsVendor
     -1
   else if not aIsVendor and bIsVendor
@@ -116,7 +114,7 @@ exports.sortByConfig = (files, config) ->
     cfg =
       before: config.before ? [] 
       after: config.after ? []
-      vendorPaths: config.vendorPaths ? []
+      vendorConvention: (config.vendorConvention or -> no)
     files.slice().sort (a, b) -> sortByBefore cfg, a, b
   else
     files
@@ -192,27 +190,35 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.root          ?= config.rootPath  ? '.'
   paths.public        ?= config.buildPath ? joinRoot 'public'
 
-  apps                 = ['app', 'test', 'vendor'].map(joinRoot)
-  paths.app           ?= apps[0]
-  paths.test          ?= apps[1]
-  paths.vendor        ?= [apps[2], join('test', 'vendor')]
-
+  paths.app           ?= joinRoot 'app'
   paths.generators    ?= joinRoot 'generators'
+  paths.test          ?= joinRoot 'test'
+  paths.vendor        ?= joinRoot 'vendor'
 
-  paths.assets        ?= [join('app', 'assets'), join('test', 'assets')]
+  paths.assets        ?= join('app', 'assets')
   paths.ignored       ?= (path) -> startsWith sysPath.basename(path), '_'
 
   paths.config         = configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
+
+  # TODO: Add regex etc support.
+  conventions          = config.conventions  ?= {}
+  conventions.assets  ?= (path) -> /assets(\/|\\)/.test(path)
+  conventions.tests   ?= (path) -> /_test\.\w+$/.test(path)
+  conventions.vendor  ?= (path) -> /vendor(\/|\\)/.test(path)
 
   config.server       ?= {}
   config.server.base  ?= ''
   config.server.port  ?= 3333
   config.server.run   ?= no
 
-  # Mangle types.
-  config.paths.assets  = ensureArray config.paths.assets
-  config.paths.vendor  = ensureArray config.paths.vendor
+  ensureNotArray = (name) ->
+    if Array.isArray config.paths[name]
+      logger.error "config.paths.#{name} can't be an array"
+
+  ensureNotArray 'assets'
+  ensureNotArray 'test'
+  ensureNotArray 'vendor'
 
   replaceSlashes config if process.platform is 'win32'
   config

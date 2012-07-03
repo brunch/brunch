@@ -39,10 +39,10 @@ module.exports = class FileList extends EventEmitter
         no
 
   _isAsset: (path) ->
-    @config.paths.assets.some((dir) -> helpers.startsWith path, dir)
+    @config.conventions.assets(path)
 
   _isVendor: (path) ->
-    @config.paths.vendor.some((dir) -> helpers.startsWith path, dir)
+    @config.conventions.vendor(path)
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.

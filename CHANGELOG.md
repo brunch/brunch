@@ -9,12 +9,21 @@
     3. Generator relations (e.g. create `model-test` for every `model`) are
     now customizable & supported via `config.generatorsRelations`.
     Example: `generatorsRelations: {model: ['model-test']}`.
-* Because of new scaffolding API, a lot of things is now not needed:
+* Added conventions:
+    * All directories that named as `assets` are considered as asset dirs,
+    all files there will be copied to public path directly.
+    * All directories that named as `vendor` are considered as vendor files,
+    all files there won't be wrapped in modules.
+    * Conventions are configurable via `config.conventions[name]`.
+    Convention can be a function.
+* Removed support for:
     * Removed support for `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.
     * Removed support for `config.framework`. It's not needed because
     all generators are local to your application.
     * Removed support for `config.generators`.
+    * Array type of `paths.vendor` / `paths.assets`. They're replaced by
+    conventions.
     * All these deprecations will now alert a warning.
 
 # Brunch 1.3.3 (June 29, 2012)
