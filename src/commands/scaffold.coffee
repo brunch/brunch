@@ -15,6 +15,7 @@ flatten = (array) ->
     acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
   , []
 
+# TODO
 formatTemplate = (template) ->
   template
 

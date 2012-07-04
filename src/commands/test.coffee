@@ -91,8 +91,8 @@ class BrunchTestRunner
       sysPath.resolve sysPath.join @config.paths.test, filename
 
     testHelpersFiles = [
-      getTestHelpersPath 'test-helpers.coffee',
-      getTestHelpersPath 'test-helpers.js'
+      getTestHelpersPath('test-helpers.coffee'),
+      getTestHelpersPath('test-helpers.js')
     ]
     
     async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
