@@ -35,11 +35,18 @@ b) Install jsdom locally for this project:
 """
 
 loadJsdom = ->
-  try
-    require 'jsdom'
-  catch error
+  safeRequire = (module) ->
+    try
+      require module
+    catch error
+      null
+
+  jsdom = safeRequire('jsdom') or safeRequire(sysPath.resolve('./node_modules/jsdom'))
+
+  unless jsdom
     showJsdomNote()
     process.exit 1
+  jsdom
 
 class BrunchTestRunner
   constructor: (@config, @options) ->
