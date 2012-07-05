@@ -179,6 +179,89 @@ exports.replaceSlashes = replaceSlashes = (config) ->
         lang.joinTo = newJoinTo
   config
 
+# Config items can be a RegExp or a function.
+# The function makes universal API to them.
+#
+# item - RegExp or Function
+#
+# Returns Function.
+normalizeChecker = (item) ->
+  switch toString.call(item)
+    when '[object RegExp]'
+      (string) -> item.test string
+    when '[object Function]'
+      item
+    else
+      throw new Error("Config item #{item} is invalid.
+Use RegExp or Function.")
+
+# Can be used in `reduce` as `array.reduce(listToObj, {})`.
+listToObj = (acc, elem) ->
+  acc[elem[0]] = elem[1]
+  acc
+
+# Converts `config.files[...].joinTo` to one format.
+# config.files[type].joinTo can be a string, a map of {str: regexp} or a map
+# of {str: function}.
+#
+# Example output:
+#
+# {
+#   javascripts: {'javascripts/app.js': checker},
+#   templates: {'javascripts/app.js': checker2}
+# }
+#
+# Returns Object of Object-s.
+createJoinConfig = (configFiles) ->
+  types = Object.keys(configFiles)
+  result = types
+    .map (type) ->
+      configFiles[type].joinTo
+    .map (joinTo) ->
+      if typeof joinTo is 'string'
+        object = {}
+        object[joinTo] = /.+/
+        object
+      else
+        joinTo
+    .map (joinTo, index) ->
+      makeChecker = (generatedFilePath) ->
+        [generatedFilePath, normalizeChecker(joinTo[generatedFilePath])]
+      subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
+      [types[index], subConfig]
+    .reduce(listToObj, {})
+  Object.freeze(result)
+
+normalizeJsWrapper = (typeOrFunction) ->
+  switch typeOrFunction
+    when 'commonjs'
+      (path, data) ->
+        """
+  window.require.define({#{path}: function(exports, require, module) {
+    #{data.replace(/\n(?!\n)/g, '\n  ')}
+  }});\n\n
+  """
+    when 'amd'
+      (path, data) ->
+        """
+  define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
+    #{data.replace(/\n(?!\n)/g, '\n  ')}
+  });
+  """
+    when 'raw'
+      (path, data) ->
+        "#{data}"
+    else typeOrFunction
+
+normalizeRequireDefinition = (typeOrFunction) ->
+  switch typeOrFunction
+    when 'commonjs'
+      path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
+      data = fs.readFileSync(path).toString()
+      -> data
+    when 'raw' then -> ''
+    else typeOrFunction
+
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
     sysPath.join config.paths[parent], name
@@ -203,9 +286,12 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   # TODO: Add regex etc support.
   conventions          = config.conventions  ?= {}
-  conventions.assets  ?= (path) -> /assets(\/|\\)/.test(path)
-  conventions.tests   ?= (path) -> /_test\.\w+$/.test(path)
-  conventions.vendor  ?= (path) -> /vendor(\/|\\)/.test(path)
+  conventions.assets  ?= /assets(\/|\\)/
+  conventions.tests   ?= /_test\.\w+$/
+  conventions.vendor  ?= /vendor(\/|\\)/
+
+  config.jsWrapper  ?= 'commonjs'
+  config.requireDefinition ?= 'commonjs'
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -223,6 +309,17 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   replaceSlashes config if process.platform is 'win32'
   config
 
+normalizeConfig = (config) ->
+  normalized = {}
+  normalized.join = createJoinConfig config.files
+  normalized.jsWrapper = normalizeJsWrapper config.jsWrapper
+  normalized.requireDefinition = normalizeRequireDefinition config.requireDefinition
+  normalized.conventions = {}
+  Object.keys(config.conventions).forEach (name) ->
+    normalized.conventions[name] = normalizeChecker config.conventions[name]
+  config._normalized = Object.freeze normalized
+  config
+
 exports.loadConfig = (configPath = 'config', options = {}) ->
   fullPath = sysPath.resolve configPath
   delete require.cache[fullPath]
@@ -232,6 +329,7 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
   recursiveExtend config, options
+  normalizeConfig config
   deepFreeze config
   config
 

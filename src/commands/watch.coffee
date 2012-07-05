@@ -20,58 +20,6 @@ getPluginIncludes = (plugins) ->
     .filter((paths) -> paths?)
     .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
 
-# Config.files.joinTo item can be a RegExp or a function.
-# The function makes universal API to them.
-#
-# item - RegExp or Function
-#
-# Returns Function.
-makeUniversalChecker = (item) ->
-  switch toString.call(item)
-    when '[object RegExp]'
-      (string) -> item.test string
-    when '[object Function]'
-      item
-    else
-      throw new Error("Config.files item #{item} is invalid.
-Use RegExp or Function.")
-
-# Can be used in `reduce` as `array.reduce(listToObj, {})`.
-listToObj = (acc, elem) ->
-  acc[elem[0]] = elem[1]
-  acc
-
-# Converts `config.files[...].joinTo` to one format.
-# config.files[type].joinTo can be a string, a map of {str: regexp} or a map
-# of {str: function}.
-#
-# Example output:
-#
-# {
-#   javascripts: {'javascripts/app.js': checker},
-#   templates: {'javascripts/app.js': checker2}
-# }
-#
-# Returns Object of Object-s.
-getJoinConfig = (config) ->
-  types = Object.keys(config.files)
-  result = types
-    .map (type) ->
-      config.files[type].joinTo
-    .map (joinTo) ->
-      if typeof joinTo is 'string'
-        object = {}
-        object[joinTo] = /.+/
-        object
-      else
-        joinTo
-    .map (joinTo, index) ->
-      makeChecker = (generatedFilePath) ->
-        [generatedFilePath, makeUniversalChecker(joinTo[generatedFilePath])]
-      subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
-      [types[index], subConfig]
-    .reduce(listToObj, {})
-  Object.freeze(result)
 
 isFunction = (item) -> typeof item is 'function'
 
@@ -174,7 +122,7 @@ initialize = (options, configParams, onCompile, callback) ->
   helpers.loadPackages options, (error, packages) ->
     return logger.error error if error?
     config     = helpers.loadConfig options.configPath, configParams
-    joinConfig = getJoinConfig config
+    joinConfig = config._normalized.join
     plugins    = helpers.getPlugins packages, config
     compilers  = plugins.filter(propIsFunction 'compile')
     minifiers  = plugins.filter(propIsFunction 'minify')

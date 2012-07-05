@@ -39,10 +39,10 @@ module.exports = class FileList extends EventEmitter
         no
 
   _isAsset: (path) ->
-    @config.conventions.assets(path)
+    @config._normalized.conventions.assets(path)
 
   _isVendor: (path) ->
-    @config.conventions.vendor(path)
+    @config._normalized.conventions.vendor(path)
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
@@ -91,7 +91,8 @@ module.exports = class FileList extends EventEmitter
 
   _add: (path, compiler, isHelper) ->
     isVendor = @_isVendor path
-    file = new SourceFile path, compiler, isHelper, isVendor
+    wrapper = @config._normalized.jsWrapper
+    file = new SourceFile path, compiler, wrapper, isHelper, isVendor
     @files.push file
     file
 

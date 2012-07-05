@@ -20,7 +20,7 @@ getAssetDirectory = (path, convention) ->
 
 module.exports = class Asset
   constructor: (@path, config) ->
-    directory = getAssetDirectory @path, config.conventions.assets
+    directory = getAssetDirectory @path, config._normalized.conventions.assets
     @relativePath = sysPath.relative directory, @path
     @destinationPath = sysPath.join config.paths.public, @relativePath
     logger.debug 'asset', "Initializing fs_utils.Asset", {

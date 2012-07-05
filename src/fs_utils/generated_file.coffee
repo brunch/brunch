@@ -8,16 +8,6 @@ common = require './common'
 helpers = require '../helpers'
 logger = require '../logger'
 
-# Load and cache static files, used for require_definition.js and test_require_definition.js
-_getStaticFile = async.memoize (filename, callback) ->
-  path = sysPath.join __dirname, '..', '..', 'vendor', filename
-  fs.readFile path, (error, result) ->
-    return logger.error error if error?
-    callback null, result.toString()
-
-# The definition would be added on top of every filewriter .js file.
-getRequireDefinition = _getStaticFile.bind null, 'require_definition.js'
-
 sort = (files, config) ->
   paths = files.map (file) -> file.path
   indexes = Object.create(null)
@@ -36,7 +26,7 @@ extractOrder = (files, config) ->
     .reduce (memo, array = {}) ->
       before: memo.before.concat(array.before ? []),
       after: memo.after.concat(array.after ? [])
-    , {before: [], after: [], vendorConvention: config.conventions.vendor}
+    , {before: [], after: [], vendorConvention: config._normalized.conventions.vendor}
 
 loadTestFiles = (files, testsConvention) ->
   files
@@ -73,14 +63,13 @@ module.exports = class GeneratedFile
   _join: (files, callback) ->
     logger.debug 'writer', "Joining files '#{files.map((file) -> file.path).join(', ')}'
  to '#{@path}'"
-    requireFiles = => loadTestFiles files, @config.conventions.tests
+    requireFiles = => loadTestFiles files, @config._normalized.conventions.tests
     joined = files.map((file) -> file.cache.data).join('')
-    if @type is 'javascript'
-      getRequireDefinition (error, requireDefinition) =>
-        data = requireDefinition + joined
-        callback error, (if @isTestFile then data + requireFiles() else data)
-    else
-      process.nextTick =>
+    process.nextTick =>
+      if @type is 'javascript'
+        data = @config._normalized.requireDefinition() + joined
+        callback null, (if @isTestFile then data + requireFiles() else data)
+      else
         callback null, joined
 
   # Private: minify data.

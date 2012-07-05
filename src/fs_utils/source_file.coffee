@@ -6,7 +6,7 @@ logger = require '../logger'
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (@path, @compiler, @isHelper = no, @isVendor = no) ->
+  constructor: (@path, @compiler, @wrapper, @isHelper, @isVendor) ->
     logger.debug 'info', "Initializing fs_utils.SourceFile:", {
       @path, @isHelper, @isVendor
     }
@@ -38,12 +38,7 @@ module.exports = class SourceFile
           .replace(/^app\//, '')
           .replace(/\.\w+$/, '')
       )
-      indentedData = data.replace(/\n(?!\n)/g, '\n  ')
-      """
-window.require.define({#{moduleName}: function(exports, require, module) {
-  #{indentedData}
-}});\n\n
-      """
+      @wrapper moduleName, data
     else
       if @type in ['javascript', 'template']
         "#{data};\n\n"

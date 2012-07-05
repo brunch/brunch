@@ -17,6 +17,11 @@
     all files there won't be wrapped in modules.
     * Conventions are configurable via `config.conventions[name]`.
     Convention can be a function.
+* Added AMD support by allowing more flexibility with file wrapping:
+    * `config.jsWrapper` can be a string (`commonjs`, `amd`, `raw`)
+    or function, will define how to wrap files in `app/` directory in modules.
+    * `config.requireDefinition` can be a string (`commonjs`, `raw`) or
+    function, will define what to add on top of every file.
 * Removed support for:
     * `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.
