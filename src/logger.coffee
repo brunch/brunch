@@ -15,10 +15,13 @@ getInfo = (level) ->
   lvl = color.set level, colors[level]
   "#{date} - #{lvl}:"
 
+namespace = process.env.BRUNCH_DEBUG
+
 logger =
-  isDebug: Boolean process.env.BRUNCH_DEBUG
+  isDebug: Boolean namespace
+  notifications: on
+
   debugNamespace: do ->
-    namespace = process.env.BRUNCH_DEBUG
     if namespace
       if namespace is '*'
         '*'
@@ -40,7 +43,7 @@ logger =
         console.log info, args...
 
   error: (args...) ->
-    growl args.join(' '), title: 'Brunch error'
+    growl args.join(' '), title: 'Brunch error' if logger.notifications
     logger.log 'error', args...
 
   warn: (args...) ->
@@ -53,4 +56,4 @@ logger =
     if logger.isDebug and logger.matchesDebugNamespace namespace
       logger.log 'debug', args...
 
-module.exports = Object.freeze(logger)
+module.exports = Object.seal logger

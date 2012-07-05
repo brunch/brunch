@@ -30,7 +30,9 @@
     brunch now has `generators/` directory.
     * Array type of `paths.vendor` / `paths.assets`. They're replaced by
     conventions.
-* Fixed `require_definition` in <IE9.
+* Added config option that disables growl / libnotify notifications.
+Usage: `config.notifications = false`.
+* Fixed commonjs `require_definition` in <IE9.
 
 # Brunch 1.3.3 (June 29, 2012)
 * Added node.js 0.8 and 0.9 support.

@@ -120,7 +120,7 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
 
 initialize = (options, configParams, onCompile, callback) ->
   helpers.loadPackages options, (error, packages) ->
-    return logger.error error if error?
+    return callback error if error?
     config     = helpers.loadConfig options.configPath, configParams
     joinConfig = config._normalized.join
     plugins    = helpers.getPlugins packages, config
@@ -139,7 +139,7 @@ initialize = (options, configParams, onCompile, callback) ->
       changeFileList compilers, fileList, path, yes
 
     initWatcher config, (error, watcher) ->
-      return logger.error error if error?
+      return callback error if error?
       compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
       reload = getReloadFn config, options, onCompile, watcher, server
       callback error, {
@@ -194,6 +194,7 @@ class BrunchWatcher
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
       {config, watcher, fileList, compilers, compile, reload} = result
+      logger.notifications = config.notifications
       bindWatcherEvents config, fileList, compilers, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
       @config = config

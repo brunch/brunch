@@ -290,7 +290,8 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.tests   ?= /_test\.\w+$/
   conventions.vendor  ?= /vendor(\/|\\)/
 
-  config.jsWrapper  ?= 'commonjs'
+  config.notifications ?= on
+  config.jsWrapper    ?= 'commonjs'
   config.requireDefinition ?= 'commonjs'
 
   config.server       ?= {}
