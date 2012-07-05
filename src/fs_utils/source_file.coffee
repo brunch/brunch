@@ -16,8 +16,8 @@ module.exports = class SourceFile
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
-    @cache = Object.seal({data: '', dependencies: [], compilationTime: null})
-    Object.freeze(this)
+    @cache = Object.seal {data: '', dependencies: [], compilationTime: null}
+    Object.freeze this
 
   _getDependencies: (data, path, callback) ->
     fn = @compiler.getDependencies or (-> callback null, [])
