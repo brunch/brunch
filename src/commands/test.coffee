@@ -34,19 +34,21 @@ b) Install jsdom locally for this project:
   * Execute `npm install jsdom`
 """
 
+safeRequire = (module) ->
+  try
+    require module
+  catch error
+    null
+
 loadJsdom = ->
-  safeRequire = (module) ->
-    try
-      require module
-    catch error
-      null
+  altPath = './node_modules/jsdom'  # Relative to brunch app dir.
+  jsdom = safeRequire('jsdom') or safeRequire(sysPath.resolve altPath)
 
-  jsdom = safeRequire('jsdom') or safeRequire(sysPath.resolve('./node_modules/jsdom'))
-
-  unless jsdom
+  if jsdom
+    jsdom
+  else
     showJsdomNote()
     process.exit 1
-  jsdom
 
 class BrunchTestRunner
   constructor: (@config, @options) ->
