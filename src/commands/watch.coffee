@@ -47,8 +47,9 @@ generateParams = (persistent, options) ->
 initWatcher = (config, callback) ->
   watched = [
     config.paths.app, config.paths.test,
+    config.paths.vendor, config.paths.assets,
     config.paths.config, config.paths.packageConfig
-  ].concat(config.paths.vendor, config.paths.assets)
+  ]
 
   async.filter watched, fs_utils.exists, (watchedFiles) ->
     watcher = chokidar.watch watchedFiles,
