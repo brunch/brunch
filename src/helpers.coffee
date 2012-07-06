@@ -279,14 +279,13 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.vendor        ?= joinRoot 'vendor'
 
   paths.assets        ?= join('app', 'assets')
-  paths.ignored       ?= (path) -> startsWith sysPath.basename(path), '_'
 
   paths.config         = configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
 
-  # TODO: Add regex etc support.
   conventions          = config.conventions  ?= {}
   conventions.assets  ?= /assets(\/|\\)/
+  conventions.ignored ?= paths.ignored ? (path) -> startsWith sysPath.basename(path), '_'
   conventions.tests   ?= /_test\.\w+$/
   conventions.vendor  ?= /vendor(\/|\\)/
 
@@ -299,9 +298,18 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.server.port  ?= 3333
   config.server.run   ?= no
 
+  # Deprecations
+  warnMoved = (configItem, from, to) ->
+    logger.warn "config.#{from} moved to config.#{to}" if configItem
+
+  warnMoved paths.ignored, 'paths.ignored', 'conventions.ignored'
+  warnMoved config.rootPath, 'rootPath', 'paths.root'
+  warnMoved config.buildPath, 'buildPath', 'paths.public'
+
   ensureNotArray = (name) ->
     if Array.isArray config.paths[name]
-      logger.error "config.paths.#{name} can't be an array"
+      logger.error "config.paths.#{name} can't be an array.
+Use config.conventions.#{name}"
 
   ensureNotArray 'assets'
   ensureNotArray 'test'

@@ -23,7 +23,7 @@ module.exports = class FileList extends EventEmitter
     @copying = []
 
   # Files that are not really app files.
-  _ignored: (path, test = @config.paths.ignored) ->
+  _ignored: (path, test = @config.conventions.ignored) ->
     return yes if path in [@config.paths.config, @config.paths.packageConfig]
     
     switch toString.call(test)

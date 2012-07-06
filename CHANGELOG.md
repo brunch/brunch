@@ -15,6 +15,11 @@
     all files there will be copied to public path directly.
     * All directories that named as `vendor` are considered as vendor files,
     all files there won't be wrapped in modules.
+    * All files that end with `_test.<extension>` are considered as test files
+    and will be loaded automatically with `brunch test`.
+    * All files that start with `_` are considered as partial files and
+    won't be compiled. Useful for Stylus / Sass languages.
+    Basically this was the functionality of `config.paths.ignored` which is moved.
     * Conventions are configurable via `config.conventions[name]`.
     Convention can be a function.
 * Added AMD support by allowing more flexibility with file wrapping:
