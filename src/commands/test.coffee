@@ -37,8 +37,6 @@ b) Install jsdom locally for this project:
 safeRequire = (module) ->
   try
     require module
-  catch error
-    null
 
 loadJsdom = ->
   altPath = './node_modules/jsdom'  # Relative to brunch app dir.
@@ -50,65 +48,71 @@ loadJsdom = ->
     showJsdomNote()
     process.exit 1
 
-class BrunchTestRunner
-  constructor: (@config, @options) ->
-    @testFiles = helpers.findTestFiles @config
+# Read requires public files
+readTestFiles = (publicPath, callback) ->
+  getPublicPath = (subPaths...) ->
+    sysPath.join publicPath, subPaths...
+  files = [
+    getPublicPath('index.html'),
+    getPublicPath('javascripts', 'vendor.js'),
+    getPublicPath('javascripts', 'app.js')
+  ]
+  async.map files, fs.readFile, callback
 
-    if @testFiles.length > 0
-      @setupJsDom @startTestRunner
-    else
-      throw new Error("Can't find tests for this project.")
-
-  readTestFiles: (callback) =>
-    getPublicPath = (subPaths...) =>
-      sysPath.join @config.paths.public, subPaths...
-    files = [
-      getPublicPath('index.html'),
-      getPublicPath('javascripts', 'vendor.js'),
-      getPublicPath('javascripts', 'app.js')
-    ]
-    async.map files, fs.readFile, callback
-
-  setupJsDom: (callback) =>
-    @readTestFiles (error, files) ->
-      throw error if error?
-      [html, vendorjs, appjs] = files
-      loadJsdom().env
-        html: html.toString(),
-        src: [
-          vendorjs.toString(),
-          appjs.toString()
-        ],
-        done: (error, window) ->
-          throw error if error?
-          callback window
-
-  startMocha: (globals) =>
-    helpers.extend global, globals
-
-    mocha = new Mocha()
-    mocha
-      .reporter(@options.reporter or @config.test?.reporter or 'spec')
-      .ui(@config.test?.ui ? 'bdd')
-    @testFiles.forEach (file) =>
-      mocha.addFile file
-    mocha.run (failures) =>
-      process.exit (if failures > 0 then 1 else 0)
-
-  startTestRunner: (window) =>
-    getTestHelpersPath = (filename) =>
-      sysPath.resolve sysPath.join @config.paths.test, filename
-
-    testHelpersFiles = [
-      getTestHelpersPath('test-helpers.coffee'),
-      getTestHelpersPath('test-helpers.js')
-    ]
+# Setup JSDom instance with public files
+# (HTML and JS) loaded
+setupJsDom = (publicPath, callback) ->
+  readTestFiles publicPath, (error, files) ->
+    throw error if error?
+    [html, vendorjs, appjs] = files
     
-    async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
+    loadJsdom().env
+      html: html.toString(),
+      src: [
+        vendorjs.toString(),
+        appjs.toString()
+      ],
+      done: (error, window) ->
+        throw error if error?
+        callback window
+
+# Start mocha with given testFiles
+# All tests can access the exposed global variables (test-helpers like chai, sinon)
+startMocha = (config, options, testFiles, globals) ->
+  helpers.extend global, globals
+
+  mocha = new Mocha()
+  mocha
+    .reporter(options.reporter or config.test?.reporter or 'spec')
+    .ui(config.test?.ui ? 'bdd')
+  testFiles.forEach (file) =>
+    mocha.addFile file
+  mocha.run (failures) =>
+    process.exit (if failures > 0 then 1 else 0)
+
+# Load the test-helpers.coffee or test-helpers.js file
+findTestHelpersFile = (testPath, callback) ->
+  getTestHelpersPath = (filename) =>
+    sysPath.resolve sysPath.join testPath, filename
+      
+  testHelpersFiles = [
+    getTestHelpersPath('test-helpers.coffee'),
+    getTestHelpersPath('test-helpers.js')
+  ]
+  
+  async.detect testHelpersFiles, fs_utils.exists, callback
+    
+    
+startBrunchTestRunner = (config, options) ->
+  testFiles = helpers.findTestFiles config
+  throw new Error("Can't find tests for this project.") if testFiles.length == 0
+    
+  setupJsDom config.paths.public, (window) =>
+    findTestHelpersFile config.paths.test, (testHelpersFile) =>
       globals = if testHelpersFile? then require(testHelpersFile) else {}
       globals.window = window
-      @startMocha globals
+      startMocha config, options, testFiles, globals
 
 module.exports = test = (options) ->
   watcher = watch yes, options, ->
-    new BrunchTestRunner watcher.config, options
+    startBrunchTestRunner watcher.config, options
