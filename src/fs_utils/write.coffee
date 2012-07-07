@@ -27,7 +27,7 @@ getFiles = (fileList, config, joinConfig, minifiers) ->
 
 changedSince = (startTime) -> (generatedFile) ->
   generatedFile.sourceFiles.some (sourceFile) ->
-    sourceFile.cache.compilationTime > startTime
+    sourceFile.cache.compilationTime >= startTime
 
 module.exports = write = (fileList, config, joinConfig, minifiers, startTime, callback) ->
   files = getFiles fileList, config, joinConfig, minifiers
