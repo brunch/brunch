@@ -97,7 +97,8 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
   fs_utils.write fileList, config, joinConfig, minifiers, startTime, (error, generatedFiles) ->
     return logger.error "Write failed: #{error}" if error?
     logger.info "compiled in #{Date.now() - startTime}ms"
-    unless config.persistent watcher.close()
+    unless config.persistent
+      watcher.close()
       process.once 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
     callback generatedFiles
