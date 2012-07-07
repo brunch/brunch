@@ -27,6 +27,9 @@
     or function, will define how to wrap files in `app/` directory in modules.
     * `config.requireDefinition` can be a string (`commonjs`, `raw`) or
     function, will define what to add on top of every file.
+* Added linting support. Linting is a static analysis of code. Example
+tools for this are JSHint, CSSLint etc. The lint API is
+`plugin.lint(data, path, callback)`. One file can use more than one linter.
 * Removed support for:
     * `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.

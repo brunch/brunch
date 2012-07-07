@@ -6,7 +6,7 @@ logger = require '../logger'
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (@path, @compiler, @wrapper, @isHelper, @isVendor) ->
+  constructor: (@path, @compiler, @linters, @wrapper, @isHelper, @isVendor) ->
     logger.debug 'info', "Initializing fs_utils.SourceFile:", {
       @path, @isHelper, @isVendor
     }
@@ -19,9 +19,19 @@ module.exports = class SourceFile
     @cache = Object.seal {data: '', dependencies: [], compilationTime: null}
     Object.freeze this
 
+  _lint: (data, path, callback) ->
+    if @linters.length is 0
+      callback null
+    else
+      async.forEach @linters, (linter, callback) =>
+        linter.lint data, path, callback
+      , callback
+
   _getDependencies: (data, path, callback) ->
-    fn = @compiler.getDependencies or (-> callback null, [])
-    fn data, path, callback
+    if @compiler.getDependencies
+      @compiler.getDependencies data, path, callback
+    else
+      callback null, []
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
@@ -52,11 +62,13 @@ module.exports = class SourceFile
     fs.readFile realPath, (error, buffer) =>
       return callback "Read error: #{error}" if error?
       fileContent = buffer.toString()
-      @compiler.compile fileContent, @path, (error, result) =>
-        return callback "Compile error: #{error}" if error?
-        @_getDependencies fileContent, @path, (error, dependencies) =>
-          return callback "GetDeps error: #{error}" if error?
-          @cache.dependencies = dependencies
-          @cache.data = @_wrap result if result?
-          @cache.compilationTime = Date.now()
-          callback null, @cache.data
+      @_lint fileContent, @path, (error) => 
+        return callback "Lint error: #{error}" if error?
+        @compiler.compile fileContent, @path, (error, result) =>
+          return callback "Compile error: #{error}" if error?
+          @_getDependencies fileContent, @path, (error, dependencies) =>
+            return callback "GetDeps error: #{error}" if error?
+            @cache.dependencies = dependencies
+            @cache.data = @_wrap result if result?
+            @cache.compilationTime = Date.now()
+            callback null, @cache.data

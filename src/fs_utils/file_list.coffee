@@ -89,10 +89,10 @@ module.exports = class FileList extends EventEmitter
         return logger.error "Copying of '#{asset.path}' failed -- #{error}"
       @_resetTimer()
 
-  _add: (path, compiler, isHelper) ->
+  _add: (path, compiler, linters, isHelper) ->
     isVendor = @_isVendor path
     wrapper = @config._normalized.jsWrapper
-    file = new SourceFile path, compiler, wrapper, isHelper, isVendor
+    file = new SourceFile path, compiler, linters, wrapper, isHelper, isVendor
     @files.push file
     file
 
@@ -101,13 +101,13 @@ module.exports = class FileList extends EventEmitter
     @assets.push file
     file
 
-  _change: (path, compiler, isHelper) =>
+  _change: (path, compiler, linters, isHelper) =>
     if @_isAsset path
       @_copy (@_findAssetByPath(path) ? @_addAsset path)
     else if @_ignored(path) or not compiler
       @_compileDependentFiles path
     else
-      @_compile (@_findByPath(path) ? @_add path, compiler, isHelper)
+      @_compile (@_findByPath(path) ? @_add path, compiler, linters, isHelper)
 
   _unlink: (path) =>
     if @_isAsset path
