@@ -19,6 +19,7 @@ namespace = process.env.BRUNCH_DEBUG
 
 logger =
   isDebug: Boolean namespace
+  errorHappened: no
   notifications: on
 
   debugNamespace: do ->
@@ -44,6 +45,7 @@ logger =
 
   error: (args...) ->
     growl args.join(' '), title: 'Brunch error' if logger.notifications
+    logger.errorHappened = yes
     logger.log 'error', args...
 
   warn: (args...) ->

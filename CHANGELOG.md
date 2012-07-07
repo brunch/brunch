@@ -30,6 +30,8 @@
 * Added linting support. Linting is a static analysis of code. Example
 tools for this are JSHint, CSSLint etc. The lint API is
 `plugin.lint(data, path, callback)`. One file can use more than one linter.
+* Added config option that disables growl / libnotify notifications.
+Usage: `config.notifications = false`.
 * Removed support for:
     * `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.
@@ -38,8 +40,8 @@ tools for this are JSHint, CSSLint etc. The lint API is
     brunch now has `generators/` directory.
     * Array type of `paths.vendor` / `paths.assets`. They're replaced by
     conventions.
-* Added config option that disables growl / libnotify notifications.
-Usage: `config.notifications = false`.
+* If any error happened in `brunch build`,
+it will exit with error code `1` instead of `0`.
 * Fixed commonjs `require_definition` in <IE9.
 
 # Brunch 1.3.3 (June 29, 2012)
