@@ -38,6 +38,7 @@ safeRequire = (module) ->
   try
     require module
 
+# Try to load JSDom from global npm packages or local node_modules directory
 loadJsdom = ->
   altPath = './node_modules/jsdom'  # Relative to brunch app dir.
   jsdom = safeRequire('jsdom') or safeRequire(sysPath.resolve altPath)
@@ -48,30 +49,45 @@ loadJsdom = ->
     showJsdomNote()
     process.exit 1
 
+# Get all <script> files from public/index.html
+getScriptFilesPath = (htmlFile, callback) ->
+  loadJsdom().env
+    html: htmlFile,
+    done: (error, window) ->
+      throw error if error?
+
+      scripts = window.document.getElementsByTagName('script')
+        .toArray()
+        .filter (script) ->
+          script.src
+        .map (script) ->
+          script.src
+
+      callback scripts
+
 # Read requires public files
 readTestFiles = (publicPath, callback) ->
   getPublicPath = (subPaths...) ->
     sysPath.join publicPath, subPaths...
-  files = [
-    getPublicPath('index.html'),
-    getPublicPath('javascripts', 'vendor.js'),
-    getPublicPath('javascripts', 'app.js')
-  ]
-  async.map files, fs.readFile, callback
+
+  fs.readFile getPublicPath('index.html'), (error, htmlFile) ->
+    throw error if error?
+
+    htmlFile = htmlFile.toString()
+    getScriptFilesPath htmlFile, (scriptFilesPath) ->
+      scriptFilesPath = scriptFilesPath.map getPublicPath
+      
+      async.map scriptFilesPath, fs.readFile, (error, scriptFiles) ->
+        callback error, htmlFile, scriptFiles.map (x) -> x.toString()
 
 # Setup JSDom instance with public files
-# (HTML and JS) loaded
 setupJsDom = (publicPath, callback) ->
-  readTestFiles publicPath, (error, files) ->
+  readTestFiles publicPath, (error, htmlFile, scriptFiles) ->
     throw error if error?
-    [html, vendorjs, appjs] = files
     
     loadJsdom().env
-      html: html.toString(),
-      src: [
-        vendorjs.toString(),
-        appjs.toString()
-      ],
+      html: htmlFile,
+      src: scriptFiles,
       done: (error, window) ->
         throw error if error?
         callback window
