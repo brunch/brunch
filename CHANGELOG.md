@@ -1,3 +1,6 @@
+# Brunch 1.3.4 (July 7, 2012)
+* Fixed bug with too fast compilations.
+
 # Brunch 1.3.3 (June 29, 2012)
 * Added node.js 0.8 and 0.9 support.
 * `jsdom`, required for `brunch test` can now be installed once
