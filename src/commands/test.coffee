@@ -51,19 +51,14 @@ loadJsdom = ->
 
 # Get all <script> files from public/index.html
 getScriptFilesPath = (htmlFile, callback) ->
-  loadJsdom().env
-    html: htmlFile,
-    done: (error, window) ->
-      throw error if error?
-
-      scripts = window.document.getElementsByTagName('script')
-        .toArray()
-        .filter (script) ->
-          script.src
-        .map (script) ->
-          script.src
-
-      callback scripts
+  document = loadJsdom().jsdom htmlFile, null,
+    features:
+      QuerySelector: true
+  window = document.createWindow()
+  
+  window.document.querySelectorAll('script[src]')
+    .map (script) ->
+      script.src
 
 # Read requires public files
 readTestFiles = (publicPath, callback) ->
@@ -74,11 +69,10 @@ readTestFiles = (publicPath, callback) ->
     throw error if error?
 
     htmlFile = htmlFile.toString()
-    getScriptFilesPath htmlFile, (scriptFilesPath) ->
-      scriptFilesPath = scriptFilesPath.map getPublicPath
+    scriptFilesPath = getScriptFilesPath(htmlFile).map getPublicPath
       
-      async.map scriptFilesPath, fs.readFile, (error, scriptFiles) ->
-        callback error, htmlFile, scriptFiles.map (x) -> x.toString()
+    async.map scriptFilesPath, fs.readFile, (error, scriptFiles) ->
+      callback error, htmlFile, scriptFiles.map (scriptFile) -> scriptFile.toString()
 
 # Setup JSDom instance with public files
 setupJsDom = (publicPath, callback) ->
@@ -101,9 +95,9 @@ startMocha = (config, options, testFiles, globals) ->
   mocha
     .reporter(options.reporter or config.test?.reporter or 'spec')
     .ui(config.test?.ui ? 'bdd')
-  testFiles.forEach (file) =>
+  testFiles.forEach (file) ->
     mocha.addFile file
-  mocha.run (failures) =>
+  mocha.run (failures) ->
     process.exit (if failures > 0 then 1 else 0)
 
 # Load the test-helpers.coffee or test-helpers.js file
@@ -121,7 +115,7 @@ findTestHelpersFile = (testPath, callback) ->
     
 startBrunchTestRunner = (config, options) ->
   testFiles = helpers.findTestFiles config
-  throw new Error("Can't find tests for this project.") if testFiles.length == 0
+  throw new Error("Can't find tests for this project.") if testFiles.length is 0
     
   setupJsDom config.paths.public, (window) =>
     findTestHelpersFile config.paths.test, (testHelpersFile) =>
