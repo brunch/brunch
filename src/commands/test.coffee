@@ -100,18 +100,18 @@ startMocha = (config, options, testFiles, globals) ->
   mocha.run (failures) ->
     process.exit (if failures > 0 then 1 else 0)
 
-# Load the test-helpers.coffee or test-helpers.js file
-findTestHelpersFile = (testPath, callback) ->
-  getTestHelpersPath = (filename) =>
-    sysPath.resolve sysPath.join testPath, filename
-      
-  testHelpersFiles = [
-    getTestHelpersPath('test-helpers.coffee'),
-    getTestHelpersPath('test-helpers.js')
-  ]
-  
-  async.detect testHelpersFiles, fs_utils.exists, callback
+# Load the test-helpers.* file
+findTestHelpersFile = (testPath, callback) ->  
+  fs.readdir testPath, (error, files) ->
+    throw error if error?
     
+    testHelpers = files.filter (file) ->
+      /^test-helpers\./.test file
+    
+    if testHelpers.length > 0
+      callback sysPath.resolve sysPath.join testPath, testHelpers[0]
+    else
+      callback null
     
 startBrunchTestRunner = (config, options) ->
   testFiles = helpers.findTestFiles config
