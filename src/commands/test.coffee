@@ -37,9 +37,8 @@ b) Install jsdom locally for this project:
 safeRequire = (module) ->
   try
     require module
-  catch error
-    null
 
+# Try to load JSDom from global npm packages or local node_modules directory
 loadJsdom = ->
   altPath = './node_modules/jsdom'  # Relative to brunch app dir.
   jsdom = safeRequire('jsdom') or safeRequire(sysPath.resolve altPath)
@@ -50,65 +49,80 @@ loadJsdom = ->
     showJsdomNote()
     process.exit 1
 
-class BrunchTestRunner
-  constructor: (@config, @options) ->
-    @testFiles = helpers.findTestFiles @config
+# Get all <script> files from public/index.html
+getScriptFilesPath = (htmlFile, callback) ->
+  document = loadJsdom().jsdom htmlFile, null,
+    features:
+      QuerySelector: true
+  window = document.createWindow()
+  
+  window.document.querySelectorAll('script[src]')
+    .map (script) ->
+      script.src
 
-    if @testFiles.length > 0
-      @setupJsDom @startTestRunner
-    else
-      throw new Error("Can't find tests for this project.")
+# Read requires public files
+readTestFiles = (publicPath, callback) ->
+  getPublicPath = (subPaths...) ->
+    sysPath.join publicPath, subPaths...
 
-  readTestFiles: (callback) =>
-    getPublicPath = (subPaths...) =>
-      sysPath.join @config.paths.public, subPaths...
-    files = [
-      getPublicPath('index.html'),
-      getPublicPath('javascripts', 'vendor.js'),
-      getPublicPath('javascripts', 'app.js')
-    ]
-    async.map files, fs.readFile, callback
+  fs.readFile getPublicPath('index.html'), (error, htmlFile) ->
+    throw error if error?
 
-  setupJsDom: (callback) =>
-    @readTestFiles (error, files) ->
-      throw error if error?
-      [html, vendorjs, appjs] = files
-      loadJsdom().env
-        html: html.toString(),
-        src: [
-          vendorjs.toString(),
-          appjs.toString()
-        ],
-        done: (error, window) ->
-          throw error if error?
-          callback window
+    htmlFile = htmlFile.toString()
+    scriptFilesPath = getScriptFilesPath(htmlFile).map getPublicPath
+      
+    async.map scriptFilesPath, fs.readFile, (error, scriptFiles) ->
+      callback error, htmlFile, scriptFiles.map (scriptFile) -> scriptFile.toString()
 
-  startMocha: (globals) =>
-    helpers.extend global, globals
-
-    mocha = new Mocha()
-    mocha
-      .reporter(@options.reporter or @config.test?.reporter or 'spec')
-      .ui(@config.test?.ui ? 'bdd')
-    @testFiles.forEach (file) =>
-      mocha.addFile file
-    mocha.run (failures) =>
-      process.exit (if failures > 0 then 1 else 0)
-
-  startTestRunner: (window) =>
-    getTestHelpersPath = (filename) =>
-      sysPath.resolve sysPath.join @config.paths.test, filename
-
-    testHelpersFiles = [
-      getTestHelpersPath('test-helpers.coffee'),
-      getTestHelpersPath('test-helpers.js')
-    ]
+# Setup JSDom instance with public files
+setupJsDom = (publicPath, callback) ->
+  readTestFiles publicPath, (error, htmlFile, scriptFiles) ->
+    throw error if error?
     
-    async.detect testHelpersFiles, fs_utils.exists, (testHelpersFile) =>
+    loadJsdom().env
+      html: htmlFile,
+      src: scriptFiles,
+      done: (error, window) ->
+        throw error if error?
+        callback window
+
+# Start mocha with given testFiles
+# All tests can access the exposed global variables (test-helpers like chai, sinon)
+startMocha = (config, options, testFiles, globals) ->
+  helpers.extend global, globals
+
+  mocha = new Mocha()
+  mocha
+    .reporter(options.reporter or config.test?.reporter or 'spec')
+    .ui(config.test?.ui ? 'bdd')
+  testFiles.forEach (file) ->
+    mocha.addFile file
+  mocha.run (failures) ->
+    process.exit (if failures > 0 then 1 else 0)
+
+# Load the test-helpers.* file
+findTestHelpersFile = (testPath, callback) ->  
+  fs.readdir testPath, (error, files) ->
+    throw error if error?
+    
+    testHelpers = files.filter (file) ->
+      /^test-helpers\./.test file
+    
+    if testHelpers.length > 0
+      callback sysPath.resolve sysPath.join testPath, testHelpers[0]
+    else
+      callback null
+    
+startBrunchTestRunner = (config, options) ->
+  testFiles = helpers.findTestFiles config
+  throw new Error("Can't find tests for this project.") if testFiles.length is 0
+    
+  setupJsDom config.paths.public, (window) =>
+    findTestHelpersFile config.paths.test, (testHelpersFile) =>
       globals = if testHelpersFile? then require(testHelpersFile) else {}
       globals.window = window
-      @startMocha globals
+      startMocha config, options, testFiles, globals
 
 module.exports = test = (options) ->
   watcher = watch yes, options, ->
-    new BrunchTestRunner watcher.config, options
+    startBrunchTestRunner watcher.config, options
