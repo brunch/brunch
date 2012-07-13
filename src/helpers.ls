@@ -144,13 +144,13 @@ exports.start-server = (config, callback = (->)) ->
 
 exports.replace-slashes = replace-slashes = (config) ->
   change-path = (string) -> string.replace(/\//g, '\\')
-  files = config.files or {}
-  for language of files
-    lang = files[language] or {}
-    order = lang.order or {}
+  files = config@files
+  keys files |> each (language) ->
+    lang = files@[language]
+    order = lang@order
 
     # Modify order.
-	for order-key of order
+    keys order |> each (order-key) ->
       lang.order[order-key] = lang.order[order-key].map(change-path)
 
     # Modify join configuration.
