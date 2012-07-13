@@ -9,7 +9,7 @@ fs_utils = require '../fs_utils'
 
 flatten = (array) ->
   array.reduce (acc, elem) ->
-    acc.concat(if Array.is-array(elem) then flatten(elem) else [elem])
+    acc.concat(if Array.is-array elem then flatten elem else [elem])
   , []
 
 categories =
@@ -40,10 +40,10 @@ categories =
     scaffold: 'javascripts'
 
 framework-chocies = ->
-  Object.keys(categories).join(', ')
+  Object.keys categories .join ', '
 
 generator-choices = (framework) ->
-  Object.keys(categories[framework] or {}).join(', ')
+  Object.keys(categories[framework] or {})join ', '
 
 generators = (config, generator) ->
   backbone:
@@ -51,23 +51,19 @@ generators = (config, generator) ->
       [sys-path.join(config.paths.test, 'models', "#{name}_test")]
 
     model: (name, plural-name) ->
-      [sys-path.join(config.paths.app, 'models', "#{name}")].concat(
-        generator('model-test', name, plural-name)
-      )
+      [sys-path.join(config.paths.app, 'models', name)] +++ generator('model-test', name, plural-name)
 
     collection-test: (name, plural-name) ->
       [sys-path.join(config.paths.test, 'models', "#{plural-name}_test")]
 
     collection: (name, plural-name) ->
-      [sys-path.join(config.paths.app, 'models', "#{plural-name}")].concat(
-        generator('collection-test', name, plural-name)
-      )
+      [sys-path.join(config.paths.app, 'models', plural-name)] +++ generator('collection-test', name, plural-name)
 
     template: (name) ->
-      [sys-path.join(config.paths.app, 'views', 'templates', "#{name}")]
+      [sys-path.join(config.paths.app, 'views', 'templates', name)]
 
     style: (name) ->
-      [sys-path.join(config.paths.app, 'views', 'styles', "#{name}")]
+      [sys-path.join(config.paths.app, 'views', 'styles', name)]
 
     view-test: (name, plural-name) ->
       [sys-path.join(config.paths.test, 'views', "#{name}_view_test")]
@@ -80,9 +76,7 @@ generators = (config, generator) ->
       )
 
     scaffold: (name, plural-name) ->
-      generator('model', name, plural-name).concat(
-        generator('view', name, plural-name),
-      )
+      generator('model', name, plural-name) +++ generator('view', name, plural-name)
 
   chaplin:
     controller-test: (name, plural-name) ->
@@ -93,7 +87,7 @@ generators = (config, generator) ->
     controller: (name, plural-name) ->
       [sys-path.join(
         config.paths.app, 'controllers', "#{plural-name}_controller"
-      )].concat(generator('controller-test', name, plural-name))
+      )] +++ generator('controller-test', name, plural-name)
 
     model-test: (name, plural-name) ->
       [sys-path.join(config.paths.test, 'models', "#{name}_test")]
@@ -162,16 +156,16 @@ get-generator = (config, plugins) ->
   framework = config.framework or 'backbone'
 
   unless categories[framework]?
-    return logger.error "Framework #{framework} isn't supported. Use one of: 
-#{framework-chocies()}"
+    return logger.error "Framework #framework isn't supported. Use one of: 
+#{framework-chocies!}"
 
   get-extension = (type) ->
     category = categories[framework]?[type]
     if category?
-      config.files[category]?.default-extension ? ''
+      config.files[category]?default-extension ? ''
     else
       logger.error "Generator #{type} isn't supported. Use one of: 
-#{generator-choices(framework)}."
+#{generator-choices framework}."
       ''
 
   generator-map = null
@@ -203,8 +197,7 @@ get-generator = (config, plugins) ->
     strings = paths
       .filter (path) ->
         typeof path is 'string'
-      .map (path) ->
-        path + ".#{extension}"
+      .map (+ ".#extension")
       .map (path) ->
         file = {type, extension, path, data}
         logger.debug "Scaffolding", file
@@ -216,36 +209,36 @@ get-generator = (config, plugins) ->
 generate-file = (path, data, callback) ->
   parent-dir = sys-path.dirname path
   write = ->
-    logger.info "create #{path}"
+    logger.info "create #path"
     fs.write-file path, data, callback
   fs_utils.exists parent-dir, (exists) ->
-    return write() if exists
-    logger.info "init #{parent-dir}"
+    return write! if exists
+    logger.info "init #parent-dir"
     mkdirp parent-dir, 0o755, (error) ->
       return logger.error if error?
-      write()
+      write!
 
 destroy-file = (path, callback) ->
   fs.unlink path, (error) ->
-    return logger.error "#{error}" if error?
-    logger.info "destroy #{path}"
+    return logger.error "#error" if error?
+    logger.info "destroy #path"
     callback error
 
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, plural-name, parent-dir, config-path} = options
-  plural-name = if type in ['controller', 'collection']
+  plural-name = if type in <[controller collection]<
     name
   else
     inflection.pluralize name, plural-name
   if name is plural-name
-    if type in ['controller', 'collection', 'scaffold']
+    if type in <[controller collection scaffold]>
       name = inflection.singularize plural-name
     else
-      return logger.error "Plural form must be declared for '#{name}'"
+      return logger.error "Plural form must be declared for '#name'"
   config = helpers.load-config config-path
-  return callback() unless config?
+  return callback! unless config?
 
-  generate-orDestroy-file = (file, callback) ->
+  generate-or-destroy-file = (file, callback) ->
     if rollback
       destroy-file file.path, callback
     else
@@ -255,6 +248,6 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     return logger.error error if error?
     generator = get-generator config, plugins
     files = generator type, name, plural-name
-    async.for-each files, generate-orDestroy-file, (error) ->
+    async.for-each files, generate-or-destroy-file, (error) ->
       return logger.error error if error?
       callback null, files

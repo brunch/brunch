@@ -30,22 +30,19 @@ module.exports = class Source-file
   # Returns a wrapped string.
   _wrap: (data) ->
     if not @is-helper and not @is-vendor and @type in ['javascript', 'template']
-      module-name = JSON.stringify(
-        @path
-          .replace(new Reg-exp('\\\\', 'g'), '/')
-          .replace(/^app\//, '')
-          .replace(/\.\w*$/, '')
-      )
+      @path .= replace //\\\\//g '/'
+      @path -= /^app\// - /\.\w*$/
+      module-name = JSON.stringify @path
       """
       (this.require.define({
-        #{module-name}: function(exports, require, module) {
-          #{data}
+        #module-name: function(exports, require, module) {
+          #data
         }
       }));\n
       """
     else
-      if @type in ['javascript', 'template']
-        "#{data};\n"
+      if @type in <[javascript template]>
+        "#data;\n"
       else
         data
 
@@ -55,17 +52,17 @@ module.exports = class Source-file
     real-path = if @is-helper then @real-path else @path
     error, buffer <~ fs.read-file real-path
     if error?
-      callback "Read error: #{error}"
+      callback "Read error: #error"
     else
-      file-content = buffer.to-string()
+      file-content = buffer.to-string!
       error, result <~ @compiler.compile file-content, @path
       if error?
-        callback "Compile error: #{error}"
+        callback "Compile error: #error"
       else
         error, dependencies <~ @_get-dependencies file-content, @path
         if error?
-          callback "Get-deps error: #{error}" if error?
+          callback "Get-deps error: #error" if error?
         else
           @cache.dependencies = dependencies
           @cache.data = @_wrap result if result?
-          callback null, @cache.data
+          callback null @cache.data

@@ -9,7 +9,7 @@ logger = require './logger'
 # Returns string.
 exports.read-package-version = read-package-version = ->
   content = fs.read-file-sync sys-path.join __dirname, '..', 'package.json'
-  (JSON.parse content).version
+  JSON.parse content .version
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 command-line-config =
@@ -143,4 +143,4 @@ the server would run'
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
-  argumentum.load(command-line-config).parse()
+  argumentum.load command-line-config .parse!

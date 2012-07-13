@@ -13,7 +13,7 @@ _get-static-file = async.memoize (filename, callback) ->
   if error?
     logger.error error 
   else
-    callback null, result.to-string()
+    callback null, result.to-string!
 
 # The definition would be added on top of every filewriter .js file.
 get-require-definition     = _get-static-file.bind null, 'require_definition.js'
@@ -28,54 +28,53 @@ module.exports = class Generated-file
   # config      - parsed application config.
   # 
   (@path, @source-files, @config, minifiers) ->    
-    @type = if @source-files.some((file) -> file.type is 'javascript')
+    type = @type = if @source-files.some (.type is 'javascript')
       'javascript'
     else
       'stylesheet'
-    @minifier = minifiers.filter((minifier) ~> minifier.type is @type)[0]
-    @is-tests-file = @type is 'javascript' and /tests\.js$/.test @path
-    Object.freeze(this)
+    @minifier = minifiers.filter (.type is type) .0
+    @is-tests-file = @type is 'javascript' and /tests\.js$/test @path
+    Object.freeze this
 
   _extract-order: (files, config) ->
     types = files.map (file) -> inflection.pluralize file.type
     Object.keys(config.files)
-      |> filter (key) -> key `elem` types
+      |> filter (`elem` types)
       # Extract order value from config.
       |> map (key) ->
-        config.files[key].order
+        config.files[key]order
       # Join orders together.
       |> fold((memo, array) ->
         array or= {}
         {
-          before: memo.before +++ (array.before or []),
-          after: memo.after +++ (array.after or []),
+          before: memo.before +++ array@@before
+          after: memo.after +++ array@@after
           vendor-paths: [config.paths.vendor]
         }
-      ) {before: [], after: []}
+      ) before: [] after: []
 
   _sort: (files) ->
-    paths = files.map (file) -> file.path
+    paths = files.map (.path)
     indexes = {}
     files.for-each (file, index) -> indexes[file.path] = file
     order = @_extract-order files, @config
-    helpers.sort-byConfig(paths, order).map (path) ->
-      indexes[path]
+    helpers.sort-by-config paths, order .map (indexes.)
 
   _load-test-files: (files) ->
     files
       |> map (lookup 'path')
-      |> filter (path) -> /_test\.[a-z]+$/.test path
+      |> filter (path) -> /_test\.[a-z]+$/test path
       |> map (path) ->
         path = path.replace /\\/g, '/'
-        path.substring 0, path.last-index-of '.'
-      |> map (path) -> "this.require('#{path}');"
+        path.substring 0 path.last-index-of '.'
+      |> map (path) -> "this.require('#path');"
       |> unlines
 
   # Private: Collect content from a list of files and wrap it with
   # require.js module definition if needed.
   # Returns string.
   _join: (files, callback) ->
-    logger.debug "Joining files '#{files.map((file) -> file.path).join(', ')}'
+    logger.debug "Joining files '#{files.map (.path) .join ', '}'
  to '#{@path}'"
     joined = files.map((file) -> file.cache.data).join('')
     if @type is 'javascript'
@@ -87,7 +86,7 @@ module.exports = class Generated-file
           callback error, require-definition + joined
     else
       process.next-tick ~>
-        callback null, joined
+        callback null joined
 
   # Private: minify data.
   # 
@@ -96,7 +95,7 @@ module.exports = class Generated-file
   # 
   # Returns nothing.
   _minify: (data, callback) ->
-    if @config.minify and @minifier?.minify?
+    if @config.minify and @minifier?minify?
       @minifier.minify data, @path, callback
     else
       callback null, data

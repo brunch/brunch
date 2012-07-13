@@ -38,7 +38,7 @@ exports.write-file = write-file = (path, data, callback) ->
 ignored-re = /(^(\.|#)|__$)/;
 
 exports.ignored = ignored = (path) ->
-  ignored-re.test(sys-path.basename path)
+  ignored-re.test sys-path.basename path
 
 exports.copy = (source, destination, callback) ->
   copy = (error) ->
@@ -50,20 +50,21 @@ exports.copy = (source, destination, callback) ->
       util.pump input, output, callback
 
   if ignored source
-    callback()
+    callback!
   else
     parent-dir = sys-path.dirname(destination)
     parent-exists <- exists parent-dir
     if parent-exists
-      copy()
+      copy!
     else
       mkdirp parent-dir, copy
 
 # Recursive copy.
 exports.copy-ifExists = (source, destination, filter = yes, callback) ->
+  # filter: (not) >> ignored ??
   options = if filter then {filter: ((path) -> not ignored path)} else {}
   source-exists <- exists source
   if source-exists
     ncp source, destination, options, callback
   else
-    callback()
+    callback!
