@@ -15,8 +15,8 @@ module.exports = class File-list extends Event-emitter
   (@config) ->
     @files = []
     @assets = []
-    @on 'change', @_change
-    @on 'unlink', @_unlink
+    @on 'change' @_change
+    @on 'unlink' @_unlink
 
   # Files that are not really app files.
   _ignored: (path, test = @config.paths.ignored) ->
@@ -42,17 +42,17 @@ module.exports = class File-list extends Event-emitter
     @timer = set-timeout (~> @emit 'ready'), @RESET_TIME
 
   _find-byPath: (path) ->
-    @files |> find (file) -> file.path is path
+    @files |> find (.path is path)
 
   _find-asset-byPath: (path) ->
-    @assets |> find (file) -> file.path is path
+    @assets |> find (.path is path)
 
   _compile-dependent-files: (path) ->
     @files
       |> filter (dependent) ~> not empty dependent.cache.dependencies
       |> filter (dependent) ~> path `elem` dependent.cache.dependencies
       |> each @_compile
-    @_reset-timer()
+    @_reset-timer!
 
   _compile: (file) ~>
     error <~ file.compile
@@ -62,7 +62,7 @@ module.exports = class File-list extends Event-emitter
     else
       logger.debug "Compiled file '#{file.path}'"
       @_compile-dependent-files file.path
-      @_reset-timer()
+      @_reset-timer!
 
   _copy: (asset) ~>
     error <~ asset.copy
@@ -85,18 +85,18 @@ module.exports = class File-list extends Event-emitter
 
   _change: (path, compiler, is-helper) ~>
     if @_is-asset path
-      @_copy (@_find-asset-byPath(path) ? @_add-asset path)
-    else if @_ignored(path) or not compiler
+      @_copy (@_find-asset-by-path(path) ? @_add-asset path)
+    else if @_ignored path or not compiler
       @_compile-dependent-files path
     else
-      @_compile (@_find-byPath(path) ? @_add path, compiler, is-helper)
+      @_compile (@_find-by-path(path) ? @_add path, compiler, is-helper)
 
   _unlink: (path) ~>
     if @_is-asset path
-      @assets.splice(@assets.index-of(path), 1)
+      @assets.splice @assets.index-of(path), 1
     else if @_ignored path
       @_compile-dependent-files path
     else
-      file = @_find-byPath path
-      @files.splice(@files.index-of(file), 1)
-    @_reset-timer()
+      file = @_find-by-path path
+      @files.splice @files.index-of(file), 1
+    @_reset-timer!

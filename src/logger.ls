@@ -9,9 +9,9 @@ colors =
   debug: 'blue'
 
 get-info = (level) ->
-  date = new Date().to-format('DD MMM HH24:MI:SS')
+  date = new Date!to-format('DD MMM HH24:MI:SS')
   lvl = color.set level, colors[level]
-  "#{date} - #{lvl}:"
+  "#date - #lvl:"
 
 logger =
   is-debug: process.env.BRUNCH_DEBUG is '1'
@@ -25,7 +25,7 @@ logger =
         console.log info, ...args
 
   error: ->
-    growl [...arguments].join(' '), title: 'Brunch error'
+    growl [...arguments]join(' '), title: 'Brunch error'
     logger.log 'error', ...arguments
 
   warn: ->
