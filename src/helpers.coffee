@@ -251,7 +251,12 @@ normalizeJsWrapper = (typeOrFunction) ->
     when 'raw'
       (path, data) ->
         "#{data}"
-    else typeOrFunction
+    else
+      if typeof typeOrFunction is 'function'
+        typeOrFunction
+      else
+        throw new Error 'config.jsWrapper should be a function or one of:
+"commonjs", "amd", "raw"'
 
 normalizeRequireDefinition = (typeOrFunction) ->
   switch typeOrFunction
@@ -260,7 +265,12 @@ normalizeRequireDefinition = (typeOrFunction) ->
       data = fs.readFileSync(path).toString()
       -> data
     when 'raw' then -> ''
-    else typeOrFunction
+    else
+      if typeof typeOrFunction is 'function'
+        typeOrFunction
+      else
+        throw new Error 'config.requireDefinition should be a function
+or one of: "commonjs", "raw"'
 
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>

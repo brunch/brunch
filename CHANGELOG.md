@@ -9,24 +9,28 @@
     `brunch generate --path PARENT-DIR` is still supported for custom paths.
     3. Generator relations (e.g. create `model-test` for every `model`) are
     now customizable & supported via `config.generatorsRelations`.
-    Example: `generatorsRelations: {model: ['model-test']}`.
 * Added conventions:
-    * All directories that named as `assets` are considered as asset dirs,
-    all files there will be copied to public path directly.
-    * All directories that named as `vendor` are considered as vendor files,
-    all files there won't be wrapped in modules.
-    * All files that end with `_test.<extension>` are considered as test files
-    and will be loaded automatically with `brunch test`.
-    * All files that start with `_` are considered as partial files and
-    won't be compiled. Useful for Stylus / Sass languages.
-    Basically this was the functionality of `config.paths.ignored` which is moved.
     * Conventions are configurable via `config.conventions[name]`.
-    Convention can be a function.
+    Convention can be a RegExp or Function.
+    * `assets` convention: all files in directories that named as `assets`
+    (default value) will be copied to public path directly.
+    * `vendor` All files in directories that named as `vendor`
+    (default value) won't be wrapped in modules.
+    * `tests` convention: all files that end with `_test.<extension>`
+    (default value) are considered as test files and will be loaded
+    automatically with `brunch test`.
+    * `ignored` convention: all files that start with `_` (default value)
+    are considered as partial files and won't be compiled. Useful for
+    Stylus / Sass languages. This replaces functionality of
+    `config.paths.ignored`.
 * Added AMD support by allowing more flexibility with file wrapping:
-    * `config.jsWrapper` can be a string (`commonjs`, `amd`, `raw`)
-    or function, will define how to wrap files in `app/` directory in modules.
-    * `config.requireDefinition` can be a string (`commonjs`, `raw`) or
-    function, will define what to add on top of every file.
+    * `config.modules` can be a string (`commonjs`, `amd`),
+    boolean (`false`, will disable modules and compile everything as-is)
+    or a detailed object of:
+        * `config.modules.wrapper` - function, defines how to wrap files
+        in app directory in modules.
+        * `config.modules.definition` - function, defines what to add on top of
+        every file.
 * Added linting support. Linting is a static analysis of code. Example
 tools for this are JSHint, CSSLint etc. The lint API is
 `plugin.lint(data, path, callback)`. One file can use more than one linter.
