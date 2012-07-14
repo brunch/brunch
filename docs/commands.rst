@@ -7,7 +7,7 @@ Create new brunch project. Options:
 
 * ``rootPath``: (required) name of project directory that would be created
 * ``-s PATH_TO_SKELETON, --skeleton PATH_TO_SKELETON``: path or
-git repo address of project, contents of which will be copied to new dir.
+git / github repo address of project, contents of which will be copied to new dir.
 
 `.git` directory is automatically removed when copying.
 
@@ -16,7 +16,7 @@ Short-cut: ``brunch n``.
 Examples:
 
 * ``brunch n twitter -s ~/brunch-templates/simple``
-* ``brunch n twitter -s git://github.com/paulmillr/brunch-with-chaplin.git``
+* ``brunch n twitter -s github://paulmillr/brunch-with-chaplin-js``
 
 ``brunch build``
 ----------------
@@ -110,5 +110,6 @@ Examples:
 Run tests on the current project. Options:
 
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
+* ``-r REPORTER, --repoter REPORTER``: mocha reporter name.
 
 Short-cut: ``brunch t``.
