@@ -6,8 +6,9 @@ Upgrading to 1.4
 ================
 * Remove all ``config.files[lang].defaultExtension`` settings.
 * Remove ``config.framework`` setting.
+* Move ``config.paths.ignored`` to ``config.conventions.ignored`` if you have it.
 * (If you want to use ``brunch generate``) Add ``generatorRelations`` setting. Example: https://github.com/paulmillr/brunch-with-chaplin/blob/master/config.coffee. Add ``generators`` directory with generators. Example: https://github.com/paulmillr/brunch-with-chaplin/blob/master/generators/
-* Update ``package.json`` brunch plugins versions to ``>= 1.0 < 1.4``
+* Update ``package.json`` brunch plugins versions to ``>= 1.0 < 1.5``
 * Run ``npm install``
 
 Upgrading to 1.3
