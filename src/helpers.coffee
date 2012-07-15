@@ -232,7 +232,7 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
-normalizeJsWrapper = (typeOrFunction) ->
+normalizeWrapper = (typeOrFunction) ->
   switch typeOrFunction
     when 'commonjs'
       (path, data) ->
@@ -248,9 +248,7 @@ normalizeJsWrapper = (typeOrFunction) ->
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   });
   """
-    when 'raw'
-      (path, data) ->
-        "#{data}"
+    when false then (path, data) -> "#{data}"
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
@@ -258,13 +256,13 @@ normalizeJsWrapper = (typeOrFunction) ->
         throw new Error 'config.jsWrapper should be a function or one of:
 "commonjs", "amd", "raw"'
 
-normalizeRequireDefinition = (typeOrFunction) ->
+normalizeDefinition = (typeOrFunction) ->
   switch typeOrFunction
     when 'commonjs'
       path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
       data = fs.readFileSync(path).toString()
       -> data
-    when 'raw' then -> ''
+    when 'amd', false then -> ''
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
@@ -295,44 +293,47 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   conventions          = config.conventions  ?= {}
   conventions.assets  ?= /assets(\/|\\)/
-  conventions.ignored ?= paths.ignored ? (path) -> startsWith sysPath.basename(path), '_'
+  conventions.ignored ?= paths.ignored ? (path) ->
+    startsWith sysPath.basename(path), '_'
   conventions.tests   ?= /_test\.\w+$/
   conventions.vendor  ?= /vendor(\/|\\)/
 
   config.notifications ?= on
-  config.jsWrapper    ?= 'commonjs'
-  config.requireDefinition ?= 'commonjs'
+  modules              = config.modules      ?= {}
+  modules.wrapper     ?= 'commonjs'
+  modules.definition  ?= 'commonjs'
 
   config.server       ?= {}
   config.server.base  ?= ''
   config.server.port  ?= 3333
   config.server.run   ?= no
+  config
 
-  # Deprecations
+getConfigDeprecations = (config) ->
+  messages = []
   warnMoved = (configItem, from, to) ->
-    logger.warn "config.#{from} moved to config.#{to}" if configItem
+    messages.push "config.#{from} moved to config.#{to}" if configItem
 
-  warnMoved paths.ignored, 'paths.ignored', 'conventions.ignored'
+  warnMoved config.paths.ignored, 'paths.ignored', 'conventions.ignored'
   warnMoved config.rootPath, 'rootPath', 'paths.root'
   warnMoved config.buildPath, 'buildPath', 'paths.public'
 
   ensureNotArray = (name) ->
     if Array.isArray config.paths[name]
-      logger.error "config.paths.#{name} can't be an array.
+      messages.push "config.paths.#{name} can't be an array.
 Use config.conventions.#{name}"
 
   ensureNotArray 'assets'
   ensureNotArray 'test'
   ensureNotArray 'vendor'
-
-  replaceSlashes config if process.platform is 'win32'
-  config
+  messages
 
 normalizeConfig = (config) ->
   normalized = {}
   normalized.join = createJoinConfig config.files
-  normalized.jsWrapper = normalizeJsWrapper config.jsWrapper
-  normalized.requireDefinition = normalizeRequireDefinition config.requireDefinition
+  normalized.modules = {}
+  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper
+  normalized.modules.definition = normalizeDefinition config.modules.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
     normalized.conventions[name] = normalizeChecker config.conventions[name]
@@ -347,7 +348,10 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   catch error
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   setConfigDefaults config, fullPath
+  deprecations = getConfigDeprecations config
+  deprecations.forEach logger.warn if deprecations.length > 0
   recursiveExtend config, options
+  replaceSlashes config if process.platform is 'win32'
   normalizeConfig config
   deepFreeze config
   config

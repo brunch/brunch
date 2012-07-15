@@ -90,25 +90,19 @@ Example:
 ``modules``
 ===========
 
-modules: 'amd'
-modules: 'commonjs'
-modules: false
-modules:
-  wrapper: 'commonjs'
-  definition: false
+``Object``: consists of ``wrapper`` and ``definition`` subsettings.
 
-modules:
-  wrapper: 'commonjs'
-  definition: false
-
-``jsWrapper``
-=============
-
-``String or Function``: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories.
+``modules.wrapper``: ``String, Boolean or Function``: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories. Values:
 
 * ``commonjs`` (Default) — CommonJS wrapper.
 * ``amd`` — AMD wrapper.
-* ``raw`` — no wrapping. Files will be compiled as-is.
+* ``false`` — no wrapping. Files will be compiled as-is.
+* Function that takes path and data
+
+``modules.definition``: ``String, Boolean or Function`` a code that will be added on top of every generated JavaScript file. Values:
+
+* ``commonjs`` (Default) — CommonJS require definition.
+* ``false`` — no definition.
 * Function that takes path and data
 
 Example:
@@ -116,21 +110,14 @@ Example:
 ::
 
     # Same as 'commonjs', but in function implementation.
-    jsWrapper: (path, data) ->
+    modules:
+      wrapper: (path, data) ->
         """
-  window.require.define({#{path}: function(exports, require, module) {
-    #{data}
-  }});\n\n
-  """
-
-``requireDefinition``
-=====================
-
-``String or Function``: a code that will be added on top of every generated JavaScript file.
-
-* ``commonjs`` (Default) — CommonJS require definition.
-* ``raw`` — no definition.
-* Function that takes path and data
+    window.require.define({#{path}: function(exports, require, module) {
+      #{data}
+    }});\n\n
+        """
+      definition: false
 
 ``notifications``
 =================
