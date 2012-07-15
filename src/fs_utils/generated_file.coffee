@@ -14,10 +14,10 @@ extractOrder = (files, config) ->
     .filter (key) ->
       key in types
     .map (key) ->
-      config.files[key].order
+      config.files[key].order ? {}
 
-  before = helpers.flatten orders.map (type) -> (type?.before ? [])
-  after = helpers.flatten orders.map (type) -> (type?.after ? [])
+  before = helpers.flatten orders.map (type) -> (type.before ? [])
+  after = helpers.flatten orders.map (type) -> (type.after ? [])
   vendorConvention = config._normalized.conventions.vendor
   {before, after, vendorConvention}
 
