@@ -5,7 +5,7 @@ FAQ
 I want to start new project with Brunch. What's the workflow?
 -------------------------------------------------------------
 
-* Create new project (preferably from brunch-with-chaplin skeleton if you're building big app) ``brunch new project --skeleton git://github.com/paulmillr/brunch-with-chaplin.git && cd project``.
+* Create new project (preferably from brunch-with-chaplin skeleton if you're building big app) ``brunch new project && cd project``.
 * Create HTML mockups in ``app/assets`` directory (``login.html``, ``user.html`` etc.) & corresponding styles.
 * Watch application files with ``brunch watch --server`` and see the results in browser on ``localhost:3000``. Auto-debug styles in browser with ``auto-reload-brunch`` which will automatically reload browser page on every page.
 * When all mockups are done, create app classes for them with ``brunch generate``. E.g. ``brunch generate scaffold user``.
@@ -14,7 +14,7 @@ I want to start new project with Brunch. What's the workflow?
 I don't like CoffeeScript. Does brunch work for pure js projects?
 -----------------------------------------------------------------
 
-Yep! Execute ``brunch new project_name --skeleton git://github.com/brunch/simple-js-skeleton.git`` and you'll create a javascript project. Customize it to your needs.
+Yep, brunch is language-agnostic! Just create a project from any JS skeleton https://github.com/brunch/brunch/wiki/Skeletons and customize it to your needs.
 
 How do I change app language?
 -----------------------------
@@ -40,8 +40,8 @@ You can't use:
     * brunch 1.1.0 with plugin 2.0.0.
     * brunch 2.0.0 with plugin 1.2.0.
 
-Why do you use these languages in default skeletons?
-----------------------------------------------------
+Why do you use these languages in default skeleton?
+---------------------------------------------------
 
 * `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
 * `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / `:`s), unlike less / sass; b) its mixins are transparent. If you're writing ``border-radius`` in stylus with ``nib``, it's automatically expanded to all vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.

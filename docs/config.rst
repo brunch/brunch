@@ -7,29 +7,27 @@ Brunch uses configuration file (``config.coffee`` or ``config.js``) located in t
 ``paths``
 =============
 
-`Optional, object`: ``paths`` contains application paths to key directories. Paths are simple strings.
+``Object``: ``paths`` contains application paths to key directories. Paths are simple strings.
 
 * ``public`` key: path to build directory that would contain output.
-* ``ignored`` key: string, regExp, function or array of them. Will check against files that would be ignored by brunch compilator.
-* ``assets`` key: path OR array of paths to asset files.
-* Other valid keys, but not recommended to use: ``test``, ``app``, ``vendor``, ``root``.
+* ``test`` key: path to test files.
+
+* Other valid keys, but not recommended to use: ``app``, ``vendor``, ``root``.
 
 Example:
 
 ::
 
     paths:
-      public: '../deploy'
-      ignored: 'vendor/styles/bootstrap'
+      public: '/user/www/deploy'
       test: 'spec'
 
 ``files``
 =========
 
-`Required, object`: ``files`` configures handling of application files: which compiler would be used on which file, what name should output file have etc. 
+``Required, object``: ``files`` configures handling of application files: which compiler would be used on which file, what name should output file have etc. 
 
 * <type>: ``javascripts``, ``stylesheets`` or ``templates``
-    * defaultExtension: (optional). Defines what file will be generated with `brunch generate`.
     * joinTo: (required) describes how files will be compiled & joined together. Available formats:
         * 'outputFilePath'
         * map of ('outputFilePath': /regExp that matches input path/)
@@ -48,69 +46,108 @@ Example:
 
     files:
       javascripts:
-        defaultExtension: 'coffee'
         joinTo:
           'javascripts/app.js': /^app/
           'javascripts/vendor.js': /^vendor/
         order:
           before: [
             'vendor/scripts/console-helper.js',
-            'vendor/scripts/jquery-1.7.js',
+            'vendor/scripts/jquery-1.7.0.js',
             'vendor/scripts/underscore-1.3.1.js',
             'vendor/scripts/backbone-0.9.0.js'
           ]
 
       stylesheets:
-        defaultExtension: 'styl'
         joinTo: 'stylesheets/app.css'
         order:
           before: ['vendor/styles/normalize.css']
           after: ['vendor/styles/helpers.css']
 
       templates:
-        defaultExtension: 'eco'
         joinTo: 'javascripts/app.js'
 
-``generators``
-==============
+``conventions``
+===============
 
-`Optional, object`: contains templates that would be used with ``brunch generate`` command. For example, if there is ``generators.model`` and you execute ``brunch generate model twitter_user``, brunch will call / load ``generators.model``. This param is optional and by default it uses some predefined templates. Template could be:
+``Object``: ``conventions`` define tests, against which all file names will be checked.
 
-a) A string.
-b) A function, that will take name, entered in ``brunch generate``.
+* ``ignored`` key: regExp or function. Default value is a function that checks if filename starts with ``_`` (underscore). Will check against files that would be ignored by brunch compilator, but that still be watched by watcher.
+* ``assets`` key: regExp or function. Default value: ``/assets(\/|\\)/``. If test gives true, file won't be compiled and will be just moved to public directory instead.
+* ``vendor`` key: regExp or function. Default value: ``/vendor(\/|\\)/``. If test gives true, file won't be wrapped in module, if there are any.
+* ``tests`` key: regExp or function. Default value: ``/_test\.\w+$/``. If test gives true, the file will be auto-loaded in test environment.
+
+Keep in mind that default brunch regexps, as you see, consider **all** ``vendor/`` (etc.) directories as vendor (etc.) files. So, ``app/views/vendor/thing/chaplin_view.coffee`` will be treated as vendor file.
 
 Example:
 
 ::
 
-    generators:
-      # formatClassName is a custom function that converts
-      # aaa_bbb_ccc to AaaBbbCcc
-      model: (name) -> 'class #{formatClassName name} extends Backbone.Model'
-      view: fs.readFileSync sysPath.join __dirname, 'generators', 'view'
+    conventions:
+      ignored: -> false       # no ignored files
+      assets: /files(\/|\\)/  # vendor/jquery/files/jq.img
+      tests: /_spec\.\w+$/    # user_spec.js etc
 
-``framework``
+``modules``
+===========
+
+modules: 'amd'
+modules: 'commonjs'
+modules: false
+modules:
+  wrapper: 'commonjs'
+  definition: false
+
+modules:
+  wrapper: 'commonjs'
+  definition: false
+
+``jsWrapper``
 =============
 
-`Optional, string`: framework you'll be using as skeleton of your app.
+``String or Function``: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories.
 
-Default value is ``'backbone'``.
+* ``commonjs`` (Default) — CommonJS wrapper.
+* ``amd`` — AMD wrapper.
+* ``raw`` — no wrapping. Files will be compiled as-is.
+* Function that takes path and data
 
-Examples: ``'backbone'``, ``'chaplin'``, ``'ember'``, ``'batman'``.
+Example:
+
+::
+
+    # Same as 'commonjs', but in function implementation.
+    jsWrapper: (path, data) ->
+        """
+  window.require.define({#{path}: function(exports, require, module) {
+    #{data}
+  }});\n\n
+  """
+
+``requireDefinition``
+=====================
+
+``String or Function``: a code that will be added on top of every generated JavaScript file.
+
+* ``commonjs`` (Default) — CommonJS require definition.
+* ``raw`` — no definition.
+* Function that takes path and data
+
+``notifications``
+=================
+
+``Boolean``: Enables or disables Growl / inotify notifications. Default value is true (enabled).
 
 ``minify``
 ==========
 
 `Optional, boolean`: determines if minifiers should be enabled or not.
 
-Default value is ``false``.
-
-Examples: ``true``, ``false``.
+Default value is ``false`` (``true`` if you run ``brunch build --minify``).
 
 ``server``
 ==========
 
-`Optional, object`: contains params of webserver that runs on ``brunch watch --server``.
+``Object``: contains params of webserver that runs on ``brunch watch --server``.
 
 * ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function.
 * ``port``: (optional) port on which server will run
