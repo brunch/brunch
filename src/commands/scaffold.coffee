@@ -10,11 +10,6 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-flatten = (array) ->
-  array.reduce (acc, elem) ->
-    acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
-  , []
-
 # TODO
 formatTemplate = (template) ->
   template

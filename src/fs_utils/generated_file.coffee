@@ -8,6 +8,19 @@ common = require './common'
 helpers = require '../helpers'
 logger = require '../logger'
 
+extractOrder = (files, config) ->
+  types = files.map (file) -> inflection.pluralize file.type
+  orders = Object.keys(config.files)
+    .filter (key) ->
+      key in types
+    .map (key) ->
+      config.files[key].order
+
+  before = helpers.flatten orders.map (type) -> (type?.before ? [])
+  after = helpers.flatten orders.map (type) -> (type?.after ? [])
+  vendorConvention = config._normalized.conventions.vendor
+  {before, after, vendorConvention}
+
 sort = (files, config) ->
   paths = files.map (file) -> file.path
   indexes = Object.create(null)
@@ -15,18 +28,6 @@ sort = (files, config) ->
   order = extractOrder files, config
   helpers.sortByConfig(paths, order).map (path) ->
     indexes[path]
-
-extractOrder = (files, config) ->
-  types = files.map (file) -> inflection.pluralize file.type
-  Object.keys(config.files)
-    .filter (key) ->
-      key in types
-    .map (key) ->
-      config.files[key].order
-    .reduce (memo, array = {}) ->
-      before: memo.before.concat(array.before ? []),
-      after: memo.after.concat(array.after ? [])
-    , {before: [], after: [], vendorConvention: config._normalized.conventions.vendor}
 
 loadTestFiles = (files, testsConvention) ->
   files
@@ -67,7 +68,7 @@ module.exports = class GeneratedFile
     joined = files.map((file) -> file.cache.data).join('')
     process.nextTick =>
       if @type is 'javascript'
-        data = @config._normalized.requireDefinition() + joined
+        data = @config._normalized.modules.definition(@path, joined) + joined
         callback null, (if @isTestFile then data + requireFiles() else data)
       else
         callback null, joined

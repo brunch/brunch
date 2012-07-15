@@ -91,7 +91,7 @@ module.exports = class FileList extends EventEmitter
 
   _add: (path, compiler, linters, isHelper) ->
     isVendor = @_isVendor path
-    wrapper = @config._normalized.jsWrapper
+    wrapper = @config._normalized.modules.wrapper
     file = new SourceFile path, compiler, linters, wrapper, isHelper, isVendor
     @files.push file
     file

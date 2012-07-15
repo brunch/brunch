@@ -10,6 +10,11 @@ logger = require './logger'
 exports.startsWith = startsWith = (string, substring) ->
   string.indexOf(substring) is 0
 
+exports.flatten = flatten = (array) ->
+  array.reduce (acc, elem) ->
+    acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
+  , []
+
 exports.callFunctionOrPass = callFunctionOrPass = (thing) ->
   if typeof thing is 'function' then thing() else thing
 
@@ -114,7 +119,7 @@ exports.sortByConfig = (files, config) ->
     cfg =
       before: config.before ? [] 
       after: config.after ? []
-      vendorConvention: (config.vendorConvention or -> no)
+      vendorConvention: (config.vendorConvention ? -> no)
     files.slice().sort (a, b) -> sortByBefore cfg, a, b
   else
     files
@@ -253,8 +258,8 @@ normalizeWrapper = (typeOrFunction) ->
       if typeof typeOrFunction is 'function'
         typeOrFunction
       else
-        throw new Error 'config.jsWrapper should be a function or one of:
-"commonjs", "amd", "raw"'
+        throw new Error 'config.modules.wrapper should be a function or one of:
+"commonjs", "amd", false'
 
 normalizeDefinition = (typeOrFunction) ->
   switch typeOrFunction
@@ -267,8 +272,8 @@ normalizeDefinition = (typeOrFunction) ->
       if typeof typeOrFunction is 'function'
         typeOrFunction
       else
-        throw new Error 'config.requireDefinition should be a function
-or one of: "commonjs", "raw"'
+        throw new Error 'config.modules.definition should be a function
+or one of: "commonjs", false'
 
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   join = (parent, name) =>
