@@ -24,13 +24,11 @@
     Stylus / Sass languages. This replaces functionality of
     `config.paths.ignored`.
 * Added AMD support by allowing more flexibility with file wrapping:
-    * `config.modules` can be a string (`commonjs`, `amd`),
-    boolean (`false`, will disable modules and compile everything as-is)
-    or a detailed object of:
-        * `config.modules.wrapper` - function, defines how to wrap files
-        in app directory in modules.
-        * `config.modules.definition` - function, defines what to add on top of
-        every file.
+    * `config.modules` can be an object of:
+        * `config.modules.wrapper` - string, boolean or function,
+        defines how to wrap files in app directory in modules.
+        * `config.modules.definition` - string, boolean or function, defines
+        what to add on top of every file.
 * Added linting support. Linting is a static analysis of code. Example
 tools for this are JSHint, CSSLint etc. The lint API is
 `plugin.lint(data, path, callback)`. One file can use more than one linter.
