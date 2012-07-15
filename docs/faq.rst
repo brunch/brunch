@@ -2,6 +2,11 @@
 FAQ
 ***
 
+I get EMFILE error when I build Brunch project. WTF?
+----------------------------------------------------
+
+`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command ``ulimit -n <number>`` (10000 should be enough).
+
 I want to start new project with Brunch. What's the workflow?
 -------------------------------------------------------------
 
