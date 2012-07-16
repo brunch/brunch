@@ -106,7 +106,7 @@ findTestHelpersFile = (testPath, callback) ->
     throw error if error?
     
     testHelpers = files.filter (file) ->
-      /^test-helpers\./.test file
+      /^test[-_]helper(s)?\./.test file
     
     if testHelpers.length > 0
       callback sysPath.resolve sysPath.join testPath, testHelpers[0]
