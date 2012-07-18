@@ -39,9 +39,9 @@ recursiveExtend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
     if typeof value is 'object' and value?
-      recursiveExtend object[key], properties[key]
+      recursiveExtend object[key], value
     else
-      object[key] = properties[key]
+      object[key] = value
   object
 
 exports.deepFreeze = deepFreeze = (object) ->
@@ -145,22 +145,24 @@ startDefaultServer = (port, path, base, callback) ->
   server.use base, express.static path
   server.all "#{base}/*", (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
-  server.listen parseInt port, 10
+  server.listen port
   server.on 'listening', callback
   server
 
 exports.startServer = (config, callback = (->)) ->
+  port = parseInt config.server.port, 10
+  publicPath = config.paths.public
   onListening = ->
-    logger.info "application started on http://localhost:#{config.server.port}/"
+    logger.info "application started on http://localhost:#{port}/"
     callback()
   if config.server.path
     try
       server = require sysPath.resolve config.server.path
-      server.startServer config.server.port, config.paths.public, onListening
+      server.startServer port, publicPath, onListening
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer config.server.port, config.paths.public, config.server.base, onListening
+    startDefaultServer port, publicPath, config.server.base, onListening
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
