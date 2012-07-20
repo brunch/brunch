@@ -1,13 +1,13 @@
 helpers = require '../src/helpers'
 
 describe 'helpers', ->
-  describe '#replaceSlashes', ->
+  describe 'replaceSlashes()', ->
     it 'should replace slashes with backslashes in config', ->
       unix = require './fixtures/unix_config'
       win = require './fixtures/win_config'
       expect(helpers.replaceSlashes unix.config).to.eql win.config
 
-  describe '#sortByConfig()', ->
+  describe 'sortByConfig()', ->
     it 'should files by config.before', ->
       files = ['backbone.js', 'jquery.js', 'underscore.js']
       config =
@@ -29,7 +29,7 @@ describe 'helpers', ->
       expect(helpers.sortByConfig files, config).to.eql [
         'meh/underscore.js', 'vendor/backbone.js', 'jquery.js'
       ]
-      
+
     it 'should files alphabetically', ->
       files = ['z', 'e', 'a', 'd', 'c', 's', 'z']
       config = {}
@@ -71,9 +71,17 @@ describe 'helpers', ->
         'b'
       ]
 
-  describe '#startsWith()', ->
+  describe 'startsWith()', ->
     it 'should work correctly', ->
       expect(helpers.startsWith 'abc', 'abc').to.equal yes
       expect(helpers.startsWith 'abc', 'a').to.equal yes
       expect(helpers.startsWith 'abc', 'c').to.equal no
       expect(helpers.startsWith 'cba', 'b').to.equal no
+
+  describe 'formatTemplate()', ->
+    format = (template) ->
+      helpers.formatTemplate 'hitler_user', 'hitler_users', template
+    expect(format '{{name}}').to.equal 'hitler_user'
+    expect(format '{{camelizedName}}').to.equal 'HitlerUser'
+    expect(format '{{name}}\n{{camelizedPluralName}}')
+      .to.equal 'hitler_user\nHitlerUsers'

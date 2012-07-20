@@ -399,3 +399,25 @@ cachedTestFiles = null
 
 exports.findTestFiles = (config) ->
   cachedTestFiles ?= getTestFiles config
+
+exports.formatTemplate = (name, pluralName, template) ->
+  re = /\{\{((?:camelized)?(?:[nN]ame|[pP]luralName))\}\}/g
+  states = {name, pluralName}
+  modifiers =
+    camelized: (string) ->
+      regexp = /[-_]([a-z])/g
+      rest = string.replace regexp, (match, char) ->
+        char.toUpperCase()
+      rest[0].toUpperCase() + rest[1...]
+
+  values =
+    Name: name
+    PluralName: pluralName
+
+  Object.keys(modifiers).forEach (modifierName) ->
+    modifier = modifiers[modifierName]
+    Object.keys(values).forEach (valueName) ->
+      value = values[valueName]
+      states[modifierName + valueName] = modifier value
+  template.replace re, (match, char) ->
+    states[char]

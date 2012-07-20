@@ -10,10 +10,6 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-# TODO
-formatTemplate = (template) ->
-  template
-
 # 
 #
 # generatorsPath - String, 
@@ -59,10 +55,10 @@ getGenerator = (generators, name, pluralName) -> (type, parent) ->
   Object.freeze generator
 
 getFilesFromGenerators = (generators) ->
-  console.log generators
   generators.map (generator) ->
-    path = sysPath.join(generator.parent, generator.name) + generator.extension
-    data = formatTemplate generator.template
+    gen = generator
+    path = sysPath.join(gen.parent, gen.name) + gen.extension
+    data = helpers.formatTemplate gen.name, gen.pluralName, gen.template
     {path, data}
 
 generateFile = (path, data, callback) ->
