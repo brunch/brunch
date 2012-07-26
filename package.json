@@ -29,22 +29,22 @@
     "node": "~0.6.10 || 0.8 || 0.9"
   },
   "dependencies": {
-    "coffee-script": "1.3.x",
-    "argumentum": "0.6.x",
-    "chokidar": "0.4.x",
-    "async": "0.1.x",
-    "mkdirp": "0.3.x",
-    "ncp": "0.2.x",
-    "walk": "2.2.x",
-    "rimraf": "2.0.x",
-    "growl": "1.5.x",
-    "express": "2.5.x",
-    "date-utils": "1.2.x",
-    "ansi-color": "0.2.x",
-    "inflection": "1.2.x",
-    "mocha": "1.2.x"
+    "coffee-script": "~1.3.3",
+    "argumentum":    "~0.6.0",
+    "chokidar":      "~0.4.0",
+    "async":         "~0.1.22",
+    "mkdirp":        "~0.3.3",
+    "ncp":           "~0.2.6",
+    "walk":          "~2.2.1",
+    "rimraf":        "~2.0.2",
+    "growl":         "~1.5.1",
+    "express":       "~2.5.11",
+    "date-utils":    "~1.2.11",
+    "ansi-color":    "~0.2.1",
+    "inflection":    "~1.2.2",
+    "mocha":         "~1.3.0"
   },
   "devDependencies": {
-    "chai": "1.1.x"
+    "chai":          "~1.1.1"
   }
 }
