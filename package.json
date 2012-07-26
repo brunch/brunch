@@ -31,7 +31,7 @@
   "dependencies": {
     "coffee-script": "1.3.x",
     "argumentum": "0.6.x",
-    "chokidar": "0.3.x",
+    "chokidar": "0.4.x",
     "async": "0.1.x",
     "mkdirp": "0.3.x",
     "ncp": "0.2.x",
