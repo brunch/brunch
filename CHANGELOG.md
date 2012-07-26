@@ -34,6 +34,10 @@ tools for this are JSHint, CSSLint etc. The lint API is
 `plugin.lint(data, path, callback)`. One file can use more than one linter.
 * Added config option that disables growl / libnotify notifications.
 Usage: `config.notifications = false`.
+* Added support for Mac OS X Mountain Lion notification center.
+You'll need to place
+[terminal-notifier.app](https://github.com/alloy/terminal-notifier/downloads)
+to `/Applications/` to get it work.
 * Removed support for:
     * `config.files[lang].defaultExtension`.
     Brunch will automatically detect extension from your generator file name.
