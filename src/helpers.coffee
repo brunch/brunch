@@ -8,7 +8,7 @@ sysPath = require 'path'
 logger = require './logger'
 
 exports.startsWith = startsWith = (string, substring) ->
-  string.indexOf(substring) is 0
+  string.lastIndexOf(substring, 0) is 0
 
 exports.flatten = flatten = (array) ->
   array.reduce (acc, elem) ->
