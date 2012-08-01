@@ -2,13 +2,8 @@
 * Added new phenomenally simplified scaffolder:
     1. Create `generators/` directory in your brunch application
     (directory name is customizable by `config.paths.generators`).
-    2. Place generator there in a way that mirrors generated file path.
-    For example, if you want `brunch generate <generator-name>`
-    to create new file in `app/views/styles`, you'll need to create
-    `generators/app/views/styles/<generator-name>.<extension>`.
-    `brunch generate --path PARENT-DIR` is still supported for custom paths.
-    3. Generator relations (e.g. create `model-test` for every `model`) are
-    now customizable & supported via `config.generatorsRelations`.
+    2. Create generator directory there with `generator.json` and
+    files that will be generated.
 * Added conventions:
     * Conventions are configurable via `config.conventions[name]`.
     Convention can be a RegExp or Function.

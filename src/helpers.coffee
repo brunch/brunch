@@ -400,7 +400,8 @@ cachedTestFiles = null
 exports.findTestFiles = (config) ->
   cachedTestFiles ?= getTestFiles config
 
-exports.formatTemplate = (name, pluralName, template) ->
+exports.formatTemplate = (template, templateData) ->
+  {name, pluralName} = templateData
   re = /\{\{((?:camelized)?(?:[nN]ame|[pP]luralName))\}\}/g
   states = {name, pluralName}
   modifiers =

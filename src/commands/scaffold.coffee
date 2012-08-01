@@ -10,56 +10,37 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-# 
-#
-# generatorsPath - String, 
-# callback       - Function, 
-#
-# Example:
-#
-#   getAllGenerators './generators', ->
-#   # => {
-#     controller: {parent: 'app/controllers', template: '', extension: ''}
-#   }
-#
-# Returns an Object of Object-s.
-getAllGenerators = (generatorsPath, callback) ->
-  err = null
-  generators = Object.create(null)
-  walker = walk.walk generatorsPath
-  walker.on 'file', (root, stats, next) ->
-    path = sysPath.join root, stats.name
-    return next() if fs_utils.ignored path
-    type = sysPath.basename(path).replace(/\.\w*$/, '')
-    generators[type] = generator = Object.create(null)
-    generator.type = type
-    generator.parent = sysPath.relative generatorsPath, root
-    generator.extension = sysPath.extname path
-    fs.readFile path, (error, data) ->
-      if error?
-        err = error
-        return next()
-      generator.template = data.toString()
-      next()
-  walker.on 'end', ->
-    callback err, generators
+readGeneratorConfig = (generatorsPath) -> (generatorPath, callback) ->
+  fs.readFile (sysPath.join generatorsPath, generatorPath, 'generator.json'), (error, data) ->
+    return callback error if error?
+    json = JSON.parse data.toString()
+    json.name = generatorPath
+    callback null, json
 
-getGenerator = (generators, name, pluralName) -> (type, parent) ->
-  generator = generators[type]
-  unless generator?
-    throw new Error "Generator #{type} isn't supported. Use one of: 
-#{Object.keys(generators).join(', ')}"
-  generator.parent = parent if parent?
-  generator.name = name
-  generator.pluralName = pluralName
-  Object.freeze generator
+formatGeneratorConfig = (path, json, templateData) ->
+  join = (file) -> sysPath.join path, file
+  replaceSlashes = (string) ->
+    if process.platform is 'win32'
+      string.replace(/\//g, '\\')
+    else
+      string
 
-getFilesFromGenerators = (generators) ->
-  generators.map (generator) ->
-    gen = generator
-    path = sysPath.join(gen.parent, gen.name) + gen.extension
-    data = helpers.formatTemplate gen.name, gen.pluralName, gen.template
-    {path, data}
+  json.files = json.files.map (object) ->
+    replacedTo = replaceSlashes object.to
+    copy = {}
+    copy.from = join replaceSlashes object.from
+    copy.to = helpers.formatTemplate replacedTo, templateData
+    copy
+
+  Object.freeze json
+
+getDependencyTree = (generators, generatorName, memo = []) ->
+  predicate = (generator) -> generator.name is generatorName
+  generator = generators.filter(predicate)[0]
+  (generator.dependencies ? []).forEach (dependency) ->
+    getDependencyTree generators, dependency, memo
+  memo.push generator
+  memo
 
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
@@ -79,6 +60,32 @@ destroyFile = (path, callback) ->
     logger.info "destroy #{path}"
     callback error
 
+scaffoldFile = (from, to, rollback, templateData, callback) ->
+  if rollback
+    destroyFile to, callback
+  else
+    fs.readFile from, (error, buffer) ->
+      formatted = helpers.formatTemplate buffer.toString(), templateData
+      generateFile to, formatted, callback
+
+scaffoldFiles = (rollback, templateData) -> (generator, callback) ->
+  async.forEach generator.files, ({from, to}, callback) ->
+    scaffoldFile from, to, rollback, templateData, callback
+  , callback
+
+generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
+  fs.readdir generatorsPath, (error, directories) ->
+    return callback error if error?
+    async.map directories, readGeneratorConfig(generatorsPath), (error, configs) ->
+      generators = directories.map (directory, index) ->
+        path = sysPath.join generatorsPath, directory
+        formatGeneratorConfig path, configs[index], templateData
+      tree = getDependencyTree generators, type
+      # logger.error "#{generator} is invalid generator name. Valid names:  #{generators.join ' '}"
+      async.forEach tree, scaffoldFiles(rollback, templateData), (error) ->
+        return callback error if error?
+        callback()
+
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
   pluralName = if type in ['controller', 'collection']
@@ -91,27 +98,14 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     else
       return logger.error "Plural form must be declared for '#{name}'"
 
-  generateOrDestroyFile = (file, callback) ->
-    if rollback
-      destroyFile file.path, callback
-    else
-      generateFile file.path, file.data, callback
-
   helpers.loadPackages '.', (error, packages) ->
     return logger.error error if error?
     config = helpers.loadConfig configPath
     return callback() unless config?
-    
-    relatedTypes = config.generatorsRelations?[type] ? []
 
-    getAllGenerators config.paths.generators, (error, allGenerators) ->
+    generators = config.paths.generators
+    templateData = {name, pluralName}
+
+    generateFiles rollback, generators, type, templateData, (error) ->
       return logger.error error if error?
-      getGen = getGenerator allGenerators, name, pluralName
-      generators = if parentDir?
-        [getGen type, parent]
-      else
-        ([type].concat relatedTypes).map (type) -> getGen type
-      files = getFilesFromGenerators generators
-      async.forEach files, generateOrDestroyFile, (error) ->
-        return logger.error error if error?
-        callback null, files
+      callback()
