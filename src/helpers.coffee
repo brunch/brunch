@@ -3,6 +3,7 @@
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'
+Handlebars = require 'handlebars'
 fs = require 'fs'
 sysPath = require 'path'
 logger = require './logger'
@@ -400,25 +401,14 @@ cachedTestFiles = null
 exports.findTestFiles = (config) ->
   cachedTestFiles ?= getTestFiles config
 
+Handlebars.registerHelper 'camelize', do ->
+  camelize = (string) ->
+    regexp = /[-_]([a-z])/g
+    rest = string.replace regexp, (match, char) ->
+      char.toUpperCase()
+    rest[0].toUpperCase() + rest[1...]
+  (options) ->
+    new Handlebars.SafeString camelize options.fn this
+
 exports.formatTemplate = (template, templateData) ->
-  {name, pluralName} = templateData
-  re = /\{\{((?:camelized)?(?:[nN]ame|[pP]luralName))\}\}/g
-  states = {name, pluralName}
-  modifiers =
-    camelized: (string) ->
-      regexp = /[-_]([a-z])/g
-      rest = string.replace regexp, (match, char) ->
-        char.toUpperCase()
-      rest[0].toUpperCase() + rest[1...]
-
-  values =
-    Name: name
-    PluralName: pluralName
-
-  Object.keys(modifiers).forEach (modifierName) ->
-    modifier = modifiers[modifierName]
-    Object.keys(values).forEach (valueName) ->
-      value = values[valueName]
-      states[modifierName + valueName] = modifier value
-  template.replace re, (match, char) ->
-    states[char]
+  Handlebars.compile(template)(templateData)

@@ -10,37 +10,10 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-readGeneratorConfig = (generatorsPath) -> (generatorPath, callback) ->
-  fs.readFile (sysPath.join generatorsPath, generatorPath, 'generator.json'), (error, data) ->
-    return callback error if error?
-    json = JSON.parse data.toString()
-    json.name = generatorPath
-    callback null, json
-
-formatGeneratorConfig = (path, json, templateData) ->
-  join = (file) -> sysPath.join path, file
-  replaceSlashes = (string) ->
-    if process.platform is 'win32'
-      string.replace(/\//g, '\\')
-    else
-      string
-
-  json.files = json.files.map (object) ->
-    replacedTo = replaceSlashes object.to
-    copy = {}
-    copy.from = join replaceSlashes object.from
-    copy.to = helpers.formatTemplate replacedTo, templateData
-    copy
-
-  Object.freeze json
-
-getDependencyTree = (generators, generatorName, memo = []) ->
-  predicate = (generator) -> generator.name is generatorName
-  generator = generators.filter(predicate)[0]
-  (generator.dependencies ? []).forEach (dependency) ->
-    getDependencyTree generators, dependency, memo
-  memo.push generator
-  memo
+isDirectory = (generatorsPath) -> (path, callback) ->
+  fs.stat (sysPath.join generatorsPath, path), (error, stats) ->
+    return logger.error error if error?
+    callback stats.isDirectory()
 
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
@@ -60,7 +33,7 @@ destroyFile = (path, callback) ->
     logger.info "destroy #{path}"
     callback error
 
-scaffoldFile = (from, to, rollback, templateData, callback) ->
+scaffoldFile = (rollback, from, to, templateData, callback) ->
   if rollback
     destroyFile to, callback
   else
@@ -70,33 +43,67 @@ scaffoldFile = (from, to, rollback, templateData, callback) ->
 
 scaffoldFiles = (rollback, templateData) -> (generator, callback) ->
   async.forEach generator.files, ({from, to}, callback) ->
-    scaffoldFile from, to, rollback, templateData, callback
+    scaffoldFile rollback, from, to, templateData, callback
   , callback
 
-generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
-  fs.readdir generatorsPath, (error, directories) ->
+readGeneratorConfig = (generatorsPath) -> (name, callback) ->
+  path = sysPath.join generatorsPath, name, 'generator.json'
+  fs.readFile path, (error, buffer) ->
     return callback error if error?
-    async.map directories, readGeneratorConfig(generatorsPath), (error, configs) ->
-      generators = directories.map (directory, index) ->
-        path = sysPath.join generatorsPath, directory
-        formatGeneratorConfig path, configs[index], templateData
-      tree = getDependencyTree generators, type
-      # logger.error "#{generator} is invalid generator name. Valid names:  #{generators.join ' '}"
-      async.forEach tree, scaffoldFiles(rollback, templateData), (error) ->
-        return callback error if error?
-        callback()
+    data = buffer.toString()
+    try
+      json = JSON.parse data
+    catch error
+      throw new Error "Invalid json at #{path}: #{error}"
+    json.name = name
+    callback null, json
+
+formatGeneratorConfig = (path, json, templateData) ->
+  join = (file) -> sysPath.join path, file
+  replaceSlashes = (string) ->
+    if process.platform is 'win32'
+      string.replace(/\//g, '\\')
+    else
+      string
+
+  json.files = json.files.map (object) ->
+    {
+      from: join replaceSlashes object.from
+      to: helpers.formatTemplate (replaceSlashes object.to), templateData
+    }
+  json.dependencies = json.dependencies.map (object) ->
+    {
+      name: object.name
+      params: helpers.formatTemplate object.params, templateData
+    }
+  Object.freeze json
+
+getDependencyTree = (generators, generatorName, memo = []) ->
+  generator = generators.filter((gen) -> gen.name is generatorName)[0]
+  throw new Error "Invalid generator #{generatorName}" unless generator?
+  (generator.dependencies ? []).forEach (dependency) ->
+    getDependencyTree generators, dependency.name, memo
+  memo.push generator
+  memo
+
+generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
+  fs.readdir generatorsPath, (error, files) ->
+    return throw new Error error if error?
+    async.filter files, isDirectory(generatorsPath), (directories) ->
+      async.map directories, readGeneratorConfig(generatorsPath), (error, configs) ->
+        return throw new Error error if error?
+        console.log 123, configs
+        generators = directories.map (directory, index) ->
+          path = sysPath.join generatorsPath, directory
+          formatGeneratorConfig path, configs[index], templateData
+        tree = getDependencyTree generators, type
+        async.forEach tree, scaffoldFiles(rollback, templateData), (error) ->
+          return callback error if error?
+          callback()
 
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
-  pluralName = if type in ['controller', 'collection']
-    name
-  else
-    inflection.pluralize name, pluralName
-  if name is pluralName
-    if type in ['controller', 'collection', 'scaffold']
-      name = inflection.singularize pluralName
-    else
-      return logger.error "Plural form must be declared for '#{name}'"
+  pluralName = inflection.pluralize name
 
   helpers.loadPackages '.', (error, packages) ->
     return logger.error error if error?
