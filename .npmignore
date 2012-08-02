@@ -6,5 +6,5 @@ CVS/
 *~
 *.bak
 .DS_Store
-docs/_build
-skeletons/brunch-with-chaplin/public
+/docs/_build/
+/skeletons/brunch-with-chaplin/public/
