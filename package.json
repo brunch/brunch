@@ -42,7 +42,8 @@
     "date-utils":    "~1.2.11",
     "ansi-color":    "~0.2.1",
     "inflection":    "~1.2.2",
-    "mocha":         "~1.3.0"
+    "mocha":         "~1.3.0",
+    "handlebars":    "~1.0.6"
   },
   "devDependencies": {
     "chai":          "~1.1.1"
