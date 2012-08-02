@@ -4,6 +4,7 @@ async = require 'async'
 fs = require 'fs'
 inflection = require 'inflection'
 mkdirp = require 'mkdirp'
+os = require 'os'
 sysPath = require 'path'
 walk = require 'walk'
 helpers = require '../helpers'
@@ -61,7 +62,7 @@ readGeneratorConfig = (generatorsPath) -> (name, callback) ->
 formatGeneratorConfig = (path, json, templateData) ->
   join = (file) -> sysPath.join path, file
   replaceSlashes = (string) ->
-    if process.platform is 'win32'
+    if os.platform() is 'win32'
       string.replace(/\//g, '\\')
     else
       string

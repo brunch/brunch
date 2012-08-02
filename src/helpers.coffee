@@ -5,6 +5,7 @@ coffeescript = require 'coffee-script'
 express = require 'express'
 Handlebars = require 'handlebars'
 fs = require 'fs'
+os = require 'os'
 sysPath = require 'path'
 logger = require './logger'
 
@@ -359,7 +360,7 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0
   recursiveExtend config, options
-  replaceSlashes config if process.platform is 'win32'
+  replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
   deepFreeze config
   config

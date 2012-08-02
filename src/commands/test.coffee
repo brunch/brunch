@@ -65,14 +65,15 @@ readTestFiles = (publicPath, callback) ->
   getPublicPath = (subPaths...) ->
     sysPath.join publicPath, subPaths...
 
-  fs.readFile getPublicPath('index.html'), (error, htmlFile) ->
+  fs.readFile getPublicPath('index.html'), (error, buffer) ->
     throw error if error?
 
-    htmlFile = htmlFile.toString()
+    htmlFile = buffer.toString()
     scriptFilesPath = getScriptFilesPath(htmlFile).map getPublicPath
       
-    async.map scriptFilesPath, fs.readFile, (error, scriptFiles) ->
-      callback error, htmlFile, scriptFiles.map (scriptFile) -> scriptFile.toString()
+    async.map scriptFilesPath, fs.readFile, (error, buffers) ->
+      callback error, htmlFile, buffers.map (scriptBuffer) ->
+        scriptBuffer.toString()
 
 # Setup JSDom instance with public files
 setupJsDom = (publicPath, callback) ->

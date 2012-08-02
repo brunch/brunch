@@ -4,12 +4,12 @@ fs = require 'fs'
 {EventEmitter} = require 'events'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
+os = require 'os'
 sysPath = require 'path'
-util = require 'util'
 logger = require '../logger'
 
 exports.exists = fs.exists or sysPath.exists
-exports.sep = sysPath.sep or (if process.platform is 'win32' then '\\' else '/')
+exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
 
 # Creates file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
@@ -45,7 +45,8 @@ exports.copy = (source, destination, callback) ->
     return logger.error error if error?
     input = fs.createReadStream source
     output = fs.createWriteStream destination
-    util.pump input, output, callback
+    request = input.pipe output
+    request.on 'close', callback
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
