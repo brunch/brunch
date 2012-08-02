@@ -412,4 +412,6 @@ Handlebars.registerHelper 'camelize', do ->
     new Handlebars.SafeString camelize options.fn this
 
 exports.formatTemplate = (template, templateData) ->
-  Handlebars.compile(template)(templateData)
+  key = '__BRUNCH_TEMPLATE_FORMATTER'
+  Handlebars.compile(template.replace(/\\\{/, key))(templateData)
+    .replace(key, '\\')
