@@ -10,11 +10,6 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
-isDirectory = (generatorsPath) -> (path, callback) ->
-  fs.stat (sysPath.join generatorsPath, path), (error, stats) ->
-    return logger.error error if error?
-    callback stats.isDirectory()
-
 generateFile = (path, data, callback) ->
   parentDir = sysPath.dirname path
   write = ->
@@ -45,6 +40,11 @@ scaffoldFiles = (rollback, templateData) -> (generator, callback) ->
   async.forEach generator.files, ({from, to}, callback) ->
     scaffoldFile rollback, from, to, templateData, callback
   , callback
+
+isDirectory = (generatorsPath) -> (path, callback) ->
+  fs.stat (sysPath.join generatorsPath, path), (error, stats) ->
+    logger.error error if error?
+    callback stats.isDirectory()
 
 readGeneratorConfig = (generatorsPath) -> (name, callback) ->
   path = sysPath.join generatorsPath, name, 'generator.json'
@@ -92,7 +92,6 @@ generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
     async.filter files, isDirectory(generatorsPath), (directories) ->
       async.map directories, readGeneratorConfig(generatorsPath), (error, configs) ->
         return throw new Error error if error?
-        console.log 123, configs
         generators = directories.map (directory, index) ->
           path = sysPath.join generatorsPath, directory
           formatGeneratorConfig path, configs[index], templateData
