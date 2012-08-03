@@ -1,4 +1,4 @@
-# Brunch 1.4.0 (unreleased)
+# Brunch 1.4.0 (August 4, 2012)
 * Added new phenomenally simplified scaffolder:
     1. Create `generators/` directory in your brunch application
     (directory name is customizable by `config.paths.generators`).
