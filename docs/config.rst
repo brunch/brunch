@@ -4,6 +4,8 @@ Configuration file
 
 Brunch uses configuration file (``config.coffee`` or ``config.js``) located in the root directory to control various aspects of your application.
 
+You can see all config default values in ``setConfigDefaults`` function of ``src/helpers.coffee`` in brunch source code.
+
 ``paths``
 =============
 
@@ -69,9 +71,9 @@ Example:
 ``conventions``
 ===============
 
-``Object``: ``conventions`` define tests, against which all file names will be checked.
+``Object``: ``conventions`` define tests, against which all file pathnames will be checked.
 
-* ``ignored`` key: regExp or function. Default value is a function that checks if filename starts with ``_`` (underscore). Will check against files that would be ignored by brunch compilator, but that still be watched by watcher.
+* ``ignored`` key: regExp or function. Default value is a function that checks if filename starts with ``_`` (see implementation at ``setConfigDefaults`` function of ``src/helpers.coffee`` in brunch source code). Will check against files that would be ignored by brunch compilator, but that still be watched by watcher.
 * ``assets`` key: regExp or function. Default value: ``/assets(\/|\\)/``. If test gives true, file won't be compiled and will be just moved to public directory instead.
 * ``vendor`` key: regExp or function. Default value: ``/vendor(\/|\\)/``. If test gives true, file won't be wrapped in module, if there are any.
 * ``tests`` key: regExp or function. Default value: ``/_test\.\w+$/``. If test gives true, the file will be auto-loaded in test environment.
