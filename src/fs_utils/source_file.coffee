@@ -1,5 +1,6 @@
 'use strict'
 
+async = require 'async'
 fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
