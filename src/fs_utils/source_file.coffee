@@ -1,5 +1,6 @@
 'use strict'
 
+async = require 'async'
 fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
@@ -21,11 +22,14 @@ module.exports = class SourceFile
 
   _lint: (data, path, callback) ->
     if @linters.length is 0
-      callback null
+      callback null, data
     else
       async.forEach @linters, (linter, callback) =>
-        linter.lint data, path, callback
-      , callback
+        linter.lint data, path, (error, newContent) ->
+          # update file content
+          data = newContent if newContent?
+          callback()
+      , (error) -> callback error, data
 
   _getDependencies: (data, path, callback) ->
     if @compiler.getDependencies
@@ -35,10 +39,10 @@ module.exports = class SourceFile
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
-  # 
+  #
   # path - path to file, contents of which will be wrapped.
   # source - file contents.
-  # 
+  #
   # Returns a wrapped string.
   _wrap: (data) ->
     if not @isHelper and not @isVendor and @type in ['javascript', 'template']
@@ -62,7 +66,7 @@ module.exports = class SourceFile
     fs.readFile realPath, (error, buffer) =>
       return callback "Read error: #{error}" if error?
       fileContent = buffer.toString()
-      @_lint fileContent, @path, (error) => 
+      @_lint fileContent, @path, (error, fileContent) =>
         return callback "Lint error: #{error}" if error?
         @compiler.compile fileContent, @path, (error, result) =>
           return callback "Compile error: #{error}" if error?
