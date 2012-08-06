@@ -34,10 +34,11 @@ exports.writeFile = (path, data, callback) ->
         callback error, path, data
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
-ignoredRe = /(^[.#]|(?:__|~)$)/;
-
 exports.ignored = ignored = (path) ->
-  ignoredRe.test(sysPath.basename path)
+  /(^[.#]|(?:__|~)$)/.test sysPath.basename path
+
+exports.ignoredAlways = ignoredAlways = (path) ->
+  /^\.(git|hg)$/.test sysPath.basename path
 
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
@@ -56,7 +57,11 @@ exports.copy = (source, destination, callback) ->
 
 # Recursive copy.
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
-  options = if filter then {filter: ((path) -> not ignored path)} else {}
+  options = if filter
+    {filter: (path) -> not ignored path}
+  else
+    {filter: (path) -> not ignoredAlways path}
+  options.stopOnError = true
   exports.exists source, (exists) ->
     return callback() unless exists
     ncp source, destination, options, callback

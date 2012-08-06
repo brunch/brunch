@@ -1,3 +1,7 @@
+# Brunch 1.4.1 (August 7, 2012)
+* `brunch new` now allowed to take current working directory
+(`.`) as first argument.
+
 # Brunch 1.4.0 (August 4, 2012)
 * Added new phenomenally simplified scaffolder:
     1. Create `generators/` directory in your brunch application
