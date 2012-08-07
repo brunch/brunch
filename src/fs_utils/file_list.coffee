@@ -102,19 +102,24 @@ module.exports = class FileList extends EventEmitter
     file
 
   _change: (path, compiler, linters, isHelper) =>
+    ignored = @_ignored path
     if @_isAsset path
-      @_copy (@_findAssetByPath(path) ? @_addAsset path)
-    else if @_ignored(path) or not compiler
-      @_compileDependentFiles path
+      unless ignored
+        @_copy (@_findAssetByPath(path) ? @_addAsset path)
     else
-      @_compile (@_findByPath(path) ? @_add path, compiler, linters, isHelper)
-
+      if ignored or not compiler
+        @_compileDependentFiles path
+      else
+        @_compile (@_findByPath(path) ? @_add path, compiler, linters, isHelper)
   _unlink: (path) =>
+    ignored = @_ignored path
     if @_isAsset path
-      @assets.splice(@assets.indexOf(path), 1)
-    else if @_ignored path
-      @_compileDependentFiles path
+      unless ignored
+        @assets.splice(@assets.indexOf(path), 1)
     else
-      file = @_findByPath path
-      @files.splice(@files.indexOf(file), 1)
+      if ignored
+        @_compileDependentFiles path
+      else
+        file = @_findByPath path
+        @files.splice(@files.indexOf(file), 1)
     @_resetTimer()

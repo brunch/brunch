@@ -1,6 +1,7 @@
-# Brunch 1.4.1 (August 7, 2012)
+# Brunch 1.4.1 (unreleased)
 * `brunch new` now allowed to take current working directory
 (`.`) as first argument.
+* Assets are now affected by `conventions.ignored` too.
 
 # Brunch 1.4.0 (August 4, 2012)
 * Added new phenomenally simplified scaffolder:
