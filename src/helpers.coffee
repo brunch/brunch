@@ -126,6 +126,9 @@ exports.sortByConfig = (files, config) ->
   else
     files
 
+exports.pwd = pwd = ->
+  '.'
+
 exports.install = install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
   logger.info 'Installing packages...'

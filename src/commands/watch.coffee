@@ -124,7 +124,7 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
     reWatch()
 
 initialize = (options, configParams, onCompile, callback) ->
-  helpers.loadPackages options, (error, packages) ->
+  helpers.loadPackages helpers.pwd(), (error, packages) ->
     return callback error if error?
     config     = helpers.loadConfig options.configPath, configParams
     joinConfig = config._normalized.join

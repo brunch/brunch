@@ -105,7 +105,7 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
   pluralName = inflection.pluralize name
 
-  helpers.loadPackages '.', (error, packages) ->
+  helpers.loadPackages helpers.pwd(), (error, packages) ->
     return logger.error error if error?
     config = helpers.loadConfig configPath
     return callback() unless config?
