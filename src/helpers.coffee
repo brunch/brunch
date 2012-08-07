@@ -290,7 +290,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     join 'root', name
 
   paths                = config.paths     ?= {}
-  paths.root          ?= config.rootPath  ? '.'
+  paths.root          ?= config.rootPath  ? pwd()
   paths.public        ?= config.buildPath ? joinRoot 'public'
 
   paths.app           ?= joinRoot 'app'
