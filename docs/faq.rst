@@ -21,8 +21,8 @@ I don't like CoffeeScript. Does brunch work for pure js projects?
 
 Yep, brunch is language-agnostic! Just create a project from any JS skeleton https://github.com/brunch/brunch/wiki/Skeletons and customize it to your needs.
 
-I want to create separate file for bookmarklet (etc.). What's the best way?
----------------------------------------------------------------------------
+I want to create a separate javascript file for a bookmarklet (etc.). What's the best way?
+------------------------------------------------------------------------------------------
 
 Use this joinTo config. It will compile all files in app/ (except in ``app/namespace``) to one file and all files in ``app/namespace`` to another.
 
