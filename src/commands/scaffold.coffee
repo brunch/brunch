@@ -70,7 +70,7 @@ formatGeneratorConfig = (path, json, templateData) ->
   json.files = json.files.map (object) ->
     {
       from: join replaceSlashes object.from
-      to: helpers.formatTemplate (replaceSlashes object.to), templateData
+      to: replaceSlashes helpers.formatTemplate object.to, templateData
     }
   json.dependencies = json.dependencies.map (object) ->
     {
