@@ -1,3 +1,7 @@
+# Brunch 1.4.2 (August 18, 2012)
+* Fixed incorrect scaffolding on windows.
+* `.git` directories are now discarded when using `brunch new` with git URL.
+
 # Brunch 1.4.1 (August 8, 2012)
 * `brunch new` now allowed to take current working directory
 (`.`) or any existing directory as first argument.
