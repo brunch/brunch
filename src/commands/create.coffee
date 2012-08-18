@@ -3,6 +3,7 @@
 {exec} = require 'child_process'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
+rimraf = require 'rimraf'
 helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
@@ -34,7 +35,9 @@ cloneSkeleton = (address, rootPath, isGitHubUrl, callback) ->
   exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
     return logger.error "Git clone error: #{stderr.toString()}" if error?
     logger.info 'Created brunch directory layout'
-    helpers.install rootPath, callback
+    rimraf (sysPath.join rootPath, '.git'), (error) ->
+      return logger.error error if error?
+      helpers.install rootPath, callback
 
 module.exports = create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
