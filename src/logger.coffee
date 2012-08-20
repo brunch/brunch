@@ -23,7 +23,6 @@ notify = do ->
       args.title ?= args.name ? 'Terminal'
       args.groupId ?= counter += 1
       args.bundleId ?= 'com.apple.Terminal'
-      console.log [args.groupId, args.title, message, args.bundleId]
       proc = spawn tnBin, [args.groupId, args.title, message, args.bundleId]
       proc.on 'exit', ->
         callback()

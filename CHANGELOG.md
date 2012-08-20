@@ -1,3 +1,6 @@
+# Brunch 1.4.3 (unreleased)
+* Improved error logging.
+
 # Brunch 1.4.2 (August 18, 2012)
 * Fixed incorrect scaffolding on windows.
 * `.git` directories are now discarded when using `brunch new` with git URL.

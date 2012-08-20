@@ -59,16 +59,21 @@ module.exports = class SourceFile
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
+    callbackError = (type, string) ->
+      error = new Error string
+      error.brunchType = type
+      callback error
+
     realPath = if @isHelper then @realPath else @path
     fs.readFile realPath, (error, buffer) =>
-      return callback "Read error: #{error}" if error?
+      return callbackError 'Reading', error if error?
       fileContent = buffer.toString()
       @_lint fileContent, @path, (error) => 
-        return callback "Lint error: #{error}" if error?
+        return callbackError 'Linting', error if error?
         @compiler.compile fileContent, @path, (error, result) =>
-          return callback "Compile error: #{error}" if error?
+          return callbackError 'Compiling', error if error?
           @_getDependencies fileContent, @path, (error, dependencies) =>
-            return callback "GetDeps error: #{error}" if error?
+            return callbackError 'Dependency parsing', error if error?
             @cache.dependencies = dependencies
             @cache.data = @_wrap result if result?
             @cache.compilationTime = Date.now()
