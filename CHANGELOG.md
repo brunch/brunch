@@ -1,4 +1,5 @@
 # Brunch 1.4.3 (unreleased)
+* Added support of binary files to generators.
 * Improved error logging.
 
 # Brunch 1.4.2 (August 18, 2012)
