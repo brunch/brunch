@@ -34,7 +34,10 @@ scaffoldFile = (rollback, from, to, templateData, callback) ->
     destroyFile to, callback
   else
     fs.readFile from, (error, buffer) ->
-      formatted = helpers.formatTemplate buffer.toString(), templateData
+      formatted = try
+        helpers.formatTemplate buffer.toString(), templateData
+      catch error
+        buffer
       generateFile to, formatted, callback
 
 scaffoldFiles = (rollback, templateData) -> (generator, callback) ->
