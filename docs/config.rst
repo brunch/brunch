@@ -20,7 +20,7 @@ You can also import node.js modules in configuration file.
 
 Example:
 
-::
+  .. code-block:: coffeescript
 
     paths:
       public: '/user/www/deploy'
@@ -46,7 +46,7 @@ Example:
 
 Example:
 
-::
+  .. code-block:: coffeescript
 
     files:
       javascripts:
@@ -99,7 +99,7 @@ Keep in mind that default brunch regexps, as you see, consider **all** ``vendor/
 
 Example:
 
-::
+  .. code-block:: coffeescript
 
     conventions:
       ignored: -> false       # no ignored files
@@ -126,7 +126,7 @@ Example:
 
 Example:
 
-::
+  .. code-block:: coffeescript
 
     # Same as 'commonjs', but in function implementation.
     modules:
@@ -162,7 +162,7 @@ Default value is ``false`` (``true`` if you run ``brunch build --minify``).
 
 Example:
 
-::
+  .. code-block:: coffeescript
 
     server:
       path: 'server.coffee'
