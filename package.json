@@ -33,7 +33,7 @@
     "argumentum":    "~0.6.0",
     "chokidar":      "~0.4.0",
     "async":         "~0.1.22",
-    "mkdirp":        "~0.3.3",
+    "mkdirp":        "~0.3.4",
     "ncp":           "~0.2.6",
     "rimraf":        "~2.0.2",
     "walk":          "~2.2.1",
@@ -42,7 +42,7 @@
     "date-utils":    "~1.2.11",
     "ansi-color":    "~0.2.1",
     "inflection":    "~1.2.2",
-    "mocha":         "~1.3.2",
+    "mocha":         "~1.4.1",
     "handlebars":    "~1.0.6"
   },
   "devDependencies": {
