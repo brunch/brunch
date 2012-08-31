@@ -6,6 +6,8 @@ Brunch uses configuration file (``config.coffee`` or ``config.js``) located in t
 
 You can see all config default values in ``setConfigDefaults`` function of ``src/helpers.coffee`` in brunch source code.
 
+You can also import node.js modules in configuration file.
+
 ``paths``
 =============
 
@@ -73,7 +75,22 @@ Example:
 
 ``Object``: ``conventions`` define tests, against which all file pathnames will be checked.
 
-* ``ignored`` key: regExp or function. Default value is a function that checks if filename starts with ``_`` (see implementation at ``setConfigDefaults`` function of ``src/helpers.coffee`` in brunch source code). Will check against files that would be ignored by brunch compilator, but that still be watched by watcher.
+* ``ignored`` key: regExp or function. Will check against files that would be ignored by brunch compilator, but that still be watched by watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to Sass partials: http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/. Implementation of default value (a function that checks if filename starts with ``_``):
+
+  .. code-block:: coffeescript
+
+    # Import node.js `path` module.
+    sysPath = require 'path'
+
+    # A simple helper that checks if string starts with substring.
+    startsWith = (string, substring) ->
+      string.lastIndexOf(substring, 0) is 0
+
+    # Extract file name (`c.js` for `a/b/c.js`), check if it starts with `_`.
+    conventions.ignored = (path) ->
+      startsWith sysPath.basename(path), '_'
+
+
 * ``assets`` key: regExp or function. Default value: ``/assets(\/|\\)/``. If test gives true, file won't be compiled and will be just moved to public directory instead.
 * ``vendor`` key: regExp or function. Default value: ``/vendor(\/|\\)/``. If test gives true, file won't be wrapped in module, if there are any.
 * ``tests`` key: regExp or function. Default value: ``/_test\.\w+$/``. If test gives true, the file will be auto-loaded in test environment.
