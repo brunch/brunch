@@ -59,7 +59,11 @@ module.exports = class SourceFile
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
-    callbackError = (type, string) ->
+    callbackError = (type, stringOrError) ->
+      string = if stringOrError instanceof Error
+        stringOrError.toString().slice(7)
+      else
+        stringOrError
       error = new Error string
       error.brunchType = type
       callback error

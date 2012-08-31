@@ -76,7 +76,7 @@ module.exports = class FileList extends EventEmitter
       logger.debug 'info', "Compiled file '#{file.path}'"
       if error?
         return logger.error "#{error.brunchType} of '#{file.path}' 
-failed: #{error.toString().slice(7)}"
+failed. #{error.toString().slice(7)}"
       @_compileDependentFiles file.path
       @_resetTimer()
 
@@ -86,7 +86,7 @@ failed: #{error.toString().slice(7)}"
       @copying.splice @copying.indexOf(asset), 1
       logger.debug 'info', "Copied asset '#{asset.path}'"
       if error?
-        return logger.error "Copying of '#{asset.path}' failed: #{error}"
+        return logger.error "Copying of '#{asset.path}' failed. #{error}"
       @_resetTimer()
 
   _add: (path, compiler, linters, isHelper) ->
