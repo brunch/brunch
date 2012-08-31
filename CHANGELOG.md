@@ -1,6 +1,7 @@
 # Brunch 1.4.3 (unreleased)
 * Added support of binary files to generators.
 * Improved error logging.
+* Updated built-in webserver to express.js 3.0.
 
 # Brunch 1.4.2 (August 18, 2012)
 * Fixed incorrect scaffolding on windows.

@@ -143,15 +143,14 @@ exports.install = install = (rootPath, callback = (->)) ->
     callback null, stdout
 
 startDefaultServer = (port, path, base, callback) ->
-  server = express.createServer()
+  server = express()
   server.use (request, response, next) ->
     response.header 'Cache-Control', 'no-cache'
     next()
   server.use base, express.static path
   server.all "#{base}/*", (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
-  server.listen port
-  server.on 'listening', callback
+  server.listen port, callback
   server
 
 exports.startServer = (config, callback = (->)) ->
