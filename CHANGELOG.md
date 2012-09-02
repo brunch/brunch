@@ -1,4 +1,4 @@
-# Brunch 1.4.3 (unreleased)
+# Brunch 1.4.3 (September 2, 2012)
 * Added support of binary files to generators.
 * Improved error logging.
 * Updated built-in webserver to express.js 3.0.
@@ -220,7 +220,7 @@ and `main.styl` depends on it, `main.styl` will be recompiled too.
 
 # Brunch 1.0.0 (March 14, 2012)
 * Simplified config files.
-* Default app now uses two separate files to simplify debugging: `app.js` and 
+* Default app now uses two separate files to simplify debugging: `app.js` and
 `vendor.js`.
 * Changed default naming of build directory & its subdirs. Now the style
 matches expressjs and rails.

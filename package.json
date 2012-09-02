@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.4.3-pre",
+  "version": "1.4.3",
   "keywords": ["assembler", "builder", "stack", "chaplin", "backbone", "ember", "html5"],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
