@@ -29,7 +29,7 @@ Example:
 ``files``
 =========
 
-``Required, object``: ``files`` configures handling of application files: which compiler would be used on which file, what name should output file have etc. 
+``Required, object``: ``files`` configures handling of application files: which compiler would be used on which file, what name should output file have etc.
 
 * <type>: ``javascripts``, ``stylesheets`` or ``templates``
     * joinTo: (required) describes how files will be compiled & joined together. Available formats:
@@ -127,6 +127,12 @@ Example:
 Example:
 
   .. code-block:: coffeescript
+
+    # To use AMD, just add this and add require.js as
+    # your first vendor file.
+    modules:
+      wrapper: 'amd'
+      definition: 'amd'
 
     # Same as 'commonjs', but in function implementation.
     modules:
