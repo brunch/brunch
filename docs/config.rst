@@ -147,7 +147,7 @@ Example:
 ``notifications``
 =================
 
-``Boolean``: Enables or disables Growl / inotify notifications. Default value is true (enabled).
+``Boolean``: Enables or disables Growl / inotify / `terminal-notifier.app <https://github.com/alloy/terminal-notifier#download>`_ (OS X Mountain Lion +) notifications. Default value is true (enabled). 
 
 ``minify``
 ==========
