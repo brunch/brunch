@@ -23,7 +23,7 @@ notify = do ->
       args.title ?= args.name ? 'Terminal'
       args.groupId ?= counter += 1
       args.bundleId ?= 'com.apple.Terminal'
-      proc = spawn tnBin, [args.groupId, args.title, message, args.bundleId]
+      proc = spawn tnBin, ['-group', args.groupId, '-title', args.title, '-message', message, '-activate', args.bundleId]
       proc.on 'exit', ->
         callback()
       yes
