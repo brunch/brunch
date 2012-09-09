@@ -1,34 +1,8 @@
 'use strict'
 
-{exec, spawn} = require 'child_process'
-os = require 'os'
 color = require 'ansi-color'
 growl = require 'growl'
 require 'date-utils'
-
-
-notify = do ->
-  isMountainLion = os.platform() is 'darwin' and os.release().indexOf('12.') is 0
-  tnBin = '/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier'
-  counter = 52910
-  enabled = no
-
-  if isMountainLion
-    exec "#{tnBin} --help", (error, stdout, stderr) ->
-      enabled = yes unless stderr.length > 0
-
-  (message, args = {}, callback = ->) ->
-    if isMountainLion and enabled
-      throw new Error 'First argument is required in notification' unless message
-      args.title ?= args.name ? 'Terminal'
-      args.groupId ?= counter += 1
-      args.bundleId ?= 'com.apple.Terminal'
-      proc = spawn tnBin, [args.groupId, args.title, message, args.bundleId]
-      proc.on 'exit', ->
-        callback()
-      yes
-    else
-      growl message, args
 
 colors =
   error: 'red'
@@ -70,7 +44,7 @@ logger =
         console.log info, args...
 
   error: (args...) ->
-    notify args.join(' '), title: 'Brunch error' if logger.notifications
+    growl args.join(' '), title: 'Brunch error' if logger.notifications
     logger.errorHappened = yes
     logger.log 'error', args...
 
