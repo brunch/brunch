@@ -345,7 +345,7 @@ normalizeConfig = (config) ->
   normalized = {}
   normalized.join = createJoinConfig config.files
   normalized.modules = {}
-  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper
+  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper, config.modules.strict
   normalized.modules.definition = normalizeDefinition config.modules.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
