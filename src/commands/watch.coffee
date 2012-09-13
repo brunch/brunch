@@ -12,7 +12,7 @@ fs_utils = require '../fs_utils'
 #
 # plugins - Array of brunch plugins.
 #
-# Returns Array of Strings. 
+# Returns Array of Strings.
 getPluginIncludes = (plugins) ->
   plugins
     .map((plugin) -> plugin.include)
@@ -156,8 +156,8 @@ initialize = (options, configParams, onCompile, callback) ->
 #
 # config    - application config.
 # fileList  - `fs_utils.FileList` instance.
-# compilers - array of brunch plugins that can compile source code. 
-# watcher   - `chokidar.FSWatcher` instance. 
+# compilers - array of brunch plugins that can compile source code.
+# watcher   - `chokidar.FSWatcher` instance.
 # reload    - function that will reload the whole thing.
 # onChange  - callback that will be executed every time any file is changed.
 #

@@ -25,7 +25,7 @@ module.exports = class FileList extends EventEmitter
   # Files that are not really app files.
   _ignored: (path, test = @config.conventions.ignored) ->
     return yes if path in [@config.paths.config, @config.paths.packageConfig]
-    
+
     switch toString.call(test)
       when '[object RegExp]'
         path.match test
@@ -75,8 +75,8 @@ module.exports = class FileList extends EventEmitter
       @compiling.splice @compiling.indexOf(file), 1
       logger.debug 'info', "Compiled file '#{file.path}'"
       if error?
-        return logger.error "#{error.brunchType} of '#{file.path}' 
-failed. #{error.toString().slice(7)}"
+        return logger.error "#{error.brunchType} of '#{file.path}'
+ failed. #{error.toString().slice(7)}"
       @_compileDependentFiles file.path
       @_resetTimer()
 

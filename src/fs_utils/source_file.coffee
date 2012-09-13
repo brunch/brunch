@@ -36,10 +36,10 @@ module.exports = class SourceFile
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
-  # 
+  #
   # path - path to file, contents of which will be wrapped.
   # source - file contents.
-  # 
+  #
   # Returns a wrapped string.
   _wrap: (data) ->
     if not @isHelper and not @isVendor and @type in ['javascript', 'template']
@@ -72,7 +72,7 @@ module.exports = class SourceFile
     fs.readFile realPath, (error, buffer) =>
       return callbackError 'Reading', error if error?
       fileContent = buffer.toString()
-      @_lint fileContent, @path, (error) => 
+      @_lint fileContent, @path, (error) =>
         return callbackError 'Linting', error if error?
         @compiler.compile fileContent, @path, (error, result) =>
           return callbackError 'Compiling', error if error?

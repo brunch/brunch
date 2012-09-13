@@ -13,7 +13,7 @@ getPaths = (sourceFile, joinConfig) ->
 
 getFiles = (fileList, config, joinConfig, minifiers) ->
   map = {}
-  
+
   fileList.files.forEach (file) ->
     paths = getPaths file, joinConfig
     paths.forEach (path) ->

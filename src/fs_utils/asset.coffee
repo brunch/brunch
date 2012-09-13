@@ -8,7 +8,7 @@ common = require './common'
 
 # 'app/assets/thing/thing2.html'
 # ['app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html']
-# 
+#
 getAssetDirectory = (path, convention) ->
   splitted = path.split(common.sep)
   splitted

@@ -28,10 +28,10 @@ exports.ensureArray = ensureArray = (object) ->
 
 # Extends the object with properties from another object.
 # Example
-#   
+#
 #   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
 #   # => {a: 5, b: 15, c: 20, e: 50}
-# 
+#
 exports.extend = extend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     object[key] = properties[key]
@@ -108,18 +108,18 @@ sortByBefore = (config, a, b) ->
     sortByAfter config, a, b
 
 # Sorts by pattern.
-# 
+#
 # Examples
 #
 #   sort ['b.coffee', 'c.coffee', 'a.coffee'],
 #     before: ['a.coffee'], after: ['b.coffee']
 #   # => ['a.coffee', 'c.coffee', 'b.coffee']
-# 
+#
 # Returns new sorted array.
 exports.sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
     cfg =
-      before: config.before ? [] 
+      before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
     files.slice().sort (a, b) -> sortByBefore cfg, a, b

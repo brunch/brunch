@@ -18,11 +18,11 @@ exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
 # data - data to be written
 # callback(error, path, data) - would be executed on error or on
 #    successful write.
-# 
+#
 # Example
-# 
+#
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
-# 
+#
 exports.writeFile = (path, data, callback) ->
   logger.debug 'writer', "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback

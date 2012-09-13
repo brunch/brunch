@@ -66,7 +66,7 @@ commandLineConfig =
           help: 'run a simple http server that would serve public dir'
         port:
           abbr: 'p'
-          help: 'if a `server` option was specified, define on which port 
+          help: 'if a `server` option was specified, define on which port
 the server would run'
           metavar: 'PORT'
       callback: commands.watch
@@ -145,7 +145,7 @@ the server would run'
             'html'
           ]
       callback: commands.test
-      
+
   options:
     version:
       abbr: 'v'
