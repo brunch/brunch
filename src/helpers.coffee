@@ -243,12 +243,13 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
-normalizeWrapper = (typeOrFunction) ->
+normalizeWrapper = (typeOrFunction, strict = false) ->
   switch typeOrFunction
     when 'commonjs'
       (path, data) ->
         """
   window.require.define({#{path}: function(exports, require, module) {
+    #{if strict then "'use strict';" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   }});\n\n
   """
@@ -256,6 +257,7 @@ normalizeWrapper = (typeOrFunction) ->
       (path, data) ->
         """
   define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
+    #{if strict then "'use strict';" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   });
   """
@@ -313,6 +315,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
+  modules.strict      ?= false
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -343,7 +346,7 @@ normalizeConfig = (config) ->
   normalized = {}
   normalized.join = createJoinConfig config.files
   normalized.modules = {}
-  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper
+  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper, config.modules.strict
   normalized.modules.definition = normalizeDefinition config.modules.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
