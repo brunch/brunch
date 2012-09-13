@@ -243,20 +243,26 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
-normalizeWrapper = (typeOrFunction) ->
+indent = (data, strict) ->
+  result = ''
+  result += if strict then "'use strict';\n  " else ""
+  result += data.replace /\n(?!\n)/g, '\n  '
+  result
+
+normalizeWrapper = (typeOrFunction, strict) ->
   switch typeOrFunction
     when 'commonjs'
       (path, data) ->
         """
   window.require.define({#{path}: function(exports, require, module) {
-    #{data.replace(/\n(?!\n)/g, '\n  ')}
+    #{indent data, strict}
   }});\n\n
   """
     when 'amd'
       (path, data) ->
         """
   define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-    #{data.replace(/\n(?!\n)/g, '\n  ')}
+    #{indent data, strict}
   });
   """
     when false then (path, data) -> "#{data}"
@@ -313,6 +319,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
+  modules.strict      ?= yes
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -342,9 +349,10 @@ Use config.conventions.#{name}"
 normalizeConfig = (config) ->
   normalized = {}
   normalized.join = createJoinConfig config.files
+  mod = config.modules
   normalized.modules = {}
-  normalized.modules.wrapper = normalizeWrapper config.modules.wrapper
-  normalized.modules.definition = normalizeDefinition config.modules.definition
+  normalized.modules.wrapper = normalizeWrapper mod.wrapper, mod.strict
+  normalized.modules.definition = normalizeDefinition mod.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
     normalized.conventions[name] = normalizeChecker config.conventions[name]
