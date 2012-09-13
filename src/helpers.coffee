@@ -243,12 +243,13 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
-normalizeWrapper = (typeOrFunction) ->
+normalizeWrapper = (typeOrFunction, strict = false) ->
   switch typeOrFunction
     when 'commonjs'
       (path, data) ->
         """
   window.require.define({#{path}: function(exports, require, module) {
+    #{if strict then "use strict;" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   }});\n\n
   """
@@ -256,6 +257,7 @@ normalizeWrapper = (typeOrFunction) ->
       (path, data) ->
         """
   define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
+    #{if strict then "use strict;" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   });
   """
