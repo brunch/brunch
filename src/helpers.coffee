@@ -249,7 +249,7 @@ normalizeWrapper = (typeOrFunction, strict = false) ->
       (path, data) ->
         """
   window.require.define({#{path}: function(exports, require, module) {
-    #{if strict then "use strict;" else ""}
+    #{if strict then "'use strict';" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   }});\n\n
   """
@@ -257,7 +257,7 @@ normalizeWrapper = (typeOrFunction, strict = false) ->
       (path, data) ->
         """
   define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-    #{if strict then "use strict;" else ""}
+    #{if strict then "'use strict';" else ""}
     #{data.replace(/\n(?!\n)/g, '\n  ')}
   });
   """
