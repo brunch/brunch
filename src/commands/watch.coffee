@@ -94,13 +94,25 @@ changeFileList = (compilers, linters, fileList, path, isHelper) ->
 #
 # Returns nothing.
 getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (startTime) ->
+  assetErrors = fileList.getAssetErrors()
+  if assetErrors?
+    assetErrors.forEach (error) -> logger.error error
+    return
+
   fs_utils.write fileList, config, joinConfig, minifiers, startTime, (error, generatedFiles) ->
-    return logger.error "Write failed: #{error}" if error?
+    if error?
+      if Array.isArray error
+        error.forEach (subError) ->
+          logger.error subError
+      else
+        logger.error error
+      return
     logger.info "compiled in #{Date.now() - startTime}ms"
     unless config.persistent
       watcher.close()
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
+
     callback generatedFiles
 
 # Restart brunch watcher.

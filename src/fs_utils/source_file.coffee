@@ -17,7 +17,9 @@ module.exports = class SourceFile
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
-    @cache = Object.seal {data: '', dependencies: [], compilationTime: null}
+    @cache = Object.seal {
+      data: '', dependencies: [], compilationTime: null, error: null
+    }
     Object.freeze this
 
   _lint: (data, path, callback) ->
@@ -59,13 +61,14 @@ module.exports = class SourceFile
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
-    callbackError = (type, stringOrError) ->
+    callbackError = (type, stringOrError) =>
       string = if stringOrError instanceof Error
         stringOrError.toString().slice(7)
       else
         stringOrError
       error = new Error string
       error.brunchType = type
+      @cache.error = error
       callback error
 
     realPath = if @isHelper then @realPath else @path
@@ -81,4 +84,5 @@ module.exports = class SourceFile
             @cache.dependencies = dependencies
             @cache.data = @_wrap result if result?
             @cache.compilationTime = Date.now()
+            @cache.error = null
             callback null, @cache.data

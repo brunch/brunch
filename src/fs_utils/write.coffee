@@ -4,6 +4,7 @@ async = require 'async'
 sysPath = require 'path'
 inflection = require 'inflection'
 GeneratedFile = require './generated_file'
+helpers = require '../helpers'
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
@@ -29,9 +30,27 @@ changedSince = (startTime) -> (generatedFile) ->
   generatedFile.sourceFiles.some (sourceFile) ->
     sourceFile.cache.compilationTime >= startTime
 
+gatherErrors = (generatedFiles) ->
+  errors = []
+  generatedFiles
+    .forEach (generatedFile) ->
+      generatedFile.sourceFiles
+        .filter (sourceFile) ->
+          sourceFile.cache.error?
+        .forEach (sourceFile) ->
+          cache = sourceFile.cache
+          errors.push helpers.formatError cache.error, sourceFile.path
+
+  if errors.length > 0
+    errors
+  else
+    null
+
 module.exports = write = (fileList, config, joinConfig, minifiers, startTime, callback) ->
   files = getFiles fileList, config, joinConfig, minifiers
   changed = files.filter(changedSince startTime)
+  error = gatherErrors files
+  return callback error if error?
   async.forEach changed, ((file, next) -> file.write next), (error) ->
     return callback error if error?
     callback null, changed

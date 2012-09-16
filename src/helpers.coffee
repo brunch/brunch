@@ -55,6 +55,10 @@ exports.deepFreeze = deepFreeze = (object) ->
     .forEach(deepFreeze)
   object
 
+exports.formatError = (error, path) ->
+  "#{error.brunchType} of '#{path}'
+ failed. #{error.toString().slice(7)}"
+
 sortAlphabetically = (a, b) ->
   if a < b
     -1

@@ -43,7 +43,7 @@ exports.ignoredAlways = ignoredAlways = (path) ->
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
   copy = (error) ->
-    return logger.error error if error?
+    return callback error if error?
     input = fs.createReadStream source
     output = fs.createWriteStream destination
     request = input.pipe output
