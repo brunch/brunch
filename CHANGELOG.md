@@ -1,3 +1,12 @@
+# Brunch 1.4.4 (October 1, 2012)
+* All errors are now deferred to the compilation end.
+Also, if you have added one error on previous compilation
+and one error on current, brunch will show both of them until
+they will be fixed.
+* Fixed terminal-notifier.app integration.
+* Fixed test passing.
+* Fixed `config.notifications` on ubuntu.
+
 # Brunch 1.4.3 (September 2, 2012)
 * Added support of binary files to generators.
 * Improved error logging.
