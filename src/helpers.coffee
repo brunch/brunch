@@ -419,5 +419,5 @@ Handlebars.registerHelper 'camelize', do ->
 
 exports.formatTemplate = (template, templateData) ->
   key = '__BRUNCH_TEMPLATE_FORMATTER'
-  Handlebars.compile(template.replace(/\\\{/, key))(templateData)
-    .replace(key, '\\')
+  compiled = Handlebars.compile template.replace /\\\{/, key
+  compiled(templateData).toString().replace(key, '\\')
