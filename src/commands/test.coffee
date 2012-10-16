@@ -125,6 +125,15 @@ startBrunchTestRunner = (config, options) ->
     findTestHelpersFile config.paths.test, (testHelpersFile) =>
       globals = if testHelpersFile? then require(testHelpersFile) else {}
       globals.window = window
+
+      if options.filter
+        filterRegex = new RegExp(options.filter)
+        stripTestDirRegex = /^test\//
+
+        globals._brunchTestNameFilter = (fullTestName) ->
+          testName = fullTestName.replace(stripTestDirRegex, '')
+          return filterRegex.test(testName)
+
       startMocha config, options, testFiles, globals
 
 module.exports = test = (options) ->

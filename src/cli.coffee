@@ -127,13 +127,18 @@ the server would run'
 
     test:
       abbr: 't'
-      help: 'Run all tests for the current project'
+      help: 'Run tests for the current project'
       options:
         configPath:
           abbr: 'c'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
+        filter:
+          abbr: 'f'
+          help: 'only run tests matched by this regex filter'
+          metavar: 'REGEX'
+          full: 'filter'
         reporter:
           abbr: 'r'
           help: 'mocha reporter'
