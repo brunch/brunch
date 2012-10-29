@@ -166,7 +166,7 @@ exports.startServer = (config, callback = (->)) ->
   if config.server.path
     try
       server = require sysPath.resolve config.server.path
-      server.startServer port, publicPath, onListening
+      server.startServer port, publicPath, onListening, config
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
