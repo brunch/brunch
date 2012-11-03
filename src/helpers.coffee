@@ -28,10 +28,10 @@ exports.ensureArray = ensureArray = (object) ->
 
 # Extends the object with properties from another object.
 # Example
-#   
+#
 #   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
 #   # => {a: 5, b: 15, c: 20, e: 50}
-# 
+#
 exports.extend = extend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     object[key] = properties[key]
@@ -54,6 +54,10 @@ exports.deepFreeze = deepFreeze = (object) ->
       typeof value is 'object' and value? and not Object.isFrozen(value)
     .forEach(deepFreeze)
   object
+
+exports.formatError = (error, path) ->
+  "#{error.brunchType} of '#{path}'
+ failed. #{error.toString().slice(7)}"
 
 sortAlphabetically = (a, b) ->
   if a < b
@@ -108,18 +112,18 @@ sortByBefore = (config, a, b) ->
     sortByAfter config, a, b
 
 # Sorts by pattern.
-# 
+#
 # Examples
 #
 #   sort ['b.coffee', 'c.coffee', 'a.coffee'],
 #     before: ['a.coffee'], after: ['b.coffee']
 #   # => ['a.coffee', 'c.coffee', 'b.coffee']
-# 
+#
 # Returns new sorted array.
 exports.sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
     cfg =
-      before: config.before ? [] 
+      before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
     files.slice().sort (a, b) -> sortByBefore cfg, a, b
@@ -423,5 +427,5 @@ Handlebars.registerHelper 'camelize', do ->
 
 exports.formatTemplate = (template, templateData) ->
   key = '__BRUNCH_TEMPLATE_FORMATTER'
-  Handlebars.compile(template.replace(/\\\{/, key))(templateData)
-    .replace(key, '\\')
+  compiled = Handlebars.compile template.replace /\\\{/, key
+  compiled(templateData).toString().replace(key, '\\')

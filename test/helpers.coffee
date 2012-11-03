@@ -21,7 +21,7 @@ describe 'helpers', ->
       expect(helpers.sortByConfig files, config).to.eql [
         'backbone.js', 'helper-1.js', 'helper-2.js'
       ]
-      
+
     it 'should files by config.vendor', ->
       files = ['vendor/backbone.js', 'jquery.js', 'meh/underscore.js']
       config =
@@ -36,7 +36,7 @@ describe 'helpers', ->
       expect(helpers.sortByConfig files, config).to.eql [
         'a', 'c', 'd', 'e', 's', 'z', 'z'
       ]
-      
+
     it 'should sort files by config correctly', ->
       files = [
         'a',
@@ -51,12 +51,12 @@ describe 'helpers', ->
         'e',
         'vendor/2'
       ]
-      
+
       config =
         before: ['vendor/1', 'vendor/2', 'vendor/3', 'vendor/4', 'vendor/5']
         after: ['b']
         vendorConvention: (path) -> /vendor\//.test(path)
- 
+
       expect(helpers.sortByConfig files, config).to.eql [
         'vendor/1',
         'vendor/2',
@@ -79,9 +79,6 @@ describe 'helpers', ->
       expect(helpers.startsWith 'cba', 'b').to.equal no
 
   describe 'formatTemplate()', ->
-    format = (template) ->
-      helpers.formatTemplate 'hitler_user', 'hitler_users', template
-    expect(format '{{name}}').to.equal 'hitler_user'
-    expect(format '{{camelizedName}}').to.equal 'HitlerUser'
-    expect(format '{{name}}\n{{camelizedPluralName}}')
-      .to.equal 'hitler_user\nHitlerUsers'
+    expect(helpers.formatTemplate '{{#camelize}}{{name}}{{/camelize}}', name: 'hitler_user').to.equal 'HitlerUser'
+    expect(helpers.formatTemplate '{{#camelize}}{{name}}{{/camelize}}\n{{#camelize}}{{pluralName}}{{/camelize}}', name: 'hitler_user', pluralName: 'hitler_users')
+      .to.equal 'HitlerUser\nHitlerUsers'

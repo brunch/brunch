@@ -17,7 +17,9 @@ module.exports = class SourceFile
       fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
-    @cache = Object.seal {data: '', dependencies: [], compilationTime: null}
+    @cache = Object.seal {
+      data: '', dependencies: [], compilationTime: null, error: null
+    }
     Object.freeze this
 
   _lint: (data, path, callback) ->
@@ -36,10 +38,10 @@ module.exports = class SourceFile
 
   # Defines a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
-  # 
+  #
   # path - path to file, contents of which will be wrapped.
   # source - file contents.
-  # 
+  #
   # Returns a wrapped string.
   _wrap: (data) ->
     if not @isHelper and not @isVendor and @type in ['javascript', 'template']
@@ -59,20 +61,21 @@ module.exports = class SourceFile
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
   compile: (callback) ->
-    callbackError = (type, stringOrError) ->
+    callbackError = (type, stringOrError) =>
       string = if stringOrError instanceof Error
         stringOrError.toString().slice(7)
       else
         stringOrError
       error = new Error string
       error.brunchType = type
+      @cache.error = error
       callback error
 
     realPath = if @isHelper then @realPath else @path
     fs.readFile realPath, (error, buffer) =>
       return callbackError 'Reading', error if error?
       fileContent = buffer.toString()
-      @_lint fileContent, @path, (error) => 
+      @_lint fileContent, @path, (error) =>
         return callbackError 'Linting', error if error?
         @compiler.compile fileContent, @path, (error, result) =>
           return callbackError 'Compiling', error if error?
@@ -81,4 +84,5 @@ module.exports = class SourceFile
             @cache.dependencies = dependencies
             @cache.data = @_wrap result if result?
             @cache.compilationTime = Date.now()
+            @cache.error = null
             callback null, @cache.data

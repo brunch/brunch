@@ -12,7 +12,7 @@ fs_utils = require '../fs_utils'
 #
 # plugins - Array of brunch plugins.
 #
-# Returns Array of Strings. 
+# Returns Array of Strings.
 getPluginIncludes = (plugins) ->
   plugins
     .map((plugin) -> plugin.include)
@@ -94,13 +94,27 @@ changeFileList = (compilers, linters, fileList, path, isHelper) ->
 #
 # Returns nothing.
 getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (startTime) ->
+  assetErrors = fileList.getAssetErrors()
+  if assetErrors?
+    assetErrors.forEach (error) -> logger.error error
+    return
+
   fs_utils.write fileList, config, joinConfig, minifiers, startTime, (error, generatedFiles) ->
-    return logger.error "Write failed: #{error}" if error?
-    logger.info "compiled in #{Date.now() - startTime}ms"
+    if error?
+      if Array.isArray error
+        error.forEach (subError) ->
+          logger.error subError
+      else
+        logger.error error
+    else
+      logger.info "compiled in #{Date.now() - startTime}ms"
+
     unless config.persistent
       watcher.close()
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
+
+    return if error?
     callback generatedFiles
 
 # Restart brunch watcher.
@@ -156,8 +170,8 @@ initialize = (options, configParams, onCompile, callback) ->
 #
 # config    - application config.
 # fileList  - `fs_utils.FileList` instance.
-# compilers - array of brunch plugins that can compile source code. 
-# watcher   - `chokidar.FSWatcher` instance. 
+# compilers - array of brunch plugins that can compile source code.
+# watcher   - `chokidar.FSWatcher` instance.
 # reload    - function that will reload the whole thing.
 # onChange  - callback that will be executed every time any file is changed.
 #

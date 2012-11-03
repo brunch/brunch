@@ -55,7 +55,7 @@ getScriptFilesPath = (htmlFile, callback) ->
     features:
       QuerySelector: true
   window = document.createWindow()
-  
+
   window.document.querySelectorAll('script[src]')
     .map (script) ->
       script.src
@@ -70,7 +70,7 @@ readTestFiles = (publicPath, callback) ->
 
     htmlFile = buffer.toString()
     scriptFilesPath = getScriptFilesPath(htmlFile).map getPublicPath
-      
+
     async.map scriptFilesPath, fs.readFile, (error, buffers) ->
       return callback error if error?
       scripts = buffers
@@ -82,7 +82,7 @@ readTestFiles = (publicPath, callback) ->
 setupJsDom = (publicPath, callback) ->
   readTestFiles publicPath, (error, htmlFile, scriptFiles) ->
     throw error if error?
-    
+
     loadJsdom().env
       html: htmlFile,
       src: scriptFiles,
@@ -105,22 +105,22 @@ startMocha = (config, options, testFiles, globals) ->
     process.exit (if failures > 0 then 1 else 0)
 
 # Load the test-helpers.* file
-findTestHelpersFile = (testPath, callback) ->  
+findTestHelpersFile = (testPath, callback) ->
   fs.readdir testPath, (error, files) ->
     throw error if error?
-    
+
     testHelpers = files.filter (file) ->
       /^test[-_]helpers?\./.test file
-    
+
     if testHelpers.length > 0
       callback sysPath.resolve sysPath.join testPath, testHelpers[0]
     else
       callback null
-    
+
 startBrunchTestRunner = (config, options) ->
   testFiles = helpers.findTestFiles config
   throw new Error("Can't find tests for this project.") if testFiles.length is 0
-    
+
   setupJsDom config.paths.public, (window) =>
     findTestHelpersFile config.paths.test, (testHelpersFile) =>
       globals = if testHelpersFile? then require(testHelpersFile) else {}

@@ -22,10 +22,18 @@ module.exports = class FileList extends EventEmitter
     @compiling = []
     @copying = []
 
+  getAssetErrors: ->
+    invalidAssets = @assets.filter((asset) -> asset.error?)
+    if invalidAssets.length > 0
+      invalidAssets.map (invalidAsset) ->
+        helpers.formatError invalidAsset.error, invalidAsset.path
+    else
+      null
+
   # Files that are not really app files.
   _ignored: (path, test = @config.conventions.ignored) ->
     return yes if path in [@config.paths.config, @config.paths.packageConfig]
-    
+
     switch toString.call(test)
       when '[object RegExp]'
         path.match test
@@ -73,21 +81,18 @@ module.exports = class FileList extends EventEmitter
     @compiling.push(file)
     file.compile (error) =>
       @compiling.splice @compiling.indexOf(file), 1
-      logger.debug 'info', "Compiled file '#{file.path}'"
-      if error?
-        return logger.error "#{error.brunchType} of '#{file.path}' 
-failed. #{error.toString().slice(7)}"
-      @_compileDependentFiles file.path
       @_resetTimer()
+      return if error?
+      logger.debug 'info', "Compiled file '#{file.path}'"
+      @_compileDependentFiles file.path
 
   _copy: (asset) =>
     @copying.push asset
     asset.copy (error) =>
       @copying.splice @copying.indexOf(asset), 1
-      logger.debug 'info', "Copied asset '#{asset.path}'"
-      if error?
-        return logger.error "Copying of '#{asset.path}' failed. #{error}"
       @_resetTimer()
+      return if error?
+      logger.debug 'info', "Copied asset '#{asset.path}'"
 
   _add: (path, compiler, linters, isHelper) ->
     isVendor = @_isVendor path

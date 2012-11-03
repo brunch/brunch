@@ -8,7 +8,7 @@ common = require './common'
 
 # 'app/assets/thing/thing2.html'
 # ['app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html']
-# 
+#
 getAssetDirectory = (path, convention) ->
   splitted = path.split(common.sep)
   splitted
@@ -26,7 +26,15 @@ module.exports = class Asset
     logger.debug 'asset', "Initializing fs_utils.Asset", {
       @path, directory, @relativePath, @destinationPath
     }
-    Object.freeze this
+    @error = null
+    Object.seal this
 
   copy: (callback) ->
-    common.copy @path, @destinationPath, callback
+    common.copy @path, @destinationPath, (error) =>
+      if error?
+        err = new Error error
+        err.brunchType = 'Copying'
+        @error = err
+      else
+        @error = null
+      callback @error
