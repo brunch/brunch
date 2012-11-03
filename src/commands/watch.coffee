@@ -106,12 +106,16 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
           logger.error subError
       else
         logger.error error
-      return
-    logger.info "compiled in #{Date.now() - startTime}ms"
+    else
+      logger.info "compiled in #{Date.now() - startTime}ms"
+
     unless config.persistent
       watcher.close()
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
+
+    if error?
+      return
 
     callback generatedFiles
 
