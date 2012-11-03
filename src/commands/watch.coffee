@@ -114,9 +114,7 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
 
-    if error?
-      return
-
+    return if error?
     callback generatedFiles
 
 # Restart brunch watcher.
