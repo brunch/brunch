@@ -85,6 +85,7 @@ Examples:
 Run tests on the current project. Options:
 
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
-* ``-r REPORTER, --repoter REPORTER``: mocha reporter name.
+* ``-f REGEX, --filter REGEX``: only run tests matched by this regex filter (e.g. ``brunch test -f ^integration/`` to run all tests in the directory ``test/integration/``)
+* ``-r REPORTER, --reporter REPORTER``: mocha reporter name.
 
 Short-cut: ``brunch t``.
