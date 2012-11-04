@@ -130,9 +130,11 @@ startBrunchTestRunner = (config, options) ->
         filterRegex = new RegExp(options.filter)
         stripTestDirRegex = /^test\//
 
-        globals._brunchTestNameFilter = (fullTestName) ->
-          testName = fullTestName.replace(stripTestDirRegex, '')
-          return filterRegex.test(testName)
+        br = globals.window.brunch ?= {}
+        settings = br.test ?= {}
+        settings.filterer = (fullName) ->
+          testName = fullName.replace(stripTestDirRegex, '')
+          filterRegex.test testName
 
       startMocha config, options, testFiles, globals
 

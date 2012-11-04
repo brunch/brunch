@@ -40,9 +40,9 @@ loadTestFiles = (files, testsConvention) ->
       path.substring 0, path.lastIndexOf '.'
     .map (path) ->
       """
-      if(typeof _brunchTestNameFilter === 'undefined' ||
-         _brunchTestNameFilter('#{path}'))
-          window.require('#{path}');
+      var hasFilterer = window.brunch && window.brunch.test && window.brunch.test.filterer;
+      var valid = hasFilterer ? window.brunch.test.filterer('#{path}') : true;
+      if (valid) window.require('#{path}');
       """
     .join('\n') + '\n'
 
