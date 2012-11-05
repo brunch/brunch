@@ -28,22 +28,6 @@ To continuously rebuild the project on every change, run `brunch watch`.
 
 To run a simple http server, execute `brunch watch --server`.
 
-## Contributing
-![build status](https://secure.travis-ci.org/brunch/brunch.png?branch=master)
-
-You can install the latest `master` version of brunch by following these
-simple steps:
-
-* Clone the repo, navigate to its directory.
-* Change `bin/brunch` in `package.json` to `bin/brunchcoffee`.
-It will allow you not to compile the source every time you change it.
-* Execute `npm install` to install packages.
-* Execute `npm uninstall -g brunch && npm link`
-* Change `package.json` `bin/brunchcoffee` back to `bin/brunch`.
-* Use `git pull` to update to latest brunch.
-
-Test suite can be run via `npm test`.
-
 ## Contact
 * Website: [brunch.io](http://brunch.io).
 * Project twitter: [@brunch](http://twitter.com/brunch)
