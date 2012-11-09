@@ -1,3 +1,13 @@
+# Brunch 1.5.0 (unreleased)
+* Added ability to auto-prepend `'use strict'` to result modules
+(`config.modules.strict`).
+* Added `-f REGEX, --filter REGEX` option to `brunch test`.
+* `--minify` (`-m`) command line option was changed to `--optimize` (`-o`).
+The previous version is deprecated and will be removed in the future.
+This is made for plugins that will do optimizations of you application
+that are not minifications.
+* Fixed bug when process didn’t returned code "1" on compilation errors.
+
 # Brunch 1.4.4 (October 1, 2012)
 * All errors are now deferred to the compilation end.
 Also, if you have added one error on previous compilation
