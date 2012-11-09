@@ -31,6 +31,7 @@ generateParams = (persistent, options) ->
     logger.warn '--minify (-m) option is deprecated.
 Use --optimize (-o) instead'
   params.optimize = Boolean (options.optimize ? options.minify)
+  params.minify = params.optimize
   params.persistent = persistent
   if options.publicPath
     params.paths = {}
