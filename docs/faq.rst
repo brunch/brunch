@@ -8,7 +8,7 @@ I want to start new project with Brunch. What's the workflow?
 * Create new project (preferably from brunch-with-chaplin skeleton if you're building big app) ``brunch new project && cd project``.
 * Create HTML mockups in ``app/assets`` directory (``login.html``, ``user.html`` etc.) & corresponding styles.
 * Watch application files with ``brunch watch --server`` and see the results in browser on ``localhost:3000``. Auto-debug styles in browser with ``auto-reload-brunch`` which will automatically reload browser page on every page.
-* When all mockups are done, create app classes for them with ``brunch generate``. E.g. ``brunch generate scaffold user``.
+* When all mockups are done, create app classes for them with ``brunch generate``. E.g. ``brunch generate view user`` (you need to have `generators` directory in your app).
 * Debug your code in browser via ``console.log`` or ``debugger`` statements.
 
 I don't like CoffeeScript. Does brunch work for pure js projects?
