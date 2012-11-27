@@ -36,7 +36,6 @@ For example, you want to change default `Handlebars` templates to `eco`.
 
 * Remove ``"handlebars-brunch": "version"`` line from ``package.json``.
 * Add ``"eco-brunch": "version"`` there
-* Change config.files.templates.defaultExtension to ``eco`` in ``config.coffee``.
 
 What version of plugin do I need to use? There are eco-brunch 1.0.1, 1.1.0 etc.
 -------------------------------------------------------------------------------
