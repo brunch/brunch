@@ -2,11 +2,6 @@
 FAQ
 ***
 
-I get EMFILE error when I build Brunch project. WTF?
-----------------------------------------------------
-
-`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command ``ulimit -n <number>`` (10000 should be enough).
-
 I want to start new project with Brunch. What's the workflow?
 -------------------------------------------------------------
 
@@ -64,3 +59,13 @@ Why do you use these languages in default skeleton?
 * `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
 * `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / `:`s), unlike less / sass; b) its mixins are transparent. If you're writing ``border-radius`` in stylus with ``nib``, it's automatically expanded to all vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
 * `Handlebars` templates are used because they are logic-less / compatible with Mustache (that has implementations in many languages) and have nice helpers system. If you're a fan of clear syntax, you might like `Jade` instead, which is much clearer than `HAML`.
+
+I get EMFILE error when I build Brunch project. WTF?
+----------------------------------------------------
+
+`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command ``ulimit -n <number>`` (10000 should be enough).
+
+I get error, like "MODULE_NOT_FOUND" when trying to run Brunch
+--------------------------------------------------------------
+
+You need to install brunch plugins. It can be done simply by executing ``npm install`` in your project directory.

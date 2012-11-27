@@ -29,7 +29,8 @@ destroyFile = (path, callback) ->
     logger.info "destroy #{path}"
     callback error
 
-scaffoldFile = (rollback, from, to, templateData, callback) ->
+scaffoldFile = (rollback, from, to, templateData, parentDir, callback) ->
+  [from, to] = [(sysPath.join parentDir, from), (sysPath.join parentDir, to)]
   if rollback
     destroyFile to, callback
   else
@@ -116,6 +117,6 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     generators = config.paths.generators
     templateData = {name, pluralName}
 
-    generateFiles rollback, generators, type, templateData, (error) ->
+    generateFiles rollback, generators, type, templateData, parentDir, (error) ->
       return logger.error error if error?
       callback()
