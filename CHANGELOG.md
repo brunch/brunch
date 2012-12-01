@@ -7,6 +7,8 @@ The previous version is deprecated and will be removed in the future.
 This is made for plugins that will do optimizations of you application
 that are not minifications.
 * Fixed bug when process didn’t returned code "1" on compilation errors.
+* Brunch will now work only with brunch plugins that have
+`brunch` in their name.
 
 # Brunch 1.4.4 (October 1, 2012)
 * All errors are now deferred to the compilation end.

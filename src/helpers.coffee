@@ -382,15 +382,18 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
 exports.loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
   nodeModules = "#{rootPath}/node_modules"
-  fs.readFile sysPath.join(rootPath, 'package.json'), (error, data) ->
-    return callback error if error?
-    json = JSON.parse(data)
-    deps = Object.keys(extend(json.devDependencies ? {}, json.dependencies))
-    try
-      plugins = deps.map (dependency) -> require "#{nodeModules}/#{dependency}"
-    catch err
-      error = err
-    callback error, plugins
+  json = require sysPath.join rootPath, 'package.json'
+  deps = Object.keys extend(json.devDependencies ? {}, json.dependencies)
+  try
+    # TODO: test if `brunch-plugin` is in dep’s package.json.
+    plugins = deps
+      .filter (dependency) ->
+        dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
+      .map (dependency) ->
+        require "#{nodeModules}/#{dependency}"
+  catch err
+    error = err
+  callback error, plugins
 
 exports.getPlugins = (packages, config) ->
   packages
