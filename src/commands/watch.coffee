@@ -149,7 +149,9 @@ initialize = (options, configParams, onCompile, callback) ->
     plugins    = helpers.getPlugins packages, config
     compilers  = plugins.filter(propIsFunction 'compile')
     linters    = plugins.filter(propIsFunction 'lint')
-    minifiers  = plugins.filter(propIsFunction 'minify')
+    minifiers  = plugins.filter(propIsFunction 'minify').concat(
+      plugins.filter(propIsFunction 'optimize')
+    )
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
     callbacks.push onCompile
     callCompileCallbacks = (generatedFiles) ->

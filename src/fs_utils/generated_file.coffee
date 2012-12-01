@@ -84,8 +84,9 @@ module.exports = class GeneratedFile
   #
   # Returns nothing.
   _minify: (data, callback) ->
-    if @config.optimize and @minifier?.minify?
-      @minifier.minify data, @path, callback
+    if @config.optimize
+      minify = @minifier?.optimize ? @minifier?.minify
+      minify? data, @path, callback
     else
       callback null, data
 
