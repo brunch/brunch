@@ -326,7 +326,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.assets  ?= /assets(\/|\\)/
   conventions.ignored ?= paths.ignored ? (path) ->
     startsWith sysPath.basename(path), '_'
-  conventions.tests   ?= /_test\.\w+$/
+  conventions.tests   ?= /[-_]test\.\w+$/
   conventions.vendor  ?= /vendor(\/|\\)/
 
   config.notifications ?= on
