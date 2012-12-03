@@ -8,6 +8,8 @@ This is made for plugins that will do optimizations of you application
 that are not minifications.
 * `config.modules.wrapper` now accepts full file path as first argument,
 instead of sanitized.
+* Debugging mode syntax was changed to standardized
+`debug=brunch:* brunch <command>`.
 * Fixed bug when process didn’t returned code "1" on compilation errors.
 * Brunch will now work only with brunch plugins that have
 `brunch` in their name.

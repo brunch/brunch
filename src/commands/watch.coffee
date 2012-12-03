@@ -2,6 +2,7 @@
 
 async = require 'async'
 chokidar = require 'chokidar'
+debug = require('debug')('brunch:watch')
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -61,11 +62,11 @@ initWatcher = (config, callback) ->
       persistent: config.persistent
     watcher
       .on 'add', (path) ->
-        logger.debug 'watcher', "File '#{path}' received event 'add'"
+        debug "File '#{path}' received event 'add'"
       .on 'change', (path) ->
-        logger.debug 'watcher', "File '#{path}' received event 'change'"
+        debug "File '#{path}' received event 'change'"
       .on 'unlink', (path) ->
-        logger.debug 'watcher', "File '#{path}' received event 'unlink'"
+        debug "File '#{path}' received event 'unlink'"
       .on('error', logger.error)
     callback null, watcher
 

@@ -8,32 +8,15 @@ colors =
   error: 'red'
   warn: 'yellow'
   info: 'green'
-  debug: 'blue'
 
 getInfo = (level) ->
   date = new Date().toFormat('DD MMM HH24:MI:SS')
   lvl = color.set level, colors[level]
   "#{date} - #{lvl}:"
 
-namespace = process.env.BRUNCH_DEBUG
-
 logger =
-  isDebug: Boolean namespace
   errorHappened: no
   notifications: on
-
-  debugNamespace: do ->
-    if namespace
-      if namespace is '*'
-        '*'
-      else
-        namespace.split(',')
-    else
-      []
-
-  matchesDebugNamespace: (current) ->
-    namespace = logger.debugNamespace
-    namespace is '*' or current in namespace
 
   log: (level, args...) ->
     info = getInfo level
@@ -53,9 +36,5 @@ logger =
 
   info: (args...) ->
     logger.log 'info', args...
-
-  debug: (namespace, args...) ->
-    if logger.isDebug and logger.matchesDebugNamespace namespace
-      logger.log 'debug', args...
 
 module.exports = Object.seal logger

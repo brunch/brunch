@@ -1,6 +1,7 @@
 'use strict'
 
 {exec} = require 'child_process'
+debug = require('debug')('brunch:create')
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 rimraf = require 'rimraf'
@@ -11,7 +12,7 @@ fs_utils = require '../fs_utils'
 copySkeleton = (skeletonPath, rootPath, callback) ->
   skeletonDir = sysPath.join __dirname, '..', '..', 'skeletons'
   skeletonPath ?= sysPath.join skeletonDir, 'brunch-with-chaplin'
-  logger.debug 'info', "Copying skeleton from #{skeletonPath}"
+  debug "Copying skeleton from #{skeletonPath}"
 
   copyDirectory = (from) ->
     fs_utils.copyIfExists from, rootPath, no, (error) ->
@@ -31,7 +32,7 @@ cloneSkeleton = (address, rootPath, isGitHubUrl, callback) ->
     "git://github.com/#{address.replace('github://', '')}.git"
   else
     address
-  logger.debug 'info', "Cloning skeleton from git URL #{URL}"
+  debug "Cloning skeleton from git URL #{URL}"
   exec "git clone #{URL} #{rootPath}", (error, stdout, stderr) ->
     return logger.error "Git clone error: #{stderr.toString()}" if error?
     logger.info 'Created brunch directory layout'

@@ -43,7 +43,8 @@
     "ansi-color":    "~0.2.1",
     "inflection":    "~1.2.2",
     "mocha":         "~1.4.2",
-    "handlebars":    "~1.0.6"
+    "handlebars":    "~1.0.6",
+    "debug":         "~0.7.0"
   },
   "devDependencies": {
     "chai":          "~1.2.0"

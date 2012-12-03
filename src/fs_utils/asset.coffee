@@ -1,5 +1,6 @@
 'use strict'
 
+debug = require('debug')('brunch:asset')
 sysPath = require 'path'
 helpers = require '../helpers'
 logger = require '../logger'
@@ -23,7 +24,7 @@ module.exports = class Asset
     directory = getAssetDirectory @path, config._normalized.conventions.assets
     @relativePath = sysPath.relative directory, @path
     @destinationPath = sysPath.join config.paths.public, @relativePath
-    logger.debug 'asset', "Initializing fs_utils.Asset", {
+    debug "Initializing fs_utils.Asset %s", JSON.stringify {
       @path, directory, @relativePath, @destinationPath
     }
     @error = null

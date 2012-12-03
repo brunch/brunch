@@ -1,5 +1,6 @@
 'use strict'
 
+debug = require('debug')('brunch:common')
 fs = require 'fs'
 {EventEmitter} = require 'events'
 mkdirp = require 'mkdirp'
@@ -24,7 +25,7 @@ exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 #
 exports.writeFile = (path, data, callback) ->
-  logger.debug 'writer', "Writing file '#{path}'"
+  debug "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
   write (error) ->
     return callback null, path, data unless error?

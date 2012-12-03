@@ -1,5 +1,6 @@
 'use strict'
 
+debug = require('debug')('brunch:generated-file')
 fs = require 'fs'
 inflection = require 'inflection'
 sysPath = require 'path'
@@ -66,7 +67,7 @@ module.exports = class GeneratedFile
   # require.js module definition if needed.
   # Returns string.
   _join: (files, callback) ->
-    logger.debug 'writer', "Joining files '#{files.map((file) -> file.path).join(', ')}'
+    debug "Joining files '#{files.map((file) -> file.path).join(', ')}'
  to '#{@path}'"
     requireFiles = => loadTestFiles files, @config._normalized.conventions.tests
     joined = files.map((file) -> file.cache.data).join('')

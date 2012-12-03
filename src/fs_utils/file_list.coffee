@@ -1,5 +1,6 @@
 'use strict'
 
+debug = require('debug')('brunch:file-list')
 {EventEmitter} = require 'events'
 Asset = require './asset'
 SourceFile = require './source_file'
@@ -83,7 +84,7 @@ module.exports = class FileList extends EventEmitter
       @compiling.splice @compiling.indexOf(file), 1
       @_resetTimer()
       return if error?
-      logger.debug 'info', "Compiled file '#{file.path}'"
+      debug "Compiled file '#{file.path}'"
       @_compileDependentFiles file.path
 
   _copy: (asset) =>
@@ -92,7 +93,7 @@ module.exports = class FileList extends EventEmitter
       @copying.splice @copying.indexOf(asset), 1
       @_resetTimer()
       return if error?
-      logger.debug 'info', "Copied asset '#{asset.path}'"
+      debug "Copied asset '#{asset.path}'"
 
   _add: (path, compiler, linters, isHelper) ->
     isVendor = @_isVendor path

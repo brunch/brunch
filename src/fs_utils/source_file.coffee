@@ -1,6 +1,7 @@
 'use strict'
 
 async = require 'async'
+debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
 logger = require '../logger'
@@ -8,7 +9,7 @@ logger = require '../logger'
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
   constructor: (@path, @compiler, @linters, @wrapper, @isHelper, @isVendor) ->
-    logger.debug 'info', "Initializing fs_utils.SourceFile:", {
+    debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, @isHelper, @isVendor
     }
     @type = @compiler.type
