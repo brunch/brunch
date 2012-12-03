@@ -392,7 +392,11 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
 exports.loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
   nodeModules = "#{rootPath}/node_modules"
-  json = require sysPath.join rootPath, 'package.json'
+  try
+    json = require sysPath.join rootPath, 'package.json'
+  catch err
+    return callback "Current directory is not brunch application root path,
+ as it does not contain package.json (#{err})"
   deps = Object.keys extend(json.devDependencies ? {}, json.dependencies)
   try
     # TODO: test if `brunch-plugin` is in dep’s package.json.
