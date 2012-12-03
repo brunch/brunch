@@ -14,7 +14,7 @@ module.exports = class SourceFile
     @type = @compiler.type
     @compilerName = @compiler.constructor.name
     if isHelper
-      fileName = "brunch_#{@compilerName}_#{sysPath.basename @path}"
+      fileName = "brunch-#{@compilerName}-#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName
     @cache = Object.seal {
@@ -45,13 +45,7 @@ module.exports = class SourceFile
   # Returns a wrapped string.
   _wrap: (data) ->
     if not @isHelper and not @isVendor and @type in ['javascript', 'template']
-      moduleName = JSON.stringify(
-        @path
-          .replace(new RegExp('\\\\', 'g'), '/')
-          .replace(/^app\//, '')
-          .replace(/\.\w+$/, '')
-      )
-      @wrapper moduleName, data
+      @wrapper @path, data
     else
       if @type in ['javascript', 'template']
         "#{data};\n\n"

@@ -59,6 +59,14 @@ exports.formatError = (error, path) ->
   "#{error.brunchType} of '#{path}'
  failed. #{error.toString().slice(7)}"
 
+exports.cleanModuleName = cleanModuleName = (path) ->
+  JSON.stringify(
+    path
+      .replace(new RegExp('\\\\', 'g'), '/')
+      .replace(/^app\//, '')
+      .replace(/\.\w+$/, '')
+  )
+
 sortAlphabetically = (a, b) ->
   if a < b
     -1
@@ -256,14 +264,16 @@ indent = (data, strict) ->
 normalizeWrapper = (typeOrFunction, strict) ->
   switch typeOrFunction
     when 'commonjs'
-      (path, data) ->
+      (fullPath, data) ->
+        path = cleanModuleName fullPath
         """
   window.require.define({#{path}: function(exports, require, module) {
     #{indent data, strict}
   }});\n\n
   """
     when 'amd'
-      (path, data) ->
+      (fullPath, data) ->
+        path = cleanModuleName fullPath
         """
   define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
     #{indent data, strict}

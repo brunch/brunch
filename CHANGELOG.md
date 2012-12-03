@@ -1,4 +1,6 @@
 # Brunch 1.5.0 (unreleased)
+* `config.modules.wrapper` now accepts full file path as first argument,
+instead of sanitized.
 * Added ability to auto-prepend `'use strict'` to result modules
 (`config.modules.strict`).
 * Added `-f REGEX, --filter REGEX` option to `brunch test`.
