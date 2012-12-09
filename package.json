@@ -32,7 +32,7 @@
     "coffee-script": "~1.4.0",
     "argumentum":    "~0.6.0",
     "chokidar":      "~0.5.0",
-    "async":         "~0.1.23",
+    "async":         "~0.1.22",
     "mkdirp":        "~0.3.4",
     "ncp":           "~0.2.6",
     "rimraf":        "~2.0.2",
