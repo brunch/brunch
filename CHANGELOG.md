@@ -1,3 +1,6 @@
+# Brunch 1.4.5 (December 14, 2012)
+* Updated base brunch with chaplin skeleton to the latest libs.
+
 # Brunch 1.4.4 (October 1, 2012)
 * All errors are now deferred to the compilation end.
 Also, if you have added one error on previous compilation
