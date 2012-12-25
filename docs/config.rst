@@ -161,7 +161,14 @@ Default value is ``false`` (``true`` if you run ``brunch build --optimize``).
 
 ``Object``: contains params of webserver that runs on ``brunch watch --server``.
 
-* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function.
+* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function: 
+    
+  .. code-block:: coffeescript
+
+    exports.startServer = (port, path, callback) ->
+      # callback doesn't take any parameters and (if provided) should be called after server is started
+      # should return an instance of http.Server
+
 * ``port``: (optional) port on which server will run
 * ``base``: (optional) base URL from which to serve the app
 * ``run``: should the server be launched with ``brunch watch``?
