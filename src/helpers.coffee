@@ -348,7 +348,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
-  modules.addSourceURLs ?= yes
+  modules.addSourceURLs ?= no
 
   config.server       ?= {}
   config.server.base  ?= ''

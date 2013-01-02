@@ -1,6 +1,6 @@
 # Brunch 1.5.0 (unreleased)
-* Added ability to auto-prepend `'use strict'` to result modules
-(`config.modules.strict`).
+* Added ability to wrap files in sourceURLs which simplifies debugging a lot.
+Disabled by default in non-production mode, but can be disabled with `config.modules.addSourceURLs = false`.
 * Added `-f REGEX, --filter REGEX` option to `brunch test`.
 * `--minify` (`-m`) command line option was changed to `--optimize` (`-o`).
 The previous version is deprecated and will be removed in the future.
