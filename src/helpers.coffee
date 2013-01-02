@@ -279,7 +279,7 @@ commonJsWrapper = (addSourceURLs = no) -> (fullPath, fileData, isVendor) ->
       "Function('exports, require, module', #{data})"
     else
       "function(exports, require, module) {\n  #{indent data}\n}"
-    "require.register(#{path}, #{definition});\n"
+    "window.require.register(#{path}, #{definition});\n"
 
 normalizeWrapper = (typeOrFunction, addSourceURLs) ->
   switch typeOrFunction
