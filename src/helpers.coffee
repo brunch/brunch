@@ -257,34 +257,41 @@ exports.cleanModuleName = cleanModuleName = (path) ->
     .replace(new RegExp('\\\\', 'g'), '/')
     .replace(/^app\//, '')
 
-commonJsWrapper = (fullPath, fileData, isVendor) ->
+commonJsWrapper = (addSourceURLs = no) -> (fullPath, fileData, isVendor) ->
   sourceURLPath = cleanModuleName fullPath
-  path = JSON.stringify sourceURLPath.replace /\.\w+$/, '.js'
-  sourceURL = no
+  path = JSON.stringify sourceURLPath.replace /\.\w+$/, ''
 
   # JSON-stringify data if sourceURL is enabled.
-  data = if sourceURL
+  data = if addSourceURLs
     JSON.stringify "#{fileData}\n//@ sourceURL=#{sourceURLPath}"
   else
     fileData
 
   if isVendor
     # Simply execute vendor files.
-    if sourceURL
-      "Function('', #{data}).call(this);\n"
+    if addSourceURLs
+      "Function(#{data}).call(this);\n"
     else
       "#{data};\n"
   else
     # Wrap in common.js require definition.
-    definition = if sourceURL
+    definition = if addSourceURLs
       "Function('exports, require, module', #{data})"
     else
       "function(exports, require, module) {\n  #{indent data}\n}"
     "require.register(#{path}, #{definition});\n"
 
-normalizeWrapper = (typeOrFunction) ->
+normalizeWrapper = (typeOrFunction, addSourceURLs) ->
   switch typeOrFunction
-    when 'commonjs' then commonJsWrapper
+    when 'commonjs' then commonJsWrapper addSourceURLs
+    when 'amd'
+      (fullPath, data) ->
+        path = cleanModuleName fullPath
+        """
+define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
+  #{indent data, strict}
+});
+"""
     when false then (path, data) -> "#{data}"
     else
       if typeof typeOrFunction is 'function'
@@ -336,9 +343,12 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.vendor  ?= /vendor(\/|\\)/
 
   config.notifications ?= on
+  config.optimize ?= no
+
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
+  modules.addSourceURLs ?= yes
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -370,7 +380,8 @@ normalizeConfig = (config) ->
   normalized.join = createJoinConfig config.files
   mod = config.modules
   normalized.modules = {}
-  normalized.modules.wrapper = normalizeWrapper mod.wrapper
+  sourceURLs = mod.addSourceURLs and not config.optimize
+  normalized.modules.wrapper = normalizeWrapper mod.wrapper, sourceURLs
   normalized.modules.definition = normalizeDefinition mod.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
