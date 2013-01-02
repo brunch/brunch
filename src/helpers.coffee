@@ -59,14 +59,6 @@ exports.formatError = (error, path) ->
   "#{error.brunchType} of '#{path}'
  failed. #{error.toString().slice(7)}"
 
-exports.cleanModuleName = cleanModuleName = (path) ->
-  JSON.stringify(
-    path
-      .replace(new RegExp('\\\\', 'g'), '/')
-      .replace(/^app\//, '')
-      .replace(/\.\w+$/, '')
-  )
-
 sortAlphabetically = (a, b) ->
   if a < b
     -1
@@ -255,30 +247,44 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
-indent = (data, strict) ->
-  result = ''
-  result += if strict then "'use strict';\n  " else ""
-  result += data.replace /\n(?!\n)/g, '\n  '
-  result
+indent = (js) ->
+  # Emulate negative regexp look-behind a-la (?<!stuff).
+  js.replace /(\\)?\n(?!\n)/g, ($0, $1) ->
+    if $1 then $0 else '\n  '
 
-normalizeWrapper = (typeOrFunction, strict) ->
+exports.cleanModuleName = cleanModuleName = (path) ->
+  path
+    .replace(new RegExp('\\\\', 'g'), '/')
+    .replace(/^app\//, '')
+
+commonJsWrapper = (fullPath, fileData, isVendor) ->
+  sourceURLPath = cleanModuleName fullPath
+  path = JSON.stringify sourceURLPath.replace /\.\w+$/, '.js'
+  sourceURL = no
+
+  # JSON-stringify data if sourceURL is enabled.
+  data = if sourceURL
+    JSON.stringify "#{fileData}\n//@ sourceURL=#{sourceURLPath}"
+  else
+    fileData
+
+  if isVendor
+    # Simply execute vendor files.
+    if sourceURL
+      "Function('', #{data}).call(this);\n"
+    else
+      "#{data};\n"
+  else
+    # Wrap in common.js require definition.
+    definition = if sourceURL
+      "Function('exports, require, module', #{data})"
+    else
+      "function(exports, require, module) {\n  #{indent data}\n}"
+    "require.register(#{path}, #{definition});\n"
+
+normalizeWrapper = (typeOrFunction) ->
   switch typeOrFunction
-    when 'commonjs'
-      (fullPath, data) ->
-        path = cleanModuleName fullPath
-        """
-  window.require.define({#{path}: function(exports, require, module) {
-    #{indent data, strict}
-  }});\n\n
-  """
-    when 'amd'
-      (fullPath, data) ->
-        path = cleanModuleName fullPath
-        """
-  define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-    #{indent data, strict}
-  });
-  """
+    when 'commonjs' then commonJsWrapper
     when false then (path, data) -> "#{data}"
     else
       if typeof typeOrFunction is 'function'
@@ -333,7 +339,6 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
-  modules.strict      ?= no
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -365,7 +370,7 @@ normalizeConfig = (config) ->
   normalized.join = createJoinConfig config.files
   mod = config.modules
   normalized.modules = {}
-  normalized.modules.wrapper = normalizeWrapper mod.wrapper, mod.strict
+  normalized.modules.wrapper = normalizeWrapper mod.wrapper
   normalized.modules.definition = normalizeDefinition mod.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->

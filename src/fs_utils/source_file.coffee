@@ -45,13 +45,10 @@ module.exports = class SourceFile
   #
   # Returns a wrapped string.
   _wrap: (data) ->
-    if not @isHelper and not @isVendor and @type in ['javascript', 'template']
-      @wrapper @path, data
+    if @type in ['javascript', 'template']
+      @wrapper @path, data, (@isHelper or @isVendor)
     else
-      if @type in ['javascript', 'template']
-        "#{data};\n\n"
-      else
-        data
+      data
 
   # Reads file and compiles it with compiler. Data is cached to `this.data`
   # in order to do compilation only if the file was changed.
