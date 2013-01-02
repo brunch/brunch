@@ -1,4 +1,4 @@
-# Brunch 1.5.0 (unreleased)
+# Brunch 1.5.0 (January 2, 2012)
 * Added ability to wrap files in sourceURLs which simplifies debugging a lot.
 Disabled by default in non-production mode, but can be disabled with `config.modules.addSourceURLs = false`.
 * Added `-f REGEX, --filter REGEX` option to `brunch test`.
@@ -9,7 +9,7 @@ that are not minifications.
 * `config.modules.wrapper` now accepts full file path as first argument,
 instead of sanitized.
 * Debugging mode syntax was changed to standardized
-`debug=brunch:* brunch <command>`.
+`DEBUG=brunch:* brunch <command>`.
 * Fixed bug when process didn’t returned code "1" on compilation errors.
 * Brunch will now work only with brunch plugins that have
 `brunch` in their name.
