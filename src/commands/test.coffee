@@ -99,6 +99,7 @@ startMocha = (config, options, testFiles, globals) ->
   mocha
     .reporter(options.reporter or config.test?.reporter or 'spec')
     .ui(config.test?.ui ? 'bdd')
+    .grep(options.grep)
   testFiles.forEach (file) ->
     mocha.addFile file
   mocha.run (failures) ->
