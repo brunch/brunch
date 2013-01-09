@@ -139,5 +139,5 @@ startBrunchTestRunner = (config, options) ->
       startMocha config, options, testFiles, globals
 
 module.exports = test = (options) ->
-  watcher = watch yes, options, ->
+  watcher = watch false, options, ->
     startBrunchTestRunner watcher.config, options
