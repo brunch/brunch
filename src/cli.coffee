@@ -134,11 +134,6 @@ the server would run'
           help: 'path to config file'
           metavar: 'CONFIG'
           full: 'config'
-        filter:
-          abbr: 'f'
-          help: 'only run tests matched by this regex filter'
-          metavar: 'REGEX'
-          full: 'filter'
         grep:
           abbr: 'g'
           help: 'only specs/tests whose name contains this string see http://visionmedia.github.com/mocha/#grep-option'
