@@ -124,6 +124,8 @@ Example:
 * ``false`` — no definition.
 * Function that takes path and data
 
+``modules.addSourceUrls``: ``Boolean`` determines if all modules should be wrapped in `Function()` with [`sourceURL`](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) mappings for much easier debugging. Works only in development environment. Default value is ``false``.
+
 Example:
 
   .. code-block:: coffeescript
@@ -133,6 +135,7 @@ Example:
     modules:
       wrapper: 'amd'
       definition: 'amd'
+      addSourceUrls: true
 
     # Same as 'commonjs', but in function implementation.
     modules:
@@ -161,8 +164,8 @@ Default value is ``false`` (``true`` if you run ``brunch build --optimize``).
 
 ``Object``: contains params of webserver that runs on ``brunch watch --server``.
 
-* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function: 
-    
+* ``path``: (optional) path to nodejs file that will be loaded. The file must contain ``exports.startServer`` function:
+
   .. code-block:: coffeescript
 
     exports.startServer = (port, path, callback) ->
