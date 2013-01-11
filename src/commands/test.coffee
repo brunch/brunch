@@ -99,6 +99,7 @@ startMocha = (config, options, testFiles, globals) ->
   mocha
     .reporter(options.reporter or config.test?.reporter or 'spec')
     .ui(config.test?.ui ? 'bdd')
+    .grep(options.grep)
   testFiles.forEach (file) ->
     mocha.addFile file
   mocha.run (failures) ->
@@ -125,16 +126,6 @@ startBrunchTestRunner = (config, options) ->
     findTestHelpersFile config.paths.test, (testHelpersFile) =>
       globals = if testHelpersFile? then require(testHelpersFile) else {}
       globals.window = window
-
-      if options.filter
-        filterRegex = new RegExp(options.filter)
-        stripTestDirRegex = /^test\//
-
-        br = globals.window.brunch ?= {}
-        settings = br.test ?= {}
-        settings.filterer = (fullName) ->
-          testName = fullName.replace(stripTestDirRegex, '')
-          filterRegex.test testName
 
       startMocha config, options, testFiles, globals
 
