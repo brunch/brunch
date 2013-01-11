@@ -82,7 +82,7 @@ Examples:
 Run tests on the current project. Options:
 
 * ``-c CONFIG_PATH, --config CONFIG_PATH``: path to config (default: ``config``)
-* ``-f REGEX, --filter REGEX``: only run tests matched by this regex filter (e.g. ``brunch test -f ^integration/`` to run all tests in the directory ``test/integration/``)
+* ``-g GREP, --grep GREP``: only run specs/tests whose name contains the grep string (see http://visionmedia.github.com/mocha/#grep-option)
 * ``-r REPORTER, --reporter REPORTER``: mocha reporter name.
 
 Short-cut: ``brunch t``.
