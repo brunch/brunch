@@ -21,9 +21,10 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "prepublish": "coffee -o lib/ src/",
-    "postinstall": "node setup.js postinstall",
-    "test": "node setup.js test"
+    "prepublish": "node setup.js prepublish",
+    "postpublish": "node setup.js postpublish",
+    "test": "node setup.js test",
+    "postinstall": "node setup.js test"
   },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
