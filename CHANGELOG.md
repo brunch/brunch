@@ -1,3 +1,6 @@
+# Brunch 1.5.2 (January 13, 2012)
+* Improved installation process.
+
 # Brunch 1.5.1 (January 11, 2012)
 * Tester no longer runs watcher by default.
 * Changed `brunch test -f REGEX` option to `-g / --grep` for consistency with Mocha.
