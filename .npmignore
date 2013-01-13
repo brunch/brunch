@@ -8,3 +8,5 @@ CVS/
 .DS_Store
 /docs/_build/
 /skeletons/brunch-with-chaplin/public/
+/src
+/test
