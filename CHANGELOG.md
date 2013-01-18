@@ -1,11 +1,11 @@
-# Brunch 1.5.2 (January 13, 2012)
+# Brunch 1.5.2 (January 13, 2013)
 * Improved installation process.
 
-# Brunch 1.5.1 (January 11, 2012)
+# Brunch 1.5.1 (January 11, 2013)
 * Tester no longer runs watcher by default.
 * Changed `brunch test -f REGEX` option to `-g / --grep` for consistency with Mocha.
 
-# Brunch 1.5.0 (January 2, 2012)
+# Brunch 1.5.0 (January 2, 2013)
 * Added ability to wrap files in sourceURLs which simplifies debugging a lot.
 Disabled by default in non-production mode, but can be disabled with `config.modules.addSourceURLs = false`.
 * Added `-f REGEX, --filter REGEX` option to `brunch test`.
