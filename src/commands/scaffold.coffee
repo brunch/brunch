@@ -12,16 +12,21 @@ logger = require '../logger'
 fs_utils = require '../fs_utils'
 
 generateFile = (path, data, callback) ->
-  parentDir = sysPath.dirname path
-  write = ->
-    logger.info "create #{path}"
-    fs.writeFile path, data, callback
-  fs_utils.exists parentDir, (exists) ->
-    return write() if exists
-    logger.info "init #{parentDir}"
-    mkdirp parentDir, 0o755, (error) ->
-      return logger.error if error?
-      write()
+  fs_utils.exists path, (exists) ->
+    if exists
+      logger.info "skipping #{path} (already exists)"
+      callback() if callback?
+    else
+      parentDir = sysPath.dirname path
+      write = ->
+        logger.info "create #{path}"
+        fs.writeFile path, data, callback
+      fs_utils.exists parentDir, (exists) ->
+        return write() if exists
+        logger.info "init #{parentDir}"
+        mkdirp parentDir, 0o755, (error) ->
+          return logger.error if error?
+          write()
 
 destroyFile = (path, callback) ->
   fs.unlink path, (error) ->
