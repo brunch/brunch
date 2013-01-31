@@ -16,8 +16,7 @@ fs_utils = require '../fs_utils'
 # Returns Array of Strings.
 getPluginIncludes = (plugins) ->
   plugins
-    .map((plugin) -> plugin.include)
-    .map(helpers.callFunctionOrPass)
+    .map((plugin) -> helpers.callFunctionOrPass(plugin.include, plugin))
     .filter((paths) -> paths?)
     .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
 
