@@ -1,3 +1,8 @@
+# Brunch 1.5.3 (February 02, 2013)
+* When using `brunch generate`, generator will no longer overwrite
+existing files.
+* Preserved context of `include` method of plugins.
+
 # Brunch 1.5.2 (January 13, 2013)
 * Improved installation process.
 
