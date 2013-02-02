@@ -17,8 +17,8 @@ exports.flatten = flatten = (array) ->
     acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
   , []
 
-exports.callFunctionOrPass = callFunctionOrPass = (thing) ->
-  if typeof thing is 'function' then thing() else thing
+exports.callFunctionOrPass = callFunctionOrPass = (thing, context) ->
+  if typeof thing is 'function' then thing.call(context or this) else thing
 
 exports.ensureArray = ensureArray = (object) ->
   if Array.isArray object
