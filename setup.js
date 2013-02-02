@@ -27,7 +27,7 @@ var togglePostinstall = function(add) {
 
   if (add) {
     if (!pkg.scripts) pkg.scripts = {};
-    pkg.scripts.postinstall = 'node setup.js test';
+    pkg.scripts.postinstall = 'node setup.js postinstall';
   } else if (pkg.scripts && pkg.scripts.postinstall) {
     delete pkg.scripts.postinstall;
   }
