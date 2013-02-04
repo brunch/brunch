@@ -113,6 +113,7 @@ generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
   pluralName = inflection.pluralize name
+  strippedName = name.replace /(\/|\\)/g, '_'
 
   helpers.loadPackages helpers.pwd(), (error, packages) ->
     return logger.error error if error?
@@ -120,7 +121,7 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     return callback() unless config?
 
     generators = config.paths.generators
-    templateData = {name, pluralName}
+    templateData = {name, pluralName, strippedName}
 
     generateFiles rollback, generators, type, templateData, parentDir, (error) ->
       return logger.error error if error?
