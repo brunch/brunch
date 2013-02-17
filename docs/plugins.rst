@@ -7,9 +7,7 @@ Brunch uses asynchronous node.js plugins to provide compilation / minification f
 Usage
 =====
 
-Add "<plugin-npm-name>": "<plugin-version>" to package.json of your brunch app.
-
-Pick a plugin version that corresponds to your minor (y) brunch version.
+Install plugins with command ``npm install --save plugin-name``. E.g. ``npm install --save sass-brunch``. This adds "<plugin-npm-name>": "<plugin-version>" to package.json of your brunch app.
 
 If you want to use git version of plugin, add "<plugin-npm-name>": "<git-repo>".
 
@@ -17,7 +15,7 @@ Examples:
 
 .. code-block:: json
 
-    "javascript-brunch": "1.3.5"
+    "javascript-brunch": "1.3.5",
     "sass-brunch": "git+ssh://git@github.com:brunch/sass-brunch.git"
 
 API
