@@ -62,7 +62,13 @@ Why do you use these languages in default skeleton?
 I get EMFILE error when I build Brunch project. WTF?
 ----------------------------------------------------
 
-`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command ``ulimit -n <number>`` (10000 should be enough).
+`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command ``ulimit -n <number
+>`` (10000 should be enough).
+
+How do I enable verbose mode for brunch commands?
+-------------------------------------------------
+
+Use env variable: ``DEBUG='brunch:*' brunch watch``.
 
 I get error, like "MODULE_NOT_FOUND" when trying to run Brunch
 --------------------------------------------------------------
