@@ -117,6 +117,7 @@ module.exports = class FileList extends EventEmitter
         @_compileDependentFiles path
       else
         @_compile (@_findByPath(path) ? @_add path, compiler, linters, isHelper)
+
   _unlink: (path) =>
     ignored = @_ignored path
     if @_isAsset path
