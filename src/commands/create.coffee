@@ -33,8 +33,16 @@ copySkeleton = (skeletonPath, rootPath, callback) ->
         return logger.error "Skeleton '#{skeletonPath}' doesn't exist"
       copyDirectory skeletonPath
 
-cloneSkeleton = (address, rootPath, isGitHubUrl, callback) ->
-  URL = if isGitHubUrl
+# Clones skeleton from URI.
+#
+# address     - String, URI. https:, github: or git: may be used.
+# rootPath    - String, directory to which skeleton files will be copied.
+# callback    - Function.
+#
+# Returns nothing.
+cloneSkeleton = (address, rootPath, callback) ->
+  gitHubRe = /(gh|github)\:\/\//
+  URL = if gitHubRe.test address
     "git://github.com/#{address.replace('github://', '')}.git"
   else
     address
@@ -48,14 +56,11 @@ cloneSkeleton = (address, rootPath, isGitHubUrl, callback) ->
 
 module.exports = create = (options, callback = (->)) ->
   {rootPath, skeleton} = options
-  re = /(?:https?|git(hub)?)(?::\/\/|@)/
+  uriRe = /(?:https?|git(hub)?|gh)(?::\/\/|@)/
 
   fs_utils.exists (sysPath.join rootPath, 'package.json'), (exists) ->
     if exists
       return logger.error "Directory '#{rootPath}' is already an npm project"
-    isGitUrl = skeleton?.match re
-    isGitHubUrl = Boolean isGitUrl?[1]
-    if isGitUrl
-      cloneSkeleton skeleton, rootPath, isGitHubUrl, callback
-    else
-      copySkeleton skeleton, rootPath, callback
+    isGitUri = skeleton and uriRe.test skeleton
+    get = if isGitUri then cloneSkeleton else copySkeleton
+    get skeleton, rootPath, callback
