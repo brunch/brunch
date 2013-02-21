@@ -14,6 +14,8 @@ module.exports = class SourceFile
     }
     @type = @compiler.type
     @compilerName = @compiler.constructor.name
+
+    # If current file is provided by brunch plugin, use fake path.
     if isHelper
       fileName = "brunch-#{@compilerName}-#{sysPath.basename @path}"
       @realPath = @path
@@ -23,6 +25,7 @@ module.exports = class SourceFile
     }
     Object.freeze this
 
+  # Run all linters.
   _lint: (data, path, callback) ->
     if @linters.length is 0
       callback null
@@ -31,13 +34,14 @@ module.exports = class SourceFile
         linter.lint data, path, callback
       , callback
 
+  # Extract files that depend on current file.
   _getDependencies: (data, path, callback) ->
     if @compiler.getDependencies
       @compiler.getDependencies data, path, callback
     else
       callback null, []
 
-  # Defines a requirejs module in scripts & templates.
+  # Define a requirejs module in scripts & templates.
   # This allows brunch users to use `require 'module/name'` in browsers.
   #
   # path - path to file, contents of which will be wrapped.

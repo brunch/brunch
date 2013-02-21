@@ -9,14 +9,17 @@ os = require 'os'
 sysPath = require 'path'
 logger = require '../logger'
 
+# Short-cut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists
+
+# Directory separator.
 exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
 
-# Creates file if it doesn't exist and writes data to it.
+# Create file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
 #
-# path - path to file that would be written.
-# data - data to be written
+# path - String. Path to file that would be written.
+# data - String. Data to be written.
 # callback(error, path, data) - would be executed on error or on
 #    successful write.
 #
@@ -24,6 +27,7 @@ exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
 #
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 #
+# Returns nothing.
 exports.writeFile = (path, data, callback) ->
   debug "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
@@ -38,9 +42,17 @@ exports.writeFile = (path, data, callback) ->
 exports.ignored = ignored = (path) ->
   /(^[.#]|(?:__|~)$)/.test sysPath.basename path
 
+# Files that should be always ignored (git / mercurial metadata etc).
 exports.ignoredAlways = ignoredAlways = (path) ->
   /^\.(git|hg)$/.test sysPath.basename path
 
+# Copy file.
+#
+# source      - String. Path to file that will be copied.
+# destination - String. File system path that will be created etc.
+# callback    - Function.
+#
+# Returns nothing.
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
   copy = (error) ->
@@ -56,7 +68,15 @@ exports.copy = (source, destination, callback) ->
     else
       mkdirp parentDir, copy
 
-# Recursive copy.
+# Recursively copy files from one directory to another.
+# Ignores dotfiles and stuff in process.
+
+# source      - String.
+# destination - String.
+# filter      - Boolean.
+# callback    - Function.
+#
+# Returns nothing.
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
   options = if filter
     {filter: (path) -> not ignored path}

@@ -7,11 +7,17 @@ logger = require '../logger'
 common = require './common'
 {ncp} = require 'ncp'
 
-# 'app/assets/thing/thing2.html'
-# ['app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html']
+# Get first parent directory that matches asset convention.
 #
+# Example:
+#   getAssetDirectory 'app/assets/thing/thing2.html', /assets/
+#   # => app/assets/
+#
+# Returns String.
 getAssetDirectory = (path, convention) ->
   splitted = path.split(common.sep)
+  # Creates thing like this
+  # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html'
   splitted
     .map (part, index) ->
       previous = if index is 0 then '' else splitted[index - 1] + common.sep
@@ -19,6 +25,7 @@ getAssetDirectory = (path, convention) ->
       previous + current
     .filter(convention)[0]
 
+# A static file that shall be copied to public directory.
 module.exports = class Asset
   constructor: (@path, config) ->
     directory = getAssetDirectory @path, config._normalized.conventions.assets
@@ -30,6 +37,7 @@ module.exports = class Asset
     @error = null
     Object.seal this
 
+  # Copy file to public directory.
   copy: (callback) ->
     common.copy @path, @destinationPath, (error) =>
       if error?
