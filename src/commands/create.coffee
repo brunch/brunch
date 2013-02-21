@@ -9,9 +9,15 @@ helpers = require '../helpers'
 logger = require '../logger'
 fs_utils = require '../fs_utils'
 
+# Copy skeleton from file system.
+#
+# skeletonPath - String, file system path from which files will be taken.
+# rootPath     - String, directory to which skeleton files will be copied.
+# callback     - Function.
+#
 copySkeleton = (skeletonPath, rootPath, callback) ->
-  skeletonDir = sysPath.join __dirname, '..', '..', 'skeletons'
-  skeletonPath ?= sysPath.join skeletonDir, 'brunch-with-chaplin'
+  defaultDir = sysPath.join __dirname, '..', '..', 'skeletons'
+  skeletonPath ?= sysPath.join defaultDir, 'brunch-with-chaplin'
   debug "Copying skeleton from #{skeletonPath}"
 
   copyDirectory = (from) ->

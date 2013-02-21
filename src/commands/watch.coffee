@@ -20,11 +20,17 @@ getPluginIncludes = (plugins) ->
     .filter((paths) -> paths?)
     .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
 
+# Generate function that will check if object has property and it is a fn.
+# Returns Function.
+propIsFunction = (prop) -> (object) ->
+  typeof object[prop] is 'function'
 
-isFunction = (item) -> typeof item is 'function'
-
-propIsFunction = (prop) -> (object) -> isFunction object[prop]
-
+# Generate params that will be used as default config values.
+#
+# persistent - Boolean. Determines if brunch should run a web server.
+# options    - Object. {optimize, publicPath, server, port}.
+#
+# Returns Object.
 generateParams = (persistent, options) ->
   params = {}
   if options.minify
@@ -69,9 +75,12 @@ initWatcher = (config, callback) ->
       .on('error', logger.error)
     callback null, watcher
 
+# Generate function that will check if plugin can work with file.
+#
 # path   - Path to source file that can be compiled with plugin
 # plugin - Brunch plugin instance.
-# Returns boolean.
+#
+# Returns Function.
 isPluginFor = (path) -> (plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
@@ -81,28 +90,40 @@ isPluginFor = (path) -> (plugin) ->
     /$.^/
   pattern.test(path)
 
+# Determine which compiler should be used for path and
+# emit `change` event.
+#
+# compilers - Array. Brunch plugins that were treated as compilers.
+# linters   - Array. Brunch plugins that were treated as linters.
+# fileList  - fs_utils.FileList instance.
+# path      - String. Path to file that was changed.
+# isHelper  - Boolean. Is current file included with brunch plugin?
+#
+# Returns nothing.
 changeFileList = (compilers, linters, fileList, path, isHelper) ->
   compiler = compilers.filter(isPluginFor path)[0]
   currentLinters = linters.filter(isPluginFor path)
   fileList.emit 'change', path, compiler, currentLinters, isHelper
 
-# Consolidate all needed info and generate files.
+# Generate function that consolidates all needed info and generate files.
 #
-# config     - application config.
-# joinConfig - an Object, generated from app config by `getJoinConfig()`
+# config     - Object. Application config.
+# joinConfig - Object. Generated from app config by `getJoinConfig()`
 # fileList   - `fs_utils.FileList` instance.
-# minifiers  - Array of Object-s (brunch plugins that are treated as minifiers).
+# minifiers  - Array. Brunch plugins that are treated as minifiers.
 # watcher    - `chokidar.FSWatcher` instance.
-# callback   - Function, that will receive an array of `fs_utils.GeneratedFile`.
-# startTime  - Number, timestamp of a moment when compilation started.
+# callback   - Function. Will receive an array of `fs_utils.GeneratedFile`.
+# startTime  - Number. Timestamp of a moment when compilation started.
 #
-# Returns nothing.
+# Returns Function.
 getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (startTime) ->
   assetErrors = fileList.getAssetErrors()
   if assetErrors?
     assetErrors.forEach (error) -> logger.error error
     return
 
+  # Determine which files has been changed,
+  # create new `fs_utils.GeneratedFile` instances and write them.
   fs_utils.write fileList, config, joinConfig, minifiers, startTime, (error, generatedFiles) ->
     if error?
       if Array.isArray error
@@ -113,24 +134,27 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
     else
       logger.info "compiled in #{Date.now() - startTime}ms"
 
+    # If it’s single non-continuous build, close file watcher and
+    # exit process with correct exit code.
     unless config.persistent
       watcher.close()
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
 
     return if error?
+    # Just pass `fs_utils.GeneratedFile` instances to callbacks.
     callback generatedFiles
 
-# Restart brunch watcher.
+# Generate function that restarts brunch process.
 #
 # config    - application config.
 # options   - options that would be passed to new watcher.
 # onCompile - callback that will be passed to new watcher.
-# watcher   - `chokidar.FSWatcher` instance that has `close()` method.
+# watcher   - chokidar.FSWatcher instance that has `close()` method.
 # server    - instance of HTTP server that has `close()` method.
 # reInstall - should brunch run `npm install` before rewatching?
 #
-# Returns nothing.
+# Returns Function.
 getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
   reWatch = ->
     server?.close?()
@@ -141,18 +165,31 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
   else
     reWatch()
 
+# Load brunch plugins, group them and initialise file watcher.
+#
+# options      - Object. {configPath[, minify, server, port]}.
+# configParams - Object. Optional. Params will be set as default config params.
+# onCompile    - Function. Will be executed after every successful compilation.
+# callback     - Function.
+#
+# Returns nothing.
 initialize = (options, configParams, onCompile, callback) ->
   helpers.loadPackages helpers.pwd(), (error, packages) ->
     return callback error if error?
+    # Load config, get brunch packages from package.json.
     config     = helpers.loadConfig options.configPath, configParams
     joinConfig = config._normalized.join
     plugins    = helpers.getPlugins packages, config
+
+    # Get compilation methods.
     compilers  = plugins.filter(propIsFunction 'compile')
     linters    = plugins.filter(propIsFunction 'lint')
     minifiers  = plugins.filter(propIsFunction 'minify').concat(
       plugins.filter(propIsFunction 'optimize')
     )
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
+
+    # Add default brunch callback.
     callbacks.push onCompile
     callCompileCallbacks = (generatedFiles) ->
       callbacks.forEach (callback) ->
@@ -161,11 +198,14 @@ initialize = (options, configParams, onCompile, callback) ->
     if config.persistent and config.server.run
       server   = helpers.startServer config
 
+    # Emit `change` event for each file that is included with plugins.
     getPluginIncludes(plugins).forEach (path) ->
       changeFileList compilers, linters, fileList, path, yes
 
+    # Initialise file watcher.
     initWatcher config, (error, watcher) ->
       return callback error if error?
+      # Get compile and reload functions.
       compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
       reload = getReloadFn config, options, onCompile, watcher, server
       callback error, {
@@ -185,17 +225,22 @@ initialize = (options, configParams, onCompile, callback) ->
 bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onChange) ->
   watcher
     .on 'add', (path) ->
+      # Update file list.
       onChange()
       changeFileList compilers, linters, fileList, path, no
     .on 'change', (path) ->
+      # If file is special (config.coffee, package.json), restart Brunch.
       if path is config.paths.config
         reload no
       else if path is config.paths.packageConfig
         reload yes
       else
+        # Otherwise, just update file list.
         onChange()
         changeFileList compilers, linters, fileList, path, no
     .on 'unlink', (path) ->
+      # If file is special (config.coffee, package.json), exit.
+      # Otherwise, just update file list.
       if path is config.paths.config or path is config.paths.packageConfig
         logger.info "Detected removal of config.coffee / package.json.
 Exiting."
@@ -208,8 +253,7 @@ Exiting."
 # options    - Object: {configPath, minify, server, port}. Only configPath is
 #              needed.
 # onCompile  - Function that will be executed after every successful
-#              compilation. Receives an array of `fs_utils.GeneratedFile` as 2nd
-#              argument.
+#              compilation. May receive an array of `fs_utils.GeneratedFile`.
 #
 # this.config is an application config.
 # this._start is a mutable timestamp that represents latest compilation
@@ -225,9 +269,13 @@ class BrunchWatcher
       fileList.on 'ready', => compile @_endCompilation()
       @config = config
 
+  # Set start time of last compilation to current time.
+  # Returns Number.
   _startCompilation: =>
     @_start ?= Date.now()
 
+  # Get last compilation start time and reset the state.
+  # Returns Number.
   _endCompilation: =>
     start = @_start
     @_start = null
