@@ -8,7 +8,6 @@ You can also import node.js modules in configuration file.
 
 ## `paths`
 
-
 `Object`: `paths` contains application paths to key directories. Paths are simple strings.
 
 * `public` key: path to build directory that would contain output.
@@ -18,11 +17,11 @@ You can also import node.js modules in configuration file.
 
 Example:
 
-  ```coffeescript
-    paths:
-      public: '/user/www/deploy'
-      test: 'spec'
-  ```
+```coffeescript
+paths:
+  public: '/user/www/deploy'
+  test: 'spec'
+```
 
 ## `files`
 
@@ -42,29 +41,29 @@ All files from `vendor` directory are automatically (by-default) loaded before a
 
 Example:
 
-  ```coffeescript
-    files:
-      javascripts:
-        joinTo:
-          'javascripts/app.js': /^app/
-          'javascripts/vendor.js': /^vendor/
-        order:
-          before: [
-            'vendor/scripts/console-helper.js',
-            'vendor/scripts/jquery-1.7.0.js',
-            'vendor/scripts/underscore-1.3.1.js',
-            'vendor/scripts/backbone-0.9.0.js'
-          ]
+```coffeescript
+files:
+  javascripts:
+    joinTo:
+      'javascripts/app.js': /^app/
+      'javascripts/vendor.js': /^vendor/
+    order:
+      before: [
+        'vendor/scripts/console-helper.js',
+        'vendor/scripts/jquery-1.7.0.js',
+        'vendor/scripts/underscore-1.3.1.js',
+        'vendor/scripts/backbone-0.9.0.js'
+      ]
 
-      stylesheets:
-        joinTo: 'stylesheets/app.css'
-        order:
-          before: ['vendor/styles/normalize.css']
-          after: ['vendor/styles/helpers.css']
+  stylesheets:
+    joinTo: 'stylesheets/app.css'
+    order:
+      before: ['vendor/styles/normalize.css']
+      after: ['vendor/styles/helpers.css']
 
-      templates:
-        joinTo: 'javascripts/app.js'
-  ```
+  templates:
+    joinTo: 'javascripts/app.js'
+```
 
 ## `conventions`
 
@@ -73,8 +72,7 @@ Example:
 
 * `ignored` key: regExp or function. Will check against files that would be ignored by brunch compilator, but that still be watched by watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to Sass partials: http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/. Implementation of default value (a function that checks if filename starts with `_`):
 
-  ```
-
+    ```coffeescript
     # Import node.js `path` module.
     sysPath = require 'path'
 
@@ -85,7 +83,7 @@ Example:
     # Extract file name (`c.js` for `a/b/c.js`), check if it starts with `_`.
     conventions.ignored = (path) ->
       startsWith sysPath.basename(path), '_'
-
+    ```
 
 * `assets` key: regExp or function. Default value: `/assets(\/|\\)/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
 * `vendor` key: regExp or function. Default value: `/vendor(\/|\\)/`. If test gives true, file won't be wrapped in module, if there are any.
@@ -95,12 +93,12 @@ Keep in mind that default brunch regexps, as you see, consider **all** `vendor/`
 
 Example:
 
-  ```coffeescript
-    conventions:
-      ignored: -> false       # no ignored files
-      assets: /files(\/|\\)/  # vendor/jquery/files/jq.img
-      tests: /_spec\.\w+$/    # user_spec.js etc
-  ```
+```coffeescript
+conventions:
+  ignored: -> false       # no ignored files
+  assets: /files(\/|\\)/  # vendor/jquery/files/jq.img
+  tests: /_spec\.\w+$/    # user_spec.js etc
+```
 
 ## `modules`
 

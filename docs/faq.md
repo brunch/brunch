@@ -10,25 +10,25 @@
 
 ## I don't like CoffeeScript. Does brunch work for pure js projects?
 
-Yep, brunch is language-agnostic! Just create a project from any JS skeleton https://github.com/brunch/brunch/wiki/Skeletons and customize it to your needs.
+Yep, brunch is language-agnostic! Just create a project from [any JS skeleton](https://github.com/brunch/brunch/wiki/Skeletons) and customize it to your needs.
 
 ## I want to create a separate javascript file for a bookmarklet (etc.). What's the best way?
 
 Use this joinTo config. It will compile all files in app/ (except in `app/namespace`) to one file and all files in `app/namespace` to another.
 
-    ```coffeescript
-        joinTo:
-          'javascripts/namespace.js': /^app(\/|\\)namespace/
-          'javascripts/app.js': /^app(\/|\\)(?!namespace)/
-          'javascripts/vendor.js': /^vendor/
-    ```
+```coffeescript
+joinTo:
+  'javascripts/namespace.js': /^app(\/|\\)namespace/
+  'javascripts/app.js': /^app(\/|\\)(?!namespace)/
+  'javascripts/vendor.js': /^vendor/
+```
 
 ## How do I change app language?
 
 For example, you want to change default `Handlebars` templates to `eco`.
 
 * Remove `"handlebars-brunch": "version"` line from `package.json`.
-* Add `"eco-brunch": "version"` there
+* Install eco-brunch: `npm install eco-brunch --save`.
 
 ## What version of plugin do I need to use?
 
@@ -56,8 +56,10 @@ You can't use:
 
 ## I get EMFILE error when I build Brunch project. WTF?
 
-`EMFILE` means there're too many open files. Brunch watches all your project files and it's usually a pretty big number. You can fix this error with setting max opened file count to bigger number with command `ulimit -n <number
->` (10000 should be enough).
+`EMFILE` means there're too many open files.
+Brunch watches all your project files and it's usually a pretty big number.
+You can fix this error with setting max opened file count to bigger number
+with command `ulimit -n <number>` (10000 should be enough).
 
 ## How do I enable verbose mode for brunch commands?
 
