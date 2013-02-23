@@ -9,7 +9,9 @@ Sections:
 * [Skeletons](./skeletons.md)
 * [Upgrading](./upgrading.md)
 
-## Getting started
+## Basics
+
+### Concatenation
 
 Brunch concatenates all your scripts in `app/`, `test/` and `vendor/`
 directories to **two** files by default:
@@ -21,22 +23,7 @@ This is better solution for browser caching than using one file,
 because you change dependencies not as often as you change
 your application code.
 
-Some files have special meaning:
-
-* Files whose name start with `_` (underscore)
-  are ignored by compiler. They're useful for languages like sass / stylus,
-  where you import all substyles in main style file.
-* Files in `assets/` dirs are copied directly to
-  `public/`.
-
-* Files in `vendor/` dirs aren't wrapped in modules.
-  Module is a Common.JS / AMD abstraction that allows to simply
-  get rid of global vars. For example, you have file `app/views/user_view` —
-  you can load this in browser by using `require('views/user_view')`.
-* Files named as `_test.<extension>` are considered as tests
-  and are required automatically in test runner.
-
-Order of concatenation is:
+Order of file concatenation is:
 
 1. Files in `config.files[type].order.before` in order you specify.
 2. Files in `vendor/` directories in alphabetic order.
@@ -45,3 +32,19 @@ Order of concatenation is:
 
 All this stuff (conventions, name of out files etc) can be changed
 via modifying config file.
+
+### Conventions
+
+Brunch also has conventions. Conventions are filters for files with special meaning. They can be changed via config.
+
+* Files whose name start with `_` (underscore)
+  are ignored by compiler. They're useful for languages like sass / stylus,
+  where you import all substyles in main style file.
+* Files in `assets/` dirs are copied directly to
+  `public/`.
+* Files in `vendor/` dirs aren't wrapped in modules.
+  Module is a Common.JS / AMD abstraction that allows to simply
+  get rid of global vars. For example, you have file `app/views/user_view` —
+  you can load this in browser by using `require('views/user_view')`.
+* Files named as `-test.<extension>` are considered as tests
+  and are required automatically in test runner.
