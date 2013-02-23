@@ -37,14 +37,16 @@ You may saw that there are eco-brunch 1.0.1, 1.1.0 etc.
 Brunch x.y.z releases are compatible with plugins (in this case `eco-brunch`) x.(<= y).*. It means that:
 
 You can use:
-    * brunch 1.1.0 with plugin 1.0.0.
-    * brunch 1.1.0 with plugin 1.1.9.
-    * brunch 1.9.14 with plugin 1.5.6.
+
+* brunch 1.1.0 with plugin 1.0.0.
+* brunch 1.1.0 with plugin 1.1.9.
+* brunch 1.9.14 with plugin 1.5.6.
 
 You can't use:
-    * brunch 1.1.0 with plugin 1.2.0.
-    * brunch 1.1.0 with plugin 2.0.0.
-    * brunch 2.0.0 with plugin 1.2.0.
+
+* brunch 1.1.0 with plugin 1.2.0.
+* brunch 1.1.0 with plugin 2.0.0.
+* brunch 2.0.0 with plugin 1.2.0.
 
 ## Why do you use these languages in default skeleton?
 

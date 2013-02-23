@@ -38,9 +38,7 @@ Example:
         * before: list of files that will be loaded before other files
         * after: list of files that will be loaded after other files
 
-.. note::
-
-    all files from `vendor` directory are automatically (by-default) loaded before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty.
+All files from `vendor` directory are automatically (by-default) loaded before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty.
 
 Example:
 
@@ -164,11 +162,11 @@ Default value is `false` (`true` if you run `brunch build --optimize`).
 
 * `path`: (optional) path to nodejs file that will be loaded. The file must contain `exports.startServer` function:
 
-  ```coffeescript
+    ```coffeescript
     exports.startServer = (port, path, callback) ->
       # callback doesn't take any parameters and (if provided) should be called after server is started
       # should return an instance of http.Server
-  ```
+    ```
 
 * `port`: (optional) port on which server will run
 * `base`: (optional) base URL from which to serve the app
@@ -176,10 +174,9 @@ Default value is `false` (`true` if you run `brunch build --optimize`).
 
 Example:
 
-  ```coffeescript
-    server:
-      path: 'server.coffee'
-      port: 6832
-      base: '/myapp'
-      run: yes
-  ```
+```coffeescript
+server:
+  path: 'server.coffee'
+  port: 6832
+  base: '/myapp'
+```

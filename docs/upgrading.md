@@ -10,6 +10,7 @@
 * Rename `config.minify` setting to `config.optimize`.
 
 ## Upgrading to 1.4
+
 * Remove all `config.files[lang].defaultExtension` settings.
 * Remove `config.framework` setting.
 * Move `config.paths.ignored` to `config.conventions.ignored` if you have it.
