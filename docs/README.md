@@ -11,6 +11,28 @@ Sections:
 
 ## Basics
 
+Default application structure:
+
+```
+root/         # Main brunch application directory.
+|-app/        # Your code will reside here.
+|--assets/    # Static files that shall not be compiled
+|---images/   # will be just copied to `public` dir.
+|--views/     # Create any subdirectories inside `app` dir.
+|---file-1.js # JS files will be automatically concatenated to one file.
+|--file-2.js  # They will be also usable as modules, like require('file-2').
+|--file-1.css # CSS files will be automatically concatenated to one file.
+|--stuff.sass # JS and CSS files may be linted before concatenation.
+|--tpl.jade   # You may have pre-compiled to JS templates. Also with `require`.
+|-vendor/     # All third-party libraries should be put here. JS, CSS, etc.
+|--scripts/   # They will be included BEFORE your scripts automatically.
+|---backbone.js
+|---underscore.js
+|-package.json  # Contains all brunch plugins, like jshint-brunch, css-brunch.
+|-config.coffee # All params (you can concat to 2, 5, 10 files etc.)
+                # are set via this config. Just simple, 15 lines-of-code config
+```
+
 ### Concatenation
 
 Brunch concatenates all your scripts in `app/`, `test/` and `vendor/`
