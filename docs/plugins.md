@@ -48,6 +48,4 @@ module.exports = class CSSCompiler
     callback null, data
 ```
 
-See `wiki page`_ for a list of plugins. Feel free to add new plugins there.
-
-_`wiki page`: https://github.com/brunch/brunch/wiki/Plugins
+See [wiki page](https://github.com/brunch/brunch/wiki/Plugins) for a list of plugins. Feel free to add new plugins there.
