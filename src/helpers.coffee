@@ -457,6 +457,9 @@ Handlebars.registerHelper 'camelize', do ->
     rest[0].toUpperCase() + rest[1...]
   (options) ->
     new Handlebars.SafeString camelize options.fn this
+    
+exports.registerHandlebarsHelper = (name, helperFunction) ->
+  Handlebars.registerHelper name, helperFunction
 
 exports.formatTemplate = (template, templateData) ->
   key = '__BRUNCH_TEMPLATE_FORMATTER'
