@@ -110,6 +110,19 @@ generateFiles = (rollback, generatorsPath, type, templateData, callback) ->
           return callback error if error?
           callback()
 
+importCustomHandlebarsHelpers = (generatorsPath) ->
+  #Import custom Handlebars helpers
+  fullGeneratorPath = sysPath.join sysPath.resolve(helpers.pwd()), generatorsPath
+  customGeneratorHandlebarsHelpers = sysPath.join fullGeneratorPath, 'helper.js'
+  if fs.existsSync customGeneratorHandlebarsHelpers
+    hbHelperObj = require customGeneratorHandlebarsHelpers
+    Object.keys(hbHelperObj).forEach (key) ->
+      val = hbHelperObj[key]
+      try
+        helpers.registerHandlebarsHelper key, val
+      catch error
+        console.log 'Error importing helpers' + error
+
 module.exports = scaffold = (rollback, options, callback = (->)) ->
   {type, name, pluralName, parentDir, configPath} = options
   pluralName = inflection.pluralize name
@@ -120,6 +133,9 @@ module.exports = scaffold = (rollback, options, callback = (->)) ->
     return callback() unless config?
 
     generators = config.paths.generators
+    
+    importCustomHandlebarsHelpers generators
+    
     templateData = {name, pluralName}
 
     generateFiles rollback, generators, type, templateData, parentDir, (error) ->
