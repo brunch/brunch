@@ -118,7 +118,7 @@ conventions:
 * `false` — no definition.
 * Function that takes path and data
 
-`modules.addSourceUrls`: `Boolean` determines if all modules should be wrapped in `Function()` with [`sourceURL`](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) mappings for much easier debugging. Works only in development environment. Default value is `false`.
+`modules.addSourceURLs`: `Boolean` determines if all modules should be wrapped in `Function()` with [`sourceURL`](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) mappings for much easier debugging. Works only in development environment. Default value is `false`.
 
 Example:
 
@@ -128,7 +128,7 @@ Example:
     modules:
       wrapper: 'amd'
       definition: 'amd'
-      addSourceUrls: true
+      addSourceURLs: true
 
     # Same as 'commonjs', but in function implementation.
     modules:
