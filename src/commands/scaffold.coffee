@@ -32,7 +32,7 @@ destroyFile = (path, callback) ->
   fs.unlink path, (error) ->
     return logger.error "#{error}" if error?
     logger.info "destroy #{path}"
-    callback error
+    callback error if callback?
 
 scaffoldFile = (rollback, from, to, templateData, parentDir, callback) ->
   [from, to] = [(sysPath.join parentDir, from), (sysPath.join parentDir, to)]
