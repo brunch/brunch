@@ -3,8 +3,8 @@
 initSkeleton = require 'init-skeleton'
 scaffolt = require 'scaffolt'
 sysPath = require 'path'
-watch = require './commands/watch'
-test = require './commands/test'
+watch = require './watch'
+test = require './test'
 
 create = (options) ->
   options.skeleton ?= sysPath.join(__dirname, '..', 'skeletons', 'brunch-with-chaplin')
