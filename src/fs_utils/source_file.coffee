@@ -4,7 +4,6 @@ async = require 'async'
 debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
-logger = require '../logger'
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile

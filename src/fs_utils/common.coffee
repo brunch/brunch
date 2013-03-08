@@ -7,7 +7,6 @@ mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 os = require 'os'
 sysPath = require 'path'
-logger = require '../logger'
 
 # Short-cut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists

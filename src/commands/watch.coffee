@@ -5,7 +5,7 @@ chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
 helpers = require '../helpers'
-logger = require '../logger'
+logger = require 'loggy'
 fs_utils = require '../fs_utils'
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes

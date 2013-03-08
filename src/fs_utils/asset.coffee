@@ -3,7 +3,6 @@
 debug = require('debug')('brunch:asset')
 sysPath = require 'path'
 helpers = require '../helpers'
-logger = require '../logger'
 common = require './common'
 {ncp} = require 'ncp'
 

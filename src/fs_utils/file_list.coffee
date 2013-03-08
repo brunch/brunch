@@ -5,7 +5,6 @@ debug = require('debug')('brunch:file-list')
 Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
-logger = require '../logger'
 sysPath = require 'path'
 
 # A list of `fs_utils.SourceFile` or `fs_utils.Asset`

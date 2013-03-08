@@ -7,7 +7,6 @@ sysPath = require 'path'
 async = require 'async'
 common = require './common'
 helpers = require '../helpers'
-logger = require '../logger'
 
 extractOrder = (files, config) ->
   types = files.map (file) -> inflection.pluralize file.type

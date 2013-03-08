@@ -33,8 +33,7 @@
   "scripts": {
     "prepublish": "node setup.js prepublish",
     "postpublish": "node setup.js postpublish",
-    "test": "node setup.js test",
-    "postinstall": "node setup.js postinstall"
+    "test": "node setup.js test"
   },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
@@ -46,16 +45,14 @@
     "async": "~0.1.22",
     "mkdirp": "~0.3.4",
     "ncp": "~0.2.6",
-    "rimraf": "~2.0.2",
-    "walk": "~2.2.1",
-    "growl": "~1.6.1",
     "express": "~3.0.4",
-    "date-utils": "~1.2.12",
-    "ansi-color": "~0.2.1",
     "inflection": "~1.2.3",
     "mocha": "~1.7.4",
     "handlebars": "~1.0.7",
-    "debug": "~0.7.0"
+    "debug": "~0.7.0",
+    "init-skeleton": "~0.1.2",
+    "scaffolt": "~0.1.1",
+    "loggy": "~0.1.0"
   },
   "devDependencies": {
     "chai": "~1.4.0"

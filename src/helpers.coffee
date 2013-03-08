@@ -7,7 +7,7 @@ Handlebars = require 'handlebars'
 fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
-logger = require './logger'
+logger = require 'loggy'
 
 exports.startsWith = startsWith = (string, substring) ->
   string.lastIndexOf(substring, 0) is 0

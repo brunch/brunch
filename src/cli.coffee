@@ -3,9 +3,8 @@
 argumentum = require 'argumentum'
 fs = require 'fs'
 sysPath = require 'path'
-commands = require './commands'
+commands = require './'
 helpers = require './helpers'
-logger = require './logger'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
