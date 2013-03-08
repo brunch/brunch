@@ -48,7 +48,6 @@
     "express": "~3.0.4",
     "inflection": "~1.2.3",
     "mocha": "~1.7.4",
-    "handlebars": "~1.0.7",
     "debug": "~0.7.0",
     "init-skeleton": "~0.1.2",
     "scaffolt": "~0.1.1",

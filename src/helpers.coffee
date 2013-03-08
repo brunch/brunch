@@ -3,7 +3,6 @@
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'
-Handlebars = require 'handlebars'
 fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
@@ -448,17 +447,3 @@ cachedTestFiles = null
 
 exports.findTestFiles = (config) ->
   cachedTestFiles ?= getTestFiles config
-
-Handlebars.registerHelper 'camelize', do ->
-  camelize = (string) ->
-    regexp = /[-_]([a-z])/g
-    rest = string.replace regexp, (match, char) ->
-      char.toUpperCase()
-    rest[0].toUpperCase() + rest[1...]
-  (options) ->
-    new Handlebars.SafeString camelize options.fn this
-
-exports.formatTemplate = (template, templateData) ->
-  key = '__BRUNCH_TEMPLATE_FORMATTER'
-  compiled = Handlebars.compile template.replace /\\\{/, key
-  compiled(templateData).toString().replace(key, '\\')
