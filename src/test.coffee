@@ -5,8 +5,8 @@ fs = require 'fs'
 sysPath = require 'path'
 async = require 'async'
 Mocha = require 'mocha'
-fs_utils = require '../fs_utils'
-helpers = require '../helpers'
+fs_utils = require './fs_utils'
+helpers = require './helpers'
 watch = require './watch'
 
 showJsdomNote = ->

@@ -4,9 +4,9 @@ async = require 'async'
 chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
-helpers = require '../helpers'
 logger = require 'loggy'
-fs_utils = require '../fs_utils'
+fs_utils = require './fs_utils'
+helpers = require './helpers'
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
