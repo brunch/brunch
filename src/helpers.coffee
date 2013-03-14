@@ -149,6 +149,7 @@ startDefaultServer = (port, path, base, callback) ->
   server = express()
   server.use (request, response, next) ->
     response.header 'Cache-Control', 'no-cache'
+    response.header 'Access-Control-Allow-Origin', '*'
     next()
   server.use base, express.static path
   server.all "#{base}/*", (request, response) ->
