@@ -1,16 +1,16 @@
-# Brunch 1.5.3 (February 02, 2013)
+# Brunch 1.5.3 (2 February 2013)
 * When using `brunch generate`, generator will no longer overwrite
 existing files.
 * Preserved context of `include` method of plugins.
 
-# Brunch 1.5.2 (January 13, 2013)
+# Brunch 1.5.2 (13 January 2013)
 * Improved installation process.
 
-# Brunch 1.5.1 (January 11, 2013)
+# Brunch 1.5.1 (11 January 2013)
 * Tester no longer runs watcher by default.
 * Changed `brunch test -f REGEX` option to `-g / --grep` for consistency with Mocha.
 
-# Brunch 1.5.0 (January 2, 2013)
+# Brunch 1.5.0 (2 January 2013)
 * Added ability to wrap files in sourceURLs which simplifies debugging a lot.
 Disabled by default in non-production mode, but can be disabled with `config.modules.addSourceURLs = false`.
 * Added `-f REGEX, --filter REGEX` option to `brunch test`.
@@ -27,10 +27,10 @@ instead of sanitized.
 `brunch` in their name.
 * Improved error handling of running brunch in non-brunch app dirs.
 
-# Brunch 1.4.5 (December 14, 2012)
+# Brunch 1.4.5 (14 December 2012)
 * Updated base brunch with chaplin skeleton to the latest libs.
 
-# Brunch 1.4.4 (October 1, 2012)
+# Brunch 1.4.4 (1 October 2012)
 * All errors are now deferred to the compilation end.
 Also, if you have added one error on previous compilation
 and one error on current, brunch will show both of them until
@@ -39,22 +39,22 @@ they will be fixed.
 * Fixed test passing.
 * Fixed `config.notifications` on ubuntu.
 
-# Brunch 1.4.3 (September 2, 2012)
+# Brunch 1.4.3 (2 September 2012)
 * Added support of binary files to generators.
 * Improved error logging.
 * Updated built-in webserver to express.js 3.0.
 
-# Brunch 1.4.2 (August 18, 2012)
+# Brunch 1.4.2 (18 August 2012)
 * Fixed incorrect scaffolding on windows.
 * `.git` directories are now discarded when using `brunch new` with git URL.
 
-# Brunch 1.4.1 (August 8, 2012)
+# Brunch 1.4.1 (8 August 2012)
 * `brunch new` now allowed to take current working directory
 (`.`) or any existing directory as first argument.
 * Assets are now affected by `conventions.ignored` too.
 * Fixed linting bug.
 
-# Brunch 1.4.0 (August 4, 2012)
+# Brunch 1.4.0 (4 August 2012)
 * Added new phenomenally simplified scaffolder:
     1. Create `generators/` directory in your brunch application
     (directory name is customizable by `config.paths.generators`).
@@ -101,26 +101,26 @@ to `/Applications/` to get it work.
 it will exit with error code `1` instead of `0`.
 * Fixed commonjs `require_definition` in <IE9.
 
-# Brunch 1.3.4 (July 7, 2012)
+# Brunch 1.3.4 (7 July 2012)
 * Fixed bug with too fast compilations.
 
-# Brunch 1.3.3 (June 29, 2012)
+# Brunch 1.3.3 (29 June 2012)
 * Added node.js 0.8 and 0.9 support.
 * `jsdom`, required for `brunch test` can now be installed once
 for all apps via `npm install -g jsdom`. You'll need to have its
 parent dir in `NODE_MODULES` env variable.
 * Fixed `compiled in` timer and `brunch generate` bugs.
 
-# Brunch 1.3.2 (June 27, 2012)
+# Brunch 1.3.2 (27 June 2012)
 * Fixed `brunch test` on new projects.
 
-# Brunch 1.3.1 (June 22, 2012)
+# Brunch 1.3.1 (22 June 2012)
 * Config can now be in any language you use in app (e.g. livescript).
 * Added `--reporter` (`-r`) option to `brunch test` which allows to choose
 Mocha reporter.
 * Made require definition much easier for debugging.
 
-# Brunch 1.3.0 (June 19, 2012)
+# Brunch 1.3.0 (19 June 2012)
 * Brunch with Chaplin is now the default application skeleton, that will be
 created on `brunch new <app>`. Old one is still available with
 `brunch new <app> -s github://brunch/simple-coffee-skeleton`.
@@ -158,7 +158,7 @@ some libs that break with brunch. Hello, Zepto!
 * Only generated files that depend on changed in current compilation files
 are written now. Before, brunch was writing all files each time.
 
-# Brunch 1.2.2 (May 24, 2012)
+# Brunch 1.2.2 (24 May 2012)
 * Brunch now outputs compilation time.
 * Assets are copied one-by-one on change, instead of copying the whole
 assets directory. This improves watcher performance by about 25%+.
@@ -176,11 +176,11 @@ brunch process will exit.
 * Maximum time between changes of two files that will be considered
 as a one compilation changed from 100ms to 65ms.
 
-# Brunch 1.2.1 (May 12, 2012)
+# Brunch 1.2.1 (12 May 2012)
 * Fixed persistence of process with `brunch watch` (without server).
 * Fixed watching of files on windows.
 
-# Brunch 1.2.0 (May 12, 2012)
+# Brunch 1.2.0 (12 May 2012)
 * Greatly improved `brunch generate`:
     * User can now define his own generators in `config.generators`.
     * Default generators are now:
@@ -201,16 +201,16 @@ as a one compilation changed from 100ms to 65ms.
 watcher and compiler because they're created by some IDEs.
 * Files in `vendor` directory are now sorted correctly, before `app` files.
 
-# Brunch 1.1.2 (April 20, 2012)
+# Brunch 1.1.2 (20 April 2012)
 * Fixed `buildPath is deprecated` warning on new configs.
 * Fixed compiling of invalid files (`.rb`, `.png` etc).
 
-# Brunch 1.1.1 (April 19, 2012)
+# Brunch 1.1.1 (19 April 2012)
 * Fixed compiling of `package.json`, `config` and watching of assets.
 * Fixed incorrect date in brunch logger.
 * Fixed an error when requiring custom server script.
 
-# Brunch 1.1.0 (April 15, 2012)
+# Brunch 1.1.0 (15 April 2012)
 * Added windows support.
 * Added node.js 0.7 / 0.8 support.
 * Added support for chain compilation. For example, if `_user.styl` changes
@@ -248,18 +248,18 @@ and `main.styl` depends on it, `main.styl` will be recompiled too.
 * Made optional existence of `app` & `vendor` directories.
 * Node.js API now mirrors command line api.
 
-# Brunch 1.0.3 (April 3, 2012)
+# Brunch 1.0.3 (3 April 2012)
 * Dotfiles from assets dir are prevented to be copied to build dir.
 
-# Brunch 1.0.2 (March 28, 2012)
+# Brunch 1.0.2 (28 March 2012)
 * Removed `Cakefile` from default template.
 * Changed recommended framework in `test/spec` to Mocha.
 
-# Brunch 1.0.1 (March 26, 2012)
+# Brunch 1.0.1 (26 March 2012)
 * Updated dependencies.
 * Fixed permissions issue with `app/assets` folder.
 
-# Brunch 1.0.0 (March 14, 2012)
+# Brunch 1.0.0 (14 March 2012)
 * Simplified config files.
 * Default app now uses two separate files to simplify debugging: `app.js` and
 `vendor.js`.
@@ -287,10 +287,10 @@ by compiler (but not by watcher).
 * Added debugging mode. You can enable it by prepending `BRUNCH_DEBUG=1 ` to
 brunch command.
 
-# Brunch 0.9.1 (February 21, 2012)
+# Brunch 0.9.1 (21 February 2012)
 * Updated brunch-extensions to 0.2.2.
 
-# Brunch 0.9.0 (January 10, 2012)
+# Brunch 0.9.0 (10 January 2012)
 * Added new API for plugins.
 * Added support for Jade, LESS and Roy. All language compilers / plugins are
 now located in separate repo,
