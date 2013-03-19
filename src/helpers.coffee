@@ -216,7 +216,7 @@ normalizeWrapper = (typeOrFunction, addSourceURLs) ->
       (fullPath, data) ->
         path = cleanModuleName fullPath
         """
-define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
+define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
   #{indent data}
 });
 """
