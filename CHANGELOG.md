@@ -1,3 +1,6 @@
+# Brunch 1.5.4 (19 March 2013)
+* Fixed `brunch generate`, switched to standalone modules for some features.
+
 # Brunch 1.5.3 (2 February 2013)
 * When using `brunch generate`, generator will no longer overwrite
 existing files.
