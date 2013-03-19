@@ -6,6 +6,7 @@ inflection = require 'inflection'
 sysPath = require 'path'
 async = require 'async'
 common = require './common'
+{getTestFiles} = require '../helpers'
 
 cachedTestFiles = null
 

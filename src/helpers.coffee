@@ -360,7 +360,7 @@ exports.getPlugins = (packages, config) ->
     .map (plugin) ->
       new plugin config
 
-getTestFiles = (config) ->
+exports.getTestFiles = (config) ->
   isTestFile = (generatedFile) ->
     exports.startsWith(generatedFile, sysPath.normalize('test/')) and
     generatedFile.lastIndexOf('vendor') is -1
