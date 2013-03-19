@@ -6,7 +6,87 @@ inflection = require 'inflection'
 sysPath = require 'path'
 async = require 'async'
 common = require './common'
-helpers = require '../helpers'
+
+cachedTestFiles = null
+
+findTestFiles = (config) ->
+  cachedTestFiles ?= getTestFiles config
+
+sortAlphabetically = (a, b) ->
+  if a < b
+    -1
+  else if a > b
+    1
+  else
+    0
+
+# If item path starts with 'vendor', it has bigger priority.
+sortByVendor = (config, a, b) ->
+  aIsVendor = config.vendorConvention a
+  bIsVendor = config.vendorConvention b
+  if aIsVendor and not bIsVendor
+    -1
+  else if not aIsVendor and bIsVendor
+    1
+  else
+    # All conditions were false, we don't care about order of
+    # these two items.
+    sortAlphabetically a, b
+
+# Items wasn't found in config.before, try to find then in
+# config.after.
+# Item that config.after contains would have lower sorting index.
+sortByAfter = (config, a, b) ->
+  indexOfA = config.after.indexOf a
+  indexOfB = config.after.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    1
+  else if not hasA and hasB
+    -1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByVendor config, a, b
+
+# Try to find items in config.before.
+# Item that config.after contains would have bigger sorting index.
+sortByBefore = (config, a, b) ->
+  indexOfA = config.before.indexOf a
+  indexOfB = config.before.indexOf b
+  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
+  if hasA and not hasB
+    -1
+  else if not hasA and hasB
+    1
+  else if hasA and hasB
+    indexOfA - indexOfB
+  else
+    sortByAfter config, a, b
+
+# Sorts by pattern.
+#
+# Examples
+#
+#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
+#     before: ['a.coffee'], after: ['b.coffee']
+#   # => ['a.coffee', 'c.coffee', 'b.coffee']
+#
+# Returns new sorted array.
+sortByConfig = (files, config) ->
+  if toString.call(config) is '[object Object]'
+    cfg =
+      before: config.before ? []
+      after: config.after ? []
+      vendorConvention: (config.vendorConvention ? -> no)
+    files.slice().sort (a, b) -> sortByBefore cfg, a, b
+  else
+    files
+
+flatten = (array) ->
+  array.reduce (acc, elem) ->
+    acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
+  , []
 
 extractOrder = (files, config) ->
   types = files.map (file) -> inflection.pluralize file.type
@@ -16,8 +96,8 @@ extractOrder = (files, config) ->
     .map (key) ->
       config.files[key].order ? {}
 
-  before = helpers.flatten orders.map (type) -> (type.before ? [])
-  after = helpers.flatten orders.map (type) -> (type.after ? [])
+  before = flatten orders.map (type) -> (type.before ? [])
+  after = flatten orders.map (type) -> (type.after ? [])
   vendorConvention = config._normalized.conventions.vendor
   {before, after, vendorConvention}
 
@@ -26,7 +106,7 @@ sort = (files, config) ->
   indexes = Object.create(null)
   files.forEach (file, index) -> indexes[file.path] = file
   order = extractOrder files, config
-  helpers.sortByConfig(paths, order).map (path) ->
+  sortByConfig(paths, order).map (path) ->
     indexes[path]
 
 loadTestFiles = (files, testsConvention) ->
@@ -55,7 +135,7 @@ module.exports = class GeneratedFile
     else
       'stylesheet'
     @minifier = minifiers.filter((minifier) => minifier.type is @type)[0]
-    @isTestFile = @path in helpers.findTestFiles @config
+    @isTestFile = @path in findTestFiles @config
     Object.freeze this
 
   # Private: Collect content from a list of files and wrap it with

@@ -4,13 +4,11 @@ argumentum = require 'argumentum'
 fs = require 'fs'
 sysPath = require 'path'
 commands = require './'
-helpers = require './helpers'
 
 # Reads package.json and extracts brunch version from there.
 # Returns string.
 exports.readPackageVersion = readPackageVersion = ->
-  content = fs.readFileSync sysPath.join __dirname, '..', 'package.json'
-  (JSON.parse content).version
+  require(sysPath.join __dirname, '..', 'package.json').version
 
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
