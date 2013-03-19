@@ -2,7 +2,6 @@
 
 debug = require('debug')('brunch:generated-file')
 fs = require 'fs'
-inflection = require 'inflection'
 sysPath = require 'path'
 async = require 'async'
 common = require './common'
@@ -89,7 +88,7 @@ flatten = (array) ->
   , []
 
 extractOrder = (files, config) ->
-  types = files.map (file) -> inflection.pluralize file.type
+  types = files.map (file) -> file.type + 's'
   orders = Object.keys(config.files)
     .filter (key) ->
       key in types
