@@ -217,7 +217,7 @@ normalizeWrapper = (typeOrFunction, addSourceURLs) ->
         path = cleanModuleName fullPath
         """
 define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-  #{indent data, strict}
+  #{indent data}
 });
 """
     when false then (path, data) -> "#{data}"
