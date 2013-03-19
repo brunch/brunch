@@ -216,8 +216,8 @@ normalizeWrapper = (typeOrFunction, addSourceURLs) ->
       (fullPath, data) ->
         path = cleanModuleName fullPath
         """
-define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-  #{indent data, strict}
+define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
+  #{indent data}
 });
 """
     when false then (path, data) -> "#{data}"
@@ -359,15 +359,3 @@ exports.getPlugins = (packages, config) ->
       (plugin::)? and plugin::brunchPlugin
     .map (plugin) ->
       new plugin config
-
-getTestFiles = (config) ->
-  isTestFile = (generatedFile) ->
-    exports.startsWith(generatedFile, sysPath.normalize('test/')) and
-    generatedFile.lastIndexOf('vendor') is -1
-
-  joinPublic = (generatedFile) ->
-    sysPath.join(config.paths.public, generatedFile)
-
-  joinTo = config.files.javascripts.joinTo
-  files = if typeof joinTo is 'string' then [joinTo] else Object.keys(joinTo)
-  files.filter(isTestFile).map(joinPublic)
