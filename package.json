@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "keywords": [
     "assembler",
     "builder",
@@ -9,6 +9,7 @@
     "chaplin",
     "backbone",
     "ember",
+    "angular",
     "html5"
   ],
   "homepage": "http://brunch.io/",
@@ -35,23 +36,20 @@
     "postpublish": "node setup.js postpublish",
     "test": "node setup.js test"
   },
-  "engines": {
-    "node": "~0.6.10 || 0.8 || 0.9"
-  },
   "dependencies": {
-    "coffee-script": "~1.4.0",
+    "coffee-script": "~1.6.0",
     "argumentum": "~0.6.0",
-    "chokidar": "~0.5.3",
-    "async": "~0.1.22",
-    "mkdirp": "~0.3.4",
-    "ncp": "~0.2.6",
-    "express": "~3.0.4",
-    "inflection": "~1.2.3",
-    "mocha": "~1.7.4",
+    "chokidar": "~0.6.0",
+    "async": "~0.2.6",
+    "mkdirp": "~0.3.5",
+    "ncp": "~0.4.2",
+    "express": "~3.1.0",
+    "mocha": "~1.8.2",
     "debug": "~0.7.0",
     "init-skeleton": "~0.1.2",
     "scaffolt": "~0.1.1",
-    "loggy": "~0.1.0"
+    "loggy": "~0.1.0",
+    "lodash": "~1.0.1"
   },
   "devDependencies": {
     "chai": "~1.4.0"

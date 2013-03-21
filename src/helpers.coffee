@@ -16,8 +16,8 @@ exports.flatten = flatten = (array) ->
     acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
   , []
 
-exports.callFunctionOrPass = callFunctionOrPass = (thing, context) ->
-  if typeof thing is 'function' then thing.call(context or this) else thing
+exports.callFunctionOrPass = callFunctionOrPass = (thing, context = this) ->
+  if typeof thing is 'function' then thing.call(context) else thing
 
 exports.ensureArray = ensureArray = (object) ->
   if Array.isArray object
@@ -57,77 +57,6 @@ exports.deepFreeze = deepFreeze = (object) ->
 exports.formatError = (error, path) ->
   "#{error.brunchType} of '#{path}'
  failed. #{error.toString().slice(7)}"
-
-sortAlphabetically = (a, b) ->
-  if a < b
-    -1
-  else if a > b
-    1
-  else
-    0
-
-# If item path starts with 'vendor', it has bigger priority.
-sortByVendor = (config, a, b) ->
-  aIsVendor = config.vendorConvention a
-  bIsVendor = config.vendorConvention b
-  if aIsVendor and not bIsVendor
-    -1
-  else if not aIsVendor and bIsVendor
-    1
-  else
-    # All conditions were false, we don't care about order of
-    # these two items.
-    sortAlphabetically a, b
-
-# Items wasn't found in config.before, try to find then in
-# config.after.
-# Item that config.after contains would have lower sorting index.
-sortByAfter = (config, a, b) ->
-  indexOfA = config.after.indexOf a
-  indexOfB = config.after.indexOf b
-  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-  if hasA and not hasB
-    1
-  else if not hasA and hasB
-    -1
-  else if hasA and hasB
-    indexOfA - indexOfB
-  else
-    sortByVendor config, a, b
-
-# Try to find items in config.before.
-# Item that config.after contains would have bigger sorting index.
-sortByBefore = (config, a, b) ->
-  indexOfA = config.before.indexOf a
-  indexOfB = config.before.indexOf b
-  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-  if hasA and not hasB
-    -1
-  else if not hasA and hasB
-    1
-  else if hasA and hasB
-    indexOfA - indexOfB
-  else
-    sortByAfter config, a, b
-
-# Sorts by pattern.
-#
-# Examples
-#
-#   sort ['b.coffee', 'c.coffee', 'a.coffee'],
-#     before: ['a.coffee'], after: ['b.coffee']
-#   # => ['a.coffee', 'c.coffee', 'b.coffee']
-#
-# Returns new sorted array.
-exports.sortByConfig = (files, config) ->
-  if toString.call(config) is '[object Object]'
-    cfg =
-      before: config.before ? []
-      after: config.after ? []
-      vendorConvention: (config.vendorConvention ? -> no)
-    files.slice().sort (a, b) -> sortByBefore cfg, a, b
-  else
-    files
 
 exports.pwd = pwd = ->
   '.'
@@ -288,8 +217,8 @@ normalizeWrapper = (typeOrFunction, addSourceURLs) ->
       (fullPath, data) ->
         path = cleanModuleName fullPath
         """
-define(#{path}, ['require', 'exports', 'module'], function(require, exports, module) {
-  #{indent data, strict}
+define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
+  #{indent data}
 });
 """
     when false then (path, data) -> "#{data}"
@@ -431,20 +360,3 @@ exports.getPlugins = (packages, config) ->
       (plugin::)? and plugin::brunchPlugin
     .map (plugin) ->
       new plugin config
-
-getTestFiles = (config) ->
-  isTestFile = (generatedFile) ->
-    exports.startsWith(generatedFile, sysPath.normalize('test/')) and
-    generatedFile.lastIndexOf('vendor') is -1
-
-  joinPublic = (generatedFile) ->
-    sysPath.join(config.paths.public, generatedFile)
-
-  joinTo = config.files.javascripts.joinTo
-  files = if typeof joinTo is 'string' then [joinTo] else Object.keys(joinTo)
-  files.filter(isTestFile).map(joinPublic)
-
-cachedTestFiles = null
-
-exports.findTestFiles = (config) ->
-  cachedTestFiles ?= getTestFiles config

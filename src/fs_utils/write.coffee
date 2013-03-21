@@ -2,12 +2,11 @@
 
 async = require 'async'
 sysPath = require 'path'
-inflection = require 'inflection'
 GeneratedFile = require './generated_file'
 helpers = require '../helpers'
 
 getPaths = (sourceFile, joinConfig) ->
-  sourceFileJoinConfig = joinConfig[inflection.pluralize sourceFile.type] or {}
+  sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
   Object.keys(sourceFileJoinConfig).filter (generatedFilePath) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path
