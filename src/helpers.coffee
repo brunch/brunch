@@ -81,7 +81,7 @@ startDefaultServer = (port, path, base, callback) ->
     next()
   server.use base, express.static path
   server.all "#{base}/*", (request, response) ->
-    response.sendfile sysPath.join path, 'index.html'
+    response.sendfile sysPath.join path
   server.listen port, callback
   server
 
