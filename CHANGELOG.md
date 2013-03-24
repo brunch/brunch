@@ -1,3 +1,11 @@
+# Brunch 1.6.0 (24 March 2013)
+* Removed `brunch generate` and `brunch destroy`.
+  [scaffolt](https://github.com/paulmillr/scaffolt) is its simpler
+  successor.
+* Removed `brunch test`.
+  [Mocha-phantomjs](http://metaskills.net/mocha-phantomjs/) is its simpler
+  successor.
+
 # Brunch 1.5.4 (19 March 2013)
 * Fixed `brunch generate`, switched to standalone modules for some features.
 * Added node 0.10 support.
