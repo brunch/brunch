@@ -77,5 +77,4 @@ Brunch also has conventions. Conventions are filters for files with special mean
   Module is a Common.JS / AMD abstraction that allows to simply
   get rid of global vars. For example, you have file `app/views/user_view` —
   you can load this in browser by using `require('views/user_view')`.
-* Files named as `-test.<extension>` are considered as tests
-  and are required automatically in test runner.
+* Files named as `-test.<extension>` are considered as tests.
