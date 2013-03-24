@@ -5,11 +5,6 @@ fs = require 'fs'
 sysPath = require 'path'
 commands = require './'
 
-# Reads package.json and extracts brunch version from there.
-# Returns string.
-exports.readPackageVersion = readPackageVersion = ->
-  require(sysPath.join __dirname, '..', 'package.json').version
-
 # Config for [argumentum](https://github.com/paulmillr/argumentum).
 commandLineConfig =
   script: 'brunch'
@@ -68,93 +63,26 @@ the server would run'
           metavar: 'PORT'
       callback: commands.watch
 
-    generate:
-      abbr: 'g'
-      help: 'Generate file(s) from template for current project'
-      options:
-        type:
-          position: 1
-          help: 'generator type. Usually one of: controller, model, view.'
-          required: yes
-        name:
-          position: 2
-          help: 'generator class name / filename'
-          required: yes
-        pluralName:
-          help: 'plural name of file (e.g. feed)'
-          full: 'plural'
-        parentDir:
-          abbr: 'p'
-          help: 'path to generated file directory'
-          metavar: 'DIRECTORY'
-          full: 'path'
-        configPath:
-          abbr: 'c'
-          help: 'path to config file'
-          metavar: 'CONFIG'
-          full: 'config'
-      callback: commands.generate
-
-    destroy:
-      abbr: 'd'
-      help: 'Destroy changes made by brunch generate for current project'
-      options:
-        type:
-          position: 1
-          help: 'generator type. Usually one of: controller, model, view.'
-          required: yes
-        name:
-          position: 2
-          help: 'generator class name / filename'
-          required: yes
-        pluralName:
-          help: 'plural name of file (e.g. feed)'
-          full: 'plural'
-        parentDir:
-          abbr: 'p'
-          help: 'path to generated file directory'
-          metavar: 'DIRECTORY'
-          full: 'path'
-        configPath:
-          abbr: 'c'
-          help: 'path to config file'
-          metavar: 'CONFIG'
-          full: 'config'
-      callback: commands.destroy
-
-    test:
-      abbr: 't'
-      help: 'Run tests for the current project'
-      options:
-        configPath:
-          abbr: 'c'
-          help: 'path to config file'
-          metavar: 'CONFIG'
-          full: 'config'
-        grep:
-          abbr: 'g'
-          help: 'only specs/tests whose name contains this string see http://visionmedia.github.com/mocha/#grep-option'
-          metavar: 'GREP'
-          full: 'grep'
-        reporter:
-          abbr: 'r'
-          help: 'mocha reporter'
-          metavar: 'REPORTER'
-          choices: [
-            'spec', 'dot', 'min', 'markdown',
-            'tap', 'landing', 'list', 'progress',
-            'json', 'doc', 'xunit', 'teamcity',
-            'html'
-          ]
-      callback: commands.test
-
-  options:
-    version:
-      abbr: 'v'
-      help: 'display brunch version'
-      flag: yes
-      callback: readPackageVersion
-
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
+  command = process.argv[2]
+  if command in ['g', 'd', 'generate', 'destroy']
+    console.error '''`brunch generate / destroy` command was removed.
+
+    Use scaffolt (https://github.com/paulmillr/scaffolt)
+    successor or similar:
+        npm install -g scaffolt
+        scaffolt <type> <name> [options]
+        scaffolt <type> <name> [options] --revert
+    '''
+  if command in ['t', 'test']
+    console.error '''`brunch test` command was removed.
+
+    Use mocha-phantomjs (http://metaskills.net/mocha-phantomjs/)
+    successor or similar:
+        npm install -g mocha-phantomjs
+        mocha-phantomjs [options] <your-html-file-or-url>
+    '''
+  if command in ['-v', '--version']
+    return console.log require('../package.json').version
   argumentum.load(commandLineConfig).parse()
