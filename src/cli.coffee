@@ -22,7 +22,8 @@ commandLineConfig =
         skeleton:
           abbr: 's'
           help: 'path to / git URL of application skeleton (template).'
-      callback: commands.new
+      callback: (args) ->
+        commands.new args.skeleton, args.rootPath
 
     build:
       abbr: 'b'
