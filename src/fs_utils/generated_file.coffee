@@ -5,7 +5,6 @@ fs = require 'fs'
 sysPath = require 'path'
 async = require 'async'
 common = require './common'
-{concatSourceMaps} = require './source-map'
 
 sortAlphabetically = (a, b) ->
   if a < b
