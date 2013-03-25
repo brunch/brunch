@@ -1,3 +1,6 @@
+# Brunch 1.6.1 (25 March 2013)
+* Fixed `brunch new`.
+
 # Brunch 1.6.0 (24 March 2013)
 * Removed `brunch generate` and `brunch destroy`.
   [scaffolt](https://github.com/paulmillr/scaffolt) is its simpler
