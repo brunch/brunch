@@ -58,7 +58,10 @@ initWatcher = (config, callback) ->
   watched = [
     config.paths.app, config.paths.test,
     config.paths.vendor, config.paths.assets,
-    config.paths.config, config.paths.packageConfig
+    config.paths.config, 
+    config.paths.config + '.coffee', 
+    config.paths.config + '.js', 
+    config.paths.packageConfig
   ]
 
   async.filter watched, fs_utils.exists, (watchedFiles) ->
