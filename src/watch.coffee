@@ -61,6 +61,8 @@ initWatcher = (config, callback) ->
     config.paths.config, config.paths.packageConfig
   ]
 
+  watched.push config.paths.config + ext for ext of require.extensions
+
   async.filter watched, fs_utils.exists, (watchedFiles) ->
     watcher = chokidar.watch watchedFiles,
       ignored: fs_utils.ignored,

@@ -325,7 +325,7 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
     {config} = require fullPath
   catch error
     throw new Error("couldn\'t load config #{configPath}. #{error}")
-  setConfigDefaults config, fullPath
+  setConfigDefaults config, configPath
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0
   recursiveExtend config, options
