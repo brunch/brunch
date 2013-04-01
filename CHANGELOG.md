@@ -1,5 +1,5 @@
 # Brunch 1.6.2 (1 April 2013)
-* Fixed config watching.
+* Fixed watching of config files.
 
 # Brunch 1.6.1 (25 March 2013)
 * Fixed `brunch new`.

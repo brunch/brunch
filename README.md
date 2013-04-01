@@ -11,7 +11,7 @@ All build errors are printed to console. If you have growl / libnotify,
 brunch will use them too.
 
 It's like LiveReload or CodeKit plus Grunt, but much more faster,
-robust and universal.
+simple and universal.
 
 ## Getting started
 You'll need [node.js](http://nodejs.org/) 0.6.10+. Type:
