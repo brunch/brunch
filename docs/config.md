@@ -11,7 +11,6 @@ You can also import node.js modules in configuration file.
 `Object`: `paths` contains application paths to key directories. Paths are simple strings.
 
 * `public` key: path to build directory that would contain output.
-* `test` key: path to test files.
 
 * Other valid keys, but not recommended to use: `app`, `vendor`, `root`.
 
@@ -20,7 +19,6 @@ Example:
 ```coffeescript
 paths:
   public: '/user/www/deploy'
-  test: 'spec'
 ```
 
 ## `files`
@@ -87,7 +85,6 @@ files:
 
 * `assets` key: regExp or function. Default value: `/assets(\/|\\)/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
 * `vendor` key: regExp or function. Default value: `/vendor(\/|\\)/`. If test gives true, file won't be wrapped in module, if there are any.
-* `tests` key: regExp or function. Default value: `/_test\.\w+$/`. If test gives true, the file will be auto-loaded in test environment.
 
 Keep in mind that default brunch regexps, as you see, consider **all** `vendor/` (etc.) directories as vendor (etc.) files. So, `app/views/vendor/thing/chaplin_view.coffee` will be treated as vendor file.
 
@@ -97,7 +94,6 @@ Example:
 conventions:
   ignored: -> false       # no ignored files
   assets: /files(\/|\\)/  # vendor/jquery/files/jq.img
-  tests: /_spec\.\w+$/    # user_spec.js etc
 ```
 
 ## `modules`
@@ -168,7 +164,6 @@ Default value is `false` (`true` if you run `brunch build --optimize`).
 
 * `port`: (optional) port on which server will run
 * `base`: (optional) base URL from which to serve the app
-* `run`: should the server be launched with `brunch watch`?
 
 Example:
 
