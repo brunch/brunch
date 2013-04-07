@@ -15,7 +15,7 @@ module.exports = class SourceFile
     @compilerName = @compiler.constructor.name
 
     # If current file is provided by brunch plugin, use fake path.
-    if isHelper
+    if @isHelper
       fileName = "brunch-#{@compilerName}-#{sysPath.basename @path}"
       @realPath = @path
       @path = sysPath.join 'vendor', 'scripts', fileName

@@ -33,11 +33,7 @@ propIsFunction = (prop) -> (object) ->
 # Returns Object.
 generateParams = (persistent, options) ->
   params = {}
-  if options.minify
-    logger.warn '--minify (-m) option is deprecated.
-Use --optimize (-o) instead'
-  params.optimize = Boolean (options.optimize ? options.minify)
-  params.minify = params.optimize
+  params.optimize = options.optimize if options.optimize?
   params.persistent = persistent
   if options.publicPath
     params.paths = {}

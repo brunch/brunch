@@ -272,7 +272,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.vendor  ?= /vendor(\/|\\)/
 
   config.notifications ?= on
-  config.optimize ?= no
+  config.optimize     ?= no
 
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
