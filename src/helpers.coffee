@@ -3,6 +3,7 @@
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
 express = require 'express'
+http = require 'http'
 fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
@@ -83,8 +84,9 @@ startDefaultServer = (port, path, base, callback) ->
   server.use base, express.static path
   server.all "#{base}/*", (request, response) ->
     response.sendfile sysPath.join path, 'index.html'
-  server.listen port, callback
-  server
+  serv = http.createServer server
+  serv.listen port, callback
+  serv
 
 exports.startServer = (config, callback = (->)) ->
   port = parseInt config.server.port, 10
@@ -322,9 +324,10 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   fullPath = sysPath.resolve configPath
   delete require.cache[fullPath]
   try
-    {config} = require fullPath
+    originalConfig = require(fullPath).config
   catch error
     throw new Error("couldn\'t load config #{configPath}. #{error}")
+  config = extend {}, originalConfig
   setConfigDefaults config, configPath
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0

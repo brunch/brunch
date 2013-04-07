@@ -155,9 +155,14 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
 # Returns Function.
 getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
   reWatch = ->
-    server?.close?()
-    watcher.close()
-    watch(config.persistent, options, onCompile)
+    restart = ->
+      watcher.close()
+      watch config.persistent, options, onCompile
+    if server?.close?
+      server.close restart
+    else
+      restart()
+
   if reInstall
     helpers.install config.paths.root, reWatch
   else
