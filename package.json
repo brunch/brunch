@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "keywords": [
     "assembler",
     "builder",
@@ -46,8 +46,7 @@
     "express": "~3.1.0",
     "debug": "~0.7.0",
     "init-skeleton": "~0.1.2",
-    "loggy": "~0.1.0",
-    "lodash": "~1.0.1"
+    "loggy": "~0.1.0"
   },
   "devDependencies": {
     "mocha": "~1.8.2",

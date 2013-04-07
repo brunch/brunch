@@ -1,3 +1,7 @@
+# Brunch 1.6.3 (7 April 2013)
+* Fixed watching after `npm install`.
+* `config.optimize` is taken into account if it was set manually.
+
 # Brunch 1.6.2 (1 April 2013)
 * Fixed watching of config files.
 
