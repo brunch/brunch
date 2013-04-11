@@ -2,7 +2,7 @@
 
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
-express = require 'express'
+pushserve = require 'pushserve'
 http = require 'http'
 fs = require 'fs'
 os = require 'os'
@@ -91,17 +91,16 @@ startDefaultServer = (port, path, base, callback) ->
 exports.startServer = (config, callback = (->)) ->
   port = parseInt config.server.port, 10
   publicPath = config.paths.public
-  onListening = ->
-    logger.info "application started on http://localhost:#{port}/"
-    callback()
   if config.server.path
     try
       server = require sysPath.resolve config.server.path
-      server.startServer port, publicPath, onListening
+      server.startServer port, publicPath, ->
+        logger.info "application started on http://localhost:#{port}/"
+        callback()
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
   else
-    startDefaultServer port, publicPath, config.server.base, onListening
+    pushserve {port, path: publicPath, base: config.server.base}, callback
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
