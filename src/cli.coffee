@@ -1,13 +1,9 @@
 'use strict'
 
-argumentum = require 'argumentum'
+program = require 'commander'
 fs = require 'fs'
 sysPath = require 'path'
 commands = require './'
-
-#!/usr/bin/env node
-
-program = require('commander');
 
 program
   .version(require('../package.json').version)
