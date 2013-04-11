@@ -5,68 +5,42 @@ fs = require 'fs'
 sysPath = require 'path'
 commands = require './'
 
-# Config for [argumentum](https://github.com/paulmillr/argumentum).
-commandLineConfig =
-  script: 'brunch'
-  commandRequired: yes
-  commands:
-    new:
-      abbr: 'n'
-      help: 'Create new brunch project'
-      options:
-        rootPath:
-          position: 1
-          help: 'root path of project'
-          metavar: 'ROOT_PATH'
-          required: yes
-        skeleton:
-          abbr: 's'
-          help: 'path to / git URL of application skeleton (template).'
-      callback: (args) ->
-        commands.new args.skeleton, args.rootPath
+#!/usr/bin/env node
 
-    build:
-      abbr: 'b'
-      help: 'Build a brunch project'
-      options:
-        configPath:
-          abbr: 'c'
-          help: 'path to config file'
-          metavar: 'CONFIG'
-          full: 'config'
-        optimize:
-          abbr: 'o'
-          flag: yes
-          help: 'optimize result files (minify etc.)'
-      callback: commands.build
+program = require('commander');
 
-    watch:
-      abbr: 'w'
-      help: 'Watch brunch directory and rebuild if something changed'
-      options:
-        configPath:
-          abbr: 'c'
-          help: 'path to config file'
-          metavar: 'CONFIG'
-          full: 'config'
-        optimize:
-          abbr: 'o'
-          flag: yes
-          help: 'optimize result files (minify etc.)'
-        server:
-          abbr: 's'
-          flag: yes
-          help: 'run a simple http server that would serve public dir'
-        port:
-          abbr: 'p'
-          help: 'if a `server` option was specified, define on which port
-the server would run'
-          metavar: 'PORT'
-      callback: commands.watch
+program
+  .version(require('../package.json').version)
+
+program
+  .command('new [path]')
+  .description('Create new brunch project in path [.]. Short-cut: n')
+  .option('-s, --skeleton [url-or-path]', 'path to / git URL of application skeleton (template)')
+  .action ->
+    commands.new program.skeleton, program.args[0]
+
+program
+  .command('build')
+  .description('Build a brunch project. Short-cut: b')
+  .option('-c, --config [path]', 'path to config files')
+  .option('-o, --optimize', 'optimize result files (minify etc.)')
+  .action(commands.build)
+
+program
+  .command('watch')
+  .description('Watch brunch directory and rebuild if something changed. Short-cut: w')
+  .option('-c, --config [path]', 'path to config files')
+  .option('-o, --optimize', 'optimize result files (minify etc.)')
+  .option('-s, --server', 'run a simple http server that would serve public dir')
+  .option('-p, --port [port', 'if a `server` option was specified, define on which port
+the server would run')
+  .action(commands.watch)
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
-  command = process.argv[2]
+  args = process.argv.slice()
+  command = args[2]
+
   if command in ['g', 'd', 'generate', 'destroy']
     console.error '''`brunch generate / destroy` command was removed.
 
@@ -84,6 +58,12 @@ exports.run = ->
         npm install -g mocha-phantomjs
         mocha-phantomjs [options] <your-html-file-or-url>
     '''
-  if command in ['-v', '--version']
-    return console.log require('../package.json').version
-  argumentum.load(commandLineConfig).parse()
+
+  fullCommand = switch command
+    when 'n' then 'new'
+    when 'b' then 'build'
+    when 'w' then 'watch'
+    else command
+  args[2] = fullCommand if fullCommand?
+  program.parse args
+  program.help() unless fullCommand?
