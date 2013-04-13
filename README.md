@@ -31,7 +31,7 @@ To run a simple http server, execute `brunch watch --server`.
 ## Contact
 * Website: [brunch.io](http://brunch.io).
 * Project twitter: [@brunch](http://twitter.com/brunch)
-* Project forum: [ost.io/brunch/brunch](http://ost.io/brunch/brunch)
+* Project forum: http://ost.io/@brunch/brunch
 
 ## License
 Brunch is released under the MIT License (see LICENSE for details).
