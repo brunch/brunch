@@ -5,6 +5,7 @@ chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
 logger = require 'loggy'
+pushserve = require 'pushserve'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
 
@@ -15,10 +16,16 @@ helpers = require './helpers'
 #
 # Returns Array of Strings.
 getPluginIncludes = (plugins) ->
+  getValue = (thing, context = this) ->
+    if typeof thing is 'function' then thing.call(context) else thing
+
+  ensureArray = (object) ->
+    if Array.isArray object then object else [object]
+
   plugins
-    .map((plugin) -> helpers.callFunctionOrPass(plugin.include, plugin))
+    .map((plugin) -> getValue plugin.include, plugin)
     .filter((paths) -> paths?)
-    .reduce(((acc, elem) -> acc.concat(helpers.ensureArray elem)), [])
+    .reduce(((acc, elem) -> acc.concat(ensureArray elem)), [])
 
 # Generate function that will check if object has property and it is a fn.
 # Returns Function.
@@ -43,6 +50,22 @@ generateParams = (persistent, options) ->
     params.server.run = yes if options.server
     params.server.port = options.port if options.port
   params
+
+startServer = (config, callback = (->)) ->
+  port = parseInt config.server.port, 10
+  publicPath = config.paths.public
+  if config.server.path
+    try
+      server = require sysPath.resolve config.server.path
+      unless server.startServer?
+        throw new Error 'Brunch server file needs to have startServer function'
+      server.startServer port, publicPath, ->
+        logger.info "application started on http://localhost:#{port}/"
+        callback()
+    catch error
+      logger.error "couldn\'t load server #{config.server.path}: #{error}"
+  else
+    pushserve {port, path: publicPath, base: config.server.base}, callback
 
 # Filter paths that exist and watch them with `chokidar` package.
 #
@@ -168,6 +191,29 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
   else
     reWatch()
 
+getPlugins = (packages, config) ->
+  packages
+    .filter((plugin) -> plugin.prototype?.brunchPlugin)
+    .map((plugin) -> new plugin config)
+
+loadPackages = (rootPath, callback) ->
+  rootPath = sysPath.resolve rootPath
+  nodeModules = "#{rootPath}/node_modules"
+  try
+    json = require sysPath.join rootPath, 'package.json'
+  catch err
+    return callback "Current directory is not brunch application root path,
+ as it does not contain package.json (#{err})"
+  deps = Object.keys extend(json.devDependencies ? {}, json.dependencies)
+  # TODO: test if `brunch-plugin` is in dep’s package.json.
+  plugins = deps
+    .filter (dependency) ->
+      dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
+    .map (dependency) ->
+      require "#{nodeModules}/#{dependency}"
+  plugins
+
+
 # Load brunch plugins, group them and initialise file watcher.
 #
 # options      - Object. {configPath[, minify, server, port]}.
@@ -177,43 +223,43 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
 #
 # Returns nothing.
 initialize = (options, configParams, onCompile, callback) ->
-  helpers.loadPackages helpers.pwd(), (error, packages) ->
+  packages = loadPackages '.'
+
+  # Load config, get brunch packages from package.json.
+  config     = helpers.loadConfig options.configPath, configParams
+  joinConfig = config._normalized.join
+  plugins    = getPlugins packages, config
+
+  # Get compilation methods.
+  compilers  = plugins.filter(propIsFunction 'compile')
+  linters    = plugins.filter(propIsFunction 'lint')
+  minifiers  = plugins.filter(propIsFunction 'minify').concat(
+    plugins.filter(propIsFunction 'optimize')
+  )
+  callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
+
+  # Add default brunch callback.
+  callbacks.push onCompile
+  callCompileCallbacks = (generatedFiles) ->
+    callbacks.forEach (callback) ->
+      callback generatedFiles
+  fileList   = new fs_utils.FileList config
+  if config.persistent and config.server.run
+    server   = startServer config
+
+  # Emit `change` event for each file that is included with plugins.
+  getPluginIncludes(plugins).forEach (path) ->
+    changeFileList compilers, linters, fileList, path, yes
+
+  # Initialise file watcher.
+  initWatcher config, (error, watcher) ->
     return callback error if error?
-    # Load config, get brunch packages from package.json.
-    config     = helpers.loadConfig options.configPath, configParams
-    joinConfig = config._normalized.join
-    plugins    = helpers.getPlugins packages, config
-
-    # Get compilation methods.
-    compilers  = plugins.filter(propIsFunction 'compile')
-    linters    = plugins.filter(propIsFunction 'lint')
-    minifiers  = plugins.filter(propIsFunction 'minify').concat(
-      plugins.filter(propIsFunction 'optimize')
-    )
-    callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
-
-    # Add default brunch callback.
-    callbacks.push onCompile
-    callCompileCallbacks = (generatedFiles) ->
-      callbacks.forEach (callback) ->
-        callback generatedFiles
-    fileList   = new fs_utils.FileList config
-    if config.persistent and config.server.run
-      server   = helpers.startServer config
-
-    # Emit `change` event for each file that is included with plugins.
-    getPluginIncludes(plugins).forEach (path) ->
-      changeFileList compilers, linters, fileList, path, yes
-
-    # Initialise file watcher.
-    initWatcher config, (error, watcher) ->
-      return callback error if error?
-      # Get compile and reload functions.
-      compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
-      reload = getReloadFn config, options, onCompile, watcher, server
-      callback error, {
-        config, watcher, server, fileList, compilers, linters, compile, reload
-      }
+    # Get compile and reload functions.
+    compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
+    reload = getReloadFn config, options, onCompile, watcher, server
+    callback error, {
+      config, watcher, server, fileList, compilers, linters, compile, reload
+    }
 
 # Binds needed events to watcher.
 #

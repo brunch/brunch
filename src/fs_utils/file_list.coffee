@@ -7,6 +7,9 @@ SourceFile = require './source_file'
 helpers = require '../helpers'
 sysPath = require 'path'
 
+startsWith = (string, substring) ->
+  string.lastIndexOf(substring, 0) is 0
+
 # A list of `fs_utils.SourceFile` or `fs_utils.Asset`
 # with some additional methods used to simplify file reading / removing.
 module.exports = class FileList extends EventEmitter
@@ -31,7 +34,7 @@ module.exports = class FileList extends EventEmitter
       null
 
   # Files that are not really app files.
-  _ignored: (path, test = @config.conventions.ignored) ->
+  isIgnored: (path, test = @config.conventions.ignored) ->
     return yes if path in [@config.paths.config, @config.paths.packageConfig]
 
     switch toString.call(test)
@@ -40,62 +43,62 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        helpers.startsWith(sysPath.normalize(path), sysPath.normalize(test))
+        startsWith sysPath.normalize(path), sysPath.normalize(test)
       when '[object Array]'
-        test.some((subTest) => @_ignored path, subTest)
+        test.some((subTest) => @isIgnored path, subTest)
       else
         no
 
-  _isAsset: (path) ->
-    @config._normalized.conventions.assets(path)
-
-  _isVendor: (path) ->
-    @config._normalized.conventions.vendor(path)
+  is: (name, path) ->
+    convention = @config._normalized.conventions[name]
+    if typeof convention isnt 'function'
+      throw new TypeError 'Invalid convention'
+    convention path
 
   # Called every time any file was changed.
   # Emits `ready` event after `RESET_TIME`.
-  _resetTimer: =>
+  resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout =>
       if @compiling.length is 0 and @copying.length is 0
         @emit 'ready'
       else
-        @_resetTimer()
+        @resetTimer()
     , @RESET_TIME
 
-  _findByPath: (path) ->
+  find: (path) ->
     @files.filter((file) -> file.path is path)[0]
 
-  _findAssetByPath: (path) ->
+  findAsset: (path) ->
     @assets.filter((file) -> file.path is path)[0]
 
-  _compileDependentFiles: (path) ->
+  compileDependentFiles: (path) ->
     @files
       .filter (dependent) =>
         dependent.cache.dependencies.length > 0
       .filter (dependent) =>
         path in dependent.cache.dependencies
-      .forEach(@_compile)
+      .forEach(@compile)
 
-  _compile: (file) =>
+  compile: (file) =>
     @compiling.push(file)
     file.compile (error) =>
       @compiling.splice @compiling.indexOf(file), 1
-      @_resetTimer()
+      @resetTimer()
       return if error?
       debug "Compiled file '#{file.path}'"
-      @_compileDependentFiles file.path
+      @compileDependentFiles file.path
 
-  _copy: (asset) =>
+  copy: (asset) =>
     @copying.push asset
     asset.copy (error) =>
       @copying.splice @copying.indexOf(asset), 1
-      @_resetTimer()
+      @resetTimer()
       return if error?
       debug "Copied asset '#{asset.path}'"
 
   _add: (path, compiler, linters, isHelper) ->
-    isVendor = @_isVendor path
+    isVendor = @is 'vendor', path
     wrapper = @config._normalized.modules.wrapper
     file = new SourceFile path, compiler, linters, wrapper, isHelper, isVendor
     @files.push file
@@ -107,25 +110,25 @@ module.exports = class FileList extends EventEmitter
     file
 
   _change: (path, compiler, linters, isHelper) =>
-    ignored = @_ignored path
-    if @_isAsset path
+    ignored = @isIgnored path
+    if @is 'asset', path
       unless ignored
-        @_copy (@_findAssetByPath(path) ? @_addAsset path)
+        @copy (@findAsset(path) ? @_addAsset path)
     else
       if ignored or not compiler
-        @_compileDependentFiles path
+        @compileDependentFiles path
       else
-        @_compile (@_findByPath(path) ? @_add path, compiler, linters, isHelper)
+        @compile (@find(path) ? @_add path, compiler, linters, isHelper)
 
   _unlink: (path) =>
-    ignored = @_ignored path
-    if @_isAsset path
+    ignored = @isIgnored path
+    if @is 'asset', path
       unless ignored
         @assets.splice(@assets.indexOf(path), 1)
     else
       if ignored
-        @_compileDependentFiles path
+        @compileDependentFiles path
       else
-        file = @_findByPath path
+        file = @find path
         @files.splice(@files.indexOf(file), 1)
-    @_resetTimer()
+    @resetTimer()

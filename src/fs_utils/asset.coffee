@@ -2,9 +2,7 @@
 
 debug = require('debug')('brunch:asset')
 sysPath = require 'path'
-helpers = require '../helpers'
 common = require './common'
-{ncp} = require 'ncp'
 
 # Get first parent directory that matches asset convention.
 #

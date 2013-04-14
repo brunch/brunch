@@ -3,7 +3,6 @@
 debug = require('debug')('brunch:generated-file')
 fs = require 'fs'
 sysPath = require 'path'
-async = require 'async'
 common = require './common'
 
 sortAlphabetically = (a, b) ->

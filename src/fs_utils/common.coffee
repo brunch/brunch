@@ -2,7 +2,6 @@
 
 debug = require('debug')('brunch:common')
 fs = require 'fs'
-{EventEmitter} = require 'events'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 os = require 'os'

@@ -1,8 +1,6 @@
 'use strict'
 
 program = require 'commander'
-fs = require 'fs'
-sysPath = require 'path'
 commands = require './'
 
 program

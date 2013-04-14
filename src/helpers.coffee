@@ -2,29 +2,11 @@
 
 {exec} = require 'child_process'
 coffeescript = require 'coffee-script'
-pushserve = require 'pushserve'
 http = require 'http'
 fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
-
-exports.startsWith = startsWith = (string, substring) ->
-  string.lastIndexOf(substring, 0) is 0
-
-exports.flatten = flatten = (array) ->
-  array.reduce (acc, elem) ->
-    acc.concat(if Array.isArray(elem) then flatten(elem) else [elem])
-  , []
-
-exports.callFunctionOrPass = callFunctionOrPass = (thing, context = this) ->
-  if typeof thing is 'function' then thing.call(context) else thing
-
-exports.ensureArray = ensureArray = (object) ->
-  if Array.isArray object
-    object
-  else
-    [object]
 
 # Extends the object with properties from another object.
 # Example
@@ -47,7 +29,7 @@ recursiveExtend = (object, properties) ->
   object
 
 exports.deepFreeze = deepFreeze = (object) ->
-  Object.keys(Object.freeze(object))
+  Object.keys(Object.freeze object)
     .map (key) ->
       object[key]
     .filter (value) ->
@@ -58,9 +40,6 @@ exports.deepFreeze = deepFreeze = (object) ->
 exports.formatError = (error, path) ->
   "#{error.brunchType} of '#{path}'
  failed. #{error.toString().slice(7)}"
-
-exports.pwd = pwd = ->
-  '.'
 
 exports.install = install = (rootPath, callback = (->)) ->
   prevDir = process.cwd()
@@ -74,33 +53,6 @@ exports.install = install = (rootPath, callback = (->)) ->
       logger.error log
       return callback log
     callback null, stdout
-
-startDefaultServer = (port, path, base, callback) ->
-  server = express()
-  server.use (request, response, next) ->
-    response.header 'Cache-Control', 'no-cache'
-    response.header 'Access-Control-Allow-Origin', '*'
-    next()
-  server.use base, express.static path
-  server.all "#{base}/*", (request, response) ->
-    response.sendfile sysPath.join path, 'index.html'
-  serv = http.createServer server
-  serv.listen port, callback
-  serv
-
-exports.startServer = (config, callback = (->)) ->
-  port = parseInt config.server.port, 10
-  publicPath = config.paths.public
-  if config.server.path
-    try
-      server = require sysPath.resolve config.server.path
-      server.startServer port, publicPath, ->
-        logger.info "application started on http://localhost:#{port}/"
-        callback()
-    catch error
-      logger.error "couldn\'t load server #{config.server.path}: #{error}"
-  else
-    pushserve {port, path: publicPath, base: config.server.base}, callback
 
 exports.replaceSlashes = replaceSlashes = (config) ->
   changePath = (string) -> string.replace(/\//g, '\\')
@@ -140,11 +92,6 @@ normalizeChecker = (item) ->
       throw new Error("Config item #{item} is invalid.
 Use RegExp or Function.")
 
-# Can be used in `reduce` as `array.reduce(listToObj, {})`.
-listToObj = (acc, elem) ->
-  acc[elem[0]] = elem[1]
-  acc
-
 # Converts `config.files[...].joinTo` to one format.
 # config.files[type].joinTo can be a string, a map of {str: regexp} or a map
 # of {str: function}.
@@ -158,6 +105,11 @@ listToObj = (acc, elem) ->
 #
 # Returns Object of Object-s.
 createJoinConfig = (configFiles) ->
+  # Can be used in `reduce` as `array.reduce(listToObj, {})`.
+  listToObj = (acc, elem) ->
+    acc[elem[0]] = elem[1]
+    acc
+
   types = Object.keys(configFiles)
   result = types
     .map (type) ->
@@ -252,7 +204,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     join 'root', name
 
   paths                = config.paths     ?= {}
-  paths.root          ?= config.rootPath  ? pwd()
+  paths.root          ?= config.rootPath  ? '.'
   paths.public        ?= config.buildPath ? joinRoot 'public'
 
   paths.app           ?= joinRoot 'app'
@@ -268,7 +220,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions          = config.conventions  ?= {}
   conventions.assets  ?= /assets(\/|\\)/
   conventions.ignored ?= paths.ignored ? (path) ->
-    startsWith sysPath.basename(path), '_'
+    sysPath.basename(path)[0] is '_'
   conventions.tests   ?= /[-_]test\.\w+$/
   conventions.vendor  ?= /vendor(\/|\\)/
 
@@ -335,30 +287,3 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   normalizeConfig config
   deepFreeze config
   config
-
-exports.loadPackages = (rootPath, callback) ->
-  rootPath = sysPath.resolve rootPath
-  nodeModules = "#{rootPath}/node_modules"
-  try
-    json = require sysPath.join rootPath, 'package.json'
-  catch err
-    return callback "Current directory is not brunch application root path,
- as it does not contain package.json (#{err})"
-  deps = Object.keys extend(json.devDependencies ? {}, json.dependencies)
-  try
-    # TODO: test if `brunch-plugin` is in dep’s package.json.
-    plugins = deps
-      .filter (dependency) ->
-        dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
-      .map (dependency) ->
-        require "#{nodeModules}/#{dependency}"
-  catch err
-    error = err
-  callback error, plugins
-
-exports.getPlugins = (packages, config) ->
-  packages
-    .filter (plugin) ->
-      (plugin::)? and plugin::brunchPlugin
-    .map (plugin) ->
-      new plugin config
