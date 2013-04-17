@@ -214,7 +214,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   paths.assets        ?= join('app', 'assets')
 
-  paths.config         = configPath       ? joinRoot 'config'
+  paths.config        ?= configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
 
   conventions          = config.conventions  ?= {}
