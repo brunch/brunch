@@ -4,6 +4,7 @@ async = require 'async'
 debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
+logger = require 'loggy'
 
 # Run all linters.
 lint = (data, path, linters, callback) ->
@@ -34,7 +35,10 @@ pipeline = (realPath, path, linters, compiler, callback) ->
   fs.readFile realPath, 'utf-8', (error, data) =>
     return callbackError 'Reading', error if error?
     lint data, path, linters, (error) =>
-      return callbackError 'Linting', error if error?
+      if error?.match /^warn\:\s/i
+        logger.warn "Linting of #{path}: #{error}"
+      else
+        return callbackError 'Linting', error if error?
       compiler.compile data, path, (error, compiled) =>
         return callbackError 'Compiling', error if error?
         getDependencies data, path, compiler, (error, dependencies) =>
