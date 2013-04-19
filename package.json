@@ -49,7 +49,7 @@
     "pushserve": "~0.1.0"
   },
   "devDependencies": {
-    "mocha": "~1.8.2",
-    "chai": "~1.4.0"
+    "mocha": "~1.9.0",
+    "chai": "~1.5.0"
   }
 }
