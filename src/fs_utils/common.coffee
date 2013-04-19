@@ -76,11 +76,11 @@ exports.copy = (source, destination, callback) ->
 #
 # Returns nothing.
 exports.copyIfExists = (source, destination, filter = yes, callback) ->
-  options = if filter
-    {filter: (path) -> not ignored path}
+  options = stopOnError: true
+  options.filter = if filter
+    (path) -> not ignored path
   else
-    {filter: (path) -> not ignoredAlways path}
-  options.stopOnError = true
+    (path) -> not ignoredAlways path
   exports.exists source, (exists) ->
     return callback() unless exists
     ncp source, destination, options, callback

@@ -54,18 +54,19 @@ generateParams = (persistent, options) ->
 startServer = (config, callback = (->)) ->
   port = parseInt config.server.port, 10
   publicPath = config.paths.public
+  log = ->
+    logger.info "application started on http://localhost:#{port}/"
+    callback()
   if config.server.path
     try
       server = require sysPath.resolve config.server.path
-      unless server.startServer?
-        throw new Error 'Brunch server file needs to have startServer function'
-      server.startServer port, publicPath, ->
-        logger.info "application started on http://localhost:#{port}/"
-        callback()
     catch error
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
+    unless server.startServer?
+      throw new Error 'Brunch server file needs to have startServer function'
+    server.startServer port, publicPath, log
   else
-    pushserve {port, path: publicPath, base: config.server.base}, callback
+    pushserve {port, path: publicPath, base: config.server.base, noLog: yes}, log
 
 # Filter paths that exist and watch them with `chokidar` package.
 #
@@ -204,7 +205,7 @@ loadPackages = (rootPath, callback) ->
   catch err
     return callback "Current directory is not brunch application root path,
  as it does not contain package.json (#{err})"
-  deps = Object.keys extend(json.devDependencies ? {}, json.dependencies)
+  deps = Object.keys helpers.extend(json.devDependencies ? {}, json.dependencies)
   # TODO: test if `brunch-plugin` is in dep’s package.json.
   plugins = deps
     .filter (dependency) ->
