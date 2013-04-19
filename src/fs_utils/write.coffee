@@ -2,7 +2,7 @@
 
 async = require 'async'
 sysPath = require 'path'
-GeneratedFile = require './generated_file'
+generate = require './generate'
 helpers = require '../helpers'
 
 getPaths = (sourceFile, joinConfig) ->
@@ -11,7 +11,7 @@ getPaths = (sourceFile, joinConfig) ->
     checker = sourceFileJoinConfig[generatedFilePath]
     checker sourceFile.path
 
-getFiles = (fileList, config, joinConfig, minifiers) ->
+getFiles = (fileList, config, joinConfig) ->
   map = {}
 
   fileList.files.forEach (file) ->
@@ -23,33 +23,25 @@ getFiles = (fileList, config, joinConfig, minifiers) ->
   Object.keys(map).map (generatedFilePath) ->
     sourceFiles = map[generatedFilePath]
     fullPath = sysPath.join config.paths.public, generatedFilePath
-    new GeneratedFile fullPath, sourceFiles, config, minifiers
+    {sourceFiles, path: fullPath}
 
-changedSince = (startTime) -> (generatedFile) ->
-  generatedFile.sourceFiles.some (sourceFile) ->
+changedSince = (startTime) -> (generated) ->
+  generated.sourceFiles.some (sourceFile) ->
     sourceFile.cache.compilationTime >= startTime
 
-gatherErrors = (generatedFiles) ->
-  errors = []
-  generatedFiles
-    .forEach (generatedFile) ->
-      generatedFile.sourceFiles
-        .filter (sourceFile) ->
-          sourceFile.cache.error?
-        .forEach (sourceFile) ->
-          cache = sourceFile.cache
-          errors.push helpers.formatError cache.error, sourceFile.path
-
-  if errors.length > 0
-    errors
-  else
-    null
+formatError = (sourceFile) ->
+  helpers.formatError sourceFile.cache.error, sourceFile.path
 
 module.exports = write = (fileList, config, joinConfig, minifiers, startTime, callback) ->
-  files = getFiles fileList, config, joinConfig, minifiers
+  files = getFiles fileList, config, joinConfig
+  errors = files
+    .map (generated) ->
+      generated.sourceFiles.filter((_) -> _.cache.error?).map(formatError)
+    .reduce(((a, b) -> a.concat b), [])
+  return callback errors.join(' ; ') if errors.length > 0  # callback errors
   changed = files.filter(changedSince startTime)
-  error = gatherErrors files
-  return callback error if error?
-  async.forEach changed, ((file, next) -> file.write next), (error) ->
+  gen = (file, next) ->
+    generate file.path, file.sourceFiles, config, minifiers, next
+  async.forEach changed, gen, (error) ->
     return callback error if error?
     callback null, changed

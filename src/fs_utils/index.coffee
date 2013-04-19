@@ -1,8 +1,10 @@
 'use strict'
 
 common = require './common'
-helpers = require '../helpers'
 FileList = require './file_list'
 write = require './write'
 
-module.exports = helpers.extend common, {write, FileList}
+module.exports = {
+  exists: common.exists, ignored: common.ignored,
+  write, FileList
+}

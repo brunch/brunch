@@ -51,8 +51,9 @@ module.exports = class FileList extends EventEmitter
 
   is: (name, path) ->
     convention = @config._normalized.conventions[name]
+    return no unless convention
     if typeof convention isnt 'function'
-      throw new TypeError 'Invalid convention'
+      throw new TypeError "Invalid convention #{convention}"
     convention path
 
   # Called every time any file was changed.
@@ -111,7 +112,7 @@ module.exports = class FileList extends EventEmitter
 
   _change: (path, compiler, linters, isHelper) =>
     ignored = @isIgnored path
-    if @is 'asset', path
+    if @is 'assets', path
       unless ignored
         @copy (@findAsset(path) ? @_addAsset path)
     else
@@ -122,7 +123,7 @@ module.exports = class FileList extends EventEmitter
 
   _unlink: (path) =>
     ignored = @isIgnored path
-    if @is 'asset', path
+    if @is 'assets', path
       unless ignored
         @assets.splice(@assets.indexOf(path), 1)
     else
