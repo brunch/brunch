@@ -27,16 +27,16 @@ getFiles = (fileList, config, joinConfig) ->
 
 changedSince = (startTime) -> (generated) ->
   generated.sourceFiles.some (sourceFile) ->
-    sourceFile.cache.compilationTime >= startTime
+    sourceFile.compilationTime >= startTime
 
 formatError = (sourceFile) ->
-  helpers.formatError sourceFile.cache.error, sourceFile.path
+  helpers.formatError sourceFile.error, sourceFile.path
 
 module.exports = write = (fileList, config, joinConfig, minifiers, startTime, callback) ->
   files = getFiles fileList, config, joinConfig
   errors = files
     .map (generated) ->
-      generated.sourceFiles.filter((_) -> _.cache.error?).map(formatError)
+      generated.sourceFiles.filter((_) -> _.error?).map(formatError)
     .reduce(((a, b) -> a.concat b), [])
   return callback errors.join(' ; ') if errors.length > 0  # callback errors
   changed = files.filter(changedSince startTime)

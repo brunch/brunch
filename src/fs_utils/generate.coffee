@@ -105,7 +105,7 @@ sort = (files, config) ->
 # New.
 join = (files, path, type, wrapper) ->
   debug "Joining files '#{files.map((file) -> file.path).join(', ')}' to '#{path}'"
-  joined = files.map((file) -> file.cache.data).join('')
+  joined = files.map((file) -> file.data).join('')
   if type is 'javascript'
     wrapper(path, joined) + joined
   else
@@ -123,6 +123,8 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
   else
     'stylesheet'
   optimizer = minifiers.filter((minifier) -> minifier.type is type)[0]
+
+  console.log 1212
 
   sorted = sort sourceFiles, config
   joined = join sorted, path, type, config._normalized.modules.definition

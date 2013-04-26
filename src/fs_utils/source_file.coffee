@@ -77,13 +77,15 @@ module.exports = class SourceFile
       sysPath.join 'vendor', 'scripts', fileName
     else
       path
+    @type = compiler.type
     wrap = makeWrapper wrapper, @path, isWrapped, isntModule
-    @cache = Object.seal {
-      data: '', dependencies: [], compilationTime: null, error: null
-    }
-    @compile = makeCompiler realPath, @path, @cache, linters, compiler, wrap
+    @data = ''
+    @dependencies = []
+    @compilationTime = null
+    @error = null
+    @compile = makeCompiler realPath, @path, this, linters, compiler, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped
     }
-    Object.freeze this
+    Object.seal this
