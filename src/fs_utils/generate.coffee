@@ -124,8 +124,6 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
     'stylesheet'
   optimizer = minifiers.filter((minifier) -> minifier.type is type)[0]
 
-  console.log 1212
-
   sorted = sort sourceFiles, config
   joined = join sorted, path, type, config._normalized.modules.definition
 
