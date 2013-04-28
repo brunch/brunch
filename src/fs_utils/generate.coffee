@@ -131,4 +131,6 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
     return callback error if error?
     common.writeFile path, data, callback
 
+generate.sortByConfig = sortByConfig
+
 module.exports = generate
