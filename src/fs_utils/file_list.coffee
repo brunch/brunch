@@ -7,9 +7,6 @@ SourceFile = require './source_file'
 helpers = require '../helpers'
 sysPath = require 'path'
 
-startsWith = (string, substring) ->
-  string.lastIndexOf(substring, 0) is 0
-
 # A list of `fs_utils.SourceFile` or `fs_utils.Asset`
 # with some additional methods used to simplify file reading / removing.
 module.exports = class FileList extends EventEmitter
@@ -43,7 +40,7 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        startsWith sysPath.normalize(path), sysPath.normalize(test)
+        @_startsWith sysPath.normalize(path), sysPath.normalize(test)
       when '[object Array]'
         test.some((subTest) => @isIgnored path, subTest)
       else
@@ -133,3 +130,6 @@ module.exports = class FileList extends EventEmitter
         file = @find path
         @files.splice(@files.indexOf(file), 1)
     @resetTimer()
+
+FileList._startsWith = (string, substring) ->
+  string.lastIndexOf(substring, 0) is 0

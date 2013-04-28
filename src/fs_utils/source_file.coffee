@@ -1,7 +1,7 @@
 'use strict'
 
 async = require 'async'
-debug = require('debug')('brunch:source-file')
+debug = require('debug')('brunch:source')
 fs = require 'fs'
 sysPath = require 'path'
 logger = require 'loggy'
@@ -34,6 +34,11 @@ pipeline = (realPath, path, linters, compiler, callback) ->
 
   fs.readFile realPath, 'utf-8', (error, data) =>
     return callbackError 'Reading', error if error?
+    debug 'Got %s%s (%s)%s [%s]', @path,
+      if isHelper then ' -> ' + realPath else ''
+      @type
+      if @isVendor then ' (vendor)' else ''
+      data.length
     lint data, path, linters, (error) =>
       if error?.match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
@@ -54,6 +59,11 @@ updateCache = (cache, error, result, wrap) ->
     cache.dependencies = dependencies
     cache.compilationTime = Date.now()
     cache.data = wrap compiled if compiled?
+    debug 'Has %s%s (%s)%s [%s:%s:%s]', @path,
+      if isHelper then ' -> ' + realPath else ''
+      @type
+      if @isVendor then ' (vendor)' else ''
+      data.length, compiled.length, cache.data.length
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
@@ -88,8 +98,8 @@ module.exports = class SourceFile
     @compilationTime = null
     @error = null
     @compile = makeCompiler realPath, @path, this, linters, compiler, wrap
-
-    debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
-      @path, isntModule, isWrapped
-    }
+    debug 'New %s%s (%s)%s', @path,
+      if isHelper then ' -> ' + realPath else ''
+      @type
+      if @isVendor then ' (vendor)' else ''
     Object.seal this
