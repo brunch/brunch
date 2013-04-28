@@ -77,8 +77,3 @@ describe 'helpers', ->
       expect(helpers.startsWith 'abc', 'a').to.equal yes
       expect(helpers.startsWith 'abc', 'c').to.equal no
       expect(helpers.startsWith 'cba', 'b').to.equal no
-
-  describe 'formatTemplate()', ->
-    expect(helpers.formatTemplate '{{#camelize}}{{name}}{{/camelize}}', name: 'hitler_user').to.equal 'HitlerUser'
-    expect(helpers.formatTemplate '{{#camelize}}{{name}}{{/camelize}}\n{{#camelize}}{{pluralName}}{{/camelize}}', name: 'hitler_user', pluralName: 'hitler_users')
-      .to.equal 'HitlerUser\nHitlerUsers'
