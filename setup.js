@@ -7,9 +7,13 @@ var fs = require('fs');
 var mode = process.argv[2];
 
 var fsExists = fs.exists || sysPath.exists;
+var fsExistsSync = fs.existsSync || sysPath.existsSync;
 
 var getBinaryPath = function(binary) {
-  return sysPath.join('node_modules', '.bin', binary);
+  var path;
+  if (fsExistsSync(path = sysPath.join('node_modules', '.bin', binary))) return path;
+  if (fsExistsSync(path = sysPath.join('..', '.bin', binary))) return path;
+  return binary;
 };
 
 var execute = function(path, params, callback) {
