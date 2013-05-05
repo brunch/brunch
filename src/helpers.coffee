@@ -273,12 +273,13 @@ normalizeConfig = (config) ->
 
 exports.loadConfig = (configPath = 'config', options = {}) ->
   fullPath = sysPath.resolve configPath
-  delete require.cache[fullPath]
+  delete require.cache[require.resolve fullPath]
   try
     originalConfig = require(fullPath).config
   catch error
     throw new Error("couldn\'t load config #{configPath}. #{error}")
-  config = extend {}, originalConfig
+  config = originalConfig
+  console.log 1234, config.server
   setConfigDefaults config, configPath
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0
