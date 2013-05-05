@@ -207,13 +207,22 @@ loadPackages = (rootPath, callback) ->
  as it does not contain package.json (#{err})"
   deps = Object.keys helpers.extend(json.devDependencies ? {}, json.dependencies)
   # TODO: test if `brunch-plugin` is in dep’s package.json.
-  plugins = deps
-    .filter (dependency) ->
-      dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
-    .map (dependency) ->
-      require "#{nodeModules}/#{dependency}"
-  plugins
-
+  loadDeps = (deps, isDev) ->
+    deps
+      .filter (dependency) ->
+        dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
+      .map (dependency) ->
+        depPath = "#{nodeModules}/#{dependency}"
+        if isDev
+          try
+            require depPath
+          catch e
+            null
+        else
+          require depPath
+  plugins = loadDeps(Object.keys json.dependencies)
+  devPlugins = loadDeps(Object.keys(json.devDependencies), true)
+  plugins.concat(devPlugins.filter((_) -> _?))
 
 # Load brunch plugins, group them and initialise file watcher.
 #
