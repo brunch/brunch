@@ -111,9 +111,9 @@ join = (files, path, type, wrapper) ->
   else
     joined
 
-minify = (data, optimizer, isEnabled, callback) ->
+minify = (data, path, optimizer, isEnabled, callback) ->
   if isEnabled
-    optimizer data, path, callback
+    (optimizer.optimize or optimizer.minify) data, path, callback
   else
     callback null, data
 
@@ -127,7 +127,7 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
   sorted = sort sourceFiles, config
   joined = join sorted, path, type, config._normalized.modules.definition
 
-  minify joined, optimizer, config.optimize, (error, data) ->
+  minify joined, path, optimizer, config.optimize, (error, data) ->
     return callback error if error?
     common.writeFile path, data, callback
 

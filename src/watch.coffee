@@ -221,7 +221,7 @@ loadPackages = (rootPath, callback) ->
         else
           require depPath
   plugins = loadDeps(Object.keys json.dependencies)
-  devPlugins = loadDeps(Object.keys(json.devDependencies), true)
+  devPlugins = loadDeps(Object.keys(json.devDependencies or {}), true)
   plugins.concat(devPlugins.filter((_) -> _?))
 
 # Load brunch plugins, group them and initialise file watcher.
@@ -243,8 +243,8 @@ initialize = (options, configParams, onCompile, callback) ->
   # Get compilation methods.
   compilers  = plugins.filter(propIsFunction 'compile')
   linters    = plugins.filter(propIsFunction 'lint')
-  minifiers  = plugins.filter(propIsFunction 'minify').concat(
-    plugins.filter(propIsFunction 'optimize')
+  minifiers  = plugins.filter(propIsFunction 'optimize').concat(
+    plugins.filter(propIsFunction 'minify')
   )
   callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
