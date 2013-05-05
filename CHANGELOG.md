@@ -1,3 +1,7 @@
+# Brunch 1.6.4 (5 May 2013)
+* Don’t throw on missing devdependencies. Closes gh-541.
+* Reload config correctly on change. Closes gh-540.
+
 # Brunch 1.6.3 (7 April 2013)
 * Fixed watching after `npm install`.
 * `config.optimize` is taken into account if it was set manually.
