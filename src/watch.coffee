@@ -174,16 +174,16 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
 # onCompile - callback that will be passed to new watcher.
 # watcher   - chokidar.FSWatcher instance that has `close()` method.
 # server    - instance of HTTP server that has `close()` method.
-# subServers- instances of plugin servers with `close()` method.
+# plugins   - brunch plugins.
 # reInstall - should brunch run `npm install` before rewatching?
 #
 # Returns Function.
-getReloadFn = (config, options, onCompile, watcher, server, subServers) -> (reInstall) ->
+getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInstall) ->
   reWatch = ->
     restart = ->
       watcher.close()
       watch config.persistent, options, onCompile
-    subServers.forEach (subServer) -> subServer.close()
+    plugins.forEach (plugin) -> plugin.teardown?()
     if server?.close?
       server.close restart
     else
@@ -248,7 +248,6 @@ initialize = (options, configParams, onCompile, callback) ->
     plugins.filter(propIsFunction 'minify')
   )
   callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
-  subServers = plugins.filter((plugin) -> plugin.server?.close?).map((plugin) -> plugin.server)
 
   # Add default brunch callback.
   callbacks.push onCompile
@@ -268,7 +267,7 @@ initialize = (options, configParams, onCompile, callback) ->
     return callback error if error?
     # Get compile and reload functions.
     compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
-    reload = getReloadFn config, options, onCompile, watcher, server, subServers
+    reload = getReloadFn config, options, onCompile, watcher, server, plugins
     callback error, {
       config, watcher, server, fileList, compilers, linters, compile, reload
     }
