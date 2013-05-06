@@ -226,7 +226,7 @@ loadPackages = (rootPath, callback) ->
 
 # Load brunch plugins, group them and initialise file watcher.
 #
-# options      - Object. {configPath[, minify, server, port]}.
+# options      - Object. {config[, minify, server, port]}.
 # configParams - Object. Optional. Params will be set as default config params.
 # onCompile    - Function. Will be executed after every successful compilation.
 # callback     - Function.
@@ -236,7 +236,7 @@ initialize = (options, configParams, onCompile, callback) ->
   packages = loadPackages '.'
 
   # Load config, get brunch packages from package.json.
-  config     = helpers.loadConfig options.configPath, configParams
+  config     = helpers.loadConfig options.config, configParams
   joinConfig = config._normalized.join
   plugins    = getPlugins packages, config
 
