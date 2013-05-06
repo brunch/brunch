@@ -205,7 +205,6 @@ loadPackages = (rootPath, callback) ->
   catch err
     return callback "Current directory is not brunch application root path,
  as it does not contain package.json (#{err})"
-  deps = Object.keys helpers.extend(json.devDependencies ? {}, json.dependencies)
   # TODO: test if `brunch-plugin` is in dep’s package.json.
   loadDeps = (deps, isDev) ->
     deps
