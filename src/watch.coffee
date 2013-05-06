@@ -190,6 +190,7 @@ getReloadFn = (config, options, onCompile, watcher, server) -> (reInstall) ->
   if reInstall
     helpers.install config.paths.root, reWatch
   else
+    logger.info "Reloading watcher..."
     reWatch()
 
 getPlugins = (packages, config) ->
@@ -303,8 +304,8 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
-      if path is config.paths.packageConfig or isConfigFile
-        reload yes
+      if isConfigFile or reInstall = path is config.paths.packageConfig
+        reload reInstall
       else
         # Otherwise, just update file list.
         onChange()
