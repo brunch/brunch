@@ -26,8 +26,8 @@ program
   .option('-c, --config [path]', 'path to config files')
   .option('-o, --optimize', 'optimize result files (minify etc.)')
   .option('-s, --server', 'run a simple http server that would serve public dir')
-  .option('-p, --port [port', 'if a `server` option was specified, define on which port
-the server would run')
+  .option('-p, --port [port]', 'if a `server` option was specified, define on which port
+ the server would run')
   .action(commands.watch)
 
 # The function would be executed every time user run `bin/brunch`.
