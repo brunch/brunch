@@ -272,16 +272,17 @@ normalizeConfig = (config) ->
   config
 
 exports.loadConfig = (configPath = 'config', options = {}) ->
-  fullPath = sysPath.resolve configPath
-  delete require.cache[require.resolve fullPath]
+  fullPath = require.resolve sysPath.resolve configPath
+  delete require.cache[fullPath]
   try
-    originalConfig = require(fullPath).config
+    config = require(fullPath).config
   catch error
-    throw new Error("couldn\'t load config #{configPath}. #{error}")
-  config = originalConfig
+    throw new Error "couldn\'t load config #{fullPath}. #{error}"
   setConfigDefaults config, configPath
+
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0
+
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
