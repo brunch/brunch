@@ -306,9 +306,9 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
-      reInstall = path is config.paths.packageConfig
-      if isConfigFile or reInstall
-        reload reInstall
+      isPluginsFile = path is config.paths.packageConfig
+      if isConfigFile or isPluginsFile
+        reload isPluginsFile
       else
         # Otherwise, just update file list.
         onChange()
@@ -316,7 +316,9 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on 'unlink', (path) ->
       # If file is special (config.coffee, package.json), exit.
       # Otherwise, just update file list.
-      if path is config.paths.config or path is config.paths.packageConfig
+      isConfigFile = possibleConfigFiles[path]
+      isPluginsFile = path is config.paths.packageConfig
+      if isConfigFile or isPluginsFile
         logger.info "Detected removal of config.coffee / package.json.
 Exiting."
         process.exit(0)
