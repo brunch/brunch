@@ -201,7 +201,9 @@ loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
   nodeModules = "#{rootPath}/node_modules"
   try
-    json = require sysPath.join rootPath, 'package.json'
+    packagePath = sysPath.join rootPath, 'package.json'
+    delete require.cache[require.resolve packagePath]
+    json = require packagePath
   catch err
     return callback "Current directory is not brunch application root path,
  as it does not contain package.json (#{err})"
