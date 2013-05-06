@@ -81,7 +81,8 @@ initWatcher = (config, callback) ->
     config.paths.config, config.paths.packageConfig
   ]
 
-  watched.push config.paths.config + ext for ext of require.extensions
+  Object.keys(require.extensions).forEach (ext) ->
+    watched.push config.paths.config + ext
 
   async.filter watched, fs_utils.exists, (watchedFiles) ->
     watcher = chokidar.watch watchedFiles,
@@ -305,7 +306,8 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
-      if isConfigFile or reInstall = path is config.paths.packageConfig
+      reInstall = path is config.paths.packageConfig
+      if isConfigFile or reInstall
         reload reInstall
       else
         # Otherwise, just update file list.
