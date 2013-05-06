@@ -279,7 +279,6 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   catch error
     throw new Error("couldn\'t load config #{configPath}. #{error}")
   config = originalConfig
-  console.log 1234, config.server
   setConfigDefaults config, configPath
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0

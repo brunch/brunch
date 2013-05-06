@@ -303,7 +303,6 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
-      console.log isConfigFile
       if path is config.paths.packageConfig or isConfigFile
         reload yes
       else
