@@ -1,3 +1,7 @@
+# Brunch 1.6.5 (6 May 2013)
+* Fixed `--config` option of build / watch commands.
+* Fixed `watch` command description.
+
 # Brunch 1.6.4 (5 May 2013)
 * Don’t throw on missing devdependencies. Closes gh-541.
 * Reload config correctly on change. Closes gh-540.
