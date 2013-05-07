@@ -11,7 +11,7 @@ program
   .description('Create new brunch project in path [.]. Short-cut: n')
   .option('-s, --skeleton [url-or-path]', 'path to / git URL of application skeleton (template)')
   .action ->
-    commands.new program.skeleton, program.args[0]
+    commands.new program.args[1].skeleton, program.args[0]
 
 program
   .command('build')
