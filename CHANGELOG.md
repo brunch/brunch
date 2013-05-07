@@ -1,3 +1,6 @@
+# Brunch 1.6.7 (8 May 2013)
+* Fixed `brunch new --skeleton`
+
 # Brunch 1.6.6 (7 May 2013)
 * Added `plugin#teardown` API support. With it you can stop servers in your plugins and stuff. It will be called after each brunch stop.
 * Added `config.notificationsTitle`.
