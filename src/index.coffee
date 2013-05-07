@@ -7,7 +7,6 @@ watch = require './watch'
 create = (skeleton, path) ->
   skeleton ?= sysPath.join(__dirname, '..', 'skeletons', 'brunch-with-chaplin')
   path ?= '.'
-  console.log 'a', skeleton, path
   initSkeleton skeleton, path
 
 module.exports = {
