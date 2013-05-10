@@ -32,26 +32,32 @@ pipeline = (realPath, path, linters, compiler, callback) ->
     error.brunchType = type
     callback error
 
-  fs.readFile realPath, 'utf-8', (error, data) =>
+  fs.readFile realPath, 'utf-8', (error, source) =>
     return callbackError 'Reading', error if error?
-    lint data, path, linters, (error) =>
+    lint source, path, linters, (error) =>
       if error?.match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
       else
         return callbackError 'Linting', error if error?
-      compiler.compile data, path, (error, compiled) =>
+      compiler.compile source, path, (error, compiled) =>
         return callbackError 'Compiling', error if error?
-        getDependencies data, path, compiler, (error, dependencies) =>
+
+        if typeof compiled isnt 'string'
+            sourceMap = compiled.sourceMap
+            compiled = compiled.compiled
+        getDependencies source, path, compiler, (error, dependencies) =>
           return callbackError 'Dependency parsing', error if error?
-          callback null, {dependencies, compiled}
+          callback null, {dependencies, compiled, source, sourceMap}
 
 updateCache = (cache, error, result, wrap) ->
   if error?
     cache.error = error
   else
-    {dependencies, compiled} = result
+    {dependencies, compiled, source, sourceMap} = result
     cache.error = null
     cache.dependencies = dependencies
+    cache.source = source
+    cache.sourceMap = sourceMap
     cache.compilationTime = Date.now()
     cache.data = wrap compiled if compiled?
   cache
@@ -83,6 +89,8 @@ module.exports = class SourceFile
       path
     @type = compiler.type
     wrap = makeWrapper wrapper, @path, isWrapped, isntModule
+    @source = null
+    @sourceMap = null
     @data = ''
     @dependencies = []
     @compilationTime = null

@@ -4,6 +4,7 @@ debug = require('debug')('brunch:generate')
 fs = require 'fs'
 sysPath = require 'path'
 common = require './common'
+concat = require './concat'
 
 sortAlphabetically = (a, b) ->
   if a < b
@@ -102,6 +103,8 @@ sort = (files, config) ->
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
+
+
 # New.
 join = (files, path, type, wrapper) ->
   debug "Joining files '#{files.map((file) -> file.path).join(', ')}' to '#{path}'"
@@ -125,11 +128,17 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
   optimizer = minifiers.filter((minifier) -> minifier.type is type)[0]
 
   sorted = sort sourceFiles, config
-  joined = join sorted, path, type, config._normalized.modules.definition
+  {code, map} = concat sorted, path, type, config._normalized.modules.definition
 
-  minify joined, path, optimizer, config.optimize, (error, data) ->
+  #debug code.substring(0, 300)
+  #debug map.toString()
+  if map then code += '\n//@ sourceMappingURL='+ sysPath.basename( path+'.map' )
+
+  minify code, path, optimizer, config.optimize, (error, data) ->
     return callback error if error?
-    common.writeFile path, data, callback
+    common.writeFile path, data, ()->
+      if map then common.writeFile path+'.map', map.toString(), callback
+      else callback()
 
 generate.sortByConfig = sortByConfig
 
