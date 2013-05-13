@@ -5,6 +5,8 @@ debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
 logger = require 'loggy'
+nodeFactory = require('../helpers').identityNode
+{SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 # Run all linters.
 lint = (data, path, linters, callback) ->
@@ -41,15 +43,15 @@ pipeline = (realPath, path, linters, compiler, callback) ->
         return callbackError 'Linting', error if error?
       compiler.compile source, path, (error, compiled) =>
         return callbackError 'Compiling', error if error?
-
+        # compiler is able to produce sourceMap
         if typeof compiled isnt 'string'
-            sourceMap = compiled.sourceMap
+            sourceMap = compiled.map
             compiled = compiled.compiled
         getDependencies source, path, compiler, (error, dependencies) =>
           return callbackError 'Dependency parsing', error if error?
           callback null, {dependencies, compiled, source, sourceMap}
 
-updateCache = (cache, error, result, wrap) ->
+updateCache = (realPath, cache, error, result, wrap) ->
   if error?
     cache.error = error
   else
@@ -57,19 +59,28 @@ updateCache = (cache, error, result, wrap) ->
     cache.error = null
     cache.dependencies = dependencies
     cache.source = source
-    cache.sourceMap = sourceMap
     cache.compilationTime = Date.now()
-    cache.data = wrap compiled if compiled?
+    debug JSON.stringify( sourceMap)
+    cache.node = if sourceMap?
+      SourceNode.fromStringWithSourceMap \
+        compiled,
+        new SourceMapConsumer sourceMap
+    else
+      nodeFactory compiled, realPath
+
+    cache.node.source = realPath
+    cache.node.setSourceContent realPath, source
+    cache.node = wrap cache.node
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
-  (data) ->
-    if isWrapped then wrapper path, data, isntModule else data
+  (node) ->
+    if isWrapped then wrapper path, node, isntModule else node
 
 makeCompiler = (realPath, path, cache, linters, compiler, wrap) ->
   (callback) ->
     pipeline realPath, path, linters, compiler, (error, data) =>
-      updateCache cache, error, data, wrap
+      updateCache realPath, cache, error, data, wrap
       return callback error if error?
       callback null, cache.data
 
@@ -90,8 +101,8 @@ module.exports = class SourceFile
     @type = compiler.type
     wrap = makeWrapper wrapper, @path, isWrapped, isntModule
     @source = null
-    @sourceMap = null
     @data = ''
+    @node = null
     @dependencies = []
     @compilationTime = null
     @error = null
