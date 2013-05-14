@@ -4,9 +4,11 @@ initSkeleton = require 'init-skeleton'
 sysPath = require 'path'
 watch = require './watch'
 
-create = (skeleton, path) ->
-  skeleton ?= sysPath.join(__dirname, '..', 'skeletons', 'brunch-with-chaplin')
-  path ?= '.'
+defaultSkeleton = sysPath.join(
+  __dirname, '..', 'skeletons', 'brunch-with-chaplin'
+)
+
+create = (skeleton = defaultSkeleton, path = '.') ->
   initSkeleton skeleton, path
 
 module.exports = {
