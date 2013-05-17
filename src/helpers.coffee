@@ -152,7 +152,7 @@ commonJsWrapper = (addSourceURLs = no) -> (fullPath, fileData, isVendor) ->
   if isVendor
     # Simply execute vendor files.
     if addSourceURLs
-      "Function(#{data}).call(this);\n"
+      "eval(#{data});\n"
     else
       "#{data};\n"
   else
