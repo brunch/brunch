@@ -97,6 +97,7 @@ module.exports = class SourceFile
     Object.seal this
 
   dispose: ->
+    debug "Disposing file '#{@path}'"
     @path = ''
     @data = ''
     @dependencies = []
