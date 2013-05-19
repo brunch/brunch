@@ -87,9 +87,18 @@ module.exports = class SourceFile
     @dependencies = []
     @compilationTime = null
     @error = null
+    @removed = false
+    @disposed = false
     @compile = makeCompiler realPath, @path, this, linters, compiler, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped
     }
     Object.seal this
+
+  dispose: ->
+    @path = ''
+    @data = ''
+    @dependencies = []
+    @disposed = true
+    Object.freeze this

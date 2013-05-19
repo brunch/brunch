@@ -27,7 +27,7 @@ getFiles = (fileList, config, joinConfig) ->
 
 changedSince = (startTime) -> (generated) ->
   generated.sourceFiles.some (sourceFile) ->
-    sourceFile.compilationTime >= startTime
+    sourceFile.compilationTime >= startTime or sourceFile.removed
 
 formatError = (sourceFile) ->
   helpers.formatError sourceFile.error, sourceFile.path
@@ -39,7 +39,18 @@ module.exports = write = (fileList, config, joinConfig, minifiers, startTime, ca
       generated.sourceFiles.filter((_) -> _.error?).map(formatError)
     .reduce(((a, b) -> a.concat b), [])
   return callback errors.join(' ; ') if errors.length > 0  # callback errors
+
   changed = files.filter(changedSince startTime)
+
+  # Remove files marked as such and dispose them, clean memory.
+  changed.forEach (generated) ->
+    sourceFiles = generated.sourceFiles
+    sourceFiles
+      .filter (file) ->
+        file.removed
+      .forEach (file) ->
+        sourceFiles.splice sourceFiles.indexOf(file), 1
+
   gen = (file, next) ->
     generate file.path, file.sourceFiles, config, minifiers, next
   async.forEach changed, gen, (error) ->

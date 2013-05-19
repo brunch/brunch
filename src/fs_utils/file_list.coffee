@@ -61,6 +61,13 @@ module.exports = class FileList extends EventEmitter
   resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout =>
+      # Clean disposed files.
+      @files
+        .filter (file) =>
+          file.disposed
+        .forEach (file, index) =>
+          @files.splice index, 1
+
       if @compiling.length is 0 and @copying.length is 0
         @emit 'ready'
       else
@@ -131,5 +138,5 @@ module.exports = class FileList extends EventEmitter
         @compileDependentFiles path
       else
         file = @find path
-        @files.splice(@files.indexOf(file), 1)
+        file.removed = true
     @resetTimer()
