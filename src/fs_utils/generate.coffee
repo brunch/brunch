@@ -4,6 +4,7 @@ debug = require('debug')('brunch:generate')
 fs = require 'fs'
 sysPath = require 'path'
 common = require './common'
+{SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 sortAlphabetically = (a, b) ->
   if a < b
@@ -102,20 +103,43 @@ sort = (files, config) ->
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
-# New.
-join = (files, path, type, wrapper) ->
-  debug "Joining files '#{files.map((file) -> file.path).join(', ')}' to '#{path}'"
-  joined = files.map((file) -> file.data).join('')
-  if type is 'javascript'
-    wrapper(path, joined) + joined
-  else
-    joined
 
-minify = (data, path, optimizer, isEnabled, callback) ->
+
+# New.
+concat = (files, path, type, wrapper)->
+  # nodes = files.map toNode
+  root = new SourceNode()
+  debug path
+  files.forEach ( file ) ->
+    root.add file.node
+    debug JSON.stringify(file.node)
+    root.setSourceContent file.node.source, file.source
+
+  if type is 'javascript'
+    root = wrapper root
+
+  root.toStringWithSourceMap file:path
+
+minify = (data, smap, path, optimizer, isEnabled, callback) ->
   if isEnabled
-    (optimizer.optimize or optimizer.minify) data, path, callback
+    debug( 'minify '+path)
+    debug( 'minify '+data.length)
+    (optimizer.optimize or optimizer.minify) data, path, ( error, result )->
+      if typeof result isnt 'string' # we have sourcemap
+        {code, map} = result
+        smConsumer = new SourceMapConsumer smap.toJSON()
+        debug smap.toJSON()
+        map = SourceMapGenerator.fromSourceMap new SourceMapConsumer( map )
+        map._sources.add path
+        map._mappings.forEach (mapping)->
+          mapping.source = path
+        debug JSON.stringify( map )
+        map.applySourceMap smConsumer
+        debug JSON.stringify( map )
+        result = code
+      callback error, result, map
   else
-    callback null, data
+    callback null, data, smap
 
 generate = (path, sourceFiles, config, minifiers, callback) ->
   type = if sourceFiles.some((file) -> file.type is 'javascript')
@@ -125,11 +149,19 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
   optimizer = minifiers.filter((minifier) -> minifier.type is type)[0]
 
   sorted = sort sourceFiles, config
-  joined = join sorted, path, type, config._normalized.modules.definition
+  {code, map} = concat sorted, path, type, config._normalized.modules.definition
 
-  minify joined, path, optimizer, config.optimize, (error, data) ->
+
+  minify code, map, path, optimizer, config.optimize, (error, data, map) ->
     return callback error if error?
-    common.writeFile path, data, callback
+
+    if map
+      if type is 'javascript' then data += '\n//@ sourceMappingURL='+ sysPath.basename( path+'.map' )
+      else data += '\n/*@ sourceMappingURL='+ sysPath.basename( path+'.map' )+'*/'
+
+    common.writeFile path, data, ()->
+      if map then common.writeFile path+'.map', map.toString(), callback
+      else callback()
 
 generate.sortByConfig = sortByConfig
 

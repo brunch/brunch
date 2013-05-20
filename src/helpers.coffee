@@ -7,6 +7,8 @@ fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
+{SourceNode} = require 'source-map'
+debug = require('debug')('brunch:helpers')
 
 # Extends the object with properties from another object.
 # Example
@@ -129,6 +131,14 @@ createJoinConfig = (configFiles) ->
     .reduce(listToObj, {})
   Object.freeze(result)
 
+identityNode =
+exports.identityNode = ( code, source )->
+  l=0
+  new SourceNode 1, 0, null, code.split('\n').map( (line)->
+    new SourceNode ++l, 0, source, (line + '\n')
+  )
+
+
 indent = (js) ->
   # Emulate negative regexp look-behind a-la (?<!stuff).
   js.replace /(\\)?\n(?!\n)/g, ($0, $1) ->
@@ -139,29 +149,24 @@ exports.cleanModuleName = cleanModuleName = (path) ->
     .replace(new RegExp('\\\\', 'g'), '/')
     .replace(/^app\//, '')
 
-commonJsWrapper = (addSourceURLs = no) -> (fullPath, fileData, isVendor) ->
+commonJsWrapper = (addSourceURLs = no) -> (fullPath, node, isVendor) ->
   sourceURLPath = cleanModuleName fullPath
-  path = JSON.stringify sourceURLPath.replace /\.\w+$/, ''
+  moduleName = sourceURLPath.replace /\.\w+$/, ''
+  path = JSON.stringify moduleName
 
-  # JSON-stringify data if sourceURL is enabled.
-  data = if addSourceURLs
-    JSON.stringify "#{fileData}\n//@ sourceURL=#{sourceURLPath}"
-  else
-    fileData
 
   if isVendor
-    # Simply execute vendor files.
-    if addSourceURLs
-      "Function(#{data}).call(this);\n"
-    else
-      "#{data};\n"
+    debug 'commonjs wrapping is vendor '
+    node
   else
     # Wrap in common.js require definition.
-    definition = if addSourceURLs
-      "Function('exports, require, module', #{data})"
-    else
-      "function(exports, require, module) {\n  #{indent data}\n}"
-    "window.require.register(#{path}, #{definition});\n"
+    prep = identityNode "window.require.register(#{path}, function(exports, require, module) {\n"
+
+    appe = identityNode "\n});\n"
+
+    pnode = new SourceNode
+    pnode.add [prep, node, appe]
+    pnode
 
 normalizeWrapper = (typeOrFunction, addSourceURLs) ->
   switch typeOrFunction
@@ -187,8 +192,11 @@ normalizeDefinition = (typeOrFunction) ->
     when 'commonjs'
       path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
       data = fs.readFileSync(path).toString()
-      -> data
-    when 'amd', false then -> ''
+      (node)->
+        # store unique node in 'data' instead?
+        node.prepend identityNode(data)
+        node
+    when 'amd', false then -> (node)-> node
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
