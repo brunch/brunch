@@ -103,39 +103,35 @@ sort = (files, config) ->
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
-
-
 # New.
-concat = (files, path, type, wrapper)->
+concat = (files, path, type, wrapper) ->
   # nodes = files.map toNode
   root = new SourceNode()
   debug path
-  files.forEach ( file ) ->
+  files.forEach (file) ->
     root.add file.node
     debug JSON.stringify(file.node)
     root.setSourceContent file.node.source, file.source
 
-  if type is 'javascript'
-    root = wrapper root
-
-  root.toStringWithSourceMap file:path
+  root = wrapper root if type is 'javascript'
+  root.toStringWithSourceMap file: path
 
 minify = (data, smap, path, optimizer, isEnabled, callback) ->
   if isEnabled
-    debug( 'minify '+path)
-    debug( 'minify '+data.length)
-    (optimizer.optimize or optimizer.minify) data, path, ( error, result )->
+    debug 'minify ' + path
+    debug 'minify ' + data.length
+    (optimizer.optimize or optimizer.minify) data, path, (error, result) ->
       if typeof result isnt 'string' # we have sourcemap
         {code, map} = result
         smConsumer = new SourceMapConsumer smap.toJSON()
         debug smap.toJSON()
-        map = SourceMapGenerator.fromSourceMap new SourceMapConsumer( map )
+        map = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
         map._sources.add path
-        map._mappings.forEach (mapping)->
+        map._mappings.forEach (mapping) ->
           mapping.source = path
-        debug JSON.stringify( map )
+        debug JSON.stringify map
         map.applySourceMap smConsumer
-        debug JSON.stringify( map )
+        debug JSON.stringify map
         result = code
       callback error, result, map
   else
@@ -156,13 +152,17 @@ generate = (path, sourceFiles, config, minifiers, callback) ->
     return callback error if error?
 
     if map
-      if type is 'javascript' then data += '\n//@ sourceMappingURL='+ sysPath.basename( path+'.map' )
-      else data += '\n/*@ sourceMappingURL='+ sysPath.basename( path+'.map' )+'*/'
+      base = sysPath.basename "#{path}.map"
+      if type is 'javascript'
+        data += "\n//@ sourceMappingURL=#{base}"
+      else
+        data += "\n/*@ sourceMappingURL=#{base}*/"
 
-    common.writeFile path, data, ()->
-      if map then common.writeFile path+'.map', map.toString(), callback
-      else callback()
+    common.writeFile path, data, ->
+      if map
+        common.writeFile "#{path}.map", map.toString(), callback
+      else
+        callback()
 
 generate.sortByConfig = sortByConfig
-
 module.exports = generate

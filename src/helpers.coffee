@@ -132,12 +132,9 @@ createJoinConfig = (configFiles) ->
   Object.freeze(result)
 
 identityNode =
-exports.identityNode = ( code, source )->
-  l=0
-  new SourceNode 1, 0, null, code.split('\n').map( (line)->
-    new SourceNode ++l, 0, source, (line + '\n')
-  )
-
+exports.identityNode = (code, source) ->
+  new SourceNode 1, 0, null, code.split('\n').map (line, index) ->
+    new SourceNode index + 1, 0, source, (line + '\n')
 
 indent = (js) ->
   # Emulate negative regexp look-behind a-la (?<!stuff).
@@ -154,14 +151,12 @@ commonJsWrapper = (addSourceURLs = no) -> (fullPath, node, isVendor) ->
   moduleName = sourceURLPath.replace /\.\w+$/, ''
   path = JSON.stringify moduleName
 
-
   if isVendor
     debug 'commonjs wrapping is vendor '
     node
   else
     # Wrap in common.js require definition.
     prep = identityNode "window.require.register(#{path}, function(exports, require, module) {\n"
-
     appe = identityNode "\n});\n"
 
     pnode = new SourceNode
@@ -192,11 +187,11 @@ normalizeDefinition = (typeOrFunction) ->
     when 'commonjs'
       path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
       data = fs.readFileSync(path).toString()
-      (node)->
+      (node) ->
         # store unique node in 'data' instead?
         node.prepend identityNode(data)
         node
-    when 'amd', false then -> (node)-> node
+    when 'amd', false then -> (node) -> node
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
