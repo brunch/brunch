@@ -71,11 +71,11 @@ updateCache = (realPath, cache, error, result, wrap) ->
 
     cache.node.source = realPath
     cache.node.setSourceContent realPath, source
-    
+
     wrapped = wrap compiled
     sourcePos = wrapped.indexOf compiled
     if sourcePos > 0
-      cache.node.prepend wrapped.slice 0, sourcePos - 1
+      cache.node.prepend wrapped.slice 0, sourcePos
       cache.node.add wrapped.slice sourcePos + compiled.length
 
   cache
