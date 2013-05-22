@@ -15,7 +15,7 @@ startsWith = (string, substring) ->
 module.exports = class FileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
-  RESET_TIME: 65
+  RESET_TIME: 165
 
   constructor: (@config) ->
     @files = []
@@ -23,6 +23,7 @@ module.exports = class FileList extends EventEmitter
     @on 'change', @_change
     @on 'unlink', @_unlink
     @compiling = []
+    @compiled = []
     @copying = []
 
   getAssetErrors: ->
@@ -70,6 +71,7 @@ module.exports = class FileList extends EventEmitter
 
       if @compiling.length is 0 and @copying.length is 0
         @emit 'ready'
+        @compiled = []
       else
         @resetTimer()
     , @RESET_TIME
@@ -86,16 +88,22 @@ module.exports = class FileList extends EventEmitter
         dependent.dependencies.length > 0
       .filter (dependent) =>
         path in dependent.dependencies
+      .filter (dependent) =>
+        dependent not in @compiled
       .forEach(@compile)
 
   compile: (file) =>
-    @compiling.push(file)
-    file.compile (error) =>
-      @compiling.splice @compiling.indexOf(file), 1
+    if @compiling.indexOf(file) == -1
+      @compiling.push(file)
+      file.compile (error) =>
+        @compiling.splice @compiling.indexOf(file), 1
+        @resetTimer()
+        return if error?
+        debug "Compiled file '#{file.path}'..."
+        @compiled.push file
+        @compileDependentFiles file.path
+    else
       @resetTimer()
-      return if error?
-      debug "Compiled file '#{file.path}'"
-      @compileDependentFiles file.path
 
   copy: (asset) =>
     @copying.push asset
