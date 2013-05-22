@@ -71,7 +71,13 @@ updateCache = (realPath, cache, error, result, wrap) ->
 
     cache.node.source = realPath
     cache.node.setSourceContent realPath, source
-    cache.node = wrap cache.node
+    
+    wrapped = wrap compiled
+    sourcePos = wrapped.indexOf compiled
+    if sourcePos > 0
+      cache.node.prepend wrapped.slice 0, sourcePos - 1
+      cache.node.add wrapped.slice sourcePos + compiled.length
+
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
