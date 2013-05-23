@@ -118,20 +118,15 @@ concat = (files, path, type, definition) ->
 
 minify = (data, smap, path, optimizer, isEnabled, callback) ->
   if isEnabled
-    debug 'minify ' + path
-    debug 'minify ' + data.length
     (optimizer.optimize or optimizer.minify) data, path, (error, result) ->
       if typeof result isnt 'string' # we have sourcemap
         {code, map} = result
         smConsumer = new SourceMapConsumer smap.toJSON()
-        debug smap.toJSON()
         map = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
         map._sources.add path
         map._mappings.forEach (mapping) ->
           mapping.source = path
-        debug JSON.stringify map
         map.applySourceMap smConsumer
-        debug JSON.stringify map
         result = code
       callback error, result, map
   else

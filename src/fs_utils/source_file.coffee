@@ -46,7 +46,7 @@ pipeline = (realPath, path, linters, compiler, callback) ->
         # compiler is able to produce sourceMap
         if typeof compiledData is 'object'
           sourceMap = compiledData.map
-          compiled = compiledData.compiled
+          compiled = compiledData.code
         else
           compiled = compiledData
         getDependencies source, path, compiler, (error, dependencies) =>
