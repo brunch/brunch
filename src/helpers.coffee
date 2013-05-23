@@ -181,11 +181,8 @@ normalizeDefinition = (typeOrFunction) ->
     when 'commonjs'
       path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
       data = fs.readFileSync(path).toString()
-      (node) ->
-        # store unique node in 'data' instead?
-        node.prepend identityNode(data)
-        node
-    when 'amd', false then (node) -> node
+      -> data
+    when 'amd', false then -> ''
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
