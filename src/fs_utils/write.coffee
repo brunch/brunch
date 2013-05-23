@@ -32,7 +32,7 @@ changedSince = (startTime) -> (generated) ->
 formatError = (sourceFile) ->
   helpers.formatError sourceFile.error, sourceFile.path
 
-module.exports = write = (fileList, config, joinConfig, minifiers, startTime, callback) ->
+module.exports = write = (fileList, config, joinConfig, optimizers, startTime, callback) ->
   files = getFiles fileList, config, joinConfig
   errors = files
     .map (generated) ->
@@ -52,7 +52,7 @@ module.exports = write = (fileList, config, joinConfig, minifiers, startTime, ca
         sourceFiles.splice sourceFiles.indexOf(file), 1
 
   gen = (file, next) ->
-    generate file.path, file.sourceFiles, config, minifiers, next
+    generate file.path, file.sourceFiles, config, optimizers, next
   async.forEach changed, gen, (error) ->
     return callback error if error?
     callback null, changed

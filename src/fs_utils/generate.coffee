@@ -116,7 +116,7 @@ concat = (files, path, type, definition) ->
   root.prepend definition() if type is 'javascript'
   root.toStringWithSourceMap file: path
 
-minify = (data, smap, path, optimizer, isEnabled, callback) ->
+optimize = (data, smap, path, optimizer, isEnabled, callback) ->
   if isEnabled
     (optimizer.optimize or optimizer.minify) data, path, (error, result) ->
       if typeof result isnt 'string' # we have sourcemap
@@ -132,18 +132,18 @@ minify = (data, smap, path, optimizer, isEnabled, callback) ->
   else
     callback null, data, smap
 
-generate = (path, sourceFiles, config, minifiers, callback) ->
+generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type is 'javascript')
     'javascript'
   else
     'stylesheet'
-  optimizer = minifiers.filter((minifier) -> minifier.type is type)[0]
+  optimizer = optimizers.filter((optimizer) -> optimizer.type is type)[0]
 
   sorted = sort sourceFiles, config
   {code, map} = concat sorted, path, type, config._normalized.modules.definition
 
 
-  minify code, map, path, optimizer, config.optimize, (error, data, map) ->
+  optimize code, map, path, optimizer, config.optimize, (error, data, map) ->
     return callback error if error?
 
     if map

@@ -133,13 +133,13 @@ changeFileList = (compilers, linters, fileList, path, isHelper) ->
 # config     - Object. Application config.
 # joinConfig - Object. Generated from app config by `getJoinConfig()`
 # fileList   - `fs_utils.FileList` instance.
-# minifiers  - Array. Brunch plugins that are treated as minifiers.
+# optimizers  - Array. Brunch plugins that are treated as optimizers.
 # watcher    - `chokidar.FSWatcher` instance.
 # callback   - Function. Will receive an array of `fs_utils.GeneratedFile`.
 # startTime  - Number. Timestamp of a moment when compilation started.
 #
 # Returns Function.
-getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (startTime) ->
+getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> (startTime) ->
   assetErrors = fileList.getAssetErrors()
   if assetErrors?
     assetErrors.forEach (error) -> logger.error error
@@ -147,7 +147,7 @@ getCompileFn = (config, joinConfig, fileList, minifiers, watcher, callback) -> (
 
   # Determine which files has been changed,
   # create new `fs_utils.GeneratedFile` instances and write them.
-  fs_utils.write fileList, config, joinConfig, minifiers, startTime, (error, generatedFiles) ->
+  fs_utils.write fileList, config, joinConfig, optimizers, startTime, (error, generatedFiles) ->
     if error?
       if Array.isArray error
         error.forEach (subError) ->
@@ -234,7 +234,7 @@ loadPackages = (rootPath, callback) ->
 
 # Load brunch plugins, group them and initialise file watcher.
 #
-# options      - Object. {config[, minify, server, port]}.
+# options      - Object. {config[, optimize, server, port]}.
 # configParams - Object. Optional. Params will be set as default config params.
 # onCompile    - Function. Will be executed after every successful compilation.
 # callback     - Function.
@@ -251,7 +251,7 @@ initialize = (options, configParams, onCompile, callback) ->
   # Get compilation methods.
   compilers  = plugins.filter(propIsFunction 'compile')
   linters    = plugins.filter(propIsFunction 'lint')
-  minifiers  = plugins.filter(propIsFunction 'optimize').concat(
+  optimizers = plugins.filter(propIsFunction 'optimize').concat(
     plugins.filter(propIsFunction 'minify')
   )
   callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
@@ -273,7 +273,7 @@ initialize = (options, configParams, onCompile, callback) ->
   initWatcher config, (error, watcher) ->
     return callback error if error?
     # Get compile and reload functions.
-    compile = getCompileFn config, joinConfig, fileList, minifiers, watcher, callCompileCallbacks
+    compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
     reload = getReloadFn config, options, onCompile, watcher, server, plugins
     callback error, {
       config, watcher, server, fileList, compilers, linters, compile, reload
@@ -332,7 +332,7 @@ Exiting."
         fileList.emit 'unlink', path
 
 # persistent - Boolean: should brunch build the app only once or watch it?
-# options    - Object: {configPath, minify, server, port}. Only configPath is
+# options    - Object: {configPath, optimize, server, port}. Only configPath is
 #              needed.
 # onCompile  - Function that will be executed after every successful
 #              compilation. May receive an array of `fs_utils.GeneratedFile`.
