@@ -89,7 +89,7 @@ module.exports = class FileList extends EventEmitter
       .filter (dependent) =>
         path in dependent.dependencies
       .filter (dependent) =>
-        @compiled[dependent.path]
+        not @compiled[dependent.path]
       .forEach(@compile)
 
   compile: (file) =>
