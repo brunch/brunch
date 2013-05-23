@@ -45,8 +45,8 @@ pipeline = (realPath, path, linters, compiler, callback) ->
         return callbackError 'Compiling', error if error?
         # compiler is able to produce sourceMap
         if typeof compiledData is 'object'
-          sourceMap = compiled.map
-          compiled = compiled.compiled
+          sourceMap = compiledData.map
+          compiled = compiledData.compiled
         else
           compiled = compiledData
         getDependencies source, path, compiler, (error, dependencies) =>
