@@ -25,6 +25,7 @@ module.exports = class FileList extends EventEmitter
     @compiling = {}
     @compiled = {}
     @copying = {}
+    @initial = yes
 
   getAssetErrors: ->
     invalidAssets = @assets.filter((asset) -> asset.error?)
@@ -82,14 +83,15 @@ module.exports = class FileList extends EventEmitter
   findAsset: (path) ->
     @assets.filter((file) -> file.path is path)[0]
 
-  compileDependentFiles: (path) ->
+  compileDependencyParents: (path) ->
+    debug "Compiling dependency '#{path}' parent(s)"
     @files
       .filter (dependent) =>
         dependent.dependencies.length > 0
       .filter (dependent) =>
         path in dependent.dependencies
       .filter (dependent) =>
-        @compiled[dependent.path]
+        !@compiled[dependent.path]
       .forEach(@compile)
 
   compile: (file) =>
@@ -104,7 +106,6 @@ module.exports = class FileList extends EventEmitter
         return if error?
         debug "Compiled file '#{path}'..."
         @compiled[path] = true
-        @compileDependentFiles path
 
   copy: (asset) =>
     path = asset.path
@@ -134,7 +135,7 @@ module.exports = class FileList extends EventEmitter
         @copy (@findAsset(path) ? @_addAsset path)
     else
       if ignored or not compiler
-        @compileDependentFiles path
+        @compileDependencyParents path unless @initial
       else
         @compile (@find(path) ? @_add path, compiler, linters, isHelper)
 
@@ -145,7 +146,7 @@ module.exports = class FileList extends EventEmitter
         @assets.splice(@assets.indexOf(path), 1)
     else
       if ignored
-        @compileDependentFiles path
+        @compileDependencyParents path
       else
         file = @find path
         file.removed = true

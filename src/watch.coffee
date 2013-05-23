@@ -164,6 +164,8 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
 
+    fileList.initial = no
+
     return if error?
     # Just pass `fs_utils.GeneratedFile` instances to callbacks.
     callback generatedFiles
