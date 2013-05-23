@@ -22,9 +22,9 @@ module.exports = class FileList extends EventEmitter
     @assets = []
     @on 'change', @_change
     @on 'unlink', @_unlink
-    @compiling = []
-    @compiled = []
-    @copying = []
+    @compiling = {}
+    @compiled = {}
+    @copying = {}
 
   getAssetErrors: ->
     invalidAssets = @assets.filter((asset) -> asset.error?)
@@ -69,9 +69,9 @@ module.exports = class FileList extends EventEmitter
         .forEach (file, index) =>
           @files.splice index, 1
 
-      if @compiling.length is 0 and @copying.length is 0
+      if Object.keys(@compiling).length is 0 and Object.keys(@copying).length is 0
         @emit 'ready'
-        @compiled = []
+        @compiled = {}
       else
         @resetTimer()
     , @RESET_TIME
@@ -89,29 +89,31 @@ module.exports = class FileList extends EventEmitter
       .filter (dependent) =>
         path in dependent.dependencies
       .filter (dependent) =>
-        dependent not in @compiled
+        @compiled[dependent.path]
       .forEach(@compile)
 
   compile: (file) =>
-    if @compiling.indexOf(file) == -1
-      @compiling.push(file)
+    path = file.path
+    if @compiling[path]
+      @resetTimer()
+    else
+      @compiling[path] = true
       file.compile (error) =>
-        @compiling.splice @compiling.indexOf(file), 1
+        delete @compiling[path]
         @resetTimer()
         return if error?
-        debug "Compiled file '#{file.path}'..."
-        @compiled.push file
-        @compileDependentFiles file.path
-    else
-      @resetTimer()
+        debug "Compiled file '#{path}'..."
+        @compiled[path] = true
+        @compileDependentFiles path
 
   copy: (asset) =>
-    @copying.push asset
+    path = asset.path
+    @copying[path] = true
     asset.copy (error) =>
-      @copying.splice @copying.indexOf(asset), 1
+      delete @copying[path]
       @resetTimer()
       return if error?
-      debug "Copied asset '#{asset.path}'"
+      debug "Copied asset '#{path}'"
 
   _add: (path, compiler, linters, isHelper) ->
     isVendor = @is 'vendor', path
