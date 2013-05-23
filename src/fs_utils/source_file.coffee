@@ -41,12 +41,14 @@ pipeline = (realPath, path, linters, compiler, callback) ->
         logger.warn "Linting of #{path}: #{error}"
       else
         return callbackError 'Linting', error if error?
-      compiler.compile source, path, (error, compiled) =>
+      compiler.compile source, path, (error, compiledData) =>
         return callbackError 'Compiling', error if error?
         # compiler is able to produce sourceMap
-        if typeof compiled isnt 'string'
-            sourceMap = compiled.map
-            compiled = compiled.compiled
+        if typeof compiledData is 'object'
+          sourceMap = compiled.map
+          compiled = compiled.compiled
+        else
+          compiled = compiledData
         getDependencies source, path, compiler, (error, dependencies) =>
           return callbackError 'Dependency parsing', error if error?
           callback null, {dependencies, compiled, source, sourceMap}
@@ -62,15 +64,20 @@ updateCache = (realPath, cache, error, result, wrap) ->
     cache.compilationTime = Date.now()
     debug JSON.stringify( sourceMap)
     cache.node = if sourceMap?
-      SourceNode.fromStringWithSourceMap \
-        compiled,
-        new SourceMapConsumer sourceMap
+      map = new SourceMapConsumer sourceMap
+      SourceNode.fromStringWithSourceMap compiled, map
     else
       nodeFactory compiled, realPath
 
     cache.node.source = realPath
     cache.node.setSourceContent realPath, source
-    cache.node = wrap cache.node
+
+    wrapped = wrap compiled
+    sourcePos = wrapped.indexOf compiled
+    if sourcePos > 0
+      cache.node.prepend wrapped.slice 0, sourcePos
+      cache.node.add wrapped.slice sourcePos + compiled.length
+
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
@@ -106,9 +113,19 @@ module.exports = class SourceFile
     @dependencies = []
     @compilationTime = null
     @error = null
+    @removed = false
+    @disposed = false
     @compile = makeCompiler realPath, @path, this, linters, compiler, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped
     }
     Object.seal this
+
+  dispose: ->
+    debug "Disposing file '#{@path}'"
+    @path = ''
+    @data = ''
+    @dependencies = []
+    @disposed = true
+    Object.freeze this

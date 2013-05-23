@@ -132,41 +132,30 @@ createJoinConfig = (configFiles) ->
   Object.freeze(result)
 
 identityNode =
-exports.identityNode = ( code, source )->
-  l=0
-  new SourceNode 1, 0, null, code.split('\n').map( (line)->
-    new SourceNode ++l, 0, source, (line + '\n')
-  )
-
-
-indent = (js) ->
-  # Emulate negative regexp look-behind a-la (?<!stuff).
-  js.replace /(\\)?\n(?!\n)/g, ($0, $1) ->
-    if $1 then $0 else '\n  '
+exports.identityNode = (code, source) ->
+  new SourceNode 1, 0, null, code.split('\n').map (line, index) ->
+    new SourceNode index + 1, 0, source, (line + '\n')
 
 exports.cleanModuleName = cleanModuleName = (path) ->
   path
     .replace(new RegExp('\\\\', 'g'), '/')
     .replace(/^app\//, '')
 
-commonJsWrapper = (addSourceURLs = no) -> (fullPath, node, isVendor) ->
+commonJsWrapper = (addSourceURLs = no) -> (fullPath, data, isVendor) ->
   sourceURLPath = cleanModuleName fullPath
   moduleName = sourceURLPath.replace /\.\w+$/, ''
   path = JSON.stringify moduleName
 
-
   if isVendor
     debug 'commonjs wrapping is vendor '
-    node
+    data
   else
     # Wrap in common.js require definition.
-    prep = identityNode "window.require.register(#{path}, function(exports, require, module) {\n"
-
-    appe = identityNode "\n});\n"
-
-    pnode = new SourceNode
-    pnode.add [prep, node, appe]
-    pnode
+    """
+window.require.register(#{path}, function(exports, require, module) {
+#{data}
+});
+"""
 
 normalizeWrapper = (typeOrFunction, addSourceURLs) ->
   switch typeOrFunction
@@ -176,10 +165,10 @@ normalizeWrapper = (typeOrFunction, addSourceURLs) ->
         path = cleanModuleName fullPath
         """
 define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
-  #{indent data}
+#{data}
 });
 """
-    when false then (path, data) -> "#{data}"
+    when false then (path, data) -> data
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction
@@ -192,11 +181,8 @@ normalizeDefinition = (typeOrFunction) ->
     when 'commonjs'
       path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
       data = fs.readFileSync(path).toString()
-      (node)->
-        # store unique node in 'data' instead?
-        node.prepend identityNode(data)
-        node
-    when 'amd', false then -> (node)-> node
+      -> data
+    when 'amd', false then -> ''
     else
       if typeof typeOrFunction is 'function'
         typeOrFunction

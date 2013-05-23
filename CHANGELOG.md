@@ -1,3 +1,6 @@
+# Brunch 1.7.0 (unreleased)
+* Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers).
+
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`
 
