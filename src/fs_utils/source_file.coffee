@@ -62,7 +62,8 @@ updateCache = (realPath, cache, error, result, wrap) ->
     cache.dependencies = dependencies
     cache.source = source
     cache.compilationTime = Date.now()
-    debug JSON.stringify( sourceMap)
+    if sourceMap
+      debug "Generated source map for '#{realPath}': " + JSON.stringify sourceMap
     cache.node = if sourceMap?
       map = new SourceMapConsumer sourceMap
       SourceNode.fromStringWithSourceMap compiled, map
