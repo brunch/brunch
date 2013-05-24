@@ -25,7 +25,7 @@ module.exports = class FileList extends EventEmitter
     @compiling = {}
     @compiled = {}
     @copying = {}
-    @initial = yes
+    @initial = true
 
   getAssetErrors: ->
     invalidAssets = @assets.filter((asset) -> asset.error?)
@@ -37,7 +37,7 @@ module.exports = class FileList extends EventEmitter
 
   # Files that are not really app files.
   isIgnored: (path, test = @config.conventions.ignored) ->
-    return yes if path in [@config.paths.config, @config.paths.packageConfig]
+    return true if path in [@config.paths.config, @config.paths.packageConfig]
 
     switch toString.call(test)
       when '[object RegExp]'
@@ -49,11 +49,11 @@ module.exports = class FileList extends EventEmitter
       when '[object Array]'
         test.some((subTest) => @isIgnored path, subTest)
       else
-        no
+        false
 
   is: (name, path) ->
     convention = @config._normalized.conventions[name]
-    return no unless convention
+    return false unless convention
     if typeof convention isnt 'function'
       throw new TypeError "Invalid convention #{convention}"
     convention path

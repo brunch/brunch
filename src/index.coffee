@@ -13,6 +13,6 @@ create = (skeleton = defaultSkeleton, path = '.') ->
 
 module.exports = {
   new: create
-  build: watch.bind(null, no)
-  watch: watch.bind(null, yes)
+  build: watch.bind(null, false)
+  watch: watch.bind(null, true)
 }

@@ -75,7 +75,7 @@ exports.copy = (source, destination, callback) ->
 # callback    - Function.
 #
 # Returns nothing.
-exports.copyIfExists = (source, destination, filter = yes, callback) ->
+exports.copyIfExists = (source, destination, filter = true, callback) ->
   options = stopOnError: true
   options.filter = if filter
     (path) -> not ignored path
