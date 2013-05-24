@@ -1,5 +1,9 @@
 # Brunch 1.7.0 (unreleased)
-* Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers).
+* Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [es128](https://github.com/es128).
+* Removed files are now actually removed from compiled output.
+* Improved compilation performance.
+* Removed `addSourceURLs` directive. Use source maps instead.
+* Improved error messages when there’s a need in `npm install`.
 
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`
