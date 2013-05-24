@@ -219,12 +219,12 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.vendor  ?= /vendor(\/|\\)/
 
   config.notifications ?= on
+  config.sourceMaps   ?= yes
   config.optimize     ?= no
 
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
-  modules.addSourceURLs ?= no
 
   config.server       ?= {}
   config.server.base  ?= ''
