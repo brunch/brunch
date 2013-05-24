@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.6.7",
+  "version": "1.7.0-pre",
   "keywords": [
     "assembler",
     "builder",
