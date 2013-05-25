@@ -77,6 +77,6 @@
   globals.require.define = define;
   globals.require.register = define;
   globals.require.brunch = true;
-  globals.require.modules = modules;
+  globals.require.cache = modules;
 })();
 
