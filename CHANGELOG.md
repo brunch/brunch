@@ -1,5 +1,6 @@
 # Brunch 1.7.0 (unreleased)
 * Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [es128](https://github.com/es128).
+* Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
 * Removed files are now actually removed from compiled output.
 * Improved compilation performance.
 * Removed `addSourceURLs` directive. Use source maps instead.
