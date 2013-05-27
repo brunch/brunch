@@ -211,7 +211,7 @@ loadPackages = (rootPath, callback) ->
     delete require.cache[require.resolve packagePath]
     json = require packagePath
   catch err
-    return callback "Current directory is not brunch application root path,
+    throw new Error "Current directory is not brunch application root path,
  as it does not contain package.json (#{err})"
   # TODO: test if `brunch-plugin` is in dep’s package.json.
   loadDeps = (deps, isDev) ->
