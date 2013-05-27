@@ -149,5 +149,5 @@ module.exports = class FileList extends EventEmitter
         @compileDependencyParents path
       else
         file = @find path
-        file.removed = true
+        file.removed = true if file and not file.disposed
     @resetTimer()
