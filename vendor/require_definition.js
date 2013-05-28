@@ -1,7 +1,14 @@
 (function(/*! Brunch !*/) {
   'use strict';
 
-  var globals = typeof window !== 'undefined' ? window : global;
+  var globals = {}
+  if (typeof window === 'undefined') {
+    globals = global;
+  } else if (typeof window.globals !== 'undefined') {
+    globals = window.globals;
+  } else {
+    window.globals = globals;
+  }
   if (typeof globals.require === 'function') return;
 
   var modules = {};
