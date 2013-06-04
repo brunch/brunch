@@ -154,7 +154,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
         data += "\n/*@ sourceMappingURL=#{base}*/"
 
     common.writeFile path, data, ->
-      if map and config.modules.sourceMaps
+      if map and config.sourceMaps
         common.writeFile "#{path}.map", map.toString(), callback
       else
         callback()
