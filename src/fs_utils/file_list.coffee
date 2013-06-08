@@ -15,7 +15,7 @@ startsWith = (string, substring) ->
 module.exports = class FileList extends EventEmitter
   # Maximum time between changes of two files that will be considered
   # as a one compilation.
-  RESET_TIME: 65
+  resetTime: 65
 
   constructor: (@config) ->
     @files = []
@@ -26,6 +26,8 @@ module.exports = class FileList extends EventEmitter
     @compiled = {}
     @copying = {}
     @initial = true
+    interval = @config.fileListInterval
+    @resetTime = interval if typeof interval is 'number'
 
   getAssetErrors: ->
     invalidAssets = @assets.filter((asset) -> asset.error?)
@@ -59,7 +61,7 @@ module.exports = class FileList extends EventEmitter
     convention path
 
   # Called every time any file was changed.
-  # Emits `ready` event after `RESET_TIME`.
+  # Emits `ready` event after `resetTime`.
   resetTimer: =>
     clearTimeout @timer if @timer?
     @timer = setTimeout =>
@@ -75,7 +77,7 @@ module.exports = class FileList extends EventEmitter
         @compiled = {}
       else
         @resetTimer()
-    , @RESET_TIME
+    , @resetTime
 
   find: (path) ->
     @files.filter((file) -> file.path is path)[0]

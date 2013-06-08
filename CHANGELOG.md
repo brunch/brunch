@@ -5,6 +5,9 @@
 * Improved compilation performance.
 * Removed `addSourceURLs` directive. Use source maps instead.
 * Improved error messages when there’s a need in `npm install`.
+* Added `config.fileListInterval` config prop that allows to set an
+  interval in ms which determines how often brunch file list
+  should be checked for new files (internal and usually not needed prop).
 
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`
