@@ -27,7 +27,7 @@ getDependencies = (data, path, compiler, callback) ->
 pipeline = (realPath, path, linters, compiler, callback) ->
   callbackError = (type, stringOrError) =>
     string = if stringOrError instanceof Error
-      stringOrError.toString().slice(7)
+      stringOrError.toString().replace /^([^:]+:\s+)/, ''
     else
       stringOrError
     error = new Error string
