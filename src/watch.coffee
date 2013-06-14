@@ -1,6 +1,6 @@
 'use strict'
 
-async = require 'async'
+each = require 'async-each'
 chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
@@ -85,7 +85,12 @@ initWatcher = (config, callback) ->
   Object.keys(require.extensions).forEach (ext) ->
     watched.push config.paths.config + ext
 
-  async.filter watched, fs_utils.exists, (watchedFiles) ->
+  exists = (path, callback) ->
+    fs_utils.exists path, (value) ->
+      callback undefined, value
+
+  each watched, exists, (err, existing) ->
+    watchedFiles = watched.filter((_, index) -> existing[index])
     watcher = chokidar.watch watchedFiles,
       ignored: fs_utils.ignored,
       persistent: config.persistent

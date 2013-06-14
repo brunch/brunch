@@ -1,6 +1,6 @@
 'use strict'
 
-async = require 'async'
+each = require 'async-each'
 debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
@@ -13,7 +13,7 @@ lint = (data, path, linters, callback) ->
   if linters.length is 0
     callback null
   else
-    async.forEach linters, (linter, callback) ->
+    each linters, (linter, callback) ->
       linter.lint data, path, callback
     , callback
 

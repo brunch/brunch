@@ -1,6 +1,6 @@
 'use strict'
 
-async = require 'async'
+each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
 helpers = require '../helpers'
@@ -53,6 +53,6 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
 
   gen = (file, next) ->
     generate file.path, file.sourceFiles, config, optimizers, next
-  async.forEach changed, gen, (error) ->
+  each changed, gen, (error) ->
     return callback error if error?
     callback null, changed
