@@ -80,6 +80,7 @@ initWatcher = (config, callback) ->
     config.paths.vendor, config.paths.assets,
     config.paths.config, config.paths.packageConfig
   ]
+  watched = watched.concat.apply watched, config._normalized.components.map (_) -> _.files
 
   Object.keys(require.extensions).forEach (ext) ->
     watched.push config.paths.config + ext
@@ -246,40 +247,40 @@ initialize = (options, configParams, onCompile, callback) ->
   packages = loadPackages '.'
 
   # Load config, get brunch packages from package.json.
-  config     = helpers.loadConfig options.config, configParams
-  joinConfig = config._normalized.join
-  plugins    = getPlugins packages, config
+  helpers.loadConfig options.config, configParams, (error, config) ->
+    joinConfig = config._normalized.join
+    plugins    = getPlugins packages, config
 
-  # Get compilation methods.
-  compilers  = plugins.filter(propIsFunction 'compile')
-  linters    = plugins.filter(propIsFunction 'lint')
-  optimizers = plugins.filter(propIsFunction 'optimize').concat(
-    plugins.filter(propIsFunction 'minify')
-  )
-  callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
+    # Get compilation methods.
+    compilers  = plugins.filter(propIsFunction 'compile')
+    linters    = plugins.filter(propIsFunction 'lint')
+    optimizers = plugins.filter(propIsFunction 'optimize').concat(
+      plugins.filter(propIsFunction 'minify')
+    )
+    callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
-  # Add default brunch callback.
-  callbacks.push onCompile
-  callCompileCallbacks = (generatedFiles) ->
-    callbacks.forEach (callback) ->
-      callback generatedFiles
-  fileList   = new fs_utils.FileList config
-  if config.persistent and config.server.run
-    server   = startServer config
+    # Add default brunch callback.
+    callbacks.push onCompile
+    callCompileCallbacks = (generatedFiles) ->
+      callbacks.forEach (callback) ->
+        callback generatedFiles
+    fileList   = new fs_utils.FileList config
+    if config.persistent and config.server.run
+      server   = startServer config
 
-  # Emit `change` event for each file that is included with plugins.
-  getPluginIncludes(plugins).forEach (path) ->
-    changeFileList compilers, linters, fileList, path, true
+    # Emit `change` event for each file that is included with plugins.
+    getPluginIncludes(plugins).forEach (path) ->
+      changeFileList compilers, linters, fileList, path, true
 
-  # Initialise file watcher.
-  initWatcher config, (error, watcher) ->
-    return callback error if error?
-    # Get compile and reload functions.
-    compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
-    reload = getReloadFn config, options, onCompile, watcher, server, plugins
-    callback error, {
-      config, watcher, server, fileList, compilers, linters, compile, reload
-    }
+    # Initialise file watcher.
+    initWatcher config, (error, watcher) ->
+      return callback error if error?
+      # Get compile and reload functions.
+      compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
+      reload = getReloadFn config, options, onCompile, watcher, server, plugins
+      callback error, {
+        config, watcher, server, fileList, compilers, linters, compile, reload
+      }
 
 isConfigFile = (basename, configPath) ->
   files = Object.keys(require.extensions).map (_) -> configPath + _

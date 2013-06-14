@@ -58,6 +58,18 @@ sortByBefore = (config, a, b) ->
   else
     sortByAfter config, a, b
 
+sortComponents = (config, a, b) ->
+  aLevel = config.componentMapping[a]
+  bLevel = config.componentMapping[b]
+  if aLevel? and not bLevel?
+    -1
+  else if not aLevel? and bLevel?
+    1
+  else if aLevel? and bLevel?
+    bLevel - aLevel
+  else
+    sortByBefore config, a, b
+
 # Sorts by pattern.
 #
 # Examples
@@ -73,7 +85,8 @@ sortByConfig = (files, config) ->
       before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
-    files.slice().sort (a, b) -> sortByBefore cfg, a, b
+      componentMapping: config.componentMapping
+    files.slice().sort (a, b) -> sortComponents cfg, a, b
   else
     files
 
@@ -93,7 +106,7 @@ extractOrder = (files, config) ->
   before = flatten orders.map (type) -> (type.before ? [])
   after = flatten orders.map (type) -> (type.after ? [])
   vendorConvention = config._normalized.conventions.vendor
-  {before, after, vendorConvention}
+  {before, after, vendorConvention, componentMapping: config._normalized.componentsFilesMap}
 
 sort = (files, config) ->
   paths = files.map (file) -> file.path
@@ -107,7 +120,7 @@ sort = (files, config) ->
 concat = (files, path, type, definition) ->
   # nodes = files.map toNode
   root = new SourceNode()
-  debug path
+  debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
   files.forEach (file) ->
     root.add file.node
     #debug JSON.stringify(file.node)
@@ -140,6 +153,8 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   optimizer = optimizers.filter((optimizer) -> optimizer.type is type)[0]
 
   sorted = sort sourceFiles, config
+  console.log 'sorted', sorted.map (_) -> _.path
+
   {code, map} = concat sorted, path, type, config._normalized.modules.definition
 
   withMaps = (map and config.sourceMaps)

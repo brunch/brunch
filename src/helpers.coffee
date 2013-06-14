@@ -8,6 +8,7 @@ os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
 {SourceNode} = require 'source-map'
+getComponentPaths = require 'read-components'
 debug = require('debug')('brunch:helpers')
 
 # Extends the object with properties from another object.
@@ -212,11 +213,11 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   paths.packageConfig ?= joinRoot 'package.json'
 
   conventions          = config.conventions  ?= {}
-  conventions.assets  ?= /assets(\/|\\)/
+  conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? (path) ->
     sysPath.basename(path)[0] is '_'
   conventions.tests   ?= /[-_]test\.\w+$/
-  conventions.vendor  ?= /vendor(\/|\\)/
+  conventions.vendor  ?= /(components|vendor)[\\/]/
 
   config.notifications ?= true
   config.sourceMaps   ?= true
@@ -262,10 +263,10 @@ normalizeConfig = (config) ->
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
     normalized.conventions[name] = normalizeChecker config.conventions[name]
-  config._normalized = Object.freeze normalized
+  config._normalized = normalized
   config
 
-exports.loadConfig = (configPath = 'config', options = {}) ->
+exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   fullPath = require.resolve sysPath.resolve configPath
   delete require.cache[fullPath]
   try
@@ -280,5 +281,11 @@ exports.loadConfig = (configPath = 'config', options = {}) ->
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
-  deepFreeze config
-  config
+  getComponentPaths '.', (error, components) ->
+    config._normalized.components = components or []
+    filesMap = config._normalized.componentsFilesMap = {}
+    components.forEach (component) ->
+      component.files.forEach (file) ->
+        filesMap[file] = component.sortingLevel
+    deepFreeze config
+    callback null, config
