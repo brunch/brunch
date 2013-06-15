@@ -1,5 +1,13 @@
 # Brunch 1.7.0 (unreleased)
 * Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [es128](https://github.com/es128).
+* Added **Twitter Bower** package manager support.
+  The support is very different from modern builders.
+  You don’t need to specify concat order or list all files, brunch will do that for you automatically.
+  Note that not all possible packages can be consumed:
+    * If package has component.json instead of bower.json, it won’t be consumed (due to ambiguity with other supported package manager component(1).
+    * If bower.json doesn’t have one of (main, scripts, styles) field, it won’t be consumed. This is required
+      for no-bullshit automatic compilation. Bower itself does not have this constraint,
+      though with steps like that we hope it will.
 * Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
 * Removed files are now actually removed from compiled output.
 * Improved compilation performance.
