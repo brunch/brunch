@@ -164,9 +164,9 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
     if withMaps
       base = sysPath.basename "#{path}.map"
       if type is 'javascript'
-        data += "\n//@ sourceMappingURL=#{base}"
+        data += "\n//# sourceMappingURL=#{base}"
       else
-        data += "\n/*@ sourceMappingURL=#{base}*/"
+        data += "\n/*# sourceMappingURL=#{base}*/"
 
     common.writeFile path, data, ->
       if withMaps
