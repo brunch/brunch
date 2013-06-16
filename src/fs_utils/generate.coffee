@@ -153,7 +153,6 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   optimizer = optimizers.filter((optimizer) -> optimizer.type is type)[0]
 
   sorted = sort sourceFiles, config
-  console.log 'sorted', sorted.map (_) -> _.path
 
   {code, map} = concat sorted, path, type, config._normalized.modules.definition
 

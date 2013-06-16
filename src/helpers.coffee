@@ -8,7 +8,7 @@ os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
 {SourceNode} = require 'source-map'
-getComponentPaths = require 'read-components'
+readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 
 # Extends the object with properties from another object.
@@ -281,8 +281,9 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
-  getComponentPaths '.', (error, components) ->
-    config._normalized.components = components or []
+  readComponents '.', (error, components) ->
+    components ?= []
+    config._normalized.components = components
     filesMap = config._normalized.componentsFilesMap = {}
     components.forEach (component) ->
       component.files.forEach (file) ->
