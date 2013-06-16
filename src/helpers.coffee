@@ -153,7 +153,7 @@ commonJsWrapper = (addSourceURLs = no) -> (fullPath, data, isVendor) ->
   else
     # Wrap in common.js require definition.
     """
-window.require.register(#{path}, function(exports, require, module) {
+window.globals.require.register(#{path}, function(exports, require, module) {
 #{data}
 });
 """
