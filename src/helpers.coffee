@@ -1,7 +1,6 @@
 'use strict'
 
 {exec} = require 'child_process'
-coffeescript = require 'coffee-script'
 http = require 'http'
 fs = require 'fs'
 os = require 'os'
@@ -10,6 +9,8 @@ logger = require 'loggy'
 {SourceNode} = require 'source-map'
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
+# Just require.
+require 'coffee-script'
 
 # Extends the object with properties from another object.
 # Example
