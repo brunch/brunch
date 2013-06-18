@@ -283,6 +283,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
   readComponents '.', (error, components) ->
+    logger.error error if error
     components ?= []
     config._normalized.components = components
     filesMap = config._normalized.componentsFilesMap = {}
