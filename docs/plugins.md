@@ -1,6 +1,6 @@
 # Plugins
 
-Brunch uses asynchronous node.js plugins to provide compilation / minification functional.
+Brunch uses asynchronous node.js plugins to provide compilation / minification functionality.
 
 ## Usage
 
