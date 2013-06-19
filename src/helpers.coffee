@@ -1,15 +1,16 @@
 'use strict'
 
 {exec} = require 'child_process'
-coffeescript = require 'coffee-script'
 http = require 'http'
 fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
 {SourceNode} = require 'source-map'
-readComponents = require 'read-components'
+reader = require 'read-components'
 debug = require('debug')('brunch:helpers')
+# Just require.
+require 'coffee-script'
 
 # Extends the object with properties from another object.
 # Example
@@ -281,12 +282,14 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
-  readComponents '.', (error, components) ->
-    components ?= []
-    config._normalized.components = components
-    filesMap = config._normalized.componentsFilesMap = {}
-    components.forEach (component) ->
+  reader.readBowerComponents '.', (error, bowerComponents) ->
+    logger.error error if error
+    bowerComponents ?= []
+    config._normalized.bowerComponents = bowerComponents
+    filesMap = config._normalized.bowerFilesMap = {}
+    bowerComponents.forEach (component) ->
       component.files.forEach (file) ->
         filesMap[file] = component.sortingLevel
+
     deepFreeze config
     callback null, config
