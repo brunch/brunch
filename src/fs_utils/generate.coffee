@@ -58,9 +58,9 @@ sortByBefore = (config, a, b) ->
   else
     sortByAfter config, a, b
 
-sortComponents = (config, a, b) ->
-  aLevel = config.componentMapping[a]
-  bLevel = config.componentMapping[b]
+sortBowerComponents = (config, a, b) ->
+  aLevel = config.bowerMapping[a]
+  bLevel = config.bowerMapping[b]
   if aLevel? and not bLevel?
     -1
   else if not aLevel? and bLevel?
@@ -85,8 +85,8 @@ sortByConfig = (files, config) ->
       before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
-      componentMapping: config.componentMapping
-    files.slice().sort (a, b) -> sortComponents cfg, a, b
+      bowerMapping: config.bowerMapping
+    files.slice().sort (a, b) -> sortBowerComponents cfg, a, b
   else
     files
 
@@ -106,7 +106,7 @@ extractOrder = (files, config) ->
   before = flatten orders.map (type) -> (type.before ? [])
   after = flatten orders.map (type) -> (type.after ? [])
   vendorConvention = config._normalized.conventions.vendor
-  {before, after, vendorConvention, componentMapping: config._normalized.componentsFilesMap}
+  {before, after, vendorConvention, bowerMapping: config._normalized.bowerFilesMap}
 
 sort = (files, config) ->
   paths = files.map (file) -> file.path

@@ -80,7 +80,7 @@ initWatcher = (config, callback) ->
     config.paths.vendor, config.paths.assets,
     config.paths.config, config.paths.packageConfig
   ]
-  watched = watched.concat.apply watched, config._normalized.components.map (_) -> _.files
+  watched = watched.concat.apply watched, config._normalized.bowerComponents.map (_) -> _.files
 
   Object.keys(require.extensions).forEach (ext) ->
     watched.push config.paths.config + ext

@@ -7,7 +7,7 @@ os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
 {SourceNode} = require 'source-map'
-readComponents = require 'read-components'
+reader = require 'read-components'
 debug = require('debug')('brunch:helpers')
 # Just require.
 require 'coffee-script'
@@ -282,13 +282,14 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
-  readComponents '.', (error, components) ->
+  reader.readBowerComponents '.', (error, bowerComponents) ->
     logger.error error if error
-    components ?= []
-    config._normalized.components = components
-    filesMap = config._normalized.componentsFilesMap = {}
-    components.forEach (component) ->
+    bowerComponents ?= []
+    config._normalized.bowerComponents = bowerComponents
+    filesMap = config._normalized.bowerFilesMap = {}
+    bowerComponents.forEach (component) ->
       component.files.forEach (file) ->
         filesMap[file] = component.sortingLevel
+
     deepFreeze config
     callback null, config
