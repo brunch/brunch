@@ -138,13 +138,11 @@ exports.identityNode = (code, source) ->
   new SourceNode 1, 0, null, code.split('\n').map (line, index) ->
     new SourceNode index + 1, 0, source, (line + '\n')
 
-exports.cleanModuleName = cleanModuleName = (path) ->
-  path
-    .replace(new RegExp('\\\\', 'g'), '/')
-    .replace(/^app\//, '')
+exports.cleanModuleName = cleanModuleName = (path, nameCleaner) ->
+  nameCleaner path.replace(new RegExp('\\\\', 'g'), '/')
 
-commonJsWrapper = (addSourceURLs = no) -> (fullPath, data, isVendor) ->
-  sourceURLPath = cleanModuleName fullPath
+commonJsWrapper = (addSourceURLs = no, nameCleaner) -> (fullPath, data, isVendor) ->
+  sourceURLPath = cleanModuleName fullPath, nameCleaner
   moduleName = sourceURLPath.replace /\.\w+$/, ''
   path = JSON.stringify moduleName
 
@@ -159,12 +157,12 @@ window.require.register(#{path}, function(exports, require, module) {
 });
 """
 
-normalizeWrapper = (typeOrFunction, addSourceURLs) ->
+normalizeWrapper = (typeOrFunction, addSourceURLs, nameCleaner) ->
   switch typeOrFunction
-    when 'commonjs' then commonJsWrapper addSourceURLs
+    when 'commonjs' then commonJsWrapper addSourceURLs, nameCleaner
     when 'amd'
       (fullPath, data) ->
-        path = cleanModuleName fullPath
+        path = cleanModuleName fullPath, nameCleaner
         """
 define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
 #{data}
@@ -227,6 +225,8 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
+  modules.nameCleaner ?= (path) ->
+    path.replace(new RegExp('^' + sysPath.relative(paths.root, paths.app) + '/'), '')
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -259,7 +259,7 @@ normalizeConfig = (config) ->
   mod = config.modules
   normalized.modules = {}
   sourceURLs = mod.addSourceURLs and not config.optimize
-  normalized.modules.wrapper = normalizeWrapper mod.wrapper, sourceURLs
+  normalized.modules.wrapper = normalizeWrapper mod.wrapper, sourceURLs, config.modules.nameCleaner
   normalized.modules.definition = normalizeDefinition mod.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
