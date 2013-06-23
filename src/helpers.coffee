@@ -141,33 +141,29 @@ exports.identityNode = (code, source) ->
 exports.cleanModuleName = cleanModuleName = (path, nameCleaner) ->
   nameCleaner path.replace(new RegExp('\\\\', 'g'), '/')
 
-commonJsWrapper = (addSourceURLs = no, nameCleaner) -> (fullPath, data, isVendor) ->
+getModuleWrapper = (type, nameCleaner) -> (fullPath, data, isVendor) ->
   sourceURLPath = cleanModuleName fullPath, nameCleaner
   moduleName = sourceURLPath.replace /\.\w+$/, ''
   path = JSON.stringify moduleName
 
   if isVendor
-    debug 'commonjs wrapping is vendor '
+    debug 'Wrapping is vendor'
     data
   else
     # Wrap in common.js require definition.
-    """
+    if type is 'commonjs'
+      """
 window.require.register(#{path}, function(exports, require, module) {
 #{data}
 });
 """
+    else if type is 'amd'
+      data.replace /define\s*\(/, (match) -> "#{match}#{path}, "
 
-normalizeWrapper = (typeOrFunction, addSourceURLs, nameCleaner) ->
+normalizeWrapper = (typeOrFunction, nameCleaner) ->
   switch typeOrFunction
-    when 'commonjs' then commonJsWrapper addSourceURLs, nameCleaner
-    when 'amd'
-      (fullPath, data) ->
-        path = cleanModuleName fullPath, nameCleaner
-        """
-define('#{path}', ['require', 'exports', 'module'], function(require, exports, module) {
-#{data}
-});
-"""
+    when 'commonjs' then getModuleWrapper 'commonjs', nameCleaner
+    when 'amd' then getModuleWrapper 'amd', nameCleaner
     when false then (path, data) -> data
     else
       if typeof typeOrFunction is 'function'
@@ -258,8 +254,7 @@ normalizeConfig = (config) ->
   normalized.join = createJoinConfig config.files
   mod = config.modules
   normalized.modules = {}
-  sourceURLs = mod.addSourceURLs and not config.optimize
-  normalized.modules.wrapper = normalizeWrapper mod.wrapper, sourceURLs, config.modules.nameCleaner
+  normalized.modules.wrapper = normalizeWrapper mod.wrapper, config.modules.nameCleaner
   normalized.modules.definition = normalizeDefinition mod.definition
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->

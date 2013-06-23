@@ -58,26 +58,30 @@ updateCache = (realPath, cache, error, result, wrap) ->
     cache.error = error
   else
     {dependencies, compiled, source, sourceMap} = result
+    if sourceMap
+      debug "Generated source map for '#{realPath}': " + JSON.stringify sourceMap
+
+    wrapped = wrap compiled
+    sourcePos = wrapped.indexOf compiled
+
     cache.error = null
     cache.dependencies = dependencies
     cache.source = source
     cache.compilationTime = Date.now()
-    if sourceMap
-      debug "Generated source map for '#{realPath}': " + JSON.stringify sourceMap
+
+    nodeData = if sourcePos > 0 then compiled else wrapped
     cache.node = if sourceMap?
       map = new SourceMapConsumer sourceMap
-      SourceNode.fromStringWithSourceMap compiled, map
+      SourceNode.fromStringWithSourceMap nodeData, map
     else
-      nodeFactory compiled, realPath
+      nodeFactory nodeData, realPath
 
-    cache.node.source = realPath
-    cache.node.setSourceContent realPath, source
-
-    wrapped = wrap compiled
-    sourcePos = wrapped.indexOf compiled
     if sourcePos > 0
       cache.node.prepend wrapped.slice 0, sourcePos
       cache.node.add wrapped.slice sourcePos + compiled.length
+
+    cache.node.source = realPath
+    cache.node.setSourceContent realPath, source
 
   cache
 
