@@ -8,11 +8,19 @@
     * If bower.json doesn’t have one of (main, scripts, styles) field, it won’t be consumed. This is required
       for no-bullshit automatic compilation. Bower itself does not have this constraint,
       though with steps like that we hope it will.
+* Added proper **AMD support**. Just include almond.js with your AMD app
+  and brunch will do require.js optimizer job for you.
 * Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
 * Removed files are now actually removed from compiled output.
 * Improved compilation performance.
 * Removed `addSourceURLs` directive. Use source maps instead.
 * Improved error messages when there’s a need in `npm install`.
+* Added `config.modules.nameCleaner`, which allows you to set
+  filterer function for module names, for example, change all
+  app/file to file. Brunch auto-calculates it now for all
+  `config.paths.app` values.
+  If you set `config.paths.app` to `src` and place source into that dir,
+  all your modules will have nice path names just as if they were in `app`.
 * Added `config.fileListInterval` config prop that allows to set an
   interval in ms which determines how often brunch file list
   should be checked for new files (internal and usually not needed prop).
