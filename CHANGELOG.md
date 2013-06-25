@@ -15,6 +15,8 @@
 * Improved compilation performance.
 * Removed `addSourceURLs` directive. Use source maps instead.
 * Improved error messages when there’s a need in `npm install`.
+* Added `config.paths.watched` that replaces
+  `config.paths.{app,test,vendor,assets}`
 * Added `config.modules.nameCleaner`, which allows you to set
   filterer function for module names, for example, change all
   app/file to file. Brunch auto-calculates it now for all

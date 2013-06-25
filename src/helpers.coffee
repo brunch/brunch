@@ -224,8 +224,17 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
 getConfigDeprecations = (config) ->
   messages = []
+  warnRemoved = (path) ->
+    if config.paths[path]
+      messages.push "config.paths.#{path} was removed, use config.paths.watched"
+
   warnMoved = (configItem, from, to) ->
     messages.push "config.#{from} moved to config.#{to}" if configItem
+
+  warnRemoved 'app'
+  warnRemoved 'test'
+  warnRemoved 'vendor'
+  warnRemoved 'assets'
 
   warnMoved config.paths.ignored, 'paths.ignored', 'conventions.ignored'
   warnMoved config.rootPath, 'rootPath', 'paths.root'
