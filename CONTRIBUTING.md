@@ -9,6 +9,7 @@ It will allow you not to compile the source every time you change it.
 * Execute `npm uninstall -g brunch && npm link`
 * Change `package.json` `bin/brunchcoffee` back to `bin/brunch`.
 * Use `git pull` to update to latest brunch.
+* Use `DEBUG='brunch:*' brunch build` to log all build steps.
 
 Test suite can be run via `npm test`.
 

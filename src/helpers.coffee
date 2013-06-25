@@ -205,7 +205,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? (path) ->
     sysPath.basename(path)[0] is '_'
-  conventions.vendor  ?= /(components|vendor)[\\/]/
+  conventions.vendor  ?= /(^components|vendor)[\\/]/
 
   config.notifications ?= true
   config.sourceMaps   ?= true
