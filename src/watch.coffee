@@ -75,9 +75,7 @@ startServer = (config, callback = (->)) ->
 #
 # Returns nothing.
 initWatcher = (config, callback) ->
-  watched = [
-    config.paths.app, config.paths.test,
-    config.paths.vendor, config.paths.assets,
+  watched = config.paths.watched.concat [
     config.paths.config, config.paths.packageConfig
   ]
   watched = watched.concat.apply watched, config._normalized.bowerComponents.map (_) -> _.files

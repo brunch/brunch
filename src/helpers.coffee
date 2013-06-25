@@ -194,15 +194,9 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     join 'root', name
 
   paths                = config.paths     ?= {}
-  paths.root          ?= config.rootPath  ? '.'
-  paths.public        ?= config.buildPath ? joinRoot 'public'
-
-  paths.app           ?= joinRoot 'app'
-  paths.generators    ?= joinRoot 'generators'
-  paths.test          ?= joinRoot 'test'
-  paths.vendor        ?= joinRoot 'vendor'
-
-  paths.assets        ?= join('app', 'assets')
+  paths.root          ?= '.'
+  paths.public        ?= joinRoot 'public'
+  paths.watched       ?= ['app', 'test', 'vendor'].map(joinRoot)
 
   paths.config        ?= configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
@@ -211,7 +205,6 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? (path) ->
     sysPath.basename(path)[0] is '_'
-  conventions.tests   ?= /[-_]test\.\w+$/
   conventions.vendor  ?= /(components|vendor)[\\/]/
 
   config.notifications ?= true
@@ -221,8 +214,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules              = config.modules      ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
-  modules.nameCleaner ?= (path) ->
-    path.replace(new RegExp('^' + sysPath.relative(paths.root, paths.app) + '/'), '')
+  modules.nameCleaner ?= (path) -> path.replace(/^app\//, '')
 
   config.server       ?= {}
   config.server.base  ?= ''
@@ -278,7 +270,8 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
   reader.readBowerComponents '.', (error, bowerComponents) ->
-    logger.error error if error
+    if error and not /ENOENT/.test(error.toString())
+      logger.error error
     bowerComponents ?= []
     config._normalized.bowerComponents = bowerComponents
     filesMap = config._normalized.bowerFilesMap = {}
