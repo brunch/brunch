@@ -52,6 +52,7 @@ generateParams = (persistent, options) ->
   params
 
 startServer = (config, callback = (->)) ->
+  serverOpts = config.server or {}
   port = parseInt config.server.port, 10
   publicPath = config.paths.public
   log = ->
@@ -66,7 +67,8 @@ startServer = (config, callback = (->)) ->
       throw new Error 'Brunch server file needs to have startServer function'
     server.startServer port, publicPath, log
   else
-    pushserve {port, path: publicPath, base: config.server.base, noLog: true}, log
+    opts = noLog: yes, path: publicPath
+    pushserve helpers.extend(opts, serverOpts), log
 
 # Filter paths that exist and watch them with `chokidar` package.
 #
