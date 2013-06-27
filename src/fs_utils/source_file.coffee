@@ -69,8 +69,7 @@ updateCache = (realPath, cache, error, result, wrap) ->
     wrapped = wrap compiled
 
     if typeof wrapped is 'object'
-      prefix = wrapped.prefix
-      suffix = wrapped.suffix
+      {prefix, suffix} = wrapped
       nodeData = wrapped.data or compiled
     else
       sourcePos = wrapped.indexOf compiled
