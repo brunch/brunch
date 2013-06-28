@@ -157,20 +157,21 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   {code, map} = concat sorted, path, type, config._normalized.modules.definition
 
   withMaps = (map and config.sourceMaps)
+  mapPath = "#{path}.map"
 
   optimize code, map, path, optimizer, config.optimize, (error, data, map) ->
     return callback error if error?
 
     if withMaps
-      base = sysPath.basename "#{path}.map"
-      if type is 'javascript'
-        data += "\n//# sourceMappingURL=#{base}"
+      base = sysPath.basename mapPath
+      data += if type is 'javascript'
+        "\n//# sourceMappingURL=#{base}"
       else
-        data += "\n/*# sourceMappingURL=#{base}*/"
+        "\n/*# sourceMappingURL=#{base}*/"
 
     common.writeFile path, data, ->
       if withMaps
-        common.writeFile "#{path}.map", map.toString(), callback
+        common.writeFile mapPath, map.toString(), callback
       else
         callback()
 
