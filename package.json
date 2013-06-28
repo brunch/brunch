@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "coffee-script": "~1.6.3",
-    "commander": "~1.1.1",
+    "commander": "~1.2.0",
     "mkdirp": "~0.3.5",
     "ncp": "~0.4.2",
     "debug": "~0.7.2",
@@ -46,8 +46,8 @@
     "async-each": "~0.1.1"
   },
   "devDependencies": {
-    "mocha": "~1.10.0",
-    "chai": "~1.6.0",
-    "express": "~3.2.0"
+    "mocha": "~1.11.0",
+    "chai": "~1.7.0",
+    "express": "~3.3.0"
   }
 }
