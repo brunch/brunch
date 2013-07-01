@@ -29,6 +29,7 @@
   "scripts": {
     "prepublish": "node setup.js prepublish",
     "postpublish": "node setup.js postpublish",
+    "postinstall": "node setup.js postinstall",
     "test": "node setup.js test"
   },
   "dependencies": {
