@@ -136,7 +136,7 @@ module.exports = class FileList extends EventEmitter
       unless ignored
         @copy (@findAsset(path) ? @_addAsset path)
     else
-      if ignored or not compiler
+      if ignored or not compiler?.length
         @compileDependencyParents path unless @initial
       else
         @compile (@find(path) ? @_add path, compiler, linters, isHelper)

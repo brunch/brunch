@@ -44,7 +44,8 @@
     "loggy": "~0.2.0",
     "pushserve": "~0.1.4",
     "read-components": "~0.3.0",
-    "async-each": "~0.1.1"
+    "async-each": "~0.1.1",
+    "async-waterfall": "~0.1.0"
   },
   "devDependencies": {
     "mocha": "~1.11.0",
