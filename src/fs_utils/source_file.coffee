@@ -1,7 +1,7 @@
 'use strict'
 
 each = require 'async-each'
-async = require 'async'
+waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
@@ -56,7 +56,7 @@ pipeline = (realPath, path, linters, compilers, callback) ->
               return callbackError 'Dependency parsing', error if error?
               next null, {dependencies, compiled, source, sourceMap, path}
       chained.unshift (next) -> next null, {source, path}
-      async.waterfall chained, callback
+      waterfall chained, callback
 
 updateCache = (realPath, cache, error, result, wrap) ->
   if error?
