@@ -1,6 +1,7 @@
 'use strict'
 
 each = require 'async-each'
+waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:source-file')
 fs = require 'fs'
 sysPath = require 'path'
@@ -24,7 +25,7 @@ getDependencies = (data, path, compiler, callback) ->
   else
     callback null, []
 
-pipeline = (realPath, path, linters, compiler, callback) ->
+pipeline = (realPath, path, linters, compilers, callback) ->
   callbackError = (type, stringOrError) =>
     string = if stringOrError instanceof Error
       stringOrError.toString().replace /^([^:]+:\s+)/, ''
@@ -41,17 +42,21 @@ pipeline = (realPath, path, linters, compiler, callback) ->
         logger.warn "Linting of #{path}: #{error}"
       else
         return callbackError 'Linting', error if error?
-      compiler.compile source, path, (error, compiledData) =>
-        return callbackError 'Compiling', error if error?
-        # compiler is able to produce sourceMap
-        if typeof compiledData is 'object'
-          sourceMap = compiledData.map
-          compiled = compiledData.code
-        else
-          compiled = compiledData
-        getDependencies source, path, compiler, (error, dependencies) =>
-          return callbackError 'Dependency parsing', error if error?
-          callback null, {dependencies, compiled, source, sourceMap}
+      chained = compilers.map (compiler) =>
+        ({dependencies, compiled, source, sourceMap, path}, next) =>
+          compiler.compile compiled or source, path, (error, compiledData) =>
+            return callbackError 'Compiling', error if error?
+            # compiler is able to produce sourceMap
+            if typeof compiledData is 'object'
+              sourceMap = compiledData.map
+              compiled = compiledData.code
+            else
+              compiled = compiledData
+            getDependencies source, path, compiler, (error, dependencies) =>
+              return callbackError 'Dependency parsing', error if error?
+              next null, {dependencies, compiled, source, sourceMap, path}
+      chained.unshift (next) -> next null, {source, path}
+      waterfall chained, callback
 
 updateCache = (realPath, cache, error, result, wrap) ->
   if error?
@@ -95,16 +100,17 @@ makeWrapper = (wrapper, path, isWrapped, isntModule) ->
   (node) ->
     if isWrapped then wrapper path, node, isntModule else node
 
-makeCompiler = (realPath, path, cache, linters, compiler, wrap) ->
+makeCompiler = (realPath, path, cache, linters, compilers, wrap) ->
   (callback) ->
-    pipeline realPath, path, linters, compiler, (error, data) =>
+    pipeline realPath, path, linters, compilers, (error, data) =>
       updateCache realPath, cache, error, data, wrap
       return callback error if error?
       callback null, cache.data
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (path, compiler, linters, wrapper, isHelper, isVendor) ->
+  constructor: (path, compilers, linters, wrapper, isHelper, isVendor) ->
+    compiler = compilers[0]
     isntModule = isHelper or isVendor
     isWrapped = compiler.type in ['javascript', 'template']
 
@@ -126,7 +132,7 @@ module.exports = class SourceFile
     @error = null
     @removed = false
     @disposed = false
-    @compile = makeCompiler realPath, @path, this, linters, compiler, wrap
+    @compile = makeCompiler realPath, @path, this, linters, compilers, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped

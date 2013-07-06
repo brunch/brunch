@@ -130,7 +130,7 @@ isPluginFor = (path) -> (plugin) ->
 #
 # Returns nothing.
 changeFileList = (compilers, linters, fileList, path, isHelper) ->
-  compiler = compilers.filter(isPluginFor path)[0]
+  compiler = compilers.filter(isPluginFor path)
   currentLinters = linters.filter(isPluginFor path)
   fileList.emit 'change', path, compiler, currentLinters, isHelper
 

@@ -29,6 +29,7 @@
   "scripts": {
     "prepublish": "node setup.js prepublish",
     "postpublish": "node setup.js postpublish",
+    "postinstall": "node setup.js postinstall",
     "test": "node setup.js test"
   },
   "dependencies": {
@@ -43,10 +44,11 @@
     "loggy": "~0.2.0",
     "pushserve": "~0.1.4",
     "read-components": "~0.4.0",
-    "async-each": "~0.1.1"
+    "async-each": "~0.1.1",
+    "async-waterfall": "~0.1.2"
   },
   "devDependencies": {
-    "mocha": "~1.11.0",
+    "mocha": "~1.12.0",
     "chai": "~1.7.0",
     "express": "~3.3.0"
   }
