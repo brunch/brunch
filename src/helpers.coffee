@@ -7,7 +7,7 @@ os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
 {SourceNode} = require 'source-map'
-reader = require 'read-components'
+readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 # Just require.
 require 'coffee-script'
@@ -202,7 +202,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? (path) ->
     sysPath.basename(path)[0] is '_'
-  conventions.vendor  ?= /(^components|vendor)[\\/]/
+  conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
 
   config.notifications ?= true
   config.sourceMaps   ?= true
@@ -275,7 +275,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   recursiveExtend config, options
   replaceSlashes config if os.platform() is 'win32'
   normalizeConfig config
-  reader.readBowerComponents '.', (error, bowerComponents) ->
+  readComponents '.', 'bower', (error, bowerComponents) ->
     if error and not /ENOENT/.test(error.toString())
       logger.error error
     bowerComponents ?= []
