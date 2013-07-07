@@ -1,3 +1,6 @@
+# Brunch 1.4.6 (7 July 2013)
+* Fixed handlebars dependency.
+
 # Brunch 1.4.5 (December 14, 2012)
 * Updated base brunch with chaplin skeleton to the latest libs.
 
