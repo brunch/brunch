@@ -313,9 +313,12 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
 
   watcher
     .on 'add', (path) ->
-      # Update file list.
-      onChange()
-      changeFileList compilers, linters, fileList, path, false
+      isConfigFile = possibleConfigFiles[path]
+      isPluginsFile = path is config.paths.packageConfig
+      unless isConfigFile or isPluginsFile
+        # Update file list.
+        onChange()
+        changeFileList compilers, linters, fileList, path, false
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
