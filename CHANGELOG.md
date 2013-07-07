@@ -14,6 +14,7 @@
 * Improved compilation performance.
 * Removed `addSourceURLs` directive. Use source maps instead.
 * Improved error messages when there’s a need in `npm install`.
+* Added ability to use multiple compilator plugins for one file.
 * Added `config.paths.watched` that replaces
   `config.paths.{app,test,vendor,assets}`
 * Added `config.modules.nameCleaner`, which allows you to set
