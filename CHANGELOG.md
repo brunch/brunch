@@ -3,11 +3,10 @@
 * Added **Twitter Bower** package manager support.
   The support is very different from modern builders.
   You don’t need to specify concat order or list all files, brunch will do that for you automatically.
-  Note that not all possible packages can be consumed:
-    * If package has component.json instead of bower.json, it won’t be consumed (due to ambiguity with other supported package manager component(1).
-    * If bower.json doesn’t have one of (main, scripts, styles) field, it won’t be consumed. This is required
-      for no-bullshit automatic compilation. Bower itself does not have this constraint,
-      though with steps like that we hope it will.
+  **But**, some packages don’t specify which files they include and
+  on which packages they depend.
+  You may specify `overrides` property in root `bower.json`, see
+  [read-components docs](http://github.com/paulmillr/read-components)
 * Added proper **AMD support**. Just include almond.js with your AMD app
   and brunch will do require.js optimizer job for you.
 * Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
