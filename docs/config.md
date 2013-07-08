@@ -173,3 +173,9 @@ server:
   port: 6832
   base: '/myapp'
 ```
+
+## `sourceMaps`
+
+
+`Boolean`: Enables or disables Source Map generation. Default value is true (enabled).
+
