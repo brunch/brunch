@@ -258,10 +258,38 @@ initialize = (options, configParams, onCompile, callback) ->
 
     # Get compilation methods.
     compilers  = plugins.filter(propIsFunction 'compile')
+    compilers.forEach (_) ->
+      _._compile = if _.compile.length is 2
+        _.compile
+      else
+        fn = _.compile.bind(_)
+        (params, callback) ->
+          fn params.data, params.path, (error, params) ->
+            return callback error if error?
+            result = if typeof params is 'object'
+              params
+            else
+              {code: params}
+            callback null, result
+
     linters    = plugins.filter(propIsFunction 'lint')
     optimizers = plugins.filter(propIsFunction 'optimize').concat(
       plugins.filter(propIsFunction 'minify')
     )
+    optimizers.forEach (_) ->
+      _._optimize = if _.optimize?.length is 2
+        _.optimize
+      else
+        fn = (_.optimize or _.minify).bind(_)
+        (params, callback) ->
+          fn params.data, params.path, (error, params) ->
+            return callback error if error?
+            result = if typeof params is 'object'
+              params
+            else
+              {code: params}
+            callback null, result
+
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
     # Add default brunch callback.

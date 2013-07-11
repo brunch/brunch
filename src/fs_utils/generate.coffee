@@ -3,6 +3,7 @@
 debug = require('debug')('brunch:generate')
 fs = require 'fs'
 sysPath = require 'path'
+waterfall = require 'async-waterfall'
 common = require './common'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
@@ -129,30 +130,37 @@ concat = (files, path, type, definition) ->
   root.prepend definition() if type is 'javascript'
   root.toStringWithSourceMap file: path
 
-optimize = (data, prevMap, path, optimizer, isEnabled, callback) ->
-  if isEnabled
-    (optimizer.optimize or optimizer.minify) data, path, (error, result) ->
-      if typeof result isnt 'string' # we have sourcemap
-        {code, map} = result
-        smConsumer = new SourceMapConsumer prevMap.toJSON()
-        newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
-        newMap._sources.add path
-        newMap._mappings.forEach (mapping) ->
-          mapping.source = path
-        newMap.applySourceMap smConsumer
+optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
+  initial = {data, code: data, path, map: prevMap}
+  return callback null, initial unless isEnabled
+
+  chained = optimizers.map (optimizer) ->
+    (params, next) ->
+      optimizer._optimize params, (error, optimized) ->
+        return next error if error?
+        {code, map} = optimized
+        if map?
+          json = params.map.toJSON()
+          json.version = 3
+          smConsumer = new SourceMapConsumer json
+          newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
+          newMap._sources.add path
+          newMap._mappings.forEach (mapping) ->
+            mapping.source = path
+          newMap.applySourceMap smConsumer
+        else
+          newMap = params.map
         result = code
-      else
-        newMap = prevMap
-      callback error, result, newMap
-  else
-    callback null, data, prevMap
+        next error, {data: code, code, map: newMap}
+  chained.unshift (next) -> next null, initial
+  waterfall chained, callback
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type is 'javascript')
     'javascript'
   else
     'stylesheet'
-  optimizer = optimizers.filter((optimizer) -> optimizer.type is type)[0]
+  optimizers = optimizers.filter((optimizer) -> optimizer.type is type)
 
   sorted = sort sourceFiles, config
 
@@ -161,20 +169,20 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
 
-  optimize code, map, path, optimizer, config.optimize, (error, data, newMap) ->
+  optimize code, map, path, optimizers, config.optimize, (error, data) ->
     return callback error if error?
 
     if withMaps
       base = sysPath.basename mapPath
       controlChar = if config.sourceMaps is 'new' then '#' else '@'
-      data += if type is 'javascript'
+      data.code += if type is 'javascript'
         "\n//#{controlChar} sourceMappingURL=#{base}"
       else
         "\n/*#{controlChar} sourceMappingURL=#{base}*/"
 
-    common.writeFile path, data, ->
+    common.writeFile path, data.code, ->
       if withMaps
-        common.writeFile mapPath, newMap.toString(), callback
+        common.writeFile mapPath, data.map.toString(), callback
       else
         callback()
 

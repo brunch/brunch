@@ -35,23 +35,24 @@ pipeline = (realPath, path, linters, compilers, callback) ->
     error.brunchType = type
     callback error
 
-  fs.readFile realPath, 'utf-8', (error, source) =>
+  debug "Reading '#{path}'"
+  fs.readFile realPath, 'utf-8', (error, source) ->
     return callbackError 'Reading', error if error?
-    lint source, path, linters, (error) =>
+    debug "Linting '#{path}'"
+    lint source, path, linters, (error) ->
       if error?.match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
       else
         return callbackError 'Linting', error if error?
       chained = compilers.map (compiler) =>
+        compilerName = compiler.constructor.name
         ({dependencies, compiled, source, sourceMap, path}, next) =>
-          compiler.compile compiled or source, path, (error, compiledData) =>
+          debug "Compiling '#{path}' with '#{compilerName}'"
+          compiler._compile {data: (compiled or source), path}, (error, result) ->
             return callbackError 'Compiling', error if error?
-            # compiler is able to produce sourceMap
-            if typeof compiledData is 'object'
-              sourceMap = compiledData.map
-              compiled = compiledData.code
-            else
-              compiled = compiledData
+            sourceMap = result.map if result.map?
+            compiled = result.code
+            debug "getDependencies '#{path}' with '#{compilerName}'"
             getDependencies source, path, compiler, (error, dependencies) =>
               return callbackError 'Dependency parsing', error if error?
               next null, {dependencies, compiled, source, sourceMap, path}
