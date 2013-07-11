@@ -68,6 +68,7 @@ Then, when you run `brunch watch`, you'll see debug output.
 
 ###Linux/OS X:
 `export DEBUG='brunch:*'`
+
 Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.
 
 ###Windows:
