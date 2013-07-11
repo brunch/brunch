@@ -63,11 +63,11 @@ with command `ulimit -n <number>` (10000 should be enough).
 
 ## How do I enable verbose mode for brunch commands?
 
-TL;DR: Add a DEBUG environment variable, e.g. `DEBUG='brunch:*'`.
+*TL;DR*: Add a DEBUG environment variable, e.g. `DEBUG='brunch:*'`.
 Then, when you run `brunch watch`, you'll see debug output.  
 
 ###Linux/OS X:
-`export DEBUG='brunch:*'
+`export DEBUG='brunch:*'`
 Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.
 
 ###Windows:
