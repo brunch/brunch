@@ -43,7 +43,7 @@
     "init-skeleton": "~0.1.5",
     "loggy": "~0.2.0",
     "pushserve": "~0.1.4",
-    "read-components": "~0.4.0",
+    "read-components": "~0.5.0",
     "async-each": "~0.1.1",
     "async-waterfall": "~0.1.2"
   },
