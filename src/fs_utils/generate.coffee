@@ -86,7 +86,7 @@ sortByConfig = (files, config) ->
       before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
-      bowerMapping: config.bowerMapping
+      bowerMapping: config.bowerMapping ? {}
     files.slice().sort (a, b) -> sortBowerComponents cfg, a, b
   else
     files
