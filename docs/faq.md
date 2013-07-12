@@ -63,7 +63,17 @@ with command `ulimit -n <number>` (10000 should be enough).
 
 ## How do I enable verbose mode for brunch commands?
 
-Use env variable: `DEBUG='brunch:*' brunch watch`.
+*TL;DR*: Add a DEBUG environment variable, e.g. `DEBUG='brunch:*'`.
+Then, when you run `brunch watch`, you'll see debug output.  
+
+###Linux/OS X:
+`export DEBUG='brunch:*'`
+
+Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.
+
+###Windows:
+Add a System Environment variable via `Control Panel > System > Advanced System Settings (Advanced Tab) > Environment Variables`:
+![Windows System Environment Variable](./windows.png?raw=true)
 
 ## I get error, like "MODULE_NOT_FOUND" when trying to run Brunch
 
