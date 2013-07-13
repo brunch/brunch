@@ -134,6 +134,85 @@ changeFileList = (compilers, linters, fileList, path, isHelper) ->
   currentLinters = linters.filter(isPluginFor path)
   fileList.emit 'change', path, compiler, currentLinters, isHelper
 
+changedSince = (startTime) -> (generated) ->
+  generated.sourceFiles.some (sourceFile) ->
+    sourceFile.compilationTime >= startTime or sourceFile.removed
+
+generateCompilationLog = (startTime, allAssets, generatedFiles) ->
+  # compiled 4 files and 145 cached files into app.js
+  # compiled app.js and 10 cached files into app.js, copied 2 files
+  # `compiled 106 into 3 and copied 47 files` - initial compilation
+  # `copied img.png` - 1 new/changed asset
+  # `copied 6 files` - >1 new/changed asset
+  # `compiled controller.coffee and 32 cached files into app.js` - change 1 source file
+  # `compiled _partial.styl and 22 cached into 2 files` - change 1 partial affecting >1 compiled file
+  # `compiled init.ls into init.js` - change 1 source file that doesn't concat with any other files
+  # `compiled 5 files into ie7.css` - change all source files that go into 1 compiled
+  # `compiled 2 and 3 cached files into ie7.css` - change some source files that go into 1 compiled
+  # `compiled 4 files and 1 cached into ie7.css` - 1 cached should not switch to filename
+  # `compiled 5 and 101 cached into 3 files` - change >1 affecting >1 compiled
+  getName = (file) -> sysPath.basename file.path
+  copied = allAssets.filter((_) -> _.copyTime > startTime).map(getName)
+  generated = []
+  compiled = []
+  cachedCount = 0
+
+  generatedFiles.forEach (generatedFile) ->
+    isChanged = false
+    locallyCompiledCount = 0
+    generatedFile.sourceFiles.forEach (sourceFile) ->
+      if sourceFile.compilationTime >= startTime
+        isChanged = true
+        locallyCompiledCount += 1
+        sourceName = getName sourceFile
+        compiled.push sourceName unless sourceName in compiled
+    if isChanged
+      generated.push getName generatedFile
+      cachedCount += (generatedFile.sourceFiles.length - locallyCompiledCount)
+
+  compiledCount = compiled.length
+  copiedCount = copied.length
+
+  generatedLog = switch generated.length
+    when 0 then ''
+    when 1 then " into #{generated[0]}"
+    else " into #{generated.length} files"
+
+  compiledLog = switch compiledCount
+    when 0 then ''
+    when 1 then "compiled #{compiled[0]}"
+    else "compiled #{compiled.length}"
+
+  cachedLog = switch cachedCount
+    when 0
+      if compiledCount is 0 or compiledCount is 1
+        ''
+      else
+        ' files'
+    else
+      if compiledCount is 1
+        " and #{cachedCount} cached files"
+      else
+        " files and #{cachedCount} cached"
+
+
+  nonAssetsLog = compiledLog + cachedLog + generatedLog
+
+  sep = if nonAssetsLog and copiedCount isnt 0 then ', ' else ''
+
+  assetsLog = switch copiedCount
+    when 0 then ''
+    when 1 then "copied #{copied[0]}"
+    else
+      if compiled.length is 0
+        "copied #{copiedCount} files"
+      else
+        "copied #{copiedCount}"
+
+  main = nonAssetsLog + sep + assetsLog
+
+  "#{if main then main else 'compiled'} in #{Date.now() - startTime}ms"
+
 # Generate function that consolidates all needed info and generate files.
 #
 # config     - Object. Application config.
@@ -161,7 +240,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
       else
         logger.error error
     else
-      logger.info "compiled in #{Date.now() - startTime}ms"
+      logger.info generateCompilationLog startTime, fileList.assets, generatedFiles
 
     # If it’s single non-continuous build, close file watcher and
     # exit process with correct exit code.
@@ -301,18 +380,15 @@ initialize = (options, configParams, onCompile, callback) ->
     if config.persistent and config.server.run
       server   = startServer config
 
-    # Emit `change` event for each file that is included with plugins.
-    getPluginIncludes(plugins).forEach (path) ->
-      changeFileList compilers, linters, fileList, path, true
-
     # Initialise file watcher.
     initWatcher config, (error, watcher) ->
       return callback error if error?
       # Get compile and reload functions.
       compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
       reload = getReloadFn config, options, onCompile, watcher, server, plugins
+      includes = getPluginIncludes(plugins)
       callback error, {
-        config, watcher, server, fileList, compilers, linters, compile, reload
+        config, watcher, server, fileList, compilers, linters, compile, reload, includes
       }
 
 isConfigFile = (basename, configPath) ->
@@ -384,12 +460,16 @@ class BrunchWatcher
     configParams = generateParams persistent, options
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
-      {config, watcher, fileList, compilers, linters, compile, reload} = result
+      {config, watcher, fileList, compilers, linters, compile, reload, includes} = result
       logger.notifications = config.notifications
       logger.notificationsTitle = config.notificationsTitle or 'Brunch'
       bindWatcherEvents config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
+      # Emit `change` event for each file that is included with plugins.
       @config = config
+      # Wish it worked like `watcher.add includes`.
+      includes.forEach (path) ->
+        changeFileList compilers, linters, fileList, path, true
 
   # Set start time of last compilation to current time.
   # Returns Number.

@@ -26,6 +26,7 @@
 * Added `config.fileListInterval` config prop that allows to set an
   interval in ms which determines how often brunch file list
   should be checked for new files (internal and usually not needed prop).
+* Added detailed messages of what was done to `compiled in` logs.
 
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`

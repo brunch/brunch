@@ -32,6 +32,7 @@ module.exports = class Asset
       @path, directory, @relativePath, @destinationPath
     }
     @error = null
+    @copyTime = null
     Object.seal this
 
   # Copy file to public directory.
@@ -43,4 +44,5 @@ module.exports = class Asset
         @error = err
       else
         @error = null
+      @copyTime = Date.now()
       callback @error
