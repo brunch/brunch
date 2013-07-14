@@ -12,7 +12,8 @@ create = (skeleton, path = '.') ->
 
   You can specify directory on disk, Git URL or GitHub uri (gh:user/repo):
 
-  brunch new --skeleton <path-or-URI>
+  brunch new <path-or-URI> [optional-output-dir]
+  brunch new gh:brunch/dead-simple
 
   Some suggestions:
 

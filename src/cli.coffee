@@ -7,11 +7,10 @@ program
   .version(require('../package.json').version)
 
 program
-  .command('new [path]')
+  .command('new [skeleton] [path]')
   .description('Create new brunch project in path [.]. Short-cut: n')
-  .option('-s, --skeleton [url-or-path]', 'path to / git URL of application skeleton (template)')
   .action ->
-    commands.new program.args[1].skeleton, program.args[0]
+    commands.new program.args[0], program.args[1]
 
 program
   .command('build')
