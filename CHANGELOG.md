@@ -1,5 +1,5 @@
 # Brunch 1.7.0 (unreleased)
-* Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [es128](https://github.com/es128).
+* Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [Elan Shanker](https://github.com/es128).
 * Added **Twitter Bower** package manager support.
   The support is very different from modern builders.
   You don’t need to specify concat order or list all files, brunch will do that for you automatically.
@@ -27,6 +27,7 @@
   interval in ms which determines how often brunch file list
   should be checked for new files (internal and usually not needed prop).
 * Added detailed messages of what was done to `compiled in` logs.
+* Changed syntax of `brunch new` to `brunch new <uri> [dir]`
 
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`
