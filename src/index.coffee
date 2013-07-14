@@ -8,8 +8,9 @@ logger = require 'loggy'
 create = (skeleton, path = '.') ->
   unless skeleton
     logger.error '''
-  You must specify skeleton (boilerplate) from which brunch will initialize
-  new application.
+  You must specify skeleton (boilerplate) from which brunch will initialize new app:
+
+  brunch new --skeleton <path-or-URI>
 
   You can specify directory on disk, Git URL or GitHub url (gh:user/repo).
 
