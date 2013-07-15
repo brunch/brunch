@@ -51,6 +51,14 @@ exports.run = ->
         npm install -g mocha-phantomjs
         mocha-phantomjs [options] <your-html-file-or-url>
     '''
+  if command in ['n', 'new'] and '--skeleton' in args
+    return console.error '''`--skeleton` option has been removed from `brunch new`.
+
+    The syntax is now simply:
+
+    brunch new <path-or-URI> [optional-output-dir]
+    brunch new gh:brunch/dead-simple
+    '''
 
   fullCommand = switch command
     when 'n' then 'new'
