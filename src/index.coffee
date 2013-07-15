@@ -19,8 +19,8 @@ create = (skeleton, path = '.') ->
 
   * gh:paulmillr/brunch-with-chaplin — Brunch with Chaplin (Backbone, Chaplin, CoffeeScript). The most popular skeleton
   * gh:brunch/dead-simple — if you want no opinions. Just initializes configs and empty directories.
-  * gh:gcollazo/brunch-with-ember-reloaded — official Ember.js starter kit + Handlebars + CoffeeScript + Stylus
   * gh:scotch/angular-brunch-seed — Angular.js + CoffeeScript + Jade + stylus + Karma + Bootstrap.js
+  * gh:gcollazo/brunch-with-ember-reloaded — official Ember.js starter kit + Handlebars + CoffeeScript + Stylus
 
   All other skeletons (40+) are available at
   http://git.io/skeletons
