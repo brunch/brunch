@@ -40,7 +40,7 @@
     "debug": "~0.7.2",
     "source-map": "~0.1.23",
     "chokidar": "~0.6.2",
-    "init-skeleton": "~0.1.5",
+    "init-skeleton": "~0.1.6",
     "loggy": "~0.2.0",
     "pushserve": "~0.1.4",
     "read-components": "~0.5.0",
