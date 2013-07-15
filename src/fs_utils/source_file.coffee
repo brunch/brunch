@@ -25,39 +25,42 @@ getDependencies = (data, path, compiler, callback) ->
   else
     callback null, []
 
-pipeline = (realPath, path, linters, compilers, callback) ->
-  callbackError = (type, stringOrError) =>
-    string = if stringOrError instanceof Error
-      stringOrError.toString().replace /^([^:]+:\s+)/, ''
-    else
-      stringOrError
-    error = new Error string
-    error.brunchType = type
-    callback error
+throwError = (type, stringOrError) =>
+  string = if stringOrError instanceof Error
+    stringOrError.toString().replace /^([^:]+:\s+)/, ''
+  else
+    stringOrError
+  error = new Error string
+  error.brunchType = type
+  error
 
+compile = (initialData, path, compilers, callback) ->
+  chained = compilers.map (compiler) =>
+    compilerName = compiler.constructor.name
+    ({dependencies, compiled, source, sourceMap, path}, next) =>
+      debug "Compiling '#{path}' with '#{compilerName}'"
+      compiler._compile {data: (compiled or source), path}, (error, result) ->
+        return callback throwError 'Compiling', error if error?
+        sourceMap = result.map if result.map?
+        compiled = result.code
+        debug "getDependencies '#{path}' with '#{compilerName}'"
+        getDependencies source, path, compiler, (error, dependencies) =>
+          return callback throwError 'Dependency parsing', error if error?
+          next null, {dependencies, compiled, source, sourceMap, path}
+  chained.unshift (next) -> next null, {source: initialData, path}
+  waterfall chained, callback
+
+pipeline = (realPath, path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
   fs.readFile realPath, 'utf-8', (error, source) ->
-    return callbackError 'Reading', error if error?
+    return callback throwError 'Reading', error if error?
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
       if error?.match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
       else
-        return callbackError 'Linting', error if error?
-      chained = compilers.map (compiler) =>
-        compilerName = compiler.constructor.name
-        ({dependencies, compiled, source, sourceMap, path}, next) =>
-          debug "Compiling '#{path}' with '#{compilerName}'"
-          compiler._compile {data: (compiled or source), path}, (error, result) ->
-            return callbackError 'Compiling', error if error?
-            sourceMap = result.map if result.map?
-            compiled = result.code
-            debug "getDependencies '#{path}' with '#{compilerName}'"
-            getDependencies source, path, compiler, (error, dependencies) =>
-              return callbackError 'Dependency parsing', error if error?
-              next null, {dependencies, compiled, source, sourceMap, path}
-      chained.unshift (next) -> next null, {source, path}
-      waterfall chained, callback
+        return callback throwError 'Linting', error if error?
+        compile source, path, compilers, callback
 
 updateCache = (realPath, cache, error, result, wrap) ->
   if error?
