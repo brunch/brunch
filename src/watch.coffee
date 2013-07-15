@@ -348,7 +348,7 @@ initialize = (options, configParams, onCompile, callback) ->
             result = if typeof params is 'object'
               params
             else
-              {code: params}
+              {data: params}
             callback null, result
 
     linters    = plugins.filter(propIsFunction 'lint')
@@ -366,7 +366,7 @@ initialize = (options, configParams, onCompile, callback) ->
             result = if typeof params is 'object'
               params
             else
-              {code: params}
+              {data: params}
             callback null, result
 
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)

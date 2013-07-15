@@ -138,7 +138,8 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
     (params, next) ->
       optimizer._optimize params, (error, optimized) ->
         return next error if error?
-        {code, map} = optimized
+        code = optimized.data
+        map = optimized.map
         if map?
           json = params.map.toJSON()
           json.version = 3
