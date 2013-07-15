@@ -152,7 +152,7 @@ getModuleWrapper = (type, nameCleaner) -> (fullPath, data, isVendor) ->
   else
     # Wrap in common.js require definition.
     if type is 'commonjs'
-      prefix: "window.require.register(#{path}, function(exports, require, module) {\n"
+      prefix: "require.register(#{path}, function(exports, require, module) {\n"
       suffix: "});\n\n"
     else if type is 'amd'
       data: data.replace /define\s*\(/, (match) -> "#{match}#{path}, "
