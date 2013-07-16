@@ -142,12 +142,13 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
         map = optimized.map
         if map?
           json = params.map.toJSON()
-          json.version = 3
           smConsumer = new SourceMapConsumer json
           newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
           newMap._sources.add path
           newMap._mappings.forEach (mapping) ->
             mapping.source = path
+          newMap._sourcesContents ?= {}
+          newMap._sourcesContents["$#{path}"] = ''  # data
           newMap.applySourceMap smConsumer
         else
           newMap = params.map
