@@ -12,14 +12,12 @@ common = require './common'
 #
 # Returns String.
 getAssetDirectory = (path, convention) ->
-  splitted = path.split(common.sep)
+  split = path.split('/')
   # Creates thing like this
   # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html'
-  splitted
+  split
     .map (part, index) ->
-      previous = if index is 0 then '' else splitted[index - 1] + common.sep
-      current = part + common.sep
-      previous + current
+      split.slice(0, index).concat([part, '']).join(common.sep)
     .filter(convention)[0]
 
 # A static file that shall be copied to public directory.
