@@ -11,8 +11,8 @@ You can also import node.js modules in configuration file.
 `Object`: `paths` contains application paths to key directories. Paths are simple strings.
 
 * `public` key: path to build directory that would contain output.
-
-* Other valid keys, but not recommended to use: `app`, `vendor`, `root`.
+* `watched` key: list of all watched paths by brunch. Default:
+  `['app', 'test', 'vendor']`
 
 Example:
 
@@ -22,7 +22,6 @@ paths:
 ```
 
 ## `files`
-
 
 `Required, object`: `files` configures handling of application files: which compiler would be used on which file, what name should output file have etc.
 
@@ -104,17 +103,15 @@ conventions:
 `modules.wrapper`: `String, Boolean or Function`: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories. Values:
 
 * `commonjs` (Default) — CommonJS wrapper.
-* `amd` — AMD wrapper.
+* `amd` — AMD `r.js`-like wrapper.
 * `false` — no wrapping. Files will be compiled as-is.
 * Function that takes path and data
 
 `modules.definition`: `String, Boolean or Function` a code that will be added on top of every generated JavaScript file. Values:
 
 * `commonjs` (Default) — CommonJS require definition.
-* `false` — no definition.
+* `amd`, `false` — no definition.
 * Function that takes path and data
-
-`modules.addSourceURLs`: `Boolean` determines if all modules should be wrapped in `Function()` with [`sourceURL`](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) mappings for much easier debugging. Works only in development environment. Default value is `false`.
 
 Example:
 
@@ -124,18 +121,28 @@ Example:
     modules:
       wrapper: 'amd'
       definition: 'amd'
-      addSourceURLs: true
 
-    # Same as 'commonjs', but in function implementation.
+    # Same as 'commonjs'.
     modules:
       wrapper: (path, data) ->
         """
-    window.require.define({#{path}: function(exports, require, module) {
+    require.define({#{path}: function(exports, require, module) {
       #{data}
     }});\n\n
         """
-      definition: false
   ```
+
+## `nameCleaner`
+`Function`: Allows you to set filterer function for module names,
+for example, change all app/file to file. Example:
+
+```coffeescript
+# Default behaviour.
+config:
+  modules:
+    nameCleaner: (path) ->
+      path.replace(/^app\//, '')
+```
 
 ## `notifications`
 
@@ -177,3 +184,7 @@ server:
 
 `Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
 
+## `fileListInterval`
+
+`Number`: Allows to set an interval in ms which determines how often brunch file list
+should be checked for new files (internal and usually not needed prop).

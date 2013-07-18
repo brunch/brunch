@@ -6,16 +6,15 @@ Sections:
 * [Commands](./commands.md)
 * [Config](./config.md)
 * [Plugins](./plugins.md)
-* [Skeletons](./skeletons.md)
 * [Upgrading](./upgrading.md)
 
 ## Basics
 
-Default application structure:
+Example application structure:
 
 ```
 root/         # Main brunch application directory.
-|-app/        # Your code will reside here.
+|-app/        # Your code may reside here.
 |--assets/    # Static files that shall not be compiled
 |---images/   # will be just copied to `public` dir.
 |--views/     # Create any subdirectories inside `app` dir.
@@ -26,7 +25,11 @@ root/         # Main brunch application directory.
 |--file.sass  # Compiled-to-css files will be concatenated to style file too.
 |--tpl.jade   # You may have pre-compiled to JS templates. Also with `require`.
 
-|-vendor/     # All third-party libraries should be put here. JS, CSS, etc.
+|-bower_components/ # Libraries, installed by Bower package manager
+|--...stuff...      # will reside here if you use it.
+
+|-vendor/     # All third-party libraries that are not handled by Bower
+              # should be put here. JS, CSS, etc.
 |--scripts/   # They will be included BEFORE your scripts automatically.
 |---backbone.js
 |---underscore.js
@@ -37,6 +40,7 @@ root/         # Main brunch application directory.
 |--assets/     # And then all changed files in your app dir will be compiled.
 |---images/
 
+|-bower.json    # Contains info about Bower packages.
 |-package.json  # Contains all brunch plugins, like jshint-brunch, css-brunch.
 |-config.coffee # All params (you can concat to 2, 5, 10 files etc.)
                 # are set via this config. Just simple, 15 lines-of-code config
@@ -44,8 +48,11 @@ root/         # Main brunch application directory.
 
 ### Concatenation
 
-Brunch concatenates all your scripts in `app/`, `test/` and `vendor/`
-directories to **two** files by default:
+Brunch concatenates all your scripts in directories specified in
+`config.paths.watched`. You set concatenation config, number of
+output files in `config.files[type]`.
+
+We suggest to have two files:
 
 * `app.js` contains your application code.
 * `vendor.js` contains code of libraries you depend on (e.g. jQuery).
@@ -56,10 +63,11 @@ your application code.
 
 Order of file concatenation is:
 
-1. Files in `config.files[type].order.before` in order you specify.
-2. Files in `vendor/` directories in alphabetic order.
-3. All other files in alphabetic order.
-4. Files in `config.files[type].order.after` in order you specify.
+1. Bower components ordered automatically.
+2. Files in `config.files[type].order.before` in order you specify.
+3. Files in `vendor/` directories in alphabetic order.
+4. All other files in alphabetic order.
+5. Files in `config.files[type].order.after` in order you specify.
 
 All this stuff (conventions, name of out files etc) can be changed
 via modifying config file.

@@ -2,22 +2,32 @@
 
 ## `brunch new`
 
-Full syntax: `brunch new <rootPath>`
+Full syntax: `brunch new <url-or-path> [rootPath]`
 
 Create new brunch project. Options:
 
-* `rootPath`: (required) name of project directory that would be created
-* `-s PATH_TO_SKELETON, --skeleton PATH_TO_SKELETON`: path or
-git / github repo address of project, contents of which will be copied to new dir.
+* `url-or-path`: (required) skeleton (path or
+git / github repo address of project), contents of which will be copied to new dir.
+* `rootPath`: name of project directory that would be created. Default: '.'.
 
 `.git` directory is automatically removed when copying.
+
+Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Creating new application with any skeleton is pretty simple: `brunch new <app> --skeleton <address>`.
+
+`<address>` can be a:
+
+* System directory (`~/skeletons/my-private-skel`)
+* Git URL (`git://github.com/user/skel.git`)
+* GitHub-sugared URL (`gh:user/skel`, `github:user/skel`)
+
+Each skeleton must have `config.(js,coffee)`.
 
 Short-cut: `brunch n`.
 
 Examples:
 
-* `brunch n twitter -s ~/brunch-templates/simple`
-* `brunch n twitter -s github://paulmillr/brunch-with-chaplin-js`
+* `brunch n ~/brunch-templates/simple`
+* `brunch n gh:paulmillr/brunch-with-chaplin twitter`
 
 ## `brunch build`
 
@@ -47,4 +57,4 @@ Examples:
 
 * `brunch w`: simply watch current directory &amp; compile the output to `public` directory.
 * `brunch w -s`: watch current project and run a webserver that would work on public directory.
-* `brunch w -s -p 8841 -o`: watch current project, compile files with optimizations and run a webserver that would work on public directory.
+* `brunch w -sop 8841`: watch current project, compile files with optimizations and run a webserver that would work on public directory.

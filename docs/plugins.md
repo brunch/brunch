@@ -26,9 +26,9 @@ Brunch language is a CoffeeScript class that has `brunchPlugin` property. It wou
 * `extension`: `(required in compilers & linters, string)`: all files with this extension will be filtered and passed to plugin.
 * `pattern`: `(optional in compilers & linters, regexp)`: sometimes just extension isn't enough. For example, Sass compiler needs to support both scss and sass extensions.
 * `lint(data, path, callback)`: `(optional, function)` would be called every time before compilation. If linter returns error to callback, compilation won't start.
-* `compile(data, path, callback)`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result`.
+* `compile(data, path, callback)` or `compile(params, callback)` where `params may contain data, path and map`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result`.
 * `getDependencies(data, path, callback)`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Used as chain compilation rule. For example, if `_user.styl` changes and `main.styl` depends on it, `main.styl` will be recompiled too. To know this, brunch needs to receive an array of dependent files from the function.
-* `optimize(data, path, callback)`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result`.
+* `optimize(data, path, callback)` or `optimize(params, callback)` where `params may contain data, path and map`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result`.
 * `onCompile(generatedFiles)`: `(optional, function)` would be called every time after brunch walks through the whole compilation circle. Could be useful if you make browser autoreload plugin etc.
 * `teardown`: `(optional, function)` with it you can stop servers in your plugins and stuff. It will be called after each brunch stop.
 
@@ -44,10 +44,32 @@ module.exports = class CSSCompiler
   extension: 'css'
 
   constructor: (@config) ->
-    return
+    null
 
   compile: (data, path, callback) ->
     callback null, data
+```
+
+Example 2:
+
+Some abstract minifier that consumes source maps.
+
+```coffeescript
+module.exports = class UglifyCompiler
+  brunchPlugin: yes
+  type: 'javascript'
+  extension: 'js'
+
+  constructor: (@config) ->
+    null
+
+  optimize: (params, callback) ->
+    {data, path, map} = params
+    try
+      optimized = minifier data, fromString: true, inSourceMap: map
+    catch err
+      error = err
+    callback error, optimized
 ```
 
 See [wiki page](https://github.com/brunch/brunch/wiki/Plugins) for a list of plugins. Feel free to add new plugins there.

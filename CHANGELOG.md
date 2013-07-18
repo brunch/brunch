@@ -19,8 +19,7 @@
   `config.paths.{app,test,vendor,assets}`
 * Added `config.modules.nameCleaner`, which allows you to set
   filterer function for module names, for example, change all
-  app/file to file. Brunch auto-calculates it now for all
-  `config.paths.app` values.
+  app/file to file.
   If you set `config.paths.app` to `src` and place source into that dir,
   all your modules will have nice path names just as if they were in `app`.
 * Added `config.fileListInterval` config prop that allows to set an
