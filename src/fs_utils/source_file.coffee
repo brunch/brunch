@@ -45,7 +45,7 @@ compile = (initialData, path, compilers, callback) ->
         return callback throwError 'Compiling', error if error?
         return next() unless result?
         sourceMap = result.map if result.map?
-        compiled = result.data
+        compiled = result.data or result.code
         debug "getDependencies '#{path}' with '#{compilerName}'"
         getDependencies source, path, compiler, (error, dependencies) =>
           return callback throwError 'Dependency parsing', error if error?
