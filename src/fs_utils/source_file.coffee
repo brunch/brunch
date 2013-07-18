@@ -37,10 +37,13 @@ throwError = (type, stringOrError) =>
 compile = (initialData, path, compilers, callback) ->
   chained = compilers.map (compiler) =>
     compilerName = compiler.constructor.name
-    ({dependencies, compiled, source, sourceMap, path}, next) =>
+    (params, next) =>
+      return next() unless params
+      {dependencies, compiled, source, sourceMap, path} = params
       debug "Compiling '#{path}' with '#{compilerName}'"
       compiler._compile {data: (compiled or source), path}, (error, result) ->
         return callback throwError 'Compiling', error if error?
+        return next() unless result?
         sourceMap = result.map if result.map?
         compiled = result.data
         debug "getDependencies '#{path}' with '#{compilerName}'"
@@ -65,6 +68,10 @@ pipeline = (realPath, path, linters, compilers, callback) ->
 updateCache = (realPath, cache, error, result, wrap) ->
   if error?
     cache.error = error
+  else if not result?
+    cache.error = null
+    cache.data = null
+    cache.compilationTime = Date.now()
   else
     {dependencies, compiled, source, sourceMap} = result
     if sourceMap

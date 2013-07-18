@@ -15,6 +15,7 @@ getFiles = (fileList, config, joinConfig) ->
   map = {}
 
   fileList.files.forEach (file) ->
+    return if not file.error? and not file.data?
     paths = getPaths file, joinConfig
     paths.forEach (path) ->
       map[path] ?= []
