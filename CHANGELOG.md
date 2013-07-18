@@ -27,6 +27,7 @@
   should be checked for new files (internal and usually not needed prop).
 * Added detailed messages of what was done to `compiled in` logs.
 * Changed syntax of `brunch new` to `brunch new <uri> [dir]`
+* Fixed advanced `conventions.assets` issues (e.g. `/styles\/img/`)
 
 # Brunch 1.6.7 (8 May 2013)
 * Fixed `brunch new --skeleton`
