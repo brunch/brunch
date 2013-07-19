@@ -45,7 +45,9 @@ compile = (initialData, path, compilers, callback) ->
         return callback throwError 'Compiling', error if error?
         return next() unless result?
         sourceMap = result.map if result.map?
-        compiled = result.data or result.code
+        compiled = result.data
+        unless compiled?
+          throw new Error "Brunch SourceFile: file #{path} data is invalid"
         debug "getDependencies '#{path}' with '#{compilerName}'"
         getDependencies source, path, compiler, (error, dependencies) =>
           return callback throwError 'Dependency parsing', error if error?
