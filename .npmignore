@@ -6,6 +6,6 @@ CVS/
 *~
 *.bak
 .DS_Store
-/docs/_build/
+/docs
 /skeletons/brunch-with-chaplin/public/
 /test
