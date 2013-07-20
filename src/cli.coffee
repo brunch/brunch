@@ -57,7 +57,8 @@ exports.run = ->
     The syntax is now simply:
 
     brunch new <path-or-URI> [optional-output-dir]
-    brunch new gh:brunch/dead-simple
+    brunch new github:brunch/dead-simple
+    brunch new gh:paulmillr/brunch-with-chaplin
     '''
 
   fullCommand = switch command
