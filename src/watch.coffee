@@ -191,10 +191,10 @@ generateCompilationLog = (startTime, allAssets, generatedFiles) ->
         ' files'
     else
       if compiledCount is 1
-        " and #{cachedCount} cached files"
+        cachedCountName = "file#{if cachedCount is 1 then '' else 's'}"
+        " and #{cachedCount} cached #{cachedCountName}"
       else
         " files and #{cachedCount} cached"
-
 
   nonAssetsLog = compiledLog + cachedLog + generatedLog
 
