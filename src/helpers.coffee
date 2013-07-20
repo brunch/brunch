@@ -9,6 +9,7 @@ logger = require 'loggy'
 {SourceNode} = require 'source-map'
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
+commonRequireDefinition = require 'commonjs-require-definition'
 # Just require.
 require 'coffee-script'
 
@@ -172,9 +173,7 @@ normalizeWrapper = (typeOrFunction, nameCleaner) ->
 normalizeDefinition = (typeOrFunction) ->
   switch typeOrFunction
     when 'commonjs'
-      path = sysPath.join __dirname, '..', 'vendor', 'require_definition.js'
-      data = fs.readFileSync(path).toString()
-      -> data
+      -> commonRequireDefinition
     when 'amd', false then -> ''
     else
       if typeof typeOrFunction is 'function'
