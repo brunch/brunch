@@ -2,7 +2,7 @@
 
 Sections:
 
-* [FAQ](./faq.md)
+* [FAQ](./faq.md), also tips on Bower integration
 * [Commands](./commands.md)
 * [Config](./config.md)
 * [Plugins](./plugins.md)
