@@ -3,8 +3,8 @@
 ## I want to start new project with Brunch. What's the workflow?
 
 * Create new project `brunch new <skeleton>`.
-* Create HTML mockups in `app/assets` directory (`login.html`, `user.html` etc.) & corresponding styles.
-* Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug styles in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically reload browser page on every page.
+* Create static HTML pages in `app/assets` directory (`login.html`, `user.html` etc.) and corresponding styles in `app/styles`.
+* Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically re-apply styles or reload the page when changes are saved.
 * When all mockups are done, create app classes for them with `scaffolt` ([scaffolt package](https://github.com/paulmillr/scaffolt)). E.g. `scaffolt view user` (you need to have `generators` directory in your app).
 * Debug your code in browser via `console.log` or `debugger` statements.
 
@@ -52,7 +52,7 @@ You can use:
 * brunch 1.1.0 with plugin 1.1.9.
 * brunch 1.9.14 with plugin 1.5.6.
 
-You can't use:
+You may encounter problems if you use:
 
 * brunch 1.1.0 with plugin 1.2.0.
 * brunch 1.1.0 with plugin 2.0.0.
@@ -60,7 +60,7 @@ You can't use:
 
 ## I get EMFILE error when I build Brunch project. WTF?
 
-`EMFILE` means there're too many open files.
+`EMFILE` means there are too many open files.
 Brunch watches all your project files and it's usually a pretty big number.
 You can fix this error with setting max opened file count to bigger number
 with command `ulimit -n <number>` (10000 should be enough).
@@ -86,5 +86,5 @@ You need to install brunch plugins. It can be done simply by executing `npm inst
 ## What languages do you advice to use?
 
 * `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
-* `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / `:`s), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
-* `Handlebars` templates are used because they are logic-less / compatible with Mustache (that has implementations in many languages) and have nice helpers system. If you're a fan of clear syntax, you might like `Jade` instead, which is much clearer than `HAML`.
+* `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / colons), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all needed vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
+* `Handlebars` templates are used because they are logic-less, compatible with Mustache (which has implementations in many languages), and have a nice helpers system. If you're a fan of clear terse syntax, you might like `Jade` instead, which is similar to, but much clearer than `HAML`.
