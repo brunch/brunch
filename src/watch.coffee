@@ -91,18 +91,8 @@ initWatcher = (config, callback) ->
 
   each watched, exists, (err, existing) ->
     watchedFiles = watched.filter((_, index) -> existing[index])
-    watcher = chokidar.watch watchedFiles,
-      ignored: fs_utils.ignored,
-      persistent: config.persistent
-    watcher
-      .on 'add', (path) ->
-        debug "File '#{path}' received event 'add'"
-      .on 'change', (path) ->
-        debug "File '#{path}' received event 'change'"
-      .on 'unlink', (path) ->
-        debug "File '#{path}' received event 'unlink'"
-      .on('error', logger.error)
-    callback null, watcher
+    params = ignored: fs_utils.ignored, persistent: config.persistent
+    callback null, chokidar.watch watchedFiles, params
 
 # Generate function that will check if plugin can work with file.
 #
@@ -416,6 +406,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     , {}
 
   watcher
+    .on('error', logger.error)
     .on 'add', (path) ->
       isConfigFile = possibleConfigFiles[path]
       isPluginsFile = path is config.paths.packageConfig
@@ -445,6 +436,9 @@ Exiting."
       else
         onChange()
         fileList.emit 'unlink', path
+  if process.env.DEBUG
+    watcher.on 'all', (event, path) ->
+      debug "File '#{path}' received event '#{event}'"
 
 # persistent - Boolean: should brunch build the app only once or watch it?
 # options    - Object: {configPath, optimize, server, port}. Only configPath is
