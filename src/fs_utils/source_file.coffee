@@ -4,7 +4,7 @@ debug = require('debug')('brunch:source-file')
 sysPath = require 'path'
 os = require 'os'
 {pipeline} = require './pipeline'
-{identityNode, replaceSlashes} = require '../helpers'
+{identityNode, replaceBackSlashes} = require '../helpers'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 isWindows = os.platform() is 'win32'
@@ -18,9 +18,9 @@ updateCache = (realPath, cache, error, result, wrap) ->
     cache.compilationTime = Date.now()
   else
     {dependencies, compiled, source, sourceMap} = result
-    realPath = replaceSlashes realPath if isWindows
+    filePath = replaceBackSlashes realPath
     if sourceMap
-      debug "Generated source map for '#{realPath}': " + JSON.stringify sourceMap
+      debug "Generated source map for '#{filePath}': " + JSON.stringify sourceMap
 
     cache.error = null
     cache.dependencies = dependencies
@@ -39,16 +39,21 @@ updateCache = (realPath, cache, error, result, wrap) ->
       suffix = wrapped.slice sourcePos + compiled.length
 
     cache.node = if sourceMap?
-      map = new SourceMapConsumer sourceMap
+      mapping = if typeof sourceMap is 'string'
+        JSON.parse sourceMap.replace /^\)\]\}'/, ''
+      else
+        sourceMap
+      mapping.sources = mapping.sources.map(replaceBackSlashes) if isWindows and mapping.sources
+      map = new SourceMapConsumer mapping
       SourceNode.fromStringWithSourceMap nodeData, map
     else
-      identityNode nodeData, realPath
+      identityNode nodeData, filePath
 
     cache.node.prepend prefix if prefix
     cache.node.add suffix if suffix
 
-    cache.node.source = realPath
-    cache.node.setSourceContent realPath, source
+    cache.node.source = filePath
+    cache.node.setSourceContent filePath, source
 
   cache
 

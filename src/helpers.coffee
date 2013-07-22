@@ -65,6 +65,13 @@ exports.replaceSlashes = replaceSlashes = do ->
   else
     (_) -> _
 
+
+exports.replaceBackSlashes = replaceBackSlashes = do ->
+  if os.platform() is 'win32'
+    (_) -> _.replace(/\\/g, '\/')
+  else
+    (_) -> _
+
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   files = config.files or {}
   Object.keys(files).forEach (language) ->
