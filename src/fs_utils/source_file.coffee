@@ -4,7 +4,7 @@ debug = require('debug')('brunch:source-file')
 sysPath = require 'path'
 os = require 'os'
 {pipeline} = require './pipeline'
-{identityNode, replaceSlashes} = require('../helpers')
+{identityNode, replaceSlashes} = require '../helpers'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 isWindows = os.platform() is 'win32'
