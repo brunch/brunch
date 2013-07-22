@@ -12,7 +12,7 @@ common = require './common'
 #
 # Returns String.
 getAssetDirectory = (path, convention) ->
-  split = path.split('/')
+  split = path.split(common.sep)
   # Creates thing like this
   # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html'
   split
