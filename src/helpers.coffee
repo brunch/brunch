@@ -59,8 +59,13 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
-exports.replaceSlashes = replaceSlashes = (config) ->
-  changePath = (string) -> string.replace(/\//g, '\\')
+exports.replaceSlashes = do ->
+  if os.platform() is 'win32'
+    (_) -> _.replace(/\//g, '\\')
+  else
+    (_) -> _
+
+exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   files = config.files or {}
   Object.keys(files).forEach (language) ->
     lang = files[language] or {}
@@ -68,16 +73,16 @@ exports.replaceSlashes = replaceSlashes = (config) ->
 
     # Modify order.
     Object.keys(order).forEach (orderKey) ->
-      lang.order[orderKey] = lang.order[orderKey].map(changePath)
+      lang.order[orderKey] = lang.order[orderKey].map(replaceSlashes)
 
     # Modify join configuration.
     switch toString.call(lang.joinTo)
       when '[object String]'
-        lang.joinTo = changePath lang.joinTo
+        lang.joinTo = replaceSlashes lang.joinTo
       when '[object Object]'
         newJoinTo = {}
         Object.keys(lang.joinTo).forEach (joinToKey) ->
-          newJoinTo[changePath joinToKey] = lang.joinTo[joinToKey]
+          newJoinTo[replaceSlashes joinToKey] = lang.joinTo[joinToKey]
         lang.joinTo = newJoinTo
   config
 
@@ -272,7 +277,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   deprecations.forEach logger.warn if deprecations.length > 0
 
   recursiveExtend config, options
-  replaceSlashes config if os.platform() is 'win32'
+  replaceConfigSlashes config if os.platform() is 'win32'
   normalizeConfig config
   readComponents '.', 'bower', (error, bowerComponents) ->
     if error and not /ENOENT/.test(error.toString())

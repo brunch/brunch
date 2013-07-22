@@ -2,9 +2,12 @@
 
 debug = require('debug')('brunch:source-file')
 sysPath = require 'path'
+os = require 'os'
 {pipeline} = require './pipeline'
-nodeFactory = require('../helpers').identityNode
+{identityNode, replaceSlashes} = require('../helpers').identityNode
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
+
+isWindows = os.platform() is 'win32'
 
 updateCache = (realPath, cache, error, result, wrap) ->
   if error?
@@ -15,6 +18,7 @@ updateCache = (realPath, cache, error, result, wrap) ->
     cache.compilationTime = Date.now()
   else
     {dependencies, compiled, source, sourceMap} = result
+    realPath = replaceSlashes realPath if isWindows
     if sourceMap
       debug "Generated source map for '#{realPath}': " + JSON.stringify sourceMap
 
@@ -38,7 +42,7 @@ updateCache = (realPath, cache, error, result, wrap) ->
       map = new SourceMapConsumer sourceMap
       SourceNode.fromStringWithSourceMap nodeData, map
     else
-      nodeFactory nodeData, realPath
+      identityNode nodeData, realPath
 
     cache.node.prepend prefix if prefix
     cache.node.add suffix if suffix
