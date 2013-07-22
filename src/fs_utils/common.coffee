@@ -55,8 +55,15 @@ exports.copy = (source, destination, callback) ->
   return callback() if ignored source
   copy = (error) ->
     return callback error if error?
+    fsStreamErrHandler = (err, io) ->
+      debug "File copy #{io}: #{err}"
+      if err.toString().match /OK, open/
+        debug "Retrying copy of #{source}"
+        copy()
     input = fs.createReadStream source
     output = fs.createWriteStream destination
+    input.on  'error', (err) -> fsStreamErrHandler err, 'input'
+    output.on 'error', (err) -> fsStreamErrHandler err, 'output'
     request = input.pipe output
     request.on 'close', callback
   parentDir = sysPath.dirname(destination)
