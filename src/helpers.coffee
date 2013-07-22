@@ -59,7 +59,7 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
-exports.replaceSlashes = do ->
+exports.replaceSlashes = replaceSlashes = do ->
   if os.platform() is 'win32'
     (_) -> _.replace(/\//g, '\\')
   else
