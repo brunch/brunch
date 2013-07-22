@@ -9,23 +9,21 @@
   [read-components docs](http://github.com/paulmillr/read-components)
 * Added proper **AMD support**. Just include almond.js with your AMD app
   and brunch will do require.js optimizer job for you.
-* Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
-* Removed files are now actually removed from compiled output.
-* Improved compilation performance.
-* Removed `addSourceURLs` directive. Use source maps instead.
-* Improved error messages when there’s a need in `npm install`.
 * Added ability to use multiple compilator plugins for one file.
+* Added `require.list` support to default require definition of app. This allows to automatically load tests and stuff.
 * Added `config.paths.watched` that replaces
   `config.paths.{app,test,vendor,assets}`
 * Added `config.modules.nameCleaner`, which allows you to set
   filterer function for module names, for example, change all
-  app/file to file.
-  If you set `config.paths.app` to `src` and place source into that dir,
-  all your modules will have nice path names just as if they were in `app`.
+  definitions of app/file to file (as done by default).
 * Added `config.fileListInterval` config prop that allows to set an
   interval in ms which determines how often brunch file list
-  should be checked for new files (internal and usually not needed prop).
+  should be checked for new files (internal property).
 * Added detailed messages of what was done to `compiled in` logs.
+* Removed files are now actually removed from compiled output.
+* Removed `config.modules.addSourceURLs` directive. Use source maps instead.
+* Improved compilation performance.
+* Improved error messages when there’s a need in `npm install`.
 * Changed syntax of `brunch new` to `brunch new <uri> [dir]`
 * Fixed advanced `conventions.assets` issues (e.g. `/styles\/img/`)
 
