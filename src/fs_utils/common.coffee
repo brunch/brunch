@@ -60,12 +60,13 @@ exports.copy = (source, destination, callback) ->
       if err.toString().match /OK, open/
         debug "Retrying copy of #{source}"
         copy()
+      else
+        callback err
     input = fs.createReadStream source
-    output = fs.createWriteStream destination
+    output = input.pipe fs.createWriteStream destination
     input.on  'error', (err) -> fsStreamErrHandler err, 'input'
     output.on 'error', (err) -> fsStreamErrHandler err, 'output'
-    request = input.pipe output
-    request.on 'close', callback
+    output.on 'close', callback
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
