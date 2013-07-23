@@ -22,6 +22,8 @@ To add package to your project:
 * Add packages to `dependencies` field of your `bower.json`
 * Optionally specify [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`
 
+Example app with Bower integration: http://github.com/paulmillr/ostio
+
 ## I want to create a separate javascript file for a bookmarklet (etc.). What's the best way?
 
 Use this joinTo config. It will compile all files in app/ (except in `app/namespace`) to one file and all files in `app/namespace` to another.
