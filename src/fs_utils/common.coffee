@@ -53,13 +53,13 @@ exports.ignoredAlways = ignoredAlways = (path) ->
 # Returns nothing.
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
-  copy = (error) ->
+  copy = (error, retry) ->
     return callback error if error?
     fsStreamErrHandler = (err, io) ->
       debug "File copy #{io}: #{err}"
-      if err.toString().match /OK, open/
-        debug "Retrying copy of #{source}"
-        copy()
+      if not retry and err.toString().match /OK, open/
+        debug "Will retry copy of #{source}"
+        setTimeout retryCopy, 100
       else
         callback err
     input = fs.createReadStream source
@@ -67,6 +67,7 @@ exports.copy = (source, destination, callback) ->
     input.on  'error', (err) -> fsStreamErrHandler err, 'input'
     output.on 'error', (err) -> fsStreamErrHandler err, 'output'
     output.on 'close', callback
+  retryCopy -> copy null, true
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
