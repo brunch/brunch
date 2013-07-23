@@ -1,4 +1,4 @@
-# Brunch 1.7.0 (unreleased)
+# Brunch 1.7.0 (23 July 2013)
 * Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [Elan Shanker](https://github.com/es128).
 * Added **Twitter Bower** package manager support.
   The support is very different from modern builders.
