@@ -67,7 +67,7 @@ exports.copy = (source, destination, callback) ->
     input.on  'error', (err) -> fsStreamErrHandler err, 'input'
     output.on 'error', (err) -> fsStreamErrHandler err, 'output'
     output.on 'close', callback
-  retryCopy -> copy null, true
+  retryCopy = -> copy null, true
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
