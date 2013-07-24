@@ -32,6 +32,7 @@
     "postinstall": "node setup.js postinstall",
     "test": "node setup.js test"
   },
+  "preferGlobal": true,
   "dependencies": {
     "coffee-script": "~1.6.3",
     "commander": "~2.0.0",
