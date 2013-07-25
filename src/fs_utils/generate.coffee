@@ -158,7 +158,7 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
   waterfall chained, callback
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
-  type = if sourceFiles.some((file) -> file.type is 'javascript')
+  type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])
     'javascript'
   else
     'stylesheet'
