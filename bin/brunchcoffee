@@ -1,7 +1,8 @@
 #!/usr/bin/env coffee
 
-path = require('path');
-fs = require('fs');
+path = require 'path'
+fs = require 'fs'
 
-src = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'src');
-require(path.join(src, 'cli')).run();
+dir = path.dirname fs.realpathSync __filename
+src = path.join dir, '..', 'src', 'cli'
+require(src).run()
