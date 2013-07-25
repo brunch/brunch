@@ -51,27 +51,36 @@ exports.ignoredAlways = ignoredAlways = (path) ->
 # callback    - Function.
 #
 # Returns nothing.
+copyCounter = 0
+copyQueue = []
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
-  copy = (error, retry) ->
+  copy = (error) ->
     return callback error if error?
     fsStreamErrHandler = (err, io) ->
-      debug "File copy #{io}: #{err}"
-      if not retry and err.toString().match /OK, open/
-        debug "Will retry copy of #{source}"
-        setTimeout retryCopy, 100
+      if err.toString().match /OK, open|EBUSY/
+        copyCounter--
+        copyQueue.push copy
       else
+        debug "File copy #{io}: #{err}"
         callback err
+    copyCounter++
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
     input.on  'error', (err) -> fsStreamErrHandler err, 'input'
     output.on 'error', (err) -> fsStreamErrHandler err, 'output'
-    output.on 'close', callback
-  retryCopy = -> copy null, true
+    output.on 'close', ->
+      if --copyCounter < 1 and copyQueue.length
+        setImmediate copyQueue.shift()
+      callback()
+      callback = ->
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
-      copy()
+      if copyQueue.length
+        copyQueue.push copy
+      else
+        copy()
     else
       mkdirp parentDir, copy
 
