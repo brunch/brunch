@@ -77,7 +77,7 @@ exports.copy = (source, destination, callback) ->
     output.on 'error', fsStreamErrHandler
     output.on 'finish', ->
       if --copyCounter < 1 and copyQueue.length
-        setImmediate copyQueue.shift()
+        process.nextTick copyQueue.shift()
       callback()
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
