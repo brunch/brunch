@@ -55,7 +55,7 @@ copyCounter = 0
 copyQueue = []
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
-  copy = (error) ->
+  copy = (error, retries = 0) ->
     return callback error if error?
     copyCounter++
     instanceError = false
@@ -63,11 +63,14 @@ exports.copy = (source, destination, callback) ->
       return if instanceError
       instanceError = true
       copyCounter--
-      if err.code in ['OK', 'EBUSY', 'UNKNOWN', 'EMFILE']
-        copyQueue.push copy
-      else
-        debug "File copy: #{err}"
-        callback err
+      switch (if retries < 5 then err.code)
+        when 'OK', 'UNKNOWN', 'EMFILE'
+          copyQueue.push -> copy null, ++retries
+        when 'EBUSY'
+          setTimeout (-> copy null, retries), 100 * ++retries 
+        else
+          debug "File copy #{io}: #{err}"
+          callback err
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
     input.on  'error', fsStreamErrHandler
