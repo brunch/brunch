@@ -58,7 +58,7 @@ exports.copy = (source, destination, callback) ->
   copy = (error) ->
     return callback error if error?
     fsStreamErrHandler = (err, io) ->
-      if err.toString().match /OK, open|EBUSY/
+      if err.code in ['OK', 'EBUSY', 'UNKNOWN', 'EMFILE']
         copyCounter--
         copyQueue.push copy
       else
