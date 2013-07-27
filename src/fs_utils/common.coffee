@@ -69,7 +69,7 @@ exports.copy = (source, destination, callback) ->
         when 'EBUSY'
           setTimeout (-> copy null, retries), 100 * ++retries 
         else
-          debug "File copy #{io}: #{err}"
+          debug "File copy: #{err}"
           callback err
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
