@@ -57,14 +57,17 @@ exports.copy = (source, destination, callback) ->
   return callback() if ignored source
   copy = (error) ->
     return callback error if error?
+    copyCounter++
+    instanceError = false
     fsStreamErrHandler = (err) ->
+      return if instanceError
+      instanceError = true
+      copyCounter--
       if err.code in ['OK', 'EBUSY', 'UNKNOWN', 'EMFILE']
-        copyCounter--
         copyQueue.push copy
       else
         debug "File copy: #{err}"
         callback err
-    copyCounter++
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
     input.on  'error', fsStreamErrHandler
@@ -73,7 +76,6 @@ exports.copy = (source, destination, callback) ->
       if --copyCounter < 1 and copyQueue.length
         setImmediate copyQueue.shift()
       callback()
-      callback = ->
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists
