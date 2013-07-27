@@ -69,7 +69,7 @@ exports.copy = (source, destination, callback) ->
     output = input.pipe fs.createWriteStream destination
     input.on  'error', (err) -> fsStreamErrHandler err, 'input'
     output.on 'error', (err) -> fsStreamErrHandler err, 'output'
-    output.on 'close', ->
+    output.on 'finish', ->
       if --copyCounter < 1 and copyQueue.length
         setImmediate copyQueue.shift()
       callback()
