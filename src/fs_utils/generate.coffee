@@ -124,6 +124,7 @@ concat = (files, path, type, definition) ->
   debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
   files.forEach (file) ->
     root.add file.node
+    root.add ';' if type is javascript
     #debug JSON.stringify(file.node)
     root.setSourceContent file.node.source, file.source
 
