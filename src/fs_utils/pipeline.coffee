@@ -50,9 +50,9 @@ compile = (initialData, path, compilers, callback) ->
   chained.unshift (next) -> next null, {source: initialData, path}
   waterfall chained, callback
 
-pipeline = (realPath, path, linters, compilers, callback) ->
+pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
-  fs.readFile realPath, 'utf-8', (error, source) ->
+  fs.readFile path, 'utf-8', (error, source) ->
     return callback throwError 'Reading', error if error?
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->

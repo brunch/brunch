@@ -128,7 +128,7 @@ createJoinConfig = (configFiles) ->
     acc
 
   types = Object.keys(configFiles)
-  result = types
+  joinConfig = types
     .map (type) ->
       configFiles[type].joinTo
     .map (joinTo) ->
@@ -144,7 +144,19 @@ createJoinConfig = (configFiles) ->
       subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
       [types[index], subConfig]
     .reduce(listToObj, {})
-  Object.freeze(result)
+
+  # special matching for plugin helpers
+  types.forEach (type) ->
+    joinConfig[type].pluginHelpers = configFiles[type].pluginHelpers or
+      do ->
+        destFiles = Object.keys joinConfig[type]
+        vendorFiles = destFiles.filter (file) -> /vendor/i.test file
+        if vendorFiles.length > 0
+          vendorFiles[0]
+        else
+          destFiles.pop()
+
+  Object.freeze(joinConfig)
 
 identityNode =
 exports.identityNode = (code, source) ->

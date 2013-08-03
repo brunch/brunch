@@ -61,28 +61,20 @@ makeWrapper = (wrapper, path, isWrapped, isntModule) ->
   (node) ->
     if isWrapped then wrapper path, node, isntModule else node
 
-makeCompiler = (realPath, path, cache, linters, compilers, wrap) ->
+makeCompiler = (path, cache, linters, compilers, wrap) ->
   (callback) ->
-    pipeline realPath, path, linters, compilers, (error, data) =>
-      updateCache realPath, cache, error, data, wrap
+    pipeline path, linters, compilers, (error, data) =>
+      updateCache path, cache, error, data, wrap
       return callback error if error?
       callback null, cache.data
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (path, compilers, linters, wrapper, isHelper, isVendor) ->
+  constructor: (@path, compilers, linters, wrapper, @isHelper, isVendor) ->
     compiler = compilers[0]
-    isntModule = isHelper or isVendor
+    isntModule = @isHelper or isVendor
     isWrapped = compiler.type in ['javascript', 'template']
 
-    # If current file is provided by brunch plugin, use fake path.
-    realPath = path
-    @path = if isHelper
-      compilerName = compiler.constructor.name
-      fileName = "brunch-#{compilerName}-#{sysPath.basename realPath}"
-      sysPath.join 'vendor', 'scripts', fileName
-    else
-      path
     @type = compiler.type
     @source = null
     @data = ''
@@ -94,7 +86,7 @@ module.exports = class SourceFile
     @disposed = false
 
     wrap = makeWrapper wrapper, @path, isWrapped, isntModule
-    @compile = makeCompiler realPath, @path, this, linters, compilers, wrap
+    @compile = makeCompiler @path, this, linters, compilers, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped
