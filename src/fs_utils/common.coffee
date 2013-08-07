@@ -38,6 +38,7 @@ exports.writeFile = (path, data, callback) ->
 
 # RegExp that would filter invalid files (dotfiles, emacs caches etc).
 exports.ignored = ignored = (path) ->
+  ('.htaccess' is sysPath.basename path) or
   /(^[.#]|(?:__|~)$)/.test sysPath.basename path
 
 # Files that should be always ignored (git / mercurial metadata etc).
