@@ -59,18 +59,17 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
-exports.replaceSlashes = replaceSlashes = do ->
+exports.replaceSlashes = replaceSlashes = (_) ->
   if os.platform() is 'win32'
-    (_) -> _.replace(/\//g, '\\')
+    _.replace(/\//g, '\\')
   else
-    (_) -> _
+    _
 
-
-exports.replaceBackSlashes = replaceBackSlashes = do ->
+exports.replaceBackSlashes = replaceBackSlashes = (_) ->
   if os.platform() is 'win32'
-    (_) -> _.replace(/\\/g, '\/')
+    _.replace(/\\/g, '\/')
   else
-    (_) -> _
+    _
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   files = config.files or {}
