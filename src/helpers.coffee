@@ -59,17 +59,13 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
+exports.isWindows = isWindows = do -> os.platform() is 'win32'
+
 exports.replaceSlashes = replaceSlashes = (_) ->
-  if os.platform() is 'win32'
-    _.replace(/\//g, '\\')
-  else
-    _
+  if isWindows then _.replace(/\//g, '\\') else _
 
 exports.replaceBackSlashes = replaceBackSlashes = (_) ->
-  if os.platform() is 'win32'
-    _.replace(/\\/g, '\/')
-  else
-    _
+  if isWindows then _.replace(/\\/g, '\/') else _
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   files = config.files or {}
@@ -295,7 +291,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   deprecations.forEach logger.warn if deprecations.length > 0
 
   recursiveExtend config, options
-  replaceConfigSlashes config if os.platform() is 'win32'
+  replaceConfigSlashes config if isWindows
   normalizeConfig config
   readComponents '.', 'bower', (error, bowerComponents) ->
     if error and not /ENOENT/.test(error.toString())
