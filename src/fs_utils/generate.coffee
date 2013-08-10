@@ -128,7 +128,7 @@ concat = (files, path, type, definition) ->
     #debug JSON.stringify(file.node)
     root.setSourceContent file.node.source, file.source
 
-  root.prepend definition() if type is 'javascript'
+  root.prepend definition(path, root.sourceContents) if type is 'javascript'
   root.toStringWithSourceMap file: path
 
 optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
