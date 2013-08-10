@@ -157,7 +157,7 @@ createJoinConfig = (configFiles) ->
         if vendorFiles.length > 0
           vendorFiles[0]
         else
-          destFiles.pop()
+          destFiles.shift()
 
   Object.freeze(joinConfig)
 
