@@ -215,6 +215,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   paths.config        ?= configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
+  paths.bowerConfig   ?= joinRoot 'bower.json'
 
   conventions          = config.conventions  ?= {}
   conventions.assets  ?= /assets[\\/]/
