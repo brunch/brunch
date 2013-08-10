@@ -149,6 +149,10 @@ createJoinConfig = (configFiles) ->
     joinConfig[type].pluginHelpers = configFiles[type].pluginHelpers or
       do ->
         destFiles = Object.keys joinConfig[type]
+        vendorMatch = destFiles.filter (file) ->
+          joinConfig[type][file] 'vendor/.'
+        if vendorMatch.length > 0
+          return vendorMatch[0]
         vendorFiles = destFiles.filter (file) -> /vendor/i.test file
         if vendorFiles.length > 0
           vendorFiles[0]
