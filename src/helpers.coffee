@@ -59,18 +59,17 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
-exports.replaceSlashes = replaceSlashes = do ->
+exports.replaceSlashes = replaceSlashes = (_) ->
   if os.platform() is 'win32'
-    (_) -> _.replace(/\//g, '\\')
+    _.replace(/\//g, '\\')
   else
-    (_) -> _
+    _
 
-
-exports.replaceBackSlashes = replaceBackSlashes = do ->
+exports.replaceBackSlashes = replaceBackSlashes = (_) ->
   if os.platform() is 'win32'
-    (_) -> _.replace(/\\/g, '\/')
+    _.replace(/\\/g, '\/')
   else
-    (_) -> _
+    _
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   files = config.files or {}
@@ -128,7 +127,7 @@ createJoinConfig = (configFiles) ->
     acc
 
   types = Object.keys(configFiles)
-  result = types
+  joinConfig = types
     .map (type) ->
       configFiles[type].joinTo
     .map (joinTo) ->
@@ -144,7 +143,19 @@ createJoinConfig = (configFiles) ->
       subConfig = Object.keys(joinTo).map(makeChecker).reduce(listToObj, {})
       [types[index], subConfig]
     .reduce(listToObj, {})
-  Object.freeze(result)
+
+  # special matching for plugin helpers
+  types.forEach (type) ->
+    joinConfig[type].pluginHelpers = configFiles[type].pluginHelpers or
+      do ->
+        destFiles = Object.keys joinConfig[type]
+        vendorFiles = destFiles.filter (file) -> /vendor/i.test file
+        if vendorFiles.length > 0
+          vendorFiles[0]
+        else
+          destFiles.pop()
+
+  Object.freeze(joinConfig)
 
 identityNode =
 exports.identityNode = (code, source) ->
