@@ -6,12 +6,13 @@ mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 os = require 'os'
 sysPath = require 'path'
+{isWindows} = require '../helpers'
 
 # Short-cut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists
 
 # Directory separator.
-exports.sep = sysPath.sep or (if os.platform() is 'win32' then '\\' else '/')
+exports.sep = sysPath.sep or (if isWindows then '\\' else '/')
 
 # Create file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
@@ -68,7 +69,7 @@ exports.copy = (source, destination, callback) ->
         when 'OK', 'UNKNOWN', 'EMFILE'
           copyQueue.push -> copy null, ++retries
         when 'EBUSY'
-          setTimeout (-> copy null, retries), 100 * ++retries 
+          setTimeout (-> copy null, retries), 100 * ++retries
         else
           debug "File copy: #{err}"
           callback err
