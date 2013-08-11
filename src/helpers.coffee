@@ -59,14 +59,16 @@ exports.install = install = (rootPath, callback = (->)) ->
       return callback log
     callback null, stdout
 
+isWindows = os.platform() is 'win32'
+
 exports.replaceSlashes = replaceSlashes = (_) ->
-  if os.platform() is 'win32'
+  if isWindows
     _.replace(/\//g, '\\')
   else
     _
 
 exports.replaceBackSlashes = replaceBackSlashes = (_) ->
-  if os.platform() is 'win32'
+  if isWindows
     _.replace(/\\/g, '\/')
   else
     _
