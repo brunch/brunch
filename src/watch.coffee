@@ -77,9 +77,7 @@ startServer = (config, callback = (->)) ->
 #
 # Returns nothing.
 initWatcher = (config, callback) ->
-  watched = config.paths.watched.concat [
-    config.paths.config, config.paths.packageConfig
-  ]
+  watched = config.paths.watched.concat config.paths.configFiles
   watched = watched.concat.apply watched, config._normalized.bowerComponents.map (_) -> _.files
 
   Object.keys(require.extensions).forEach (ext) ->
