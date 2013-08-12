@@ -33,7 +33,7 @@ paths:
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
         * before: list of files that will be loaded before other files
         * after: list of files that will be loaded after other files
-    * pluginHelpers: (optional) specify which output file plugins' include files concatenate into. Defaults to either the first output file with `vendor` in its path or the last output file in your joinTo object.
+    * pluginHelpers: (optional) specify which output file plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
 
 All files from `vendor` directory are automatically (by-default) loaded before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty.
 

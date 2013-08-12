@@ -145,11 +145,11 @@ createJoinConfig = (configFiles) ->
     joinConfig[type].pluginHelpers = configFiles[type].pluginHelpers or
       do ->
         destFiles = Object.keys joinConfig[type]
-        vendorFiles = destFiles.filter (file) -> /vendor/i.test file
-        if vendorFiles.length > 0
-          vendorFiles[0]
-        else
-          destFiles.pop()
+        joinMatch = destFiles.filter (file) -> joinConfig[type][file] 'vendor/.'
+        return joinMatch[0] if joinMatch.length > 0
+        nameMatch = destFiles.filter (file) -> /vendor/i.test file
+        return nameMatch[0] if nameMatch.length > 0
+        destFiles.shift()
 
   Object.freeze(joinConfig)
 

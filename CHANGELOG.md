@@ -1,3 +1,12 @@
+# Brunch 1.7.1 (11 August 2013)
+* Local brunch package now takes precedence over global and
+  will be auto-loaded on global `brunch` command.
+* Added `pluginHelpers` directive to `joinTo` configs. It allows to
+  specify to which file you want stuff from plugins (`handlebars-runtime.js`, for example)
+  to be added.
+* `.htaccess` is now properly copied from assets.
+* Fixed issues on windows with copying many assets.
+
 # Brunch 1.7.0 (23 July 2013)
 * Added **source maps** support! Big thanks to [Pierre Lepers](https://github.com/plepers) and [Elan Shanker](https://github.com/es128).
 * Added **Twitter Bower** package manager support.

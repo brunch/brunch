@@ -7,52 +7,54 @@ os = require 'os'
 {identityNode, replaceBackSlashes, isWindows} = require '../helpers'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
-updateCache = (realPath, cache, error, result, wrap) ->
+updateMap = (path, compiled, wrapped, sourceMap) ->
+  if sourceMap
+    debug "Generated source map for '#{path}': " + JSON.stringify sourceMap
+
+  if typeof wrapped is 'object'
+    {prefix, suffix} = wrapped
+    wrapperContent = wrapped.data or compiled
+  else
+    sourcePos = wrapped.indexOf compiled
+    wrapperContent = if sourcePos > 0 then compiled else wrapped
+    prefix = wrapped.slice 0, sourcePos
+    suffix = wrapped.slice sourcePos + compiled.length
+
+  node = if sourceMap?
+    mapping = if typeof sourceMap is 'string'
+      JSON.parse sourceMap.replace /^\)\]\}'/, ''
+    else
+      sourceMap
+    if isWindows and mapping.sources
+      mapping.sources = mapping.sources.map(replaceBackSlashes)
+    map = new SourceMapConsumer mapping
+    SourceNode.fromStringWithSourceMap wrapperContent, map
+  else
+    identityNode wrapperContent, path
+
+  node.prepend prefix if prefix
+  node.add suffix if suffix
+  node.source = path
+  node.setSourceContent path, wrapperContent
+
+  node
+
+updateCache = (path, cache, error, result, wrap) ->
   if error?
     cache.error = error
-  else if not result?
+    return cache
+  if not result?
     cache.error = null
     cache.data = null
     cache.compilationTime = Date.now()
-  else
-    {dependencies, compiled, source, sourceMap} = result
-    filePath = replaceBackSlashes realPath
-    if sourceMap
-      debug "Generated source map for '#{filePath}': " + JSON.stringify sourceMap
+    return cache
 
-    cache.error = null
-    cache.dependencies = dependencies
-    cache.source = source
-    cache.compilationTime = Date.now()
-
-    wrapped = wrap compiled
-
-    if typeof wrapped is 'object'
-      {prefix, suffix} = wrapped
-      nodeData = wrapped.data or compiled
-    else
-      sourcePos = wrapped.indexOf compiled
-      nodeData = if sourcePos > 0 then compiled else wrapped
-      prefix = wrapped.slice 0, sourcePos
-      suffix = wrapped.slice sourcePos + compiled.length
-
-    cache.node = if sourceMap?
-      mapping = if typeof sourceMap is 'string'
-        JSON.parse sourceMap.replace /^\)\]\}'/, ''
-      else
-        sourceMap
-      mapping.sources = mapping.sources.map(replaceBackSlashes) if isWindows and mapping.sources
-      map = new SourceMapConsumer mapping
-      SourceNode.fromStringWithSourceMap nodeData, map
-    else
-      identityNode nodeData, filePath
-
-    cache.node.prepend prefix if prefix
-    cache.node.add suffix if suffix
-
-    cache.node.source = filePath
-    cache.node.setSourceContent filePath, source
-
+  cache.error = null
+  cache.dependencies = result.dependencies
+  cache.source = result.source
+  cache.compilationTime = Date.now()
+  compiled = result.compiled
+  cache.node = updateMap path, compiled, (wrap compiled), result.sourceMap
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
@@ -60,9 +62,10 @@ makeWrapper = (wrapper, path, isWrapped, isntModule) ->
     if isWrapped then wrapper path, node, isntModule else node
 
 makeCompiler = (path, cache, linters, compilers, wrap) ->
+  normalizedPath = replaceBackSlashes path
   (callback) ->
     pipeline path, linters, compilers, (error, data) =>
-      updateCache path, cache, error, data, wrap
+      updateCache normalizedPath, cache, error, data, wrap
       return callback error if error?
       callback null, cache.data
 
