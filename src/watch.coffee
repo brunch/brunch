@@ -77,7 +77,7 @@ startServer = (config, callback = (->)) ->
 #
 # Returns nothing.
 initWatcher = (config, callback) ->
-  watched = config.paths.watched.concat config.paths.configFiles
+  watched = config.paths.watched.concat config._normalized.paths.allConfigFiles
   watched = watched.concat.apply watched, config._normalized.bowerComponents.map (_) -> _.files
 
   Object.keys(require.extensions).forEach (ext) ->
@@ -266,7 +266,7 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
       restart()
 
   if reInstall
-    helpers.install config.paths.root, reWatch
+    helpers.install config.paths.root, 'npm', reWatch
   else
     logger.info "Reloading watcher..."
     reWatch()
@@ -395,39 +395,37 @@ isConfigFile = (basename, configPath) ->
 #
 # Returns nothing.
 bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onChange) ->
-  possibleConfigFiles = Object.keys(require.extensions)
-    .map (_) ->
-      config.paths.config + _
-    .reduce (obj, _) ->
-      obj[_] = true
-      obj
-    , {}
+  {possibleConfigFiles} = config._normalized.paths
+  {packageConfig, bowerConfig} = config.paths
+
+  changeHandler = (path) ->
+    onChange()
+    changeFileList compilers, linters, fileList, path, false
 
   watcher
     .on('error', logger.error)
     .on 'add', (path) ->
+      console.log path
       isConfigFile = possibleConfigFiles[path]
-      isPluginsFile = path is config.paths.packageConfig
+      isPluginsFile = path in [packageConfig, bowerConfig]
       unless isConfigFile or isPluginsFile
-        # Update file list.
-        onChange()
-        changeFileList compilers, linters, fileList, path, false
+        changeHandler path
     .on 'change', (path) ->
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
-      isPluginsFile = path is config.paths.packageConfig
-      if isConfigFile or isPluginsFile
+      isPackageFile = path is packageConfig
+      if isConfigFile or isPackageFile
         reload isPluginsFile
+      else if path is bowerConfig
+        helpers.install config.paths.root, 'bower'
       else
-        # Otherwise, just update file list.
-        onChange()
-        changeFileList compilers, linters, fileList, path, false
+        changeHandler path
     .on 'unlink', (path) ->
       # If file is special (config.coffee, package.json), exit.
       # Otherwise, just update file list.
       isConfigFile = possibleConfigFiles[path]
-      isPluginsFile = path is config.paths.packageConfig
-      if isConfigFile or isPluginsFile
+      isPackageFile = path is packageConfig
+      if isConfigFile or isPackageFile
         logger.info "Detected removal of config.coffee / package.json.
 Exiting."
         process.exit(0)
