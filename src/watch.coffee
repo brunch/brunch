@@ -415,7 +415,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
       isConfigFile = possibleConfigFiles[path]
       isPackageFile = path is packageConfig
       if isConfigFile or isPackageFile
-        reload isPluginsFile
+        reload isPackageFile
       else if path is bowerConfig
         helpers.install config.paths.root, 'bower'
       else
