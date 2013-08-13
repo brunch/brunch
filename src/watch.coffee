@@ -80,9 +80,6 @@ initWatcher = (config, callback) ->
   watched = config.paths.watched.concat config._normalized.paths.allConfigFiles
   watched = watched.concat.apply watched, config._normalized.bowerComponents.map (_) -> _.files
 
-  Object.keys(require.extensions).forEach (ext) ->
-    watched.push config.paths.config + ext
-
   exists = (path, callback) ->
     fs_utils.exists path, (value) ->
       callback undefined, value
@@ -405,7 +402,6 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
   watcher
     .on('error', logger.error)
     .on 'add', (path) ->
-      console.log path
       isConfigFile = possibleConfigFiles[path]
       isPluginsFile = path in [packageConfig, bowerConfig]
       unless isConfigFile or isPluginsFile
@@ -417,7 +413,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
       if isConfigFile or isPackageFile
         reload isPluginsFile
       else if path is bowerConfig
-        helpers.install config.paths.root, 'bower'
+        helpers.install config.paths.root, 'bower', reload
       else
         changeHandler path
     .on 'unlink', (path) ->
