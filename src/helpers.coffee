@@ -300,8 +300,9 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
     config._normalized.bowerComponents = bowerComponents
     filesMap = config._normalized.bowerFilesMap = {}
     bowerComponents.forEach (component) ->
-      component.files.forEach (file) ->
-        filesMap[file] = component.sortingLevel
+      filesLength = component.files.length
+      component.files.forEach (file, index) ->
+        filesMap[file] = component.sortingLevel + (filesLength * 0.001 - index * 0.001)
 
     deepFreeze config
     callback null, config
