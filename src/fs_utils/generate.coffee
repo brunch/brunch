@@ -28,6 +28,18 @@ sortByVendor = (config, a, b) ->
     # these two items.
     sortAlphabetically a, b
 
+sortBowerComponents = (config, a, b) ->
+  aLevel = config.bowerMapping[a]
+  bLevel = config.bowerMapping[b]
+  if aLevel? and not bLevel?
+    -1
+  else if not aLevel? and bLevel?
+    1
+  else if aLevel? and bLevel?
+    bLevel - aLevel
+  else
+    sortByVendor config, a, b
+
 # Items wasn't found in config.before, try to find then in
 # config.after.
 # Item that config.after contains would have lower sorting index.
@@ -42,7 +54,7 @@ sortByAfter = (config, a, b) ->
   else if hasA and hasB
     indexOfA - indexOfB
   else
-    sortByVendor config, a, b
+    sortBowerComponents config, a, b
 
 # Try to find items in config.before.
 # Item that config.after contains would have bigger sorting index.
@@ -58,18 +70,6 @@ sortByBefore = (config, a, b) ->
     indexOfA - indexOfB
   else
     sortByAfter config, a, b
-
-sortBowerComponents = (config, a, b) ->
-  aLevel = config.bowerMapping[a]
-  bLevel = config.bowerMapping[b]
-  if aLevel? and not bLevel?
-    -1
-  else if not aLevel? and bLevel?
-    1
-  else if aLevel? and bLevel?
-    bLevel - aLevel
-  else
-    sortByBefore config, a, b
 
 # Sorts by pattern.
 #
@@ -87,7 +87,7 @@ sortByConfig = (files, config) ->
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
       bowerMapping: config.bowerMapping ? {}
-    files.slice().sort (a, b) -> sortBowerComponents cfg, a, b
+    files.slice().sort (a, b) -> sortByBefore cfg, a, b
   else
     files
 
