@@ -46,12 +46,12 @@ exports.formatError = (error, path) ->
   "#{error.brunchType} of '#{path}'
  failed. #{error.toString().slice(7)}"
 
-exports.install = install = (rootPath, callback = (->)) ->
+exports.install = install = (rootPath, command, callback = (->)) ->
   prevDir = process.cwd()
-  logger.info 'Installing packages...'
+  logger.info "Installing #{command} packages..."
   process.chdir rootPath
-  # Install node packages.
-  exec 'npm install', (error, stdout, stderr) ->
+  # Install packages.
+  exec "#{command} install", (error, stdout, stderr) ->
     process.chdir prevDir
     if error?
       log = stderr.toString()
@@ -215,6 +215,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   paths.config        ?= configPath       ? joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
+  paths.bowerConfig   ?= joinRoot 'bower.json'
 
   conventions          = config.conventions  ?= {}
   conventions.assets  ?= /assets[\\/]/
@@ -275,6 +276,18 @@ normalizeConfig = (config) ->
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
     normalized.conventions[name] = normalizeChecker config.conventions[name]
+  normalized.paths = {}
+  normalized.paths.possibleConfigFiles = Object.keys(require.extensions)
+    .map (_) ->
+      config.paths.config + _
+    .reduce (obj, _) ->
+      obj[_] = true
+      obj
+    , {}
+  normalized.paths.allConfigFiles = [
+    config.paths.packageConfig
+    config.paths.bowerConfig
+  ].concat Object.keys normalized.paths.possibleConfigFiles
   config._normalized = normalized
   config
 

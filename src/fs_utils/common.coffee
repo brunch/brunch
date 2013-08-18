@@ -73,14 +73,17 @@ exports.copy = (source, destination, callback) ->
         else
           debug "File copy: #{err}"
           callback err
+    fsStreamFinishHandler = ->
+      if --copyCounter < 1 and copyQueue.length
+        process.nextTick copyQueue.shift()
+      callback()
+      fsStreamFinishHandler = ->
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
     input.on  'error', fsStreamErrHandler
     output.on 'error', fsStreamErrHandler
-    output.on 'finish', ->
-      if --copyCounter < 1 and copyQueue.length
-        process.nextTick copyQueue.shift()
-      callback()
+    output.on 'close', fsStreamFinishHandler
+    output.on 'finish', fsStreamFinishHandler
   parentDir = sysPath.dirname(destination)
   exports.exists parentDir, (exists) ->
     if exists

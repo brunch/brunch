@@ -39,7 +39,7 @@ module.exports = class FileList extends EventEmitter
 
   # Files that are not really app files.
   isIgnored: (path, test = @config.conventions.ignored) ->
-    return true if path in [@config.paths.config, @config.paths.packageConfig]
+    return true if path in @config._normalized.paths.allConfigFiles
 
     switch toString.call(test)
       when '[object RegExp]'
