@@ -1,3 +1,10 @@
+# Brunch 1.7.2 (19 August 2013)
+* Fixed windows issues with compilation
+* Auto-watching `bower.json` for changes now
+* Concatenate JS files in main property of bower component in valid order
+  (how they were specified in `bower.json`).
+* Respect config.order.before in brunch config for bower files
+
 # Brunch 1.7.1 (11 August 2013)
 * Local brunch package now takes precedence over global and
   will be auto-loaded on global `brunch` command.
