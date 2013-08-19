@@ -32,6 +32,8 @@ updateMap = (path, compiled, wrapped, sourceMap) ->
   else
     identityNode wrapperContent, path
 
+  node.isIdentity = not sourceMap?
+
   node.prepend prefix if prefix
   node.add suffix if suffix
   node.source = path
@@ -53,6 +55,7 @@ updateCache = (path, cache, error, result, wrap) ->
   cache.dependencies = result.dependencies
   cache.source = result.source
   cache.compilationTime = Date.now()
+  cache.data = result.compiled
   compiled = result.compiled
   cache.node = updateMap path, compiled, (wrap compiled), result.sourceMap
   cache

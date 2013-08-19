@@ -125,8 +125,8 @@ concat = (files, path, type, definition) ->
   files.forEach (file) ->
     root.add file.node
     root.add ';' if type is 'javascript'
-    #debug JSON.stringify(file.node)
-    root.setSourceContent file.node.source, file.source
+    data = if file.node.isIdentity then file.data else file.source
+    root.setSourceContent file.node.source, data
 
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
   root.toStringWithSourceMap file: path
