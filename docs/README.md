@@ -63,8 +63,8 @@ your application code.
 
 Order of file concatenation is:
 
-1. Bower components ordered automatically.
-2. Files in `config.files[type].order.before` in order you specify.
+1. Files in `config.files[type].order.before` in order you specify.
+2. Bower components ordered automatically.
 3. Files in `vendor/` directories in alphabetic order.
 4. All other files in alphabetic order.
 5. Files in `config.files[type].order.after` in order you specify.
