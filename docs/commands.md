@@ -33,23 +33,25 @@ Examples:
 
 Build a brunch project. Options:
 
-* `-o, --optimize`: build an optimized version of application. Minifies result js & css files and does other stuff.
+* `-a SETTING, --apply SETTING`: apply settings from config.overrides[SETTING]
+* `-r, --production`: apply production settings (run optimize/minify plugins, disable source maps, disable auto-reload plugin), which can be modified in config.overrides.production; same as `-a production`
+* `-o, --optimize`: run optimize/minify plugins during compilation; same as `-a production` and settings can be modified in config.overrides.optimize
 * `-c CONFIG_PATH, --config CONFIG_PATH`: path to config (default: `config`)
 
 Short-cut: `brunch b`.
 
 Examples:
 
+* `brunch b -r`: would build in production mode.
 * `brunch b -c ios_config -o`: would load ios_config.(js,coffee), build application and optimize the output.
 
 ## `brunch watch`
 
 Watch brunch directory and rebuild if something changed. Options:
 
-* `-s, --server`: run a simple http server that would server `output` dir in `/` and `test` dir in `/test/`
+* all the same options available in `brunch build`, plus:
+* `-s, --server`: run a simple http server that would server `public` dir in `/` and `test` dir in `/test/`
 * `-p PORT, --port PORT`: if a `server` option was specified, define on which port the server would run
-* `-c CONFIG_PATH, --config CONFIG_PATH`: path to config (default: `config`)
-* `-o, --optimize`: build an optimized version of application. Minifies result js & css files and does other stuff.
 
 Short-cut: `brunch w`.
 
@@ -58,3 +60,4 @@ Examples:
 * `brunch w`: simply watch current directory &amp; compile the output to `public` directory.
 * `brunch w -s`: watch current project and run a webserver that would work on public directory.
 * `brunch w -sop 8841`: watch current project, compile files with optimizations and run a webserver that would work on public directory.
+* `brunch w -a ios`: watch current directory &amp; compile the output using settings from `config.overrides.ios`
