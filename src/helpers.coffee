@@ -25,9 +25,10 @@ exports.extend = extend = (object, properties) ->
   object
 
 applyOverrides = (config, options) ->
-  override = config.overrides?[options.applyOverride]
-  return config unless override
-  recursiveExtend config, override
+  options.applyOverrides.forEach (override) ->
+    recursiveExtend config, config.overrides?[override] or {}
+  delete options.applyOverrides
+  config
 
 recursiveExtend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
@@ -35,6 +36,7 @@ recursiveExtend = (object, properties) ->
     if typeof value is 'object' and value?
       recursiveExtend object[key], value
     else
+      object ?= {}
       object[key] = value
   object
 
@@ -248,7 +250,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   production.optimize ?= true
   production.sourceMaps ?= false
   production.plugins  ?= autoReload: {}
-  production.plugins.autoReload ?= false
+  production.plugins.autoReload.enabled ?= false
 
   config
 
