@@ -190,3 +190,19 @@ server:
 
 `Number`: Allows to set an interval in ms which determines how often brunch file list
 should be checked for new files (internal and usually not needed prop).
+
+## `overrides`
+
+`Object`: Alternate config settings to activate via command line switches (`--apply SETTING`)
+
+Defaults:
+
+```coffeescript
+overrides:
+  production:
+    optimize: true
+    sourceMaps: false
+    plugins: autoReload: enabled: false
+  optimize:
+    optimize: true
+```

@@ -39,8 +39,9 @@ propIsFunction = (prop) -> (object) ->
 #
 # Returns Object.
 generateParams = (persistent, options) ->
-  params = {}
-  params.optimize = options.optimize if options.optimize?
+  params = applyOverrides: options.apply?.split(',') or []
+  ['production', 'optimize'].forEach (key) ->
+    params.applyOverrides.unshift key if options[key]?
   params.persistent = persistent
   if options.publicPath
     params.paths = {}
