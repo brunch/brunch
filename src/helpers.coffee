@@ -24,12 +24,19 @@ exports.extend = extend = (object, properties) ->
     object[key] = properties[key]
   object
 
+applyOverrides = (config, options) ->
+  options.applyOverrides.forEach (override) ->
+    recursiveExtend config, config.overrides?[override] or {}
+  delete options.applyOverrides
+  config
+
 recursiveExtend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
     if typeof value is 'object' and value?
       recursiveExtend object[key], value
     else
+      object ?= {}
       object[key] = value
   object
 
@@ -208,16 +215,16 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   joinRoot = (name) ->
     join 'root', name
 
-  paths                = config.paths     ?= {}
+  paths                = config.paths         ?= {}
   paths.root          ?= '.'
   paths.public        ?= joinRoot 'public'
   paths.watched       ?= ['app', 'test', 'vendor'].map(joinRoot)
 
-  paths.config        ?= configPath       ? joinRoot 'config'
+  paths.config        ?= configPath           ?  joinRoot 'config'
   paths.packageConfig ?= joinRoot 'package.json'
   paths.bowerConfig   ?= joinRoot 'bower.json'
 
-  conventions          = config.conventions  ?= {}
+  conventions          = config.conventions   ?= {}
   conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? (path) ->
     sysPath.basename(path)[0] is '_'
@@ -227,15 +234,24 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.sourceMaps   ?= true
   config.optimize     ?= false
 
-  modules              = config.modules      ?= {}
+  modules              = config.modules       ?= {}
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
   modules.nameCleaner ?= (path) -> path.replace(/^app\//, '')
 
-  config.server       ?= {}
-  config.server.base  ?= ''
-  config.server.port  ?= 3333
-  config.server.run   ?= false
+  server               = config.server        ?= {}
+  server.base         ?= ''
+  server.port         ?= 3333
+  server.run          ?= false
+
+  overrides            = config.overrides     ?= {}
+  overrides.optimize  ?= optimize: true
+  production           = overrides.production ?= {}
+  production.optimize ?= true
+  production.sourceMaps ?= false
+  production.plugins  ?= autoReload: {}
+  production.plugins.autoReload.enabled ?= false
+
   config
 
 getConfigDeprecations = (config) ->
@@ -303,6 +319,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   deprecations = getConfigDeprecations config
   deprecations.forEach logger.warn if deprecations.length > 0
 
+  applyOverrides config, options
   recursiveExtend config, options
   replaceConfigSlashes config if isWindows
   normalizeConfig config
