@@ -17,7 +17,6 @@ program
   .description('Build a brunch project. Short-cut: b')
   .option('-c, --config [path]', 'path to config files')
   .option('-a, --apply [setting]', 'specify a set of override settings to apply')
-  .option('-r, --production', 'apply production settings')
   .option('-o, --optimize', 'optimize result files (minify etc.)')
   .action(commands.build)
 
@@ -26,7 +25,6 @@ program
   .description('Watch brunch directory and rebuild if something changed. Short-cut: w')
   .option('-c, --config [path]', 'path to config files')
   .option('-a, --apply [setting]', 'specify a set of override settings to apply')
-  .option('-r, --production', 'apply production settings')
   .option('-o, --optimize', 'optimize result files (minify etc.)')
   .option('-s, --server', 'run a simple http server that would serve public dir')
   .option('-p, --port [port]', 'if a `server` option was specified, define on which port

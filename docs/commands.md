@@ -34,7 +34,6 @@ Examples:
 Build a brunch project. Options:
 
 * `-a SETTING, --apply SETTING`: apply settings from config.overrides[SETTING]
-* `-r, --production`: apply production settings (run optimize/minify plugins, disable source maps, disable auto-reload plugin), which can be modified in config.overrides.production; same as `-a production`
 * `-o, --optimize`: run optimize/minify plugins during compilation; same as `-a production` and settings can be modified in config.overrides.optimize
 * `-c CONFIG_PATH, --config CONFIG_PATH`: path to config (default: `config`)
 
@@ -42,7 +41,7 @@ Short-cut: `brunch b`.
 
 Examples:
 
-* `brunch b -r`: would build in production mode.
+* `brunch b -o`: would create optimized build.
 * `brunch b -c ios_config -o`: would load ios_config.(js,coffee), build application and optimize the output.
 
 ## `brunch watch`
