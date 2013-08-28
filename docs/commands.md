@@ -35,7 +35,6 @@ Build a brunch project. Options:
 
 * `-e SETTING, --env SETTING`: apply settings from `config.overrides[SETTING]`
 * `-P, --production`: run optimize/minify plugins during compilation, disable source maps and auto-reload; same as `-e production` and settings can be modified in `config.overrides.production`
-* `-c CONFIG_PATH, --config CONFIG_PATH`: path to config (default: `config`)
 
 Short-cut: `brunch b`.
 
