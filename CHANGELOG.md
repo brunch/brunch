@@ -1,3 +1,16 @@
+# Brunch 1.7.3 (28 August 2013)
+* Added `-e, --env` param to `build` and `watch`
+  that will replace --config in 1.8.
+  `env` is a dead-simple way of specifying your work environment.
+  You can use `--env production` and then specify
+  `config.overrides.production`, all properties of which will
+  override default config. You may use more than one --env.
+* Source maps for languages which don't support source maps
+  (“identity source maps”) now generated from
+  compiled source (js) instead of original source (coffee)
+* Deprecated `--optimize` (use `--env production` or `--production`) and `--config`
+  options.
+
 # Brunch 1.7.2 (19 August 2013)
 * Fixed windows issues with compilation
 * Auto-watching `bower.json` for changes now
