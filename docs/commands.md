@@ -33,16 +33,16 @@ Examples:
 
 Build a brunch project. Options:
 
-* `-a SETTING, --apply SETTING`: apply settings from config.overrides[SETTING]
-* `-o, --optimize`: run optimize/minify plugins during compilation; same as `-a production` and settings can be modified in config.overrides.optimize
+* `-e SETTING, --env SETTING`: apply settings from `config.overrides[SETTING]`
+* `-P, --production`: run optimize/minify plugins during compilation, disable source maps and auto-reload; same as `-e production` and settings can be modified in `config.overrides.production`
 * `-c CONFIG_PATH, --config CONFIG_PATH`: path to config (default: `config`)
 
 Short-cut: `brunch b`.
 
 Examples:
 
-* `brunch b -o`: would create optimized build.
-* `brunch b -c ios_config -o`: would load ios_config.(js,coffee), build application and optimize the output.
+* `brunch b -P`: would create optimized/production build.
+* `brunch b -e ios`: build using the settings from `config.overrides.ios`
 
 ## `brunch watch`
 
@@ -58,5 +58,5 @@ Examples:
 
 * `brunch w`: simply watch current directory &amp; compile the output to `public` directory.
 * `brunch w -s`: watch current project and run a webserver that would work on public directory.
-* `brunch w -sop 8841`: watch current project, compile files with optimizations and run a webserver that would work on public directory.
-* `brunch w -a ios`: watch current directory &amp; compile the output using settings from `config.overrides.ios`
+* `brunch w -sp 8841`: same as above, but run webserver on port 8841.
+* `brunch w -e ios`: watch current directory &amp; compile the output using settings from `config.overrides.ios`

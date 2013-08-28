@@ -39,9 +39,9 @@ propIsFunction = (prop) -> (object) ->
 #
 # Returns Object.
 generateParams = (persistent, options) ->
-  params = applyOverrides: options.apply?.split(',') or []
-  ['production', 'optimize'].forEach (key) ->
-    params.applyOverrides.unshift key if options[key]?
+  params = env: options.env?.split(',') or []
+  if options.production? or options.optimize?
+    params.env.unshift 'production'
   params.persistent = persistent
   if options.publicPath
     params.paths = {}
@@ -315,6 +315,11 @@ loadPackages = (rootPath, callback) ->
 # Returns nothing.
 initialize = (options, configParams, onCompile, callback) ->
   packages = loadPackages '.'
+
+  if options.config?
+    logger.warn '`-c, --config` option is deprecated. Use `--env` and `config.overrides` instead'
+  if options.optimize?
+    logger.warn '`-o, --optimize` option is deprecated. Use `-p, --production` instead'
 
   # Load config, get brunch packages from package.json.
   helpers.loadConfig options.config, configParams, (error, config) ->

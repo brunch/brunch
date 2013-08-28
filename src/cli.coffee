@@ -15,20 +15,22 @@ program
 program
   .command('build')
   .description('Build a brunch project. Short-cut: b')
-  .option('-c, --config [path]', 'path to config files')
-  .option('-a, --apply [setting]', 'specify a set of override settings to apply')
-  .option('-o, --optimize', 'optimize result files (minify etc.)')
+  .option('-e, --env [setting]', 'specify a set of override settings to apply')
+  .option('-P, --production', 'same as `--env production`')
+  .option('-c, --config [path]', '[DEPRECATED] path to config files')
+  .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.build)
 
 program
   .command('watch')
   .description('Watch brunch directory and rebuild if something changed. Short-cut: w')
-  .option('-c, --config [path]', 'path to config files')
-  .option('-a, --apply [setting]', 'specify a set of override settings to apply')
-  .option('-o, --optimize', 'optimize result files (minify etc.)')
+  .option('-e, --env [setting]', 'specify a set of override settings to apply')
+  .option('-P, --production', 'same as `--env production`')
   .option('-s, --server', 'run a simple http server that would serve public dir')
   .option('-p, --port [port]', 'if a `server` option was specified, define on which port
  the server would run')
+  .option('-c, --config [path]', '[DEPRECATED] path to config files')
+  .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.watch)
 
 # The function would be executed every time user run `bin/brunch`.

@@ -25,9 +25,8 @@ exports.extend = extend = (object, properties) ->
   object
 
 applyOverrides = (config, options) ->
-  options.applyOverrides.forEach (override) ->
+  options.env.forEach (override) ->
     recursiveExtend config, config.overrides?[override] or {}
-  delete options.applyOverrides
   config
 
 recursiveExtend = (object, properties) ->
@@ -245,7 +244,6 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   server.run          ?= false
 
   overrides            = config.overrides     ?= {}
-  overrides.optimize  ?= optimize: true
   production           = overrides.production ?= {}
   production.optimize ?= true
   production.sourceMaps ?= false
