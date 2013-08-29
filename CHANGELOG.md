@@ -1,3 +1,6 @@
+# Brunch 1.7.4 (29 August 2013)
+* Quick fix for `--optimize`d building.
+
 # Brunch 1.7.3 (28 August 2013)
 * Added `-e, --env` param to `build` and `watch`
   that will replace --config in 1.8.
