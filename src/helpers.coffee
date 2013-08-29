@@ -232,6 +232,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   config.notifications ?= true
   config.sourceMaps   ?= true
   config.optimize     ?= false
+  config.plugins      ?= {}
 
   modules              = config.modules       ?= {}
   modules.wrapper     ?= 'commonjs'
@@ -247,7 +248,8 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   production           = overrides.production ?= {}
   production.optimize ?= true
   production.sourceMaps ?= false
-  production.plugins  ?= autoReload: {}
+  production.plugins  ?= {}
+  production.plugins.autoReload ?= {}
   production.plugins.autoReload.enabled ?= false
 
   config
