@@ -8,6 +8,8 @@ logger = require 'loggy'
 pushserve = require 'pushserve'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
+cluster = require 'cluster'
+{initWorker} = require './worker'
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
@@ -342,6 +344,9 @@ initialize = (options, configParams, onCompile, callback) ->
               {data: params}
             callback null, result
 
+    if cluster.isWorker
+      return callback null, {config, compilers}
+
     linters    = plugins.filter(propIsFunction 'lint')
     optimizers = plugins.filter(propIsFunction 'optimize').concat(
       plugins.filter(propIsFunction 'minify')
@@ -359,6 +364,7 @@ initialize = (options, configParams, onCompile, callback) ->
             else
               {data: params}
             callback null, result
+
 
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
@@ -455,6 +461,13 @@ class BrunchWatcher
       {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
       logger.notifications = @config.notifications
       logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
+      if cluster.isWorker
+        return initWorker compilers
+      else if @config.workers
+        worker = cluster.fork().on 'online', ->
+          @on 'message', (msg) ->
+            if msg is 'ready'
+              @send 'echo me please'
       bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
       # Emit `change` event for each file that is included with plugins.
