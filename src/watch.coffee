@@ -452,13 +452,12 @@ class BrunchWatcher
     configParams = generateParams persistent, options
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
-      {config, watcher, fileList, compilers, linters, compile, reload, includes} = result
-      logger.notifications = config.notifications
-      logger.notificationsTitle = config.notificationsTitle or 'Brunch'
-      bindWatcherEvents config, fileList, compilers, linters, watcher, reload, @_startCompilation
+      {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
+      logger.notifications = @config.notifications
+      logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
+      bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
       # Emit `change` event for each file that is included with plugins.
-      @config = config
       # Wish it worked like `watcher.add includes`.
       includes.forEach (path) ->
         changeFileList compilers, linters, fileList, path, true
