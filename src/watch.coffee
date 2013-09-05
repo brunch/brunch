@@ -102,7 +102,7 @@ isPluginFor = (path) -> (plugin) ->
   else if plugin.extension
     RegExp "\\.#{plugin.extension}$"
   else
-    /$.^/
+    /$0^/ # never match
   pattern.test(path)
 
 # Determine which compiler should be used for path and
