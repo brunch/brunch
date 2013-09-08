@@ -108,6 +108,7 @@ module.exports = class FileList extends EventEmitter
         return if error?
         debug "Compiled file '#{path}'..."
         @compiled[path] = true
+        @emit "compiled #{path}"
 
   copy: (asset) =>
     path = asset.path
@@ -118,10 +119,10 @@ module.exports = class FileList extends EventEmitter
       return if error?
       debug "Copied asset '#{path}'"
 
-  _add: (path, compiler, linters, isHelper) ->
+  _add: (path, compiler, linters, workers, isHelper) ->
     isVendor = @is 'vendor', path
     wrapper = @config._normalized.modules.wrapper
-    file = new SourceFile path, compiler, linters, wrapper, isHelper, isVendor
+    file = new SourceFile path, compiler, linters, wrapper, workers, isHelper, isVendor
     @files.push file
     file
 
@@ -130,7 +131,7 @@ module.exports = class FileList extends EventEmitter
     @assets.push file
     file
 
-  _change: (path, compiler, linters, isHelper) =>
+  _change: (path, compiler, linters, workers, isHelper) =>
     ignored = @isIgnored path
     if @is 'assets', path
       unless ignored
@@ -139,7 +140,7 @@ module.exports = class FileList extends EventEmitter
       if ignored or not compiler?.length
         @compileDependencyParents path unless @initial
       else
-        @compile (@find(path) ? @_add path, compiler, linters, isHelper)
+        @compile (@find(path) ? @_add path, compiler, linters, workers, isHelper)
 
   _unlink: (path) =>
     ignored = @isIgnored path

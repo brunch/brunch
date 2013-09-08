@@ -10,6 +10,7 @@ logger = require 'loggy'
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
+cluster = require 'cluster'
 # Just require.
 require 'coffee-script'
 
@@ -321,6 +322,8 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
 
   applyOverrides config, options
   recursiveExtend config, options
+  if cluster.isWorker
+    recursiveExtend config, plugins: autoReload: enabled: false
   replaceConfigSlashes config if isWindows
   normalizeConfig config
   readComponents '.', 'bower', (error, bowerComponents) ->
