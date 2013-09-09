@@ -6,10 +6,10 @@ debug = require('debug')('brunch:watch')
 sysPath = require 'path'
 logger = require 'loggy'
 pushserve = require 'pushserve'
+# worker must be loaded before fs_utils
+worker = require './worker'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
-cluster = require 'cluster'
-{initWorker} = require './worker'
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
@@ -117,10 +117,10 @@ isPluginFor = (path) -> (plugin) ->
 # isHelper  - Boolean. Is current file included with brunch plugin?
 #
 # Returns nothing.
-changeFileList = (compilers, linters, fileList, path, workers, isHelper) ->
+changeFileList = (compilers, linters, fileList, path, isHelper) ->
   compiler = compilers.filter(isPluginFor path)
   currentLinters = linters.filter(isPluginFor path)
-  fileList.emit 'change', path, compiler, currentLinters, workers, isHelper
+  fileList.emit 'change', path, compiler, currentLinters, isHelper
 
 changedSince = (startTime) -> (generated) ->
   generated.sourceFiles.some (sourceFile) ->
@@ -362,7 +362,6 @@ initialize = (options, configParams, onCompile, callback) ->
               {data: params}
             callback null, result
 
-
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
     # Add default brunch callback.
@@ -372,7 +371,7 @@ initialize = (options, configParams, onCompile, callback) ->
         callback generatedFiles
     fileList   = new fs_utils.FileList config
 
-    if cluster.isWorker
+    if worker.isWorker
       return callback null, {config, fileList, compilers, linters}
 
     if config.persistent and config.server.run
@@ -401,17 +400,16 @@ isConfigFile = (basename, configPath) ->
 # compilers - array of brunch plugins that can compile source code.
 # watcher   - `chokidar.FSWatcher` instance.
 # reload    - function that will reload the whole thing.
-# workers   - `BrunchWorkers` instance
 # onChange  - callback that will be executed every time any file is changed.
 #
 # Returns nothing.
-bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, workers, onChange) ->
+bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onChange) ->
   {possibleConfigFiles} = config._normalized.paths
   {packageConfig, bowerConfig} = config.paths
 
   changeHandler = (path) ->
     onChange()
-    changeFileList compilers, linters, fileList, path, workers, false
+    changeFileList compilers, linters, fileList, path, false
 
   watcher
     .on('error', logger.error)
@@ -463,19 +461,15 @@ class BrunchWatcher
       {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
       logger.notifications = @config.notifications
       logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
-      if cluster.isWorker
-        return initWorker {changeFileList, compilers, linters, fileList}
-      else if @config.workers
-        workers = list: []
-        cluster.fork().once 'message', (msg) ->
-          workers.list.push this if msg is 'ready'
+      if @config.workers
+        return unless worker {changeFileList, compilers, linters, fileList}
 
-      bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, workers, @_startCompilation
+      bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
       # Emit `change` event for each file that is included with plugins.
       # Wish it worked like `watcher.add includes`.
       includes.forEach (path) ->
-        changeFileList compilers, linters, fileList, path, workers, true
+        changeFileList compilers, linters, fileList, path, true
 
   # Set start time of last compilation to current time.
   # Returns Number.

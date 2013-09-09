@@ -8,7 +8,6 @@ os = require 'os'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 updateMap = (path, compiled, wrapped, sourceMap) ->
-  #console.log wrapped
   if sourceMap
     debug "Generated source map for '#{path}': " + JSON.stringify sourceMap
 
@@ -65,25 +64,16 @@ makeWrapper = (wrapper, path, isWrapped, isntModule) ->
   (node) ->
     if isWrapped then wrapper path, node, isntModule else node
 
-makeCompiler = (path, cache, linters, compilers, wrap, workers) ->
+makeCompiler = (path, cache, linters, compilers, wrap) ->
   normalizedPath = replaceBackSlashes path
   (callback) ->
-    postCompile = (error, data) ->
+    pipeline path, linters, compilers, (error, data) =>
       updateCache normalizedPath, cache, error, data, wrap
       callback error, cache.data
-    if workers?.list?.length
-      messageHandler = ([msg]) ->
-        return unless msg.path is path
-        this.removeListener 'message', messageHandler
-        msg.compiled = msg.data
-        postCompile msg.error, msg
-      workers.list[0].on('message', messageHandler).send(path)
-    else
-      pipeline path, linters, compilers, postCompile
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
-  constructor: (@path, compilers, linters, wrapper, workers, @isHelper, isVendor) ->
+  constructor: (@path, compilers, linters, wrapper, @isHelper, isVendor) ->
     compiler = compilers[0]
     isntModule = @isHelper or isVendor
     isWrapped = compiler.type in ['javascript', 'template']
@@ -99,7 +89,7 @@ module.exports = class SourceFile
     @disposed = false
 
     wrap = makeWrapper wrapper, @path, isWrapped, isntModule
-    @compile = makeCompiler @path, this, linters, compilers, wrap, workers
+    @compile = makeCompiler @path, this, linters, compilers, wrap
 
     debug "Initializing fs_utils.SourceFile: %s", JSON.stringify {
       @path, isntModule, isWrapped
