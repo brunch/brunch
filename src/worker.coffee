@@ -1,6 +1,8 @@
 'use strict'
 
 cluster = require 'cluster'
+numCPUs = require('os').cpus().length
+debug = require('debug')('brunch:worker')
 pipeline = require './fs_utils/pipeline'
 
 workers = undefined
@@ -8,41 +10,62 @@ workers = undefined
 # monkey-patch pipeline and override on master process
 origPipeline = pipeline.pipeline
 pipeline.pipeline = (args...) ->
-  if workers?.active
+  if workers
     [path, linters, compilers, callback] = args
-    messageHandler = ([msg]) ->
-      return unless msg.path is path
-      this.removeListener 'message', messageHandler
+    debug "Worker compilation of #{path}"
+    workers.queue path, ([msg]) ->
       msg.compiled = msg.data
       callback msg.error, msg
-    workers.list[0].on('message', messageHandler).send(path)
   else
     origPipeline args...
 
 # method invoked on worker processes
 initWorker = ({changeFileList, compilers, linters, fileList}) ->
-	process
-	.on 'message', (path) ->
-		pathFilter =
-		fileList.once "compiled #{path}", ->
-			process.send fileList.files.filter (_) -> _.path is path
-		changeFileList compilers, linters, fileList, path
-	.send 'ready'
+  fileList.on 'compiled', (path) ->
+    process.send fileList.files.filter (_) -> _.path is path
+  process
+    .on 'message', (path) ->
+      changeFileList compilers, linters, fileList, path
+    .send 'ready'
 
 # BrunchWorkers class invoked in the master process for wrangling all the workers
 class BrunchWorkers
-	constructor: ->
+  constructor: ->
+    counter = @count = numCPUs - 1
+    @workerIndex = @count - 1
+    @jobs = []
     @list = []
-    workers = this
-    cluster.fork().once 'message', (msg) ->
-      workers.list.push this if msg is 'ready'
-      workers.active = true
+    @fork @list, @work.bind(this) while counter--
+  fork: (list, work) ->
+    cluster.fork().on 'message', (msg) ->
+      if msg is 'ready'
+        @handlers = {}
+        list.push this
+        do work
+      else if msg?[0]?.path
+        @handlers[msg[0].path] msg
+  queue: (path, handler) ->
+    @jobs.push {path, handler}
+    do @work
+  work: ->
+    return unless activeWorkers = @list.length
+    if activeWorkers < @count
+      @next activeWorkers - 1
+    else
+      while @jobs.length
+        @next @workerIndex
+        @workerIndex = 0 if ++@workerIndex is @count
+  next: (index) ->
+    {path, handler} = @jobs.shift()
+    @list[index].handlers[path] = handler
+    @list[index].send path
 
 module.exports = ({changeFileList, compilers, linters, fileList}) ->
-	if cluster.isWorker
+  if cluster.isWorker
+    debug 'Worker started'
     initWorker {changeFileList, compilers, linters, fileList}
     undefined
   else
-    new BrunchWorkers
+    workers = new BrunchWorkers
 
 module.exports.isWorker = cluster.isWorker
