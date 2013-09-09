@@ -273,8 +273,10 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
 
 getPlugins = (packages, config) ->
   packages
-    .filter((plugin) -> plugin.prototype?.brunchPlugin)
-    .map((plugin) -> new plugin config)
+    .filter (plugin) ->
+      plugin::?.brunchPlugin and (not worker.isWorker or plugin::?.compile or plugin::?.lint)
+    .map (plugin) ->
+      new plugin config
 
 loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
