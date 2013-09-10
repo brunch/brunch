@@ -206,3 +206,20 @@ overrides:
   optimize:
     optimize: true
 ```
+
+## `workers`
+
+`Object`: Optional settings affecting experimental workers feature for multi-threaded compilation. May improve compilation speed of large projects with lots of cpu-bound compile operations on multi-core systems, but do not be surprised if the overhead involved actually slows down your compile times.
+
+* `enabled`: Boolean indicating whether to use experimental workers feature. Default value is `false` (disabled).
+* `count`: (optional) The number of worker processes to use. Defaults to the number of CPUs/cores on the system minus 1.
+* `extensions`: (optional) Array of file extensions to compile using worker processes. If not set, compiles all source files using workers.
+
+Example:
+
+```coffeescript
+workers:
+  enabled: true
+  count: 6
+  extensions: ['less']
+```
