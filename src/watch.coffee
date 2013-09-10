@@ -274,6 +274,8 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
 getPlugins = (packages, config) ->
   packages
     .filter (plugin) ->
+      if worker.isWorker and config.workers?.extensions
+        return false unless plugin::?.extension in config.workers.extensions
       plugin::?.brunchPlugin and (not worker.isWorker or plugin::?.compile or plugin::?.lint)
     .map (plugin) ->
       new plugin config
@@ -463,8 +465,8 @@ class BrunchWatcher
       {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
       logger.notifications = @config.notifications
       logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
-      if @config.workers
-        return unless worker {changeFileList, compilers, linters, fileList}
+      if @config.workers?.enabled
+        return unless worker {changeFileList, compilers, linters, fileList, @config}
 
       bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()

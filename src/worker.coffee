@@ -1,6 +1,7 @@
 'use strict'
 
 cluster = require 'cluster'
+sysPath = require 'path'
 numCPUs = require('os').cpus().length
 debug = require('debug')('brunch:worker')
 pipeline = require './fs_utils/pipeline'
@@ -10,8 +11,9 @@ workers = undefined
 # monkey-patch pipeline and override on master process
 origPipeline = pipeline.pipeline
 pipeline.pipeline = (args...) ->
-  if workers
-    [path, linters, compilers, callback] = args
+  [path, linters, compilers, callback] = args
+  exts = workers?.config?.extensions
+  if workers and (not exts or sysPath.extname(path).slice(1) in exts)
     debug "Worker compilation of #{path}"
     workers.queue path, ([msg]) ->
       msg.compiled = msg.data
@@ -30,12 +32,12 @@ initWorker = ({changeFileList, compilers, linters, fileList}) ->
 
 # BrunchWorkers class invoked in the master process for wrangling all the workers
 class BrunchWorkers
-  constructor: ->
-    counter = @count = numCPUs - 1
+  constructor: (@config={}) ->
+    counter = @count = @config.count or numCPUs - 1
     @workerIndex = @count - 1
     @jobs = []
     @list = []
-    @fork @list, @work.bind(this) while counter--
+    @fork @list, @work.bind this while counter--
   fork: (list, work) ->
     cluster.fork().on 'message', (msg) ->
       if msg is 'ready'
@@ -48,9 +50,10 @@ class BrunchWorkers
     @jobs.push {path, handler}
     do @work
   work: ->
-    return unless activeWorkers = @list.length
+    activeWorkers = @list.length
+    return unless activeWorkers
     if activeWorkers < @count
-      @next activeWorkers - 1
+      @next activeWorkers - 1 if @jobs.length
     else
       while @jobs.length
         @next @workerIndex
@@ -60,12 +63,12 @@ class BrunchWorkers
     @list[index].handlers[path] = handler
     @list[index].send path
 
-module.exports = ({changeFileList, compilers, linters, fileList}) ->
+module.exports = ({changeFileList, compilers, linters, fileList, config}) ->
   if cluster.isWorker
     debug 'Worker started'
     initWorker {changeFileList, compilers, linters, fileList}
     undefined
   else
-    workers = new BrunchWorkers
+    workers = new BrunchWorkers config.workers
 
 module.exports.isWorker = cluster.isWorker
