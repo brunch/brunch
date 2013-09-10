@@ -193,7 +193,7 @@ should be checked for new files (internal and usually not needed prop).
 
 ## `overrides`
 
-`Object`: Alternate config settings to activate via command line switches (`--apply SETTING`)
+`Object`: Alternate config settings to activate via command line switches (`--env SETTING`). Multiple sets of overrides can be applied at once using a comma-separated list (`--env foo,bar`).
 
 Defaults:
 
@@ -203,8 +203,6 @@ overrides:
     optimize: true
     sourceMaps: false
     plugins: autoReload: enabled: false
-  optimize:
-    optimize: true
 ```
 
 ## `workers`
