@@ -11,8 +11,8 @@
 * Source maps for languages which don't support source maps
   (“identity source maps”) now generated from
   compiled source (js) instead of original source (coffee)
-* Deprecated `--optimize` (use `--env production` or `--production`) and `--config`
-  options.
+* Deprecated `--optimize` (use `--env production` or `--production`)
+  and `--config` options.
 
 # Brunch 1.7.2 (19 August 2013)
 * Fixed windows issues with compilation
