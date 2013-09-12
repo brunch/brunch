@@ -6,6 +6,8 @@ debug = require('debug')('brunch:watch')
 sysPath = require 'path'
 logger = require 'loggy'
 pushserve = require 'pushserve'
+# worker must be loaded before fs_utils
+worker = require './worker'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
 
@@ -102,7 +104,7 @@ isPluginFor = (path) -> (plugin) ->
   else if plugin.extension
     RegExp "\\.#{plugin.extension}$"
   else
-    /$.^/
+    /$0^/ # never match
   pattern.test(path)
 
 # Determine which compiler should be used for path and
@@ -271,8 +273,12 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
 
 getPlugins = (packages, config) ->
   packages
-    .filter((plugin) -> plugin.prototype?.brunchPlugin)
-    .map((plugin) -> new plugin config)
+    .filter (plugin) ->
+      if worker.isWorker and config.workers?.extensions
+        return false unless plugin::?.extension in config.workers.extensions
+      plugin::?.brunchPlugin and (not worker.isWorker or plugin::?.compile or plugin::?.lint)
+    .map (plugin) ->
+      new plugin config
 
 loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
@@ -368,6 +374,10 @@ initialize = (options, configParams, onCompile, callback) ->
       callbacks.forEach (callback) ->
         callback generatedFiles
     fileList   = new fs_utils.FileList config
+
+    if worker.isWorker
+      return callback null, {config, fileList, compilers, linters}
+
     if config.persistent and config.server.run
       server   = startServer config
 
@@ -452,13 +462,15 @@ class BrunchWatcher
     configParams = generateParams persistent, options
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
-      {config, watcher, fileList, compilers, linters, compile, reload, includes} = result
-      logger.notifications = config.notifications
-      logger.notificationsTitle = config.notificationsTitle or 'Brunch'
-      bindWatcherEvents config, fileList, compilers, linters, watcher, reload, @_startCompilation
+      {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
+      logger.notifications = @config.notifications
+      logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
+      if @config.workers?.enabled
+        return unless worker {changeFileList, compilers, linters, fileList, @config}
+
+      bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
       fileList.on 'ready', => compile @_endCompilation()
       # Emit `change` event for each file that is included with plugins.
-      @config = config
       # Wish it worked like `watcher.add includes`.
       includes.forEach (path) ->
         changeFileList compilers, linters, fileList, path, true

@@ -108,6 +108,7 @@ module.exports = class FileList extends EventEmitter
         return if error?
         debug "Compiled file '#{path}'..."
         @compiled[path] = true
+        @emit 'compiled', path
 
   copy: (asset) =>
     path = asset.path

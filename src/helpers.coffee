@@ -33,9 +33,9 @@ recursiveExtend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
     if typeof value is 'object' and value?
+      object[key] ?= {}
       recursiveExtend object[key], value
     else
-      object ?= {}
       object[key] = value
   object
 

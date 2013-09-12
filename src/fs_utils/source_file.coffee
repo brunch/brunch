@@ -69,8 +69,7 @@ makeCompiler = (path, cache, linters, compilers, wrap) ->
   (callback) ->
     pipeline path, linters, compilers, (error, data) =>
       updateCache normalizedPath, cache, error, data, wrap
-      return callback error if error?
-      callback null, cache.data
+      callback error, cache.data
 
 # A file that will be compiled by brunch.
 module.exports = class SourceFile
