@@ -1,4 +1,7 @@
 # Brunch
+
+[![NPM](https://nodei.co/npm-dl/brunch.png)](https://nodei.co/npm/brunch/)
+
 HTML5 applications made easy.
 
 Brunch is an assembler for HTML5 applications. It's agnostic to frameworks,
