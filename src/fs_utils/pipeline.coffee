@@ -36,17 +36,22 @@ compile = (initialData, path, compilers, callback) ->
       return next() unless params
       {dependencies, compiled, source, sourceMap, path} = params
       debug "Compiling '#{path}' with '#{compilerName}'"
-      compiler._compile {data: (compiled or source), path}, (error, result) ->
+      compilerCallback = (error, result) ->
         return callback throwError 'Compiling', error if error?
         return next() unless result?
         sourceMap = result.map if result.map?
-        compiled = result.data
+        compiled = result.data or result
         unless compiled?
           throw new Error "Brunch SourceFile: file #{path} data is invalid"
         debug "getDependencies '#{path}' with '#{compilerName}'"
         getDependencies source, path, compiler, (error, dependencies) =>
           return callback throwError 'Dependency parsing', error if error?
           next null, {dependencies, compiled, source, sourceMap, path}
+      if compiler.compile.length is 2
+        compilerArgs = [{data: (compiled or source), path}, compilerCallback]
+      else
+        compilerArgs = [compiled or source, path, compilerCallback]
+      compiler.compile.apply compiler, compilerArgs
   chained.unshift (next) -> next null, {source: initialData, path}
   waterfall chained, callback
 

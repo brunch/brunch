@@ -334,20 +334,6 @@ initialize = (options, configParams, onCompile, callback) ->
 
     # Get compilation methods.
     compilers  = plugins.filter(propIsFunction 'compile')
-    compilers.forEach (_) ->
-      _._compile = if _.compile.length is 2
-        _.compile
-      else
-        fn = _.compile.bind(_)
-        (params, callback) ->
-          fn params.data, params.path, (error, params) ->
-            return callback error if error?
-            result = if typeof params is 'object'
-              params
-            else
-              {data: params}
-            callback null, result
-
     linters    = plugins.filter(propIsFunction 'lint')
     optimizers = plugins.filter(propIsFunction 'optimize').concat(
       plugins.filter(propIsFunction 'minify')
