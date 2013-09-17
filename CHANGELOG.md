@@ -1,3 +1,7 @@
+# Brunch 1.7.5 (17 September 2013)
+* Added experimental workers support.
+* Fixed custom enviroment bug.
+
 # Brunch 1.7.4 (29 August 2013)
 * Quick fix for `--optimize`d building.
 
