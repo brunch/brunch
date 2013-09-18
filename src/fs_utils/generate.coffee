@@ -137,10 +137,24 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
 
   chained = optimizers.map (optimizer) ->
     (params, next) ->
-      optimizer._optimize params, (error, optimized) ->
+      debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
+
+      optimize = optimizer.optimize or optimizer.minify
+
+      optimizerArgs = if optimize.length is 2
+        # New API: optimize({data, path, map}, callback)
+        [params]
+      else
+        # Old API: optimize(data, path, callback)
+        [params.data, params.path]
+
+      optimizerArgs.push (error, optimized) ->
         return next error if error?
-        code = optimized.data
-        map = optimized.map
+        if toString.call(optimized) is '[object Object]'
+          code = optimized.data
+          map = optimized.map
+        else
+          code = optimized
         if map?
           json = params.map.toJSON()
           smConsumer = new SourceMapConsumer json
@@ -155,8 +169,10 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
           newMap = params.map
         result = code
         next error, {data: code, code, map: newMap}
-  chained.unshift (next) -> next null, initial
-  waterfall chained, callback
+
+      optimize.apply optimizer, optimizerArgs
+  first = (next) -> next null, initial
+  waterfall [first].concat(chained), callback
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])
