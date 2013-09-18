@@ -61,7 +61,7 @@ compile = (initialData, path, compilers, callback) ->
         [compilerData, path, compilerCallback]
       compiler.compile.apply compiler, compilerArgs
   first = (next) -> next null, {source: initialData, path}
-  waterfall first.concat(chained), callback
+  waterfall [first].concat(chained), callback
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
