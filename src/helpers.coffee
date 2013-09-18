@@ -26,16 +26,16 @@ exports.extend = extend = (object, properties) ->
 
 applyOverrides = (config, options) ->
   options.env.forEach (override) ->
-    deepExtend config, config.overrides?[override] or {}, true
+    deepExtend config, config.overrides?[override] or {}, config.files
   config
 
-deepExtend = (object, properties, isRoot) ->
+deepExtend = (object, properties, rootFiles = {}) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
-    isIgnored = (isRoot and key is 'files')
-    if toString.call(value) is '[object Object]' and not isIgnored
+    # Special case for files[type]: don't merge properties.
+    if toString.call(value) is '[object Object]' and object isnt rootFiles
       object[key] ?= {}
-      deepExtend object[key], value
+      deepExtend object[key], value, rootFiles
     else
       object[key] = value
   object
@@ -75,6 +75,7 @@ exports.replaceBackSlashes = replaceBackSlashes = (_) ->
   if isWindows then _.replace(/\\/g, '\/') else _
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
+  return config is isWindows
   files = config.files or {}
   Object.keys(files).forEach (language) ->
     lang = files[language] or {}
@@ -255,7 +256,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   config
 
-getConfigDeprecations = (config) ->
+warnAboutConfigDeprecations = (config) ->
   messages = []
   warnRemoved = (path) ->
     if config.paths[path]
@@ -281,7 +282,10 @@ Use config.conventions.#{name}"
   ensureNotArray 'assets'
   ensureNotArray 'test'
   ensureNotArray 'vendor'
-  messages
+
+  messages.forEach logger.warn
+
+  config
 
 normalizeConfig = (config) ->
   normalized = {}
@@ -315,15 +319,14 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
     config = require(fullPath).config
   catch error
     throw new Error "couldn\'t load config #{fullPath}. #{error}"
+
   setConfigDefaults config, configPath
-
-  deprecations = getConfigDeprecations config
-  deprecations.forEach logger.warn if deprecations.length > 0
-
+  warnAboutConfigDeprecations config
   applyOverrides config, options
   deepExtend config, options
-  replaceConfigSlashes config if isWindows
+  replaceConfigSlashes config
   normalizeConfig config
+
   readComponents '.', 'bower', (error, bowerComponents) ->
     if error and not /ENOENT/.test(error.toString())
       logger.error error
