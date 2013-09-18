@@ -26,9 +26,9 @@ Brunch language is a CoffeeScript class that has `brunchPlugin` property. It wou
 * `extension`: `(required in compilers & linters, string)`: all files with this extension will be filtered and passed to plugin.
 * `pattern`: `(optional in compilers & linters, regexp)`: sometimes just extension isn't enough. For example, Sass compiler needs to support both scss and sass extensions.
 * `lint(data, path, callback)`: `(optional, function)` would be called every time before compilation. If linter returns error to callback, compilation won't start.
-* `compile(data, path, callback)` or `compile(params, callback)` where `params may contain data, path and map`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callack(error, {data, map})`). May return `null` in `result` to skip file compilation.
+* `compile(params, callback)` or `compile(data, path, callback)` where `params may contain data, path and map`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callack(error, {data, map})`). May return `null` in `result` to skip file compilation.
 * `getDependencies(data, path, callback)`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Used as chain compilation rule. For example, if `_user.styl` changes and `main.styl` depends on it, `main.styl` will be recompiled too. To know this, brunch needs to receive an array of dependent files from the function.
-* `optimize(data, path, callback)` or `optimize(params, callback)` where `params may contain data, path and map`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callack(error, {data, map})`).
+* `optimize(params, callback)` or `optimize(data, path, callback)` where `params may contain data, path and map`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callack(error, {data, map})`).
 * `onCompile(generatedFiles)`: `(optional, function)` would be called every time after brunch walks through the whole compilation circle. Could be useful if you make browser autoreload plugin etc.
 * `teardown`: `(optional, function)` with it you can stop servers in your plugins and stuff. It will be called after each brunch stop.
 
@@ -42,12 +42,8 @@ module.exports = class CSSCompiler
   brunchPlugin: yes
   type: 'stylesheet'
   extension: 'css'
-
-  constructor: (@config) ->
-    null
-
-  compile: (data, path, callback) ->
-    callback null, data
+  compile: (params, callback) ->
+    callback null, {data: params.data}
 ```
 
 Example 2:
@@ -60,13 +56,16 @@ module.exports = class UglifyCompiler
   type: 'javascript'
   extension: 'js'
 
-  constructor: (@config) ->
-    null
+  constructor: (config) ->
+    @pretty = !!@config?.plugins?.uglify?.pretty
 
   optimize: (params, callback) ->
     {data, path, map} = params
     try
-      optimized = minifier data, fromString: true, inSourceMap: map
+      optimized = minifier data,
+        fromString: true,
+        inSourceMap: map,
+        pretty: @pretty
     catch err
       error = err
     callback error, optimized
