@@ -312,13 +312,21 @@ normalizeConfig = (config) ->
   config._normalized = normalized
   config
 
-exports.loadConfig = (configPath = 'config', options = {}, callback) ->
-  fullPath = require.resolve sysPath.resolve configPath
-  delete require.cache[fullPath]
+exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
+    # assign fullPath in two steps in case require.resolve throws
+    fullPath = sysPath.resolve configPath
+    fullPath = require.resolve fullPath
+    delete require.cache[fullPath]
     config = require(fullPath).config
   catch error
-    throw new Error "couldn\'t load config #{fullPath}. #{error}"
+    if configPath is 'brunch-config'
+      # start to warn about deprecation of 'config' with 1.8 release
+      # seamless and silent fallback until then
+      return exports.loadConfig 'config', options, callback
+      # 'config' should remain available as a working deprecated option until 2.0
+    else
+      throw new Error "couldn\'t load config #{fullPath}. #{error}"
 
   setConfigDefaults config, configPath
   warnAboutConfigDeprecations config
