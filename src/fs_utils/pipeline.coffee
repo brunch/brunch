@@ -37,7 +37,15 @@ compile = (initialData, path, compilers, callback) ->
       {dependencies, compiled, source, sourceMap, path} = params
       debug "Compiling '#{path}' with '#{compilerName}'"
 
-      compilerCallback = (error, result) ->
+      compilerData = compiled or source
+      compilerArgs = if compiler.compile.length is 2
+        # New API: compile({data, path}, callback)
+        [{data: compilerData, path, map: sourceMap}]
+      else
+        # Old API: compile(data, path, callback)
+        [compilerData, path]
+
+      compilerArgs.push (error, result) ->
         return callback throwError 'Compiling', error if error?
         return next() unless result?
         if toString.call(result) is '[object Object]'
@@ -52,13 +60,6 @@ compile = (initialData, path, compilers, callback) ->
           return callback throwError 'Dependency parsing', error if error?
           next null, {dependencies, compiled, source, sourceMap, path}
 
-      compilerData = compiled or source
-      compilerArgs = if compiler.compile.length is 2
-        # New API: compile({data, path}, callback)
-        [{data: compilerData, path, map: sourceMap}, compilerCallback]
-      else
-        # Old API: compile(data, path, callback)
-        [compilerData, path, compilerCallback]
       compiler.compile.apply compiler, compilerArgs
   first = (next) -> next null, {source: initialData, path}
   waterfall [first].concat(chained), callback
