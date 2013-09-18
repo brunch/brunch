@@ -75,7 +75,7 @@ exports.replaceBackSlashes = replaceBackSlashes = (_) ->
   if isWindows then _.replace(/\\/g, '\/') else _
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
-  return config is isWindows
+  return config unless isWindows
   files = config.files or {}
   Object.keys(files).forEach (language) ->
     lang = files[language] or {}
