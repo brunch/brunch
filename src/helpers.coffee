@@ -29,12 +29,13 @@ applyOverrides = (config, options) ->
     recursiveExtend config, config.overrides?[override] or {}
   config
 
-recursiveExtend = (object, properties) ->
+recursiveExtend = (object, properties, parentKeys=[]) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
-    if typeof value is 'object' and value?
+    replaceObj = parentKeys.length is 2 and parentKeys[0] is 'files'
+    if typeof value is 'object' and value? and not replaceObj
       object[key] ?= {}
-      recursiveExtend object[key], value
+      recursiveExtend object[key], value, parentKeys.concat [key]
     else
       object[key] = value
   object
