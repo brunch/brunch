@@ -26,16 +26,16 @@ exports.extend = extend = (object, properties) ->
 
 applyOverrides = (config, options) ->
   options.env.forEach (override) ->
-    recursiveExtend config, config.overrides?[override] or {}
+    deepExtend config, config.overrides?[override] or {}, true
   config
 
-recursiveExtend = (object, properties, parentKeys=[]) ->
+deepExtend = (object, properties, isRoot) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
-    replaceObj = parentKeys.length is 2 and parentKeys[0] is 'files'
-    if typeof value is 'object' and value? and not replaceObj
+    isIgnored = (isRoot and key is 'files')
+    if toString.call(value) is '[object Object]' and not isIgnored
       object[key] ?= {}
-      recursiveExtend object[key], value, parentKeys.concat [key]
+      deepExtend object[key], value
     else
       object[key] = value
   object
@@ -321,7 +321,7 @@ exports.loadConfig = (configPath = 'config', options = {}, callback) ->
   deprecations.forEach logger.warn if deprecations.length > 0
 
   applyOverrides config, options
-  recursiveExtend config, options
+  deepExtend config, options
   replaceConfigSlashes config if isWindows
   normalizeConfig config
   readComponents '.', 'bower', (error, bowerComponents) ->
