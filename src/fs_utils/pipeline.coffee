@@ -36,24 +36,32 @@ compile = (initialData, path, compilers, callback) ->
       return next() unless params
       {dependencies, compiled, source, sourceMap, path} = params
       debug "Compiling '#{path}' with '#{compilerName}'"
+
       compilerCallback = (error, result) ->
         return callback throwError 'Compiling', error if error?
         return next() unless result?
-        sourceMap = result.map if result.map?
-        compiled = result.data or result
+        if toString.call(result) is '[object Object]'
+          sourceMap = result.map if result.map?
+          compiled = result.data
+        else
+          compiled = result
         unless compiled?
           throw new Error "Brunch SourceFile: file #{path} data is invalid"
         debug "getDependencies '#{path}' with '#{compilerName}'"
         getDependencies source, path, compiler, (error, dependencies) =>
           return callback throwError 'Dependency parsing', error if error?
           next null, {dependencies, compiled, source, sourceMap, path}
-      if compiler.compile.length is 2
-        compilerArgs = [{data: (compiled or source), path}, compilerCallback]
+
+      compilerData = compiled or source
+      compilerArgs = if compiler.compile.length is 2
+        # New API: compile({data, path}, callback)
+        [{data: compilerData, path, map: sourceMap}, compilerCallback]
       else
-        compilerArgs = [compiled or source, path, compilerCallback]
+        # Old API: compile(data, path, callback)
+        [compilerData, path, compilerCallback]
       compiler.compile.apply compiler, compilerArgs
-  chained.unshift (next) -> next null, {source: initialData, path}
-  waterfall chained, callback
+  first = (next) -> next null, {source: initialData, path}
+  waterfall first.concat(chained), callback
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
