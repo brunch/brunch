@@ -1,3 +1,7 @@
+# Brunch 1.7.6 (20 September 2013)
+* Fixed overriding `config.files` in custom environments.
+* Fixed issues with old compiler plugin versions.
+
 # Brunch 1.7.5 (17 September 2013)
 * Added experimental workers support.
 * Fixed custom enviroment bug.
