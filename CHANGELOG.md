@@ -1,6 +1,8 @@
 # Brunch 1.7.6 (20 September 2013)
 * Fixed overriding `config.files` in custom environments.
 * Fixed issues with old compiler plugin versions.
+* Adopted `brunch-config` as the standard config file name
+  * Config files named `config` still work, but will be deprecated starting with 1.8.0
 
 # Brunch 1.7.5 (17 September 2013)
 * Added experimental workers support.
