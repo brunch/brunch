@@ -445,8 +445,9 @@ class BrunchWatcher
       fileList.on 'ready', => compile @_endCompilation()
       # Emit `change` event for each file that is included with plugins.
       # Wish it worked like `watcher.add includes`.
-      includes.forEach (path) ->
-        changeFileList compilers, linters, fileList, path, true
+      includes.forEach (path) =>
+        relative = sysPath.relative @config.paths.root, path
+        changeFileList compilers, linters, fileList, relative, true
 
   # Set start time of last compilation to current time.
   # Returns Number.
