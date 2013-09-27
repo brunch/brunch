@@ -72,3 +72,4 @@ module.exports = ({changeFileList, compilers, linters, fileList, config}) ->
     workers = new BrunchWorkers config.workers
 
 module.exports.isWorker = cluster.isWorker
+module.exports.close = cluster.disconnect

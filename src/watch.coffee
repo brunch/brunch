@@ -234,6 +234,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
     # exit process with correct exit code.
     unless config.persistent
       watcher.close()
+      worker.close()
       process.on 'exit', (previousCode) ->
         process.exit (if logger.errorHappened then 1 else previousCode)
 
@@ -258,6 +259,7 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
   reWatch = ->
     restart = ->
       watcher.close()
+      worker.close()
       watch config.persistent, options, onCompile
     plugins.forEach (plugin) -> plugin.teardown?()
     if server?.close?
