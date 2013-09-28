@@ -1,3 +1,7 @@
+# Brunch 1.7.7 (28 September 2013)
+* Fixed absolute paths exposal for plugin includes in source maps.
+* Workers are now shut down on brunch re-watch.
+
 # Brunch 1.7.6 (20 September 2013)
 * Fixed overriding `config.files` in custom environments.
 * Fixed issues with old compiler plugin versions.
