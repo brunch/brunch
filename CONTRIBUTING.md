@@ -3,7 +3,7 @@ You can install the latest `master` version of brunch by following these
 simple steps:
 
 * Clone the repo, navigate to its directory.
-* Change `bin/brunch` in `package.json` to `bin/brunchcoffee`.
+* Change `bin/brunch` in `package.json` to `bin/brunch.coffee`.
 It will allow you not to compile the source every time you change it.
 * Execute `npm install` to install packages.
 * Execute `npm uninstall -g brunch && npm link`
