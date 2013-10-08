@@ -185,6 +185,7 @@ server:
 
 
 `Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
+`String`: set to `'old'` to use the old `@` control character instead of `#`.
 
 ## `fileListInterval`
 
