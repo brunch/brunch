@@ -193,7 +193,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
 
     if withMaps
       base = sysPath.basename mapPath
-      controlChar = if config.sourceMaps is 'new' then '#' else '@'
+      controlChar = if config.sourceMaps is 'old' then '@' else '#'
       data.code += if type is 'javascript'
         "\n//#{controlChar} sourceMappingURL=#{base}"
       else
