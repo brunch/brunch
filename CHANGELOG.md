@@ -1,3 +1,7 @@
+# Brunch 1.7.8 (10 October 2013)
+* Switched source maps format to new (`//#`).
+  Old format is still available via `config.sourceMaps = 'old'`
+
 # Brunch 1.7.7 (28 September 2013)
 * Fixed absolute paths exposal for plugin includes in source maps.
 * Workers are now shut down on brunch re-watch.
