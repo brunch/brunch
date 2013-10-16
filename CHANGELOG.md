@@ -1,3 +1,6 @@
+# Brunch 1.7.9 (16 October 2013)
+* Re-release of 1.7.8 because of npm code publishing bug.
+
 # Brunch 1.7.8 (10 October 2013)
 * Switched source maps format to new (`//#`).
   Old format is still available via `config.sourceMaps = 'old'`
