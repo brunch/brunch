@@ -2,11 +2,15 @@
 * Re-release of 1.7.8 because of npm code publishing bug.
 
 # Brunch 1.7.8 (10 October 2013)
+*NOTE:* Re-published on 16 October 2013 due to npm bug.
+If installed prior to this date, it will actually run as if it is 1.7.6.
 * Switched source maps format to new (`//#`).
   Old format is still available via `config.sourceMaps = 'old'`
 * Assets dotfile ignore exception to enable copying of `.rewrite` files.
 
 # Brunch 1.7.7 (28 September 2013)
+*NOTE:* Re-published on 16 October 2013 due to npm bug.
+If installed prior to this date, it will actually run as if it is 1.7.6.
 * Fixed absolute paths exposal for plugin includes in source maps.
 * Workers are now shut down on brunch re-watch.
 
