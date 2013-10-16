@@ -1,5 +1,6 @@
 # Brunch
 
+[![NPM](https://nodei.co/npm/brunch.png?compact=true)](https://nodei.co/npm/brunch/)  
 [![NPM](https://nodei.co/npm-dl/brunch.png)](https://nodei.co/npm/brunch/)
 
 HTML5 applications made easy.
