@@ -30,7 +30,7 @@ getDependencies = (data, path, compiler, callback) ->
     callback null, []
 
 compile = (initialData, path, compilers, callback) ->
-  compile.chained = compilers.map (compiler) =>
+  compile.chained ?= compilers.map (compiler) =>
     compilerName = compiler.constructor.name
     (params, next) =>
       return next() unless params
