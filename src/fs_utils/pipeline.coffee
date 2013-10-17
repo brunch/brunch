@@ -30,7 +30,7 @@ getDependencies = (data, path, compiler, callback) ->
     callback null, []
 
 compile = (initialData, path, compilers, callback) ->
-  chained = compilers.map (compiler) =>
+  compile.chained = compilers.map (compiler) =>
     compilerName = compiler.constructor.name
     (params, next) =>
       return next() unless params
@@ -62,7 +62,7 @@ compile = (initialData, path, compilers, callback) ->
 
       compiler.compile.apply compiler, compilerArgs
   first = (next) -> next null, {source: initialData, path}
-  waterfall [first].concat(chained), callback
+  waterfall [first].concat(compile.chained), callback
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
