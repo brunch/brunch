@@ -135,7 +135,7 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
   initial = {data, code: data, path, map: prevMap}
   return callback null, initial unless isEnabled
 
-  chained = optimizers.map (optimizer) ->
+  optimize.chained ?= optimizers.map (optimizer) ->
     (params, next) ->
       debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
@@ -172,7 +172,7 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
 
       optimizeFn.apply optimizer, optimizerArgs
   first = (next) -> next null, initial
-  waterfall [first].concat(chained), callback
+  waterfall [first].concat(optimize.chained), callback
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])
