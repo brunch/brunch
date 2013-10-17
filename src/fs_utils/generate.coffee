@@ -139,9 +139,9 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
     (params, next) ->
       debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
-      optimize = optimizer.optimize or optimizer.minify
+      optimizeFn = optimizer.optimize or optimizer.minify
 
-      optimizerArgs = if optimize.length is 2
+      optimizerArgs = if optimizeFn.length is 2
         # New API: optimize({data, path, map}, callback)
         [params]
       else
@@ -170,7 +170,7 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
         result = code
         next error, {data: code, code, map: newMap}
 
-      optimize.apply optimizer, optimizerArgs
+      optimizeFn.apply optimizer, optimizerArgs
   first = (next) -> next null, initial
   waterfall [first].concat(chained), callback
 
