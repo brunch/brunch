@@ -1,3 +1,6 @@
+# Brunch 1.7.10 (19 October 2013)
+* Fixed optimizers.
+
 # Brunch 1.7.9 (16 October 2013)
 * Re-release of 1.7.8 because of npm code publishing bug.
 
