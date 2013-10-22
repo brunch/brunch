@@ -135,8 +135,10 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
   initial = {data, code: data, path, map: prevMap}
   return callback null, initial unless isEnabled
 
-  chained = optimizers.map (optimizer) ->
+  ext = sysPath.extname(path).slice(1)
+  optimize.chain[ext] ?= optimizers.map (optimizer) ->
     (params, next) ->
+      {data, code, map, path} = params
       debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
       optimizeFn = optimizer.optimize or optimizer.minify
@@ -146,7 +148,7 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
         [params]
       else
         # Old API: optimize(data, path, callback)
-        [params.data, params.path]
+        [data, path]
 
       optimizerArgs.push (error, optimized) ->
         return next error if error?
@@ -166,13 +168,14 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
           newMap._sourcesContents["$#{path}"] = ''  # data
           newMap.applySourceMap smConsumer
         else
-          newMap = params.map
+          newMap = map
         result = code
-        next error, {data: code, code, map: newMap}
+        next error, {data: code, code, map: newMap, path}
 
       optimizeFn.apply optimizer, optimizerArgs
   first = (next) -> next null, initial
-  waterfall [first].concat(chained), callback
+  waterfall [first].concat(optimize.chain[ext]), callback
+optimize.chain = {}
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])

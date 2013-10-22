@@ -2,6 +2,7 @@ each = require 'async-each'
 waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:pipeline')
 fs = require 'fs'
+sysPath = require 'path'
 logger = require 'loggy'
 
 throwError = (type, stringOrError) =>
@@ -30,7 +31,8 @@ getDependencies = (data, path, compiler, callback) ->
     callback null, []
 
 compile = (initialData, path, compilers, callback) ->
-  chained = compilers.map (compiler) =>
+  ext = sysPath.extname(path).slice(1)
+  compile.chain[ext] ?= compilers.map (compiler) =>
     compilerName = compiler.constructor.name
     (params, next) =>
       return next() unless params
@@ -62,7 +64,8 @@ compile = (initialData, path, compilers, callback) ->
 
       compiler.compile.apply compiler, compilerArgs
   first = (next) -> next null, {source: initialData, path}
-  waterfall [first].concat(chained), callback
+  waterfall [first].concat(compile.chain[ext]), callback
+compile.chain = {}
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
