@@ -131,11 +131,11 @@ concat = (files, path, type, definition) ->
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
   root.toStringWithSourceMap file: path
 
-optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
-  initial = {data, code: data, path, map: prevMap}
+optimize = (initialData, prevMap, sourcePath, optimizers, isEnabled, callback) ->
+  initial = {data: initialData, code: initialData, path: sourcePath, map: prevMap}
   return callback null, initial unless isEnabled
 
-  ext = sysPath.extname(path).slice(1)
+  ext = sysPath.extname(sourcePath).slice(1)
   optimize.chain[ext] ?= optimizers.map (optimizer) ->
     (params, next) ->
       {data, code, map, path} = params
@@ -153,14 +153,13 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
       optimizerArgs.push (error, optimized) ->
         return next error if error?
         if toString.call(optimized) is '[object Object]'
-          code = optimized.data
-          map = optimized.map
+          optimizedCode = optimized.data
+          optimizedMap = optimized.map
         else
-          code = optimized
-        if map?
-          json = params.map.toJSON()
-          smConsumer = new SourceMapConsumer json
-          newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer map
+          optimizedCode = optimized
+        if optimizedMap?
+          json = optimizedMap.toJSON()
+          newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer optimizedMap
           newMap._sources.add path
           newMap._mappings.forEach (mapping) ->
             mapping.source = path
@@ -169,12 +168,12 @@ optimize = (data, prevMap, path, optimizers, isEnabled, callback) ->
           newMap.applySourceMap smConsumer
         else
           newMap = map
-        result = code
         next error, {data: code, code, map: newMap, path}
 
       optimizeFn.apply optimizer, optimizerArgs
   first = (next) -> next null, initial
   waterfall [first].concat(optimize.chain[ext]), callback
+
 optimize.chain = {}
 
 generate = (path, sourceFiles, config, optimizers, callback) ->

@@ -31,8 +31,8 @@ getDependencies = (data, path, compiler, callback) ->
   else
     callback null, []
 
-compile = (initialData, path, compilers, callback) ->
-  ext = sysPath.extname(path).slice(1)
+compile = (initialData, sourcePath, compilers, callback) ->
+  ext = sysPath.extname(sourcePath).slice(1)
   compile.chain[ext] ?= compilers.map (compiler) =>
     (params, next) =>
       return next() unless params
@@ -62,8 +62,9 @@ compile = (initialData, path, compilers, callback) ->
           next null, {dependencies, compiled, source, sourceMap, path}
 
       compiler.compile.apply compiler, compilerArgs
-  first = (next) -> next null, {source: initialData, path}
+  first = (next) -> next null, {source: initialData, path: sourcePath}
   waterfall [first].concat(compile.chain[ext]), callback
+
 compile.chain = {}
 
 pipeline = (path, linters, compilers, callback) ->
