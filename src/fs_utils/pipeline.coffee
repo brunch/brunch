@@ -26,6 +26,7 @@ lint = (data, path, linters, callback) ->
 # Extract files that depend on current file.
 getDependencies = (data, path, compiler, callback) ->
   if compiler.getDependencies
+    debug "getDependencies '#{path}' with '#{compiler.constructor.name}'"
     compiler.getDependencies data, path, callback
   else
     callback null, []
@@ -33,11 +34,10 @@ getDependencies = (data, path, compiler, callback) ->
 compile = (initialData, path, compilers, callback) ->
   ext = sysPath.extname(path).slice(1)
   compile.chain[ext] ?= compilers.map (compiler) =>
-    compilerName = compiler.constructor.name
     (params, next) =>
       return next() unless params
       {dependencies, compiled, source, sourceMap, path} = params
-      debug "Compiling '#{path}' with '#{compilerName}'"
+      debug "Compiling '#{path}' with '#{compiler.constructor.name}'"
 
       compilerData = compiled or source
       compilerArgs = if compiler.compile.length is 2
@@ -57,7 +57,6 @@ compile = (initialData, path, compilers, callback) ->
           compiled = result
         unless compiled?
           throw new Error "Brunch SourceFile: file #{path} data is invalid"
-        debug "getDependencies '#{path}' with '#{compilerName}'"
         getDependencies source, path, compiler, (error, dependencies) =>
           return callback throwError 'Dependency parsing', error if error?
           next null, {dependencies, compiled, source, sourceMap, path}
