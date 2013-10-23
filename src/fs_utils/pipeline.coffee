@@ -67,7 +67,7 @@ compile = (source, path, compilers, callback) ->
   first = (next) -> next null, {source, path}
   waterfall [first].concat(compile.chain[ext]), callback
 
-compile.chain = {}
+do compilerReset = -> compile.chain = {}
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
@@ -82,3 +82,4 @@ pipeline = (path, linters, compilers, callback) ->
         compile source, path, compilers, callback
 
 exports.pipeline = pipeline
+exports.compilerReset = compilerReset
