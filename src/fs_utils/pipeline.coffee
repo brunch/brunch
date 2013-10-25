@@ -34,7 +34,7 @@ getDependencies = (data, path, compiler, callback) ->
 mapCompilerChain = (compiler) ->
   (params, next) ->
     return next() unless params
-    {dependencies, compiled, source, sourceMap, path} = params
+    {dependencies, compiled, source, sourceMap, path, callback} = params
     debug "Compiling '#{path}' with '#{compiler.constructor.name}'"
 
     compilerData = compiled or source
@@ -57,14 +57,14 @@ mapCompilerChain = (compiler) ->
         throw new Error "Brunch SourceFile: file #{path} data is invalid"
       getDependencies source, path, compiler, (error, dependencies) =>
         return callback throwError 'Dependency parsing', error if error?
-        next null, {dependencies, compiled, source, sourceMap, path}
+        next null, {dependencies, compiled, source, sourceMap, path, callback}
 
     compiler.compile.apply compiler, compilerArgs
 
 compile = (source, path, compilers, callback) ->
   ext = sysPath.extname(path).slice(1)
   compile.chain[ext] ?= compilers.map mapCompilerChain
-  first = (next) -> next null, {source, path}
+  first = (next) -> next null, {source, path, callback}
   waterfall [first].concat(compile.chain[ext]), callback
 
 do compilerReset = -> compile.chain = {}
