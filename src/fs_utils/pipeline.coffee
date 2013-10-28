@@ -77,4 +77,3 @@ pipeline = (path, linters, compilers, callback) ->
         compile source, path, compilers, callback
 
 exports.pipeline = pipeline
-exports.compilerReset = compilerReset
