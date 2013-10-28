@@ -131,41 +131,40 @@ concat = (files, path, type, definition) ->
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
   root.toStringWithSourceMap file: path
 
-mapOptimizerChain = (optimizer) ->
-  (params, next) ->
-    {data, code, map, path} = params
-    debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
+mapOptimizerChain = (optimizer) -> (params, next) ->
+  {data, code, map, path} = params
+  debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
-    optimizeFn = optimizer.optimize or optimizer.minify
+  optimizeFn = optimizer.optimize or optimizer.minify
 
-    optimizerArgs = if optimizeFn.length is 2
-      # New API: optimize({data, path, map}, callback)
-      [params]
+  optimizerArgs = if optimizeFn.length is 2
+    # New API: optimize({data, path, map}, callback)
+    [params]
+  else
+    # Old API: optimize(data, path, callback)
+    [data, path]
+
+  optimizerArgs.push (error, optimized) ->
+    return next error if error?
+    if toString.call(optimized) is '[object Object]'
+      optimizedCode = optimized.data
+      optimizedMap = optimized.map
     else
-      # Old API: optimize(data, path, callback)
-      [data, path]
+      optimizedCode = optimized
+    if optimizedMap?
+      json = optimizedMap.toJSON()
+      newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer optimizedMap
+      newMap._sources.add path
+      newMap._mappings.forEach (mapping) ->
+        mapping.source = path
+      newMap._sourcesContents ?= {}
+      newMap._sourcesContents["$#{path}"] = ''  # data
+      newMap.applySourceMap smConsumer
+    else
+      newMap = map
+    next error, {data: code, code, map: newMap, path}
 
-    optimizerArgs.push (error, optimized) ->
-      return next error if error?
-      if toString.call(optimized) is '[object Object]'
-        optimizedCode = optimized.data
-        optimizedMap = optimized.map
-      else
-        optimizedCode = optimized
-      if optimizedMap?
-        json = optimizedMap.toJSON()
-        newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer optimizedMap
-        newMap._sources.add path
-        newMap._mappings.forEach (mapping) ->
-          mapping.source = path
-        newMap._sourcesContents ?= {}
-        newMap._sourcesContents["$#{path}"] = ''  # data
-        newMap.applySourceMap smConsumer
-      else
-        newMap = map
-      next error, {data: code, code, map: newMap, path}
-
-    optimizeFn.apply optimizer, optimizerArgs
+  optimizeFn.apply optimizer, optimizerArgs
 
 optimize = (data, map, path, optimizers, isEnabled, callback) ->
   initial = {data, code: data, map, path}

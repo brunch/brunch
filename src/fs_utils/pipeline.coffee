@@ -31,35 +31,34 @@ getDependencies = (data, path, compiler, callback) ->
   else
     callback null, []
 
-mapCompilerChain = (compiler) ->
-  (params, next) ->
-    return next() unless params
-    {dependencies, compiled, source, sourceMap, path, callback} = params
-    debug "Compiling '#{path}' with '#{compiler.constructor.name}'"
+mapCompilerChain = (compiler) -> (params, next) ->
+  return next() unless params
+  {dependencies, compiled, source, sourceMap, path, callback} = params
+  debug "Compiling '#{path}' with '#{compiler.constructor.name}'"
 
-    compilerData = compiled or source
-    compilerArgs = if compiler.compile.length is 2
-      # New API: compile({data, path}, callback)
-      [{data: compilerData, path, map: sourceMap}]
+  compilerData = compiled or source
+  compilerArgs = if compiler.compile.length is 2
+    # New API: compile({data, path}, callback)
+    [{data: compilerData, path, map: sourceMap}]
+  else
+    # Old API: compile(data, path, callback)
+    [compilerData, path]
+
+  compilerArgs.push (error, result) ->
+    return callback throwError 'Compiling', error if error?
+    return next() unless result?
+    if toString.call(result) is '[object Object]'
+      sourceMap = result.map if result.map?
+      compiled = result.data
     else
-      # Old API: compile(data, path, callback)
-      [compilerData, path]
+      compiled = result
+    unless compiled?
+      throw new Error "Brunch SourceFile: file #{path} data is invalid"
+    getDependencies source, path, compiler, (error, dependencies) =>
+      return callback throwError 'Dependency parsing', error if error?
+      next null, {dependencies, compiled, source, sourceMap, path, callback}
 
-    compilerArgs.push (error, result) ->
-      return callback throwError 'Compiling', error if error?
-      return next() unless result?
-      if toString.call(result) is '[object Object]'
-        sourceMap = result.map if result.map?
-        compiled = result.data
-      else
-        compiled = result
-      unless compiled?
-        throw new Error "Brunch SourceFile: file #{path} data is invalid"
-      getDependencies source, path, compiler, (error, dependencies) =>
-        return callback throwError 'Dependency parsing', error if error?
-        next null, {dependencies, compiled, source, sourceMap, path, callback}
-
-    compiler.compile.apply compiler, compilerArgs
+  compiler.compile.apply compiler, compilerArgs
 
 compile = (source, path, compilers, callback) ->
   ext = sysPath.extname(path).slice(1)
