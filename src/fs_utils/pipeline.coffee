@@ -61,12 +61,8 @@ mapCompilerChain = (compiler) -> (params, next) ->
   compiler.compile.apply compiler, compilerArgs
 
 compile = (source, path, compilers, callback) ->
-  ext = sysPath.extname(path).slice(1)
-  compile.chain[ext] ?= compilers.map mapCompilerChain
   first = (next) -> next null, {source, path, callback}
-  waterfall [first].concat(compile.chain[ext]), callback
-
-do compilerReset = -> compile.chain = {}
+  waterfall [first].concat(compilers.map mapCompilerChain), callback
 
 pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"

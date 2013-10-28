@@ -260,7 +260,6 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
     restart = ->
       watcher.close()
       worker.close()
-      fs_utils.reset()
       watch config.persistent, options, onCompile
     plugins.forEach (plugin) -> plugin.teardown?()
     if server?.close?

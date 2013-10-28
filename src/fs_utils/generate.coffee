@@ -169,13 +169,8 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
 optimize = (data, map, path, optimizers, isEnabled, callback) ->
   initial = {data, code: data, map, path}
   return callback null, initial unless isEnabled
-
-  ext = sysPath.extname(path).slice(1)
-  optimize.chain[ext] ?= optimizers.map mapOptimizerChain
   first = (next) -> next null, initial
-  waterfall [first].concat(optimize.chain[ext]), callback
-
-do optimizerReset = -> optimize.chain = {}
+  waterfall [first].concat(optimizers.map mapOptimizerChain), callback
 
 generate = (path, sourceFiles, config, optimizers, callback) ->
   type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])
@@ -209,6 +204,5 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
         callback()
 
 generate.sortByConfig = sortByConfig
-generate.optimizerReset = optimizerReset
 
 module.exports = generate

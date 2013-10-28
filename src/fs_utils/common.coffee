@@ -7,19 +7,12 @@ mkdirp = require 'mkdirp'
 os = require 'os'
 sysPath = require 'path'
 {isWindows} = require '../helpers'
-{compilerReset} = require './pipeline'
-{optimizerReset} = require './generate'
 
 # Short-cut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists
 
 # Directory separator.
 exports.sep = sysPath.sep or (if isWindows then '\\' else '/')
-
-# Clear any persistent memory objects in fs_utils when watcher restarts
-exports.reset = ->
-  compilerReset()
-  optimizerReset()
 
 # Create file if it doesn't exist and writes data to it.
 # Would also create a parent directories if they don't exist.
