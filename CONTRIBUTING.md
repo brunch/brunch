@@ -16,7 +16,7 @@ Test suite can be run via `npm test`.
 The usual contributing steps are:
 
 * Fork the [official repository](https://github.com/brunch/brunch).
-* Clone your fork: git clone git@github.com:<your-username>/brunch.git
+* Clone your fork: git clone `git@github.com:<your-username>/brunch.git`
 * Make sure tests are passing for you: npm install && npm test
 * Create a topic branch: git checkout -b topics/new-feature-name
 * Add tests and code for your changes.
