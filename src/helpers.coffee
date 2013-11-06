@@ -83,8 +83,6 @@ exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
 
     # Modify order.
     Object.keys(order).forEach (orderKey) ->
-      if typeof lang.order[orderKey] == 'string'
-        lang.order[orderKey] = [ lang.order[orderKey] ]
       lang.order[orderKey] = lang.order[orderKey].map(replaceSlashes)
 
     # Modify join configuration.
