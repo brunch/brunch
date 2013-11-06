@@ -82,7 +82,7 @@ Brunch also has conventions. Conventions are filters for files with special mean
 * Files in `assets/` dirs are copied directly to
   `public/`.
 * Files in `vendor/` dirs aren't wrapped in modules.
-  Module is a Common.JS / AMD abstraction that allows to simply
-  get rid of global vars. For example, you have file `app/views/user_view` —
-  you can load this in browser by using `require('views/user_view')`.
-* Files named as `-test.<extension>` are considered as tests.
+  Module is a Common.JS / AMD abstraction that allows you to simply
+  get rid of global vars. For example, if you have a file `app/views/user_view`,
+  then you can load this in the browser using `require('views/user_view')`.
+* Files named `-test.<extension>` are considered tests.
