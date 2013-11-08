@@ -85,8 +85,8 @@ Add a System Environment variable via `Control Panel > System > Advanced System 
 
 You need to install brunch plugins. It can be done simply by executing `npm install` in your project directory.
 
-## What languages do you advice to use?
+## What languages do you recommend using?
 
-* `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
-* `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / colons), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all needed vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
+* `CoffeeScript` is used because it plays nice with Backbone.js's object-oriented nature.
+* `Stylus` is used because a) it has a customizable syntax (you can use or drop braces / semicolons / colons), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all needed vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
 * `Handlebars` templates are used because they are logic-less, compatible with Mustache (which has implementations in many languages), and have a nice helpers system. If you're a fan of clear terse syntax, you might like `Jade` instead, which is similar to, but much clearer than `HAML`.
