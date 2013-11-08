@@ -8,18 +8,18 @@ os = require 'os'
 sysPath = require 'path'
 {isWindows} = require '../helpers'
 
-# Short-cut to `exists` function that works on both node 0.6 and 0.8+.
+# Shortcut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists
 
 # Directory separator.
 exports.sep = sysPath.sep or (if isWindows then '\\' else '/')
 
-# Create file if it doesn't exist and writes data to it.
-# Would also create a parent directories if they don't exist.
+# Writes data into a file.
+# Creates the file and/or all parent directories if they don't exist.
 #
-# path - String. Path to file that would be written.
+# path - String. Path to the file.
 # data - String. Data to be written.
-# callback(error, path, data) - would be executed on error or on
+# callback(error, path, data) - Executed on error or on
 #    successful write.
 #
 # Example
