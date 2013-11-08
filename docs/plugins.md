@@ -6,7 +6,7 @@ Brunch uses asynchronous node.js plugins to provide linting / compilation / opti
 
 Install plugins with command `npm install --save plugin-name`. E.g. `npm install --save sass-brunch`. This adds `"<plugin-npm-name>": "<plugin-version>"` to package.json of your brunch app.
 
-If you want to use git version of plugin, add "<plugin-npm-name>": "<git-repo>".
+If you want to use git version of plugin, add `"<plugin-npm-name>": "<git-repo>"`.
 
 Examples:
 
