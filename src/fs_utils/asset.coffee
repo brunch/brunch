@@ -14,7 +14,7 @@ common = require './common'
 getAssetDirectory = (path, convention) ->
   split = path.split(common.sep)
   # Creates thing like this
-  # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html'
+  # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html/'
   split
     .map (part, index) ->
       split.slice(0, index).concat([part, '']).join(common.sep)
