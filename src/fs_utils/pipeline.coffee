@@ -11,7 +11,7 @@ throwError = (type, stringOrError) =>
   else
     stringOrError
   error = new Error string
-  error.brunchType = type
+  error.code = type
   error
 
 # Run all linters.

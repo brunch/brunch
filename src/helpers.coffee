@@ -50,7 +50,7 @@ exports.deepFreeze = deepFreeze = (object) ->
   object
 
 exports.formatError = (error, path) ->
-  "#{error.brunchType} of '#{path}'
+  "#{error.code} of '#{path}'
  failed. #{error.toString().slice(7)}"
 
 exports.install = install = (rootPath, command, callback = (->)) ->

@@ -38,7 +38,7 @@ module.exports = class Asset
     common.copy @path, @destinationPath, (error) =>
       if error?
         err = new Error error
-        err.brunchType = 'Copying'
+        err.code = 'Copying'
         @error = err
       else
         @error = null
