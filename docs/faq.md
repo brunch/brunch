@@ -94,7 +94,7 @@ You need to install brunch plugins. It can be done simply by executing `npm inst
 * `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / colons), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all needed vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
 * `Handlebars` templates are used because they are logic-less, compatible with Mustache (which has implementations in many languages), and have a nice helpers system. If you're a fan of clear terse syntax, you might like `Jade` instead, which is similar to, but much clearer than `HAML`.
 
-## What is the required way of running tests?
+## What is the recommended way of running tests?
 
 This simple function will load all your files that are ending with `-test` suffix (`user-view-test.coffee` etc).
 
