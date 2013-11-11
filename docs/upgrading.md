@@ -7,12 +7,15 @@
 
 ## Upgrading to 1.7
 
+* Rename `config` to `brunch-config` (old is still supported).
+* Use `--production` instead of `--optimize` flag for building (old is still supported).
 * Replace * Added `config.paths.{app,test,vendor,assets}`
   with `config.paths.watched`.
 
 ## Upgrading to 1.6
 
 * Switch to scaffolt and mocha-phantomjs instead of `brunch generate / test`.
+* See the new [testing guide](https://github.com/brunch/brunch/blob/master/CHANGELOG.md#brunch-170-23-july-2013)
 
 ## Upgrading to 1.5
 
