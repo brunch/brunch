@@ -76,7 +76,7 @@ If installed prior to this date, it will actually run as if it is 1.7.6.
   and brunch will do require.js optimizer job for you.
 * Added ability to use multiple compilator plugins for one file.
 * Added `require.list` support to default require definition of app. This allows
-  you to automatically load tests and stuff.
+  you to automatically load tests and stuff. See new [how-to-run-tests guide](https://github.com/brunch/brunch/blob/master/docs/faq.md#what-is-the-recommended-way-of-running-tests)
 * Added `config.paths.watched` which replaces
   `config.paths.{app,test,vendor,assets}`.
 * Added `config.modules.nameCleaner`, which allows you to set
