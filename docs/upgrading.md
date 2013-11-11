@@ -9,8 +9,7 @@
 
 * Rename `config` to `brunch-config` (old is still supported).
 * Use `--production` instead of `--optimize` flag for building (old is still supported).
-* Replace * Added `config.paths.{app,test,vendor,assets}`
-  with `config.paths.watched`.
+* Replace `config.paths.{app,test,vendor,assets}` with `config.paths.watched`.
 
 ## Upgrading to 1.6
 
