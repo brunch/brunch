@@ -7,8 +7,9 @@
 
 ## Upgrading to 1.7
 
-* Rename `config` to `brunch-config` (old is still supported).
-* Use `--production` instead of `--optimize` flag for building (old is still supported).
+* Rename `config` to `brunch-config` starting with 1.7.6 (`config` is still supported).
+* Use `--production` instead of `--optimize` flag for building starting with 1.7.3
+  (`--optimize` is still supported, but deprecated).
 * Replace `config.paths.{app,test,vendor,assets}` with `config.paths.watched`.
 
 ## Upgrading to 1.6
