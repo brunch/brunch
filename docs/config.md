@@ -148,10 +148,15 @@ config:
 
 ## `notifications`
 
-`Boolean`: enables or disables Growl / inotify / [terminal-notifier.app](https://github.com/alloy/terminal-notifier#download) (OS X Mountain Lion +) notifications. Default value is `true` (enabled).
-
+`Boolean`: enables or disables
+           [Growl](http://growl.info/downloads) /
+           [Growl for Windows](http://www.growlforwindows.com/gfw/help/growlnotify.aspx) /
+           [terminal-notifier](https://github.com/alloy/terminal-notifier#download) /
+           [libnotify for Ubuntu](http://packages.ubuntu.com/search?keywords=libnotify-bin)
+           notifications.
+           Default value is `true` (enabled).
+           
 ## `optimize`
-
 
 `Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --optimize`).
 
