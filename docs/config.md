@@ -134,8 +134,7 @@ Example:
         """
   ```
 
-## `nameCleaner`
-`Function`: Allows you to set filterer function for module names,
+`nameCleaner`: `Function` Allows you to set filterer function for module names,
 for example, change all app/file to file. Example:
 
 ```coffeescript
