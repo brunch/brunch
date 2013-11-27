@@ -4,9 +4,11 @@ debug = require('debug')('brunch:generate')
 fs = require 'fs'
 sysPath = require 'path'
 waterfall = require 'async-waterfall'
+anysort = require 'anysort'
 common = require './common'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
+### TO BE REMOVED ###
 sortAlphabetically = (a, b) ->
   if a < b
     -1
@@ -70,6 +72,7 @@ sortByBefore = (config, a, b) ->
     indexOfA - indexOfB
   else
     sortByAfter config, a, b
+### /TO BE REMOVED ###
 
 # Sorts by pattern.
 #
@@ -82,12 +85,35 @@ sortByBefore = (config, a, b) ->
 # Returns new sorted array.
 sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
+    criteria = [
+      config.before ? []
+      config.after ? []
+      config.bowerOrder ? []
+      config.vendorConvention ? -> no
+    ]
+    newsort = anysort.grouped files, criteria, [0, 2, 3, 4, 1]
+    ### TO BE REMOVED ###
     cfg =
       before: config.before ? []
       after: config.after ? []
       vendorConvention: (config.vendorConvention ? -> no)
       bowerMapping: config.bowerMapping ? {}
-    files.slice().sort (a, b) -> sortByBefore cfg, a, b
+    needsAnysort = (s) ->
+      toString.call(s) isnt '[object String]' or s.indexOf('*') isnt -1
+    if cfg.before.some(needsAnysort) or cfg.after.some(needsAnysort)
+      return newsort
+    oldsort = files.slice().sort (a, b) -> sortByBefore cfg, a, b
+    mismatch = false
+    oldsort.forEach (s, i) ->
+      mismatch = true if s isnt newsort[i]
+    if mismatch
+      console.error 'Sorting mismatch'
+      console.error 'Orig:', oldsort
+      console.error 'New:', newsort
+      console.error 'Bower Mapping:', config.bowerMapping
+      console.error 'Bower Order:', config.bowerOrder
+    newsort
+    ### /TO BE REMOVED ###
   else
     files
 
@@ -106,8 +132,10 @@ extractOrder = (files, config) ->
 
   before = flatten orders.map (type) -> (type.before ? [])
   after = flatten orders.map (type) -> (type.after ? [])
-  vendorConvention = config._normalized.conventions.vendor
-  {before, after, vendorConvention, bowerMapping: config._normalized.bowerFilesMap}
+  {conventions, bowerOrder} = config._normalized
+  vendorConvention = conventions.vendor
+  ### REMOVE bowerMapping ###
+  {before, after, vendorConvention, bowerOrder, bowerMapping: config._normalized.bowerFilesMap}
 
 sort = (files, config) ->
   paths = files.map (file) -> file.path

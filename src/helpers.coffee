@@ -333,11 +333,24 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
       logger.error error
     bowerComponents ?= []
     config._normalized.bowerComponents = bowerComponents
+
+    config._normalized.bowerOrder = bowerComponents
+      .sort (a, b) ->
+        if a.sortingLevel is b.sortingLevel
+          if a.files[0] < b.files[0] then -1 else 1
+        else
+          b.sortingLevel - a.sortingLevel
+      .reduce (flat, component) ->
+        flat.concat component.files
+      , []
+
+    ### TO BE REMOVED ###
     filesMap = config._normalized.bowerFilesMap = {}
     bowerComponents.forEach (component) ->
       filesLength = component.files.length
       component.files.forEach (file, index) ->
         filesMap[file] = component.sortingLevel + (filesLength * 0.001 - index * 0.001)
+    ### /TO BE REMOVED ###
 
     deepFreeze config
     callback null, config
