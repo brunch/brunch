@@ -1,3 +1,6 @@
+# Brunch 1.7.12 (29 November 2013)
+* Fixed syntax error in source code.
+
 # Brunch 1.7.11 (29 November 2013)
 * If you remove some file and create a file with the same name,
   it will be handled correctly.
