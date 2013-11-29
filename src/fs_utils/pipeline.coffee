@@ -74,6 +74,7 @@ pipeline = (path, linters, compilers, callback) ->
         logger.warn "Linting of #{path}: #{error}"
       else
         return callback throwError 'Linting', error if error?
-        compile source, path, compilers, callback
+      
+      compile source, path, compilers, callback
 
 exports.pipeline = pipeline
