@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.7.10",
+  "version": "1.7.11",
   "keywords": [
     "assembler",
     "builder",
@@ -29,8 +29,7 @@
   "scripts": {
     "prepublish": "node setup.js prepublish",
     "postpublish": "node setup.js postpublish",
-    "test": "node setup.js test",
-    "postinstall": "node setup.js postinstall"
+    "test": "node setup.js test"
   },
   "preferGlobal": true,
   "dependencies": {

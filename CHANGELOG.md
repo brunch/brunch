@@ -1,3 +1,8 @@
+# Brunch 1.7.11 (29 November 2013)
+* If you remove some file and create a file with the same name,
+  it will be handled correctly.
+* Linter warnings are now handled correctly.
+
 # Brunch 1.7.10 (19 October 2013)
 * Fixed optimizers.
 
