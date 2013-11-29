@@ -56,6 +56,7 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
       .filter (file) ->
         file.removed
       .forEach (file) ->
+        file.dispose()
         sourceFiles.splice sourceFiles.indexOf(file), 1
 
   gen = (file, next) ->

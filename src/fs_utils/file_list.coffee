@@ -67,10 +67,8 @@ module.exports = class FileList extends EventEmitter
     @timer = setTimeout =>
       # Clean disposed files.
       @files
-        .filter (file) =>
-          file.disposed
-        .forEach (file, index) =>
-          @files.splice index, 1
+        .filter (file) => file.disposed
+        .forEach (file) => @files.splice @files.indexOf(file), 1
 
       if Object.keys(@compiling).length is 0 and Object.keys(@copying).length is 0
         @emit 'ready'
