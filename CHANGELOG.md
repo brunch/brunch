@@ -1,4 +1,4 @@
-# Brunch 1.7.12 (29 November 2013)
+# Brunch 1.7.12 (30 November 2013)
 * Fixed syntax error in source code.
 
 # Brunch 1.7.11 (29 November 2013)
