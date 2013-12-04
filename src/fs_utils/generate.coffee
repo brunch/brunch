@@ -162,7 +162,7 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
       newMap.applySourceMap smConsumer
     else
       newMap = map
-    next error, {data: code, code, map: newMap, path}
+    next error, {data: optimizedCode, code: optimizedCode, map: newMap, path}
 
   optimizeFn.apply optimizer, optimizerArgs
 
