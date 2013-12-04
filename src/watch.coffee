@@ -89,7 +89,7 @@ initWatcher = (config, callback) ->
 
   each watched, exists, (err, existing) ->
     watchedFiles = watched.filter((_, index) -> existing[index])
-    params = ignored: fs_utils.ignored, persistent: config.persistent
+    params = ignored: fs_utils.ignored, persistent: config.persistent, usePolling: config.watcher?.usePolling
     callback null, chokidar.watch watchedFiles, params
 
 # Generate function that will check if plugin can work with file.
@@ -392,12 +392,14 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
 
   watcher
     .on('error', logger.error)
-    .on 'add', (path) ->
+    .on 'add', (absPath) ->
+      path = sysPath.relative config.paths.root, absPath
       isConfigFile = possibleConfigFiles[path]
       isPluginsFile = path in [packageConfig, bowerConfig]
       unless isConfigFile or isPluginsFile
         changeHandler path
-    .on 'change', (path) ->
+    .on 'change', (absPath) ->
+      path = sysPath.relative config.paths.root, absPath
       # If file is special (config.coffee, package.json), restart Brunch.
       isConfigFile = possibleConfigFiles[path]
       isPackageFile = path is packageConfig
@@ -407,7 +409,8 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
         helpers.install config.paths.root, 'bower', reload
       else
         changeHandler path
-    .on 'unlink', (path) ->
+    .on 'unlink', (absPath) ->
+      path = sysPath.relative config.paths.root, absPath
       # If file is special (config.coffee, package.json), exit.
       # Otherwise, just update file list.
       isConfigFile = possibleConfigFiles[path]

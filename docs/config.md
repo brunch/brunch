@@ -154,7 +154,7 @@ config:
            [libnotify for Ubuntu](http://packages.ubuntu.com/search?keywords=libnotify-bin)
            notifications.
            Default value is `true` (enabled).
-           
+
 ## `optimize`
 
 `Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --optimize`).
@@ -208,6 +208,15 @@ overrides:
     sourceMaps: false
     plugins: autoReload: enabled: false
 ```
+
+## `watcher`
+`Object`: Optional settings for
+[chokidar](https://github.com/paulmillr/chokidar)
+file watching library used in brunch.
+
+* `usePolling` (default: `false`) Whether to use fs.watchFile
+    (backed by polling), or fs.watch.
+    Polling is slower but can be more reliable.
 
 ## `workers`
 
