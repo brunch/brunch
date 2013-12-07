@@ -99,6 +99,8 @@ You need to install brunch plugins. It can be done simply by executing `npm inst
 This simple function will load all your files that are ending with `-test` suffix (`user-view-test.coffee` etc).
 
 ```javascript
-window.require.list().filter(function(name) {return /-test$.test(name)/;}).forEach(require);
+window.require.list()
+  .filter(function(name) {return /-test$.test(name)/;})
+  .forEach(require);
 ```
 
