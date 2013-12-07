@@ -1,3 +1,10 @@
+# Asking an issue
+
+If you want your issue to be resolved fast please write down:
+
+* Brunch version, node.js version, OS version
+* `config.coffee` and `package.json` contents
+
 # Contributing
 You can install the latest `master` version of brunch by following these
 simple steps:
