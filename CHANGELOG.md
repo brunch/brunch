@@ -1,3 +1,6 @@
+# Brunch 1.7.13 (9 December 2013)
+* Fixed optimizers not actually optimizing the code.
+
 # Brunch 1.7.12 (30 November 2013)
 * Fixed syntax error in source code.
 
