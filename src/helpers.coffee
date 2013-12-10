@@ -220,8 +220,10 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   conventions          = config.conventions   ?= {}
   conventions.assets  ?= /assets[\\/]/
-  conventions.ignored ?= paths.ignored ? (path) ->
-    sysPath.basename(path)[0] is '_'
+  conventions.ignored ?= paths.ignored ? [
+    (path) -> sysPath.basename(path)[0] is '_'
+    /vendor[\\/]node[\\/]/
+  ]
   conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
 
   config.notifications ?= true
