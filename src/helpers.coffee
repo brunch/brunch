@@ -344,13 +344,5 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
         flat.concat component.files
       , []
 
-    ### TO BE REMOVED ###
-    filesMap = config._normalized.bowerFilesMap = {}
-    bowerComponents.forEach (component) ->
-      filesLength = component.files.length
-      component.files.forEach (file, index) ->
-        filesMap[file] = component.sortingLevel + (filesLength * 0.001 - index * 0.001)
-    ### /TO BE REMOVED ###
-
     deepFreeze config
     callback null, config

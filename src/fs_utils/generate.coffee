@@ -8,72 +8,6 @@ anysort = require 'anysort'
 common = require './common'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
-### TO BE REMOVED ###
-sortAlphabetically = (a, b) ->
-  if a < b
-    -1
-  else if a > b
-    1
-  else
-    0
-
-# If item path starts with 'vendor', it has bigger priority.
-sortByVendor = (config, a, b) ->
-  aIsVendor = config.vendorConvention a
-  bIsVendor = config.vendorConvention b
-  if aIsVendor and not bIsVendor
-    -1
-  else if not aIsVendor and bIsVendor
-    1
-  else
-    # All conditions were false, we don't care about order of
-    # these two items.
-    sortAlphabetically a, b
-
-sortBowerComponents = (config, a, b) ->
-  aLevel = config.bowerMapping[a]
-  bLevel = config.bowerMapping[b]
-  if aLevel? and not bLevel?
-    -1
-  else if not aLevel? and bLevel?
-    1
-  else if aLevel? and bLevel?
-    bLevel - aLevel
-  else
-    sortByVendor config, a, b
-
-# Items wasn't found in config.before, try to find then in
-# config.after.
-# Item that config.after contains would have lower sorting index.
-sortByAfter = (config, a, b) ->
-  indexOfA = config.after.indexOf a
-  indexOfB = config.after.indexOf b
-  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-  if hasA and not hasB
-    1
-  else if not hasA and hasB
-    -1
-  else if hasA and hasB
-    indexOfA - indexOfB
-  else
-    sortBowerComponents config, a, b
-
-# Try to find items in config.before.
-# Item that config.after contains would have bigger sorting index.
-sortByBefore = (config, a, b) ->
-  indexOfA = config.before.indexOf a
-  indexOfB = config.before.indexOf b
-  [hasA, hasB] = [(indexOfA isnt -1), (indexOfB isnt -1)]
-  if hasA and not hasB
-    -1
-  else if not hasA and hasB
-    1
-  else if hasA and hasB
-    indexOfA - indexOfB
-  else
-    sortByAfter config, a, b
-### /TO BE REMOVED ###
-
 # Sorts by pattern.
 #
 # Examples
@@ -91,29 +25,7 @@ sortByConfig = (files, config) ->
       config.bowerOrder ? []
       config.vendorConvention ? -> no
     ]
-    newsort = anysort.grouped files, criteria, [0, 2, 3, 4, 1]
-    ### TO BE REMOVED ###
-    cfg =
-      before: config.before ? []
-      after: config.after ? []
-      vendorConvention: (config.vendorConvention ? -> no)
-      bowerMapping: config.bowerMapping ? {}
-    needsAnysort = (s) ->
-      toString.call(s) isnt '[object String]' or s.indexOf('*') isnt -1
-    if cfg.before.some(needsAnysort) or cfg.after.some(needsAnysort)
-      return newsort
-    oldsort = files.slice().sort (a, b) -> sortByBefore cfg, a, b
-    mismatch = false
-    oldsort.forEach (s, i) ->
-      mismatch = true if s isnt newsort[i]
-    if mismatch
-      console.error 'Sorting mismatch'
-      console.error 'Orig:', oldsort
-      console.error 'New:', newsort
-      console.error 'Bower Mapping:', config.bowerMapping
-      console.error 'Bower Order:', config.bowerOrder
-    newsort
-    ### /TO BE REMOVED ###
+    anysort.grouped files, criteria, [0, 2, 3, 4, 1]
   else
     files
 
@@ -134,8 +46,7 @@ extractOrder = (files, config) ->
   after = flatten orders.map (type) -> (type.after ? [])
   {conventions, bowerOrder} = config._normalized
   vendorConvention = conventions.vendor
-  ### REMOVE bowerMapping ###
-  {before, after, vendorConvention, bowerOrder, bowerMapping: config._normalized.bowerFilesMap}
+  {before, after, vendorConvention, bowerOrder}
 
 sort = (files, config) ->
   paths = files.map (file) -> file.path
