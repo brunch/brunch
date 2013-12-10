@@ -47,7 +47,8 @@
     "read-components": "~0.5.1",
     "commonjs-require-definition": "~0.1.0",
     "async-each": "~0.1.2",
-    "async-waterfall": "~0.1.2"
+    "async-waterfall": "~0.1.2",
+    "anysort": "~0.1.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

@@ -10,6 +10,7 @@ logger = require 'loggy'
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
+anysort = require 'anysort'
 # Just require.
 require 'coffee-script'
 
@@ -102,15 +103,7 @@ exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
 # item - RegExp or Function
 #
 # Returns Function.
-normalizeChecker = (item) ->
-  switch toString.call(item)
-    when '[object RegExp]'
-      (string) -> item.test string
-    when '[object Function]'
-      item
-    else
-      throw new Error("Config item #{item} is invalid.
-Use RegExp or Function.")
+normalizeChecker = anysort.matcher
 
 # Converts `config.files[...].joinTo` to one format.
 # config.files[type].joinTo can be a string, a map of {str: regexp} or a map
@@ -340,11 +333,24 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
       logger.error error
     bowerComponents ?= []
     config._normalized.bowerComponents = bowerComponents
+
+    config._normalized.bowerOrder = bowerComponents
+      .sort (a, b) ->
+        if a.sortingLevel is b.sortingLevel
+          if a.files[0] < b.files[0] then -1 else 1
+        else
+          b.sortingLevel - a.sortingLevel
+      .reduce (flat, component) ->
+        flat.concat component.files
+      , []
+
+    ### TO BE REMOVED ###
     filesMap = config._normalized.bowerFilesMap = {}
     bowerComponents.forEach (component) ->
       filesLength = component.files.length
       component.files.forEach (file, index) ->
         filesMap[file] = component.sortingLevel + (filesLength * 0.001 - index * 0.001)
+    ### /TO BE REMOVED ###
 
     deepFreeze config
     callback null, config
