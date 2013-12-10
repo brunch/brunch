@@ -27,15 +27,16 @@ paths:
 
 * `<type>`: `javascripts`, `stylesheets` or `templates`
     * joinTo: (required) describes how files will be compiled & joined together. Available formats:
-        * 'outputFilePath'
-        * map of ('outputFilePath': /regExp that matches input path/)
-        * map of ('outputFilePath': function that takes input path)
+        * 'outputFilePath' in order to have all source files compiled together to one
+        * map of ('outputFilePath': [anymatch set](https://github.com/es128/anymatch#anymatch))
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
-        * before: list of files that will be loaded before other files
-        * after: list of files that will be loaded after other files
+        * before: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded before other files
+        * after: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded after other files
     * pluginHelpers: (optional) specify which output file plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
 
-All files from `vendor` directory are automatically (by-default) loaded before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty.
+All files from `vendor` directory are by default concatenated before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty. Files from Bower packages are included by default before the `vendor` files.
+
+Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [after] 
 
 Example:
 
@@ -69,23 +70,9 @@ files:
 
 `Object`: `conventions` define tests, against which all file pathnames will be checked.
 
-* `ignored` key: regExp or function. Will check against files that would be ignored by brunch compilator, but that still be watched by watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to Sass partials: http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/. Implementation of default value (a function that checks if filename starts with `_`):
-
-    ```coffeescript
-    # Import node.js `path` module.
-    sysPath = require 'path'
-
-    # A simple helper that checks if string starts with substring.
-    startsWith = (string, substring) ->
-      string.lastIndexOf(substring, 0) is 0
-
-    # Extract file name (`c.js` for `a/b/c.js`), check if it starts with `_`.
-    conventions.ignored = (path) ->
-      startsWith sysPath.basename(path), '_'
-    ```
-
-* `assets` key: regExp or function. Default value: `/assets(\/|\\)/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
-* `vendor` key: regExp or function. Default value: `/vendor(\/|\\)/`. If test gives true, file won't be wrapped in module, if there are any.
+* `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/` directory.
+* `assets` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Default value: `/assets[\\/]/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
+* `vendor` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Default value: `/vendor[\\/]/`. If test gives true, file won't be wrapped in module, if there are any.
 
 Keep in mind that default brunch regexps, as you see, consider **all** `vendor/` (etc.) directories as vendor (etc.) files. So, `app/views/vendor/thing/chaplin_view.coffee` will be treated as vendor file.
 
@@ -93,8 +80,8 @@ Example:
 
 ```coffeescript
 conventions:
-  ignored: -> false       # no ignored files
-  assets: /files(\/|\\)/  # vendor/jquery/files/jq.img
+  ignored: -> false       # override defaults for no ignored files
+  assets: /files[\\/]/  # vendor/jquery/files/jq.img
 ```
 
 ## `modules`
