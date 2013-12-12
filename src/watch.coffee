@@ -341,7 +341,12 @@ initialize = (options, configParams, onCompile, callback) ->
       plugins.filter(propIsFunction 'minify')
     )
 
+    # Get plugin onCompile callbacks
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
+
+    # Add onCompile callback from config
+    if typeof config.onCompile is 'function'
+      callbacks.push config.onCompile
 
     # Add default brunch callback.
     callbacks.push onCompile
