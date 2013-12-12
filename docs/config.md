@@ -221,3 +221,14 @@ workers:
   count: 6
   extensions: ['less']
 ```
+
+## `onCompile`
+
+`Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array. Each member of that array is an object with `path` (path of the compiled file) and `sourceFiles` (array of objects representing each source file)
+
+Example
+
+```coffeescript
+onCompile: (generatedFiles) ->
+  console.log generatedFiles.map (f) -> f.path
+```
