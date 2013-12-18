@@ -71,7 +71,7 @@ concat = (files, path, type, definition) ->
   root.toStringWithSourceMap file: path
 
 mapOptimizerChain = (optimizer) -> (params, next) ->
-  {data, code, map, path} = params
+  {data, code, map, path, sourceFiles} = params
   debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
   optimizerArgs = if optimizer.optimize.length is 2
@@ -89,22 +89,18 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
     else
       optimizedCode = optimized
     if optimizedMap?
-      json = optimizedMap.toJSON()
       newMap = SourceMapGenerator.fromSourceMap new SourceMapConsumer optimizedMap
-      newMap._sources.add path
-      newMap._mappings.forEach (mapping) ->
-        mapping.source = path
       newMap._sourcesContents ?= {}
-      newMap._sourcesContents["$#{path}"] = ''  # data
-      newMap.applySourceMap smConsumer
+      sourceFiles.forEach ({path, source}) ->
+        newMap._sourcesContents["$#{path}"] = source
     else
       newMap = map
-    next error, {data: optimizedCode, code: optimizedCode, map: newMap, path}
+    next error, {data: optimizedCode, code: optimizedCode, map: newMap, path, sourceFiles}
 
   optimizer.optimize.apply optimizer, optimizerArgs
 
-optimize = (data, map, path, optimizers, callback) ->
-  initial = {data, code: data, map, path}
+optimize = (data, map, path, optimizers, sourceFiles, callback) ->
+  initial = {data, code: data, map, path, sourceFiles}
   first = (next) -> next null, initial
   waterfall [first].concat(optimizers.map mapOptimizerChain), callback
 
@@ -122,7 +118,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
 
-  optimize code, map, path, optimizers, (error, data) ->
+  optimize code, map, path, optimizers, sourceFiles, (error, data) ->
     return callback error if error?
 
     if withMaps
