@@ -74,9 +74,7 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
   {data, code, map, path} = params
   debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
-  optimizeFn = optimizer.optimize or optimizer.minify
-
-  optimizerArgs = if optimizeFn.length is 2
+  optimizerArgs = if optimizer.optimize.length is 2
     # New API: optimize({data, path, map}, callback)
     [params]
   else
@@ -103,11 +101,10 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
       newMap = map
     next error, {data: optimizedCode, code: optimizedCode, map: newMap, path}
 
-  optimizeFn.apply optimizer, optimizerArgs
+  optimizer.optimize.apply optimizer, optimizerArgs
 
-optimize = (data, map, path, optimizers, isEnabled, callback) ->
+optimize = (data, map, path, optimizers, callback) ->
   initial = {data, code: data, map, path}
-  return callback null, initial unless isEnabled
   first = (next) -> next null, initial
   waterfall [first].concat(optimizers.map mapOptimizerChain), callback
 
@@ -125,7 +122,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
 
-  optimize code, map, path, optimizers, config.optimize, (error, data) ->
+  optimize code, map, path, optimizers, (error, data) ->
     return callback error if error?
 
     if withMaps
