@@ -335,7 +335,7 @@ initialize = (options, configParams, onCompile, callback) ->
     plugins    = getPlugins packages, config
 
     plugins = plugins.filter (plugin) ->
-      plugin.optimize ?= plugin.minify if propIsFunction 'minify'
+      plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
       plugin.defaultEnv ?= if not config.optimize and typeof plugin.optimize is 'function'
         'production'
       else
