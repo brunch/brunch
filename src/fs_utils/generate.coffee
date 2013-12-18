@@ -22,10 +22,11 @@ sortByConfig = (files, config) ->
     criteria = [
       config.before ? []
       config.after ? []
-      config.bowerOrder ? []
+      config.bower ? []
+      config.component ? []
       config.vendorConvention ? -> no
     ]
-    anysort.grouped files, criteria, [0, 2, 3, 4, 1]
+    anysort.grouped files, criteria, [0, 2, 3, 4, 5, 1]
   else
     files
 
@@ -44,9 +45,11 @@ extractOrder = (files, config) ->
 
   before = flatten orders.map (type) -> (type.before ? [])
   after = flatten orders.map (type) -> (type.after ? [])
-  {conventions, bowerOrder} = config._normalized
+  {conventions, packageInfo} = config._normalized
   vendorConvention = conventions.vendor
-  {before, after, vendorConvention, bowerOrder}
+  bower = packageInfo.bower.order
+  component = packageInfo.component.order
+  {before, after, vendorConvention, bower, component}
 
 sort = (files, config) ->
   paths = files.map (file) -> file.path
@@ -57,7 +60,7 @@ sort = (files, config) ->
     indexes[path]
 
 # New.
-concat = (files, path, type, definition) ->
+concat = (files, path, type, definition, aliases) ->
   # nodes = files.map toNode
   root = new SourceNode()
   debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
@@ -68,6 +71,10 @@ concat = (files, path, type, definition) ->
     root.setSourceContent file.node.source, data
 
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
+  aliases?.forEach (alias) ->
+    key = Object.keys(alias)[0]
+    root.add "require.alias('#{key}', '#{alias[key]});"
+
   root.toStringWithSourceMap file: path
 
 mapOptimizerChain = (optimizer) -> (params, next) ->
@@ -120,7 +127,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
 
   sorted = sort sourceFiles, config
 
-  {code, map} = concat sorted, path, type, config._normalized.modules.definition
+  {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo['component'].aliases
 
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
