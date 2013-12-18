@@ -334,12 +334,18 @@ initialize = (options, configParams, onCompile, callback) ->
     joinConfig = config._normalized.join
     plugins    = getPlugins packages, config
 
+    plugins = plugins.filter (plugin) ->
+      plugin.optimize ?= plugin.minify if propIsFunction 'minify'
+      plugin.defaultEnv ?= if not config.optimize and typeof plugin.optimize is 'function'
+        'production'
+      else
+        '*'
+      plugin.defaultEnv is '*' or plugin.defaultEnv in config.env
+
     # Get compilation methods.
-    compilers  = plugins.filter(propIsFunction 'compile')
-    linters    = plugins.filter(propIsFunction 'lint')
-    optimizers = plugins.filter(propIsFunction 'optimize').concat(
-      plugins.filter(propIsFunction 'minify')
-    )
+    compilers  = plugins.filter propIsFunction 'compile'
+    linters    = plugins.filter propIsFunction 'lint'
+    optimizers = plugins.filter propIsFunction 'optimize'
 
     # Get plugin onCompile callbacks
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
