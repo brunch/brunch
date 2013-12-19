@@ -280,7 +280,9 @@ getPlugins = (packages, config) ->
         return false unless plugin::?.extension in config.workers.extensions
       plugin::?.brunchPlugin and (not worker.isWorker or plugin::?.compile or plugin::?.lint)
     .map (plugin) ->
-      new plugin config
+      instance = new plugin config
+      instance.brunchPluginName = plugin.brunchPluginName
+      instance
 
 loadPackages = (rootPath, callback) ->
   rootPath = sysPath.resolve rootPath
@@ -294,6 +296,10 @@ loadPackages = (rootPath, callback) ->
  as it does not contain package.json (#{err})"
   # TODO: test if `brunch-plugin` is in dep’s package.json.
   loadDeps = (deps, isDev) ->
+    requireModule = (depPath, dependencyName) ->
+      plugin = require depPath
+      plugin.brunchPluginName = dependencyName
+      plugin
     deps
       .filter (dependency) ->
         dependency isnt 'brunch' and dependency.indexOf('brunch') isnt -1
@@ -301,12 +307,12 @@ loadPackages = (rootPath, callback) ->
         depPath = "#{nodeModules}/#{dependency}"
         if isDev
           try
-            require depPath
+            requireModule depPath, dependency
           catch e
             null
         else
           try
-            require depPath
+            requireModule depPath, dependency
           catch error
             throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
   plugins = loadDeps(Object.keys json.dependencies)
@@ -322,8 +328,6 @@ loadPackages = (rootPath, callback) ->
 #
 # Returns nothing.
 initialize = (options, configParams, onCompile, callback) ->
-  packages = loadPackages '.'
-
   if options.config?
     logger.warn '`-c, --config` option is deprecated. Use `--env` and `config.overrides` instead'
   if options.optimize?
@@ -332,11 +336,19 @@ initialize = (options, configParams, onCompile, callback) ->
   # Load config, get brunch packages from package.json.
   helpers.loadConfig options.config, configParams, (error, config) ->
     joinConfig = config._normalized.join
-    plugins    = getPlugins packages, config
-
-    plugins = plugins.filter (plugin) ->
+    packages = (loadPackages '.').filter ({brunchPluginName}) ->
+      if config.plugins.off?.length and brunchPluginName in config.plugins.off
+        false
+      else if config.plugins.only?.length and brunchPluginName not in config.plugins.only
+        false
+      else
+        true
+    plugins = (getPlugins packages, config).filter (plugin) ->
+      if config.plugins.on?.length and plugin.brunchPluginName in config.plugins.on
+        plugin.defaultEnv = '*'
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
-      plugin.defaultEnv ?= if not config.optimize and typeof plugin.optimize is 'function'
+      isOptimizer = typeof plugin.optimize is 'function'
+      plugin.defaultEnv ?= if not config.optimize and isOptimizer
         'production'
       else
         '*'
