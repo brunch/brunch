@@ -2,11 +2,11 @@
 
 NOTE: This page may refer to new features that have not yet been published. To the see the documentation that matches the current released version, take a look at this [document in the 'stable' branch](https://github.com/brunch/brunch/blob/stable/docs/config.md).
 
-Brunch uses configuration file (`config.coffee` or `config.js`) located in the root directory to control various aspects of your application.
+Brunch uses configuration file (`brunch-config.coffee` or `brunch-config.js`) located in the root directory to control various aspects of your application.
 
 You can see all config default values in the `setConfigDefaults` function of [`src/helpers.coffee`](/src/helpers.coffee) in the brunch source code.
 
-You can also import node.js modules in your configuration file.
+It is an executable script, so you can also do things like import Node.js modules in your configuration file.
 
 ## `paths`
 
@@ -69,7 +69,6 @@ files:
 
 ## `conventions`
 
-
 `Object`: `conventions` define tests, against which all file pathnames will be checked.
 
 * `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/` directory.
@@ -88,7 +87,6 @@ conventions:
 
 ## `modules`
 
-
 `Object`: consists of `wrapper` and `definition` subsettings.
 
 `modules.wrapper`: `String, Boolean or Function`: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories. Values:
@@ -106,32 +104,31 @@ conventions:
 
 Example:
 
-  ```coffeescript
-    # To use AMD, just add this and add require.js as
-    # your first vendor file.
-    modules:
-      wrapper: 'amd'
-      definition: 'amd'
+```coffeescript
+# To use AMD, just add this and add require.js as
+# your first vendor file.
+modules:
+  wrapper: 'amd'
+  definition: 'amd'
 
-    # Same as 'commonjs'.
-    modules:
-      wrapper: (path, data) ->
-        """
-    require.define({#{path}: function(exports, require, module) {
-      #{data}
-    }});\n\n
-        """
-  ```
+# Same as 'commonjs'.
+modules:
+  wrapper: (path, data) ->
+    """
+require.define({#{path}: function(exports, require, module) {
+  #{data}
+}});\n\n
+    """
+```
 
 `nameCleaner`: `Function` Allows you to set filterer function for module names,
 for example, change all app/file to file. Example:
 
 ```coffeescript
 # Default behaviour.
-config:
-  modules:
-    nameCleaner: (path) ->
-      path.replace(/^app\//, '')
+modules:
+  nameCleaner: (path) ->
+    path.replace(/^app\//, '')
 ```
 
 ## `notifications`
@@ -149,7 +146,6 @@ config:
 `Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --optimize`).
 
 ## `server`
-
 
 `Object`: contains params of webserver that runs on `brunch watch --server`.
 
@@ -175,8 +171,7 @@ server:
 
 ## `sourceMaps`
 
-
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
 `String`: set to `'old'` to use the old `@` control character instead of `#`.
 
 ## `fileListInterval`
@@ -199,6 +194,7 @@ overrides:
 ```
 
 ## `watcher`
+
 `Object`: Optional settings for
 [chokidar](https://github.com/paulmillr/chokidar)
 file watching library used in brunch.
