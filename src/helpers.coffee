@@ -305,6 +305,9 @@ normalizeConfig = (config) ->
     config.paths.bowerConfig
   ].concat Object.keys normalized.paths.possibleConfigFiles
   config._normalized = normalized
+  ['on', 'off', 'only'].forEach (key) ->
+    if typeof config.plugins[key] is 'string'
+      config.plugins[key] = [config.plugins[key]]
   config
 
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
