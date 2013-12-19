@@ -131,6 +131,25 @@ modules:
     path.replace(/^app\//, '')
 ```
 
+## `plugins`
+
+`Object`: Optional control to modify how plugins are loaded by default, as well as containing plugin-specific configuration.
+
+* `off`: Plugins that may be installed, but should not be run.
+* `on`: Forces listed plugins to be run, such as an optimizer even when the `optimize` flag is off.
+* `only`: Explicitly list the plugins to be used, ignoring any others that are installed.
+* _Per-Plugin_: Refer to each plugin's documentation for usage information.
+
+Example:
+
+```coffeescript
+plugins:
+  on: ['autoprefixer-brunch']
+  off: ['jade-brunch', 'static-jade-brunch']
+  autoReload:
+    enabled: true
+```
+
 ## `notifications`
 
 `Boolean`: enables or disables
