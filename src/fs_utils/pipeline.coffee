@@ -70,7 +70,7 @@ pipeline = (path, linters, compilers, callback) ->
     return callback throwError 'Reading', error if error?
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
-      if error?.match /^warn\:\s/i
+      if error?.toString().match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
       else
         return callback throwError 'Linting', error if error?
