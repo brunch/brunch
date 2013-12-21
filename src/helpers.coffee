@@ -310,6 +310,24 @@ normalizeConfig = (config) ->
       config.plugins[key] = [config.plugins[key]]
   config
 
+loadComponents = (config, type, callback) ->
+  readComponents '.', type, (error, components, aliases) ->
+    if error and not /ENOENT/.test(error.toString())
+      logger.error error
+    components ?= []
+    
+    order = components
+      .sort (a, b) ->
+        if a.sortingLevel is b.sortingLevel
+          if a.files[0] < b.files[0] then -1 else 1
+        else
+          b.sortingLevel - a.sortingLevel
+      .reduce (flat, component) ->
+        flat.concat component.files
+      , []
+
+    callback {components, aliases, order}
+
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
     # assign fullPath in two steps in case require.resolve throws
@@ -332,22 +350,12 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   deepExtend config, options
   replaceConfigSlashes config
   normalizeConfig config
-
-  readComponents '.', 'bower', (error, bowerComponents) ->
-    if error and not /ENOENT/.test(error.toString())
-      logger.error error
-    bowerComponents ?= []
-    config._normalized.bowerComponents = bowerComponents
-
-    config._normalized.bowerOrder = bowerComponents
-      .sort (a, b) ->
-        if a.sortingLevel is b.sortingLevel
-          if a.files[0] < b.files[0] then -1 else 1
-        else
-          b.sortingLevel - a.sortingLevel
-      .reduce (flat, component) ->
-        flat.concat component.files
-      , []
-
-    deepFreeze config
-    callback null, config
+  config._normalized.packageInfo = {}
+  
+  loadComponents config, 'bower', (bowerRes)->
+    config._normalized.packageInfo.bower = bowerRes
+            
+    loadComponents config, 'component', (componentRes) ->
+      config._normalized.packageInfo.component = componentRes
+      deepFreeze config
+      callback null, config
