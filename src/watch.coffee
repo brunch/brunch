@@ -80,9 +80,11 @@ startServer = (config, callback = (->)) ->
 #
 # Returns nothing.
 initWatcher = (config, callback) ->
-  watched = config.paths.watched.concat config._normalized.paths.allConfigFiles
-  watched = watched.concat.apply watched, config._normalized.packageInfo['bower'].components.map (_) -> _.files
-  watched = watched.concat.apply watched, config._normalized.packageInfo['component'].components.map (_) -> _.files
+  {paths} = config._normalized
+  {bower, component} = config._normalized.packageInfo
+  getFiles = (pkgs) -> pkgs.components.map (_) -> _.files
+  watched = paths.watched.concat
+    paths.allConfigFiles, getFiles(bower), getFiles(component)
 
   exists = (path, callback) ->
     fs_utils.exists path, (value) ->
