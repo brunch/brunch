@@ -315,7 +315,7 @@ loadComponents = (config, type, callback) ->
     if error and not /ENOENT/.test(error.toString())
       logger.error error
     components ?= []
-    
+
     order = components
       .sort (a, b) ->
         if a.sortingLevel is b.sortingLevel
@@ -351,10 +351,10 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   replaceConfigSlashes config
   normalizeConfig config
   config._normalized.packageInfo = {}
-  
+
   loadComponents config, 'bower', (bowerRes)->
     config._normalized.packageInfo.bower = bowerRes
-            
+
     loadComponents config, 'component', (componentRes) ->
       config._normalized.packageInfo.component = componentRes
       deepFreeze config
