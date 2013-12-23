@@ -83,8 +83,9 @@ initWatcher = (config, callback) ->
   {paths} = config._normalized
   {bower, component} = config._normalized.packageInfo
   getFiles = (pkgs) -> pkgs.components.map (_) -> _.files
-  watched = paths.watched.concat
+  watched = paths.watched.concat(
     paths.allConfigFiles, getFiles(bower), getFiles(component)
+  )
 
   exists = (path, callback) ->
     fs_utils.exists path, (value) ->
