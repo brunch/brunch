@@ -223,6 +223,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.ignored ?= paths.ignored ? [
     /[\\/]_/
     /vendor[\\/]node[\\/]/
+    /vendor[\\/]bundle[\\/]/
   ]
   conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
 
