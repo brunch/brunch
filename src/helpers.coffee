@@ -224,6 +224,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     /[\\/]_/
     /vendor[\\/]node[\\/]/
     /vendor[\\/]bundle[\\/]/
+    /vendor[\\/]ruby-.*[\\/]/
   ]
   conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
 
