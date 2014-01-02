@@ -73,7 +73,7 @@ concat = (files, path, type, definition, aliases) ->
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
   aliases?.forEach (alias) ->
     key = Object.keys(alias)[0]
-    root.add "require.alias('#{key}', '#{alias[key]});"
+    root.add "require.alias('#{key}', '#{alias[key]}');"
 
   root.toStringWithSourceMap file: path
 
