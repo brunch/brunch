@@ -222,8 +222,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   conventions.assets  ?= /assets[\\/]/
   conventions.ignored ?= paths.ignored ? [
     /[\\/]_/
-    /vendor[\\/]node[\\/]/
-    /vendor[\\/](j?ruby-.*|bundle)[\\/]/
+    /vendor[\\/](node|j?ruby-.*|bundle)[\\/]/
   ]
   conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
 
