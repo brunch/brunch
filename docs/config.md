@@ -195,8 +195,13 @@ server:
 
 ## `fileListInterval`
 
-`Number`: Allows to set an interval in ms which determines how often brunch file list
-should be checked for new files (internal and usually not needed prop).
+`Integer`: Sets an interval in ms which determines how often brunch file list should be
+checked for new files. Default `65`. 
+
+On large projects and/or environments with slow disk I/O, the value may need to be increased 
+to ensure a `brunch build` completes properly in one cycle. However, higher values harm 
+`brunch watch` performance, so consider changing it in an environment-specific way using 
+`overrides`.
 
 ## `overrides`
 
