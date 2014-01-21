@@ -336,7 +336,7 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
     delete require.cache[fullPath]
     config = require(fullPath).config
   catch error
-    if configPath is 'brunch-config'
+    if configPath is 'brunch-config' and error.code is 'MODULE_NOT_FOUND'
       # start to warn about deprecation of 'config' with 1.8 release
       # seamless and silent fallback until then
       return exports.loadConfig 'config', options, callback
