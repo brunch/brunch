@@ -26,7 +26,12 @@ exports.extend = extend = (object, properties) ->
   object
 
 applyOverrides = (config, options) ->
-  options.env.forEach (override) ->
+  # Allow the environment to be set from environment variable
+  environments = options.env
+  if process.env.BRUNCH_ENV?
+    environments.unshift process.env.BRUNCH_ENV
+
+  environments.forEach (override) ->
     deepExtend config, config.overrides?[override] or {}, config.files
   config
 
