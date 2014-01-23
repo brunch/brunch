@@ -207,6 +207,14 @@ to ensure a `brunch build` completes properly in one cycle. However, higher valu
 
 `Object`: Alternate config settings to activate via command line switches (`--env SETTING`). Multiple sets of overrides can be applied at once using a comma-separated list (`--env foo,bar`).
 
+It is also possible to set an additional environment value using the `BRUNCH_ENV` environment variable.
+
+Example:
+```
+BRUNCH_ENV="testing" brunch build
+```
+This can be especially useful when combined with [dotenv](https://npmjs.org/package/dotenv).
+
 Defaults:
 
 ```coffeescript
