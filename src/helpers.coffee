@@ -38,8 +38,9 @@ applyOverrides = (config, options) ->
 deepExtend = (object, properties, rootFiles = {}) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
-    # Special case for files[type]: don't merge properties.
-    if toString.call(value) is '[object Object]' and object isnt rootFiles
+    # Special case for files[type]: don't merge nested objects.
+    nestedObjs = Object.keys(rootFiles).map (_) -> rootFiles[_]
+    if toString.call(value) is '[object Object]' and object not in nestedObjs
       object[key] ?= {}
       deepExtend object[key], value, rootFiles
     else
