@@ -10,6 +10,7 @@ pushserve = require 'pushserve'
 worker = require './worker'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
+require('dotenv').load()
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
@@ -42,6 +43,9 @@ propIsFunction = (prop) -> (object) ->
 # Returns Object.
 generateParams = (persistent, options) ->
   params = env: options.env?.split(',') or []
+  # Allow the environment to be set from environment variable
+  if process.env.BRUNCH_ENV?
+    params.env.unshift process.env.BRUNCH_ENV
   if options.production? or options.optimize?
     params.env.unshift 'production'
   params.persistent = persistent
