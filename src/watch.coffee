@@ -10,6 +10,7 @@ pushserve = require 'pushserve'
 worker = require './worker'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
+require('dotenv').load()
 
 # Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
