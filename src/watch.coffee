@@ -42,6 +42,8 @@ propIsFunction = (prop) -> (object) ->
 # Returns Object.
 generateParams = (persistent, options) ->
   params = env: options.env?.split(',') or []
+  if process.env.NODE_ENV?
+    params.env.unshift process.env.NODE_ENV
   if options.production? or options.optimize?
     params.env.unshift 'production'
   params.persistent = persistent
