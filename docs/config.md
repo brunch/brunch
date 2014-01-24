@@ -226,6 +226,13 @@ overrides:
     plugins: autoReload: enabled: false
 ```
 
+Caveats:
+
+* If both `files[<type>].joinTo` and `overrides[<env>].files[<type>].joinTo` are defined, the value of `files[<type>].joinTo` will be overwritten by, not merged with, `overrides`.
+* If both `files[<type>].order` and `overrides[<env>].files[<type>].order` are defined, the value of `files[<type>].order` will be overwritten by, not merged with, `overrides`.
+
+In other words, `joinTo` and `order` don't merge if defined under `overrides`, but you still can override one while inheriting the base setting for the other.
+
 ## `watcher`
 
 `Object`: Optional settings for
