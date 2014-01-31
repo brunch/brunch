@@ -34,7 +34,7 @@
   },
   "preferGlobal": true,
   "dependencies": {
-    "coffee-script": "~1.6.3",
+    "coffee-script": "~1.7.1",
     "commander": "~2.0.0",
     "mkdirp": "~0.3.5",
     "ncp": "~0.4.2",
