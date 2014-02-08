@@ -11,8 +11,8 @@ readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anysort = require 'anysort'
-# Just require.
-require 'coffee-script'
+coffee = require 'coffee-script'
+coffee.register()
 
 # Extends the object with properties from another object.
 # Example
