@@ -340,8 +340,8 @@ initialize = (options, configParams, onCompile, callback) ->
 
   # Load config, get brunch packages from package.json.
   helpers.loadConfig options.config, configParams, (error, config) ->
-    logger.notifications = @config.notifications
-    logger.notificationsTitle = @config.notificationsTitle or 'Brunch'
+    logger.notifications = config.notifications
+    logger.notificationsTitle = config.notificationsTitle or 'Brunch'
     joinConfig = config._normalized.join
     packages = (loadPackages '.').filter ({brunchPluginName}) ->
       if config.plugins.off?.length and brunchPluginName in config.plugins.off
