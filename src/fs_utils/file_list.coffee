@@ -93,6 +93,7 @@ module.exports = class FileList extends EventEmitter
       .forEach(@compile)
 
   compile: (file) ->
+    file.removed = false
     path = file.path
     if @compiling[path]
       @resetTimer()
