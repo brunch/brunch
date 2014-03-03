@@ -131,7 +131,7 @@ changedSince = (startTime) -> (generated) ->
   generated.sourceFiles.some (sourceFile) ->
     sourceFile.compilationTime >= startTime or sourceFile.removed
 
-generateCompilationLog = (startTime, allAssets, generatedFiles) ->
+generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) ->
   # compiled 4 files and 145 cached files into app.js
   # compiled app.js and 10 cached files into app.js, copied 2 files
   # `compiled 106 into 3 and copied 47 files` - initial compilation
@@ -159,12 +159,14 @@ generateCompilationLog = (startTime, allAssets, generatedFiles) ->
         locallyCompiledCount += 1
         sourceName = getName sourceFile
         compiled.push sourceName unless sourceName in compiled
+      isChanged = true if not isChanged and generatedFile in disposedFiles.generated
     if isChanged
       generated.push getName generatedFile
       cachedCount += (generatedFile.sourceFiles.length - locallyCompiledCount)
 
   compiledCount = compiled.length
   copiedCount = copied.length
+  disposedCount = disposedFiles.sourcePaths.length
 
   generatedLog = switch generated.length
     when 0 then ''
@@ -172,22 +174,29 @@ generateCompilationLog = (startTime, allAssets, generatedFiles) ->
     else " into #{generated.length} files"
 
   compiledLog = switch compiledCount
-    when 0 then ''
+    when 0
+      switch disposedCount
+        when 0 then ''
+        when 1 then "removed #{disposedFiles.sourcePaths[0]}"
+        else "removed #{disposedCount}"
     when 1 then "compiled #{compiled[0]}"
-    else "compiled #{compiled.length}"
+    else "compiled #{compiledCount}"
 
   cachedLog = switch cachedCount
     when 0
-      if compiledCount is 0 or compiledCount is 1
+      if compiledCount <= 1
         ''
       else
         ' files'
     else
-      if compiledCount is 1
-        cachedCountName = "file#{if cachedCount is 1 then '' else 's'}"
-        " and #{cachedCount} cached #{cachedCountName}"
-      else
-        " files and #{cachedCount} cached"
+      switch compiledCount
+        when 0
+          noun = if generated.length > 1 then '' else ' files'
+          " and wrote #{cachedCount} cached#{noun}"
+        when 1
+          cachedCountName = "file#{if cachedCount is 1 then '' else 's'}"
+          " and #{cachedCount} cached #{cachedCountName}"
+        else " files and #{cachedCount} cached"
 
   nonAssetsLog = compiledLog + cachedLog + generatedLog
 
@@ -225,7 +234,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
 
   # Determine which files has been changed,
   # create new `fs_utils.GeneratedFile` instances and write them.
-  fs_utils.write fileList, config, joinConfig, optimizers, startTime, (error, generatedFiles) ->
+  writeCb = (error, generatedFiles, disposed) ->
     if error?
       if Array.isArray error
         error.forEach (subError) ->
@@ -233,7 +242,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
       else
         logger.error error
     else
-      logger.info generateCompilationLog startTime, fileList.assets, generatedFiles
+      logger.info generateCompilationLog startTime, fileList.assets, generatedFiles, disposed
 
     # If it’s single non-continuous build, close file watcher and
     # exit process with correct exit code.
@@ -248,6 +257,8 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
     return if error?
     # Just pass `fs_utils.GeneratedFile` instances to callbacks.
     callback generatedFiles
+
+  fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
 
 # Generate function that restarts brunch process.
 #

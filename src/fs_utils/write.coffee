@@ -50,12 +50,15 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
   changed = files.filter(changedSince startTime)
 
   # Remove files marked as such and dispose them, clean memory.
+  disposed = generated: [], sourcePaths: []
   changed.forEach (generated) ->
     sourceFiles = generated.sourceFiles
     sourceFiles
       .filter (file) ->
         file.removed
       .forEach (file) ->
+        disposed.generated.push generated
+        disposed.sourcePaths.push sysPath.basename file.path
         file.dispose()
         sourceFiles.splice sourceFiles.indexOf(file), 1
 
@@ -63,4 +66,4 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
     generate file.path, file.sourceFiles, config, optimizers, next
   each changed, gen, (error) ->
     return callback error if error?
-    callback null, changed
+    callback null, changed, disposed
