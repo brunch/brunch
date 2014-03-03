@@ -67,7 +67,7 @@ makeWrapper = (wrapper, path, isWrapped, isntModule) ->
 makeCompiler = (path, cache, linters, compilers, wrap) ->
   normalizedPath = replaceBackSlashes path
   (callback) ->
-    pipeline path, cache, linters, compilers, (error, data) =>
+    pipeline path, linters, compilers, (error, data) =>
       updateCache normalizedPath, cache, error, data, wrap
       callback error, cache.data
 

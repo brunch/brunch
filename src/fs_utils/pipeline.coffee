@@ -64,11 +64,9 @@ compile = (source, path, compilers, callback) ->
   first = (next) -> next null, {source, path, callback}
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
-pipeline = (path, cache, linters, compilers, callback) ->
+pipeline = (path, linters, compilers, callback) ->
   debug "Reading '#{path}'"
   fs.readFile path, 'utf-8', (error, source) ->
-    # don't throw for missing file after unlink emitted
-    return callback error if error?.code is 'ENOENT' and cache.removed is true
     return callback throwError 'Reading', error if error?
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
@@ -76,7 +74,7 @@ pipeline = (path, cache, linters, compilers, callback) ->
         logger.warn "Linting of #{path}: #{error}"
       else
         return callback throwError 'Linting', error if error?
-
+      
       compile source, path, compilers, callback
 
 exports.pipeline = pipeline
