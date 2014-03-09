@@ -48,7 +48,7 @@ Examples:
 Watch brunch directory and rebuild if something changed. Options:
 
 * all the same options available in `brunch build`, plus:
-* `-s, --server`: run a simple http server that would server `public` dir in `/` and `test` dir in `/test/`
+* `-s, --server`: run a simple http server that would serve `public` dir in `/` and `test` dir in `/test/`
 * `-p PORT, --port PORT`: if a `server` option was specified, define on which port the server would run
 
 Short-cut: `brunch w`.
