@@ -25,10 +25,11 @@ paths:
 
 ## `files`
 
-`Required, object`: `files` configures handling of application files: which compiler would be used on which file, what name should output file have etc.
+`Required, object`: `files` configures handling of application files: which compiler would be used on which file, what name should output file have etc. Any paths specified here must be listed in `paths.watched` as described above, for building.
 
 * `<type>`: `javascripts`, `stylesheets` or `templates`
-    * joinTo: (required) describes how files will be compiled & joined together. Available formats:
+    * joinTo: (required) describes how files will be compiled & joined together.
+      Available formats:
         * 'outputFilePath' in order to have all source files compiled together to one
         * map of ('outputFilePath': [anymatch set](https://github.com/es128/anymatch#anymatch))
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
