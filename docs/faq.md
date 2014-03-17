@@ -20,7 +20,7 @@ To add packages to your project:
 
 * Make sure you have `bower.json`, which can be generated with `bower init`
 * Add packages to the `dependencies` field of your `bower.json`
-* Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`
+* Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
 
 Example app with Bower integration: http://github.com/paulmillr/ostio
 
