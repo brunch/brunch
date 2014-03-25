@@ -100,7 +100,7 @@ This simple function will load all your files that are ending with `-test` suffi
 
 ```javascript
 window.require.list()
-  .filter(function(name) {return /-test$.test(name)/;})
+  .filter(function(name) {return /-test$/.test(name);})
   .forEach(require);
 ```
 
