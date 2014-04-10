@@ -92,7 +92,7 @@ module.exports = class FileList extends EventEmitter
         not @compiled[dependent.path]
       .forEach(@compile)
 
-  compile: (file) ->
+  compile: (file) =>
     file.removed = false
     path = file.path
     if @compiling[path]
@@ -107,7 +107,7 @@ module.exports = class FileList extends EventEmitter
         @compiled[path] = true
         @emit 'compiled', path
 
-  copy: (asset) ->
+  copy: (asset) =>
     path = asset.path
     @copying[path] = true
     asset.copy (error) =>
@@ -128,7 +128,7 @@ module.exports = class FileList extends EventEmitter
     @assets.push file
     file
 
-  _change: (path, compiler, linters, isHelper) ->
+  _change: (path, compiler, linters, isHelper) =>
     ignored = @isIgnored path
     if @is 'assets', path
       unless ignored
@@ -138,7 +138,7 @@ module.exports = class FileList extends EventEmitter
         @compile (@find(path) ? @_add path, compiler, linters, isHelper)
       @compileDependencyParents path unless @initial
 
-  _unlink: (path) ->
+  _unlink: (path) =>
     ignored = @isIgnored path
     if @is 'assets', path
       unless ignored
