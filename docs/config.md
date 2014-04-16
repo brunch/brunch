@@ -169,16 +169,21 @@ plugins:
 
 `Object`: contains params of webserver that runs on `brunch watch --server`.
 
-* `path`: (optional) path to nodejs file that will be loaded. The file must contain `exports.startServer` function:
+* `path`: (optional) path to nodejs file that will be loaded to run your custom server. It must contain `exports.startServer` function:
 
     ```coffeescript
     exports.startServer = (port, path, callback) ->
       # callback doesn't take any parameters and (if provided) should be called after server is started
       # should return an instance of http.Server
     ```
+  If not specified, Brunch will use [pushserve](https://github.com/paulmillr/pushserve). If using your own, only `port` from the following options can be set from the config.
 
-* `port`: (optional) port on which server will run
-* `base`: (optional) base URL from which to serve the app
+* `port`: port on which server will run. Default: `3333`
+* `base`: base URL from which to serve the app. Default: `''`
+* `indexPath`: path to serve when base URL is requested. Default `index.html`
+* `noPushState`: respond with 404 instead of `indexPath` for unknown paths. Default `false`
+* `noCors`: disables CORS headers. Default `false`
+* `stripSlashes`: removes trailing slashes from URLs. Default `false`
 
 Example:
 
@@ -187,6 +192,7 @@ server:
   path: 'server.coffee'
   port: 6832
   base: '/myapp'
+  stripSlashes: true
 ```
 
 ## `sourceMaps`
