@@ -71,4 +71,4 @@ module.exports = class UglifyCompiler
     callback error, optimized
 ```
 
-See [wiki page](https://github.com/brunch/brunch/wiki/Plugins) for a list of plugins. Feel free to add new plugins there.
+See [wiki page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins there.
