@@ -331,7 +331,7 @@ loadPackages = (rootPath, callback) ->
             requireModule depPath, dependency
           catch error
             throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
-  plugins = loadDeps(Object.keys json.dependencies)
+  plugins = loadDeps(Object.keys json.dependencies or {})
   devPlugins = loadDeps(Object.keys(json.devDependencies or {}), true)
   plugins.concat(devPlugins.filter((_) -> _?))
 
