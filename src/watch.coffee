@@ -333,7 +333,8 @@ loadPackages = (rootPath, callback) ->
             throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
   plugins = loadDeps(Object.keys json.dependencies or {})
   devPlugins = loadDeps(Object.keys(json.devDependencies or {}), true)
-  plugins.concat(devPlugins.filter((_) -> _?))
+  optPlugins = loadDeps(Object.keys(json.optionalDependencies or {}), true)
+  plugins.concat(devPlugins.concat(optPlugins).filter((_) -> _?))
 
 # Load brunch plugins, group them and initialise file watcher.
 #
