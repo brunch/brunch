@@ -57,7 +57,7 @@ sort = (files, config, joinToValue) ->
   indexes = Object.create(null)
   files.forEach (file, index) -> indexes[file.path] = file
   order = extractOrder files, config
-  order.joinToValue = joinToValue
+  order.joinToValue = joinToValue if Array.isArray joinToValue
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
