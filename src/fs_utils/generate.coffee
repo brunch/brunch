@@ -22,11 +22,12 @@ sortByConfig = (files, config) ->
     criteria = [
       config.before ? []
       config.after ? []
+      config.joinToValue ? []
       config.bower ? []
       config.component ? []
       config.vendorConvention ? -> no
     ]
-    anysort.grouped files, criteria, [0, 2, 3, 4, 5, 1]
+    anysort.grouped files, criteria, [0, 2, 3, 4, 5, 6, 1]
   else
     files
 
@@ -51,11 +52,12 @@ extractOrder = (files, config) ->
   component = packageInfo.component.order
   {before, after, vendorConvention, bower, component}
 
-sort = (files, config) ->
+sort = (files, config, joinToValue) ->
   paths = files.map (file) -> file.path
   indexes = Object.create(null)
   files.forEach (file, index) -> indexes[file.path] = file
   order = extractOrder files, config
+  order.joinToValue = joinToValue
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
@@ -118,7 +120,8 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
     'stylesheet'
   optimizers = optimizers.filter((optimizer) -> optimizer.type is type)
 
-  sorted = sort sourceFiles, config
+  joinToValue = config.files["#{type}s"].joinTo[path[config.paths.public.length+1..]]
+  sorted = sort sourceFiles, config, joinToValue
 
   {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo['component'].aliases
 
