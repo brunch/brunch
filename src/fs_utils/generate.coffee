@@ -68,8 +68,8 @@ concat = (files, path, type, definition, aliases) ->
   debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
   files.forEach (file) ->
     root.add file.node
-    root.add ';' if type is 'javascript'
     data = if file.node.isIdentity then file.data else file.source
+    root.add ';' if type is 'javascript' and ';' isnt data.trim().substr -1
     root.setSourceContent file.node.source, data
 
   root.prepend definition(path, root.sourceContents) if type is 'javascript'
