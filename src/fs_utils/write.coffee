@@ -4,9 +4,12 @@ each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
 helpers = require '../helpers'
+anysort = require 'anysort'
+
+typeToGroup = (type) -> "#{type}s"
 
 getPaths = (sourceFile, joinConfig) ->
-  sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
+  sourceFileJoinConfig = joinConfig[typeToGroup sourceFile.type] or {}
   Object.keys(sourceFileJoinConfig)
     .filter (key) ->
       key isnt 'pluginHelpers'
@@ -26,6 +29,10 @@ getFiles = (fileList, config, joinConfig) ->
     paths.forEach (path) ->
       map[path] ?= []
       map[path].push file
+
+  for path, sourceFiles of map
+    sourceFiles.sort (a, b) ->
+      anysort a.path, b.path, config.files[typeToGroup a.type].joinTo[path]
 
   Object.keys(map).map (generatedFilePath) ->
     sourceFiles = map[generatedFilePath]
