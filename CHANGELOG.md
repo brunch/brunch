@@ -1,3 +1,16 @@
+# Brunch 1.7.14 (21 May 2014)
+* [component](https://github.com/component/component) integration
+* [anysort](https://github.com/es128/anysort)/[anymatch](https://github.com/es128/anymatch)
+  integration, providing much more flexible ways to define source files in
+  config such as in `joinTo` and `order`
+* [New config options](https://github.com/brunch/brunch/blob/master/docs/config.md#plugins)
+  to control which plugins are used (can be env-specific)
+* Allow `onCompile` method to be defined in Brunch config file for triggering
+  custom project-specific functionality after every compile cycle
+* Default settings updates:
+    * Ignore directories that start with underscore (to match filename handling)
+    * Fix heroku issues
+
 # Brunch 1.7.13 (9 December 2013)
 * Fixed optimizers not actually optimizing the code.
 
