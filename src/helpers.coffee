@@ -75,11 +75,12 @@ exports.install = install = (rootPath, command, callback = (->)) ->
 
 exports.isWindows = isWindows = do -> os.platform() is 'win32'
 
-exports.replaceSlashes = replaceSlashes = (_) ->
-  if isWindows then _.replace(/\//g, '\\') else _
+windowsStringReplace = (search, replacement) -> (_) ->
+  if isWindows && typeof _ is 'string' then _.replace(search, replacement) else _
+    
+exports.replaceSlashes = replaceSlashes = windowsStringReplace(/\//g, '\\')
 
-exports.replaceBackSlashes = replaceBackSlashes = (_) ->
-  if isWindows then _.replace(/\\/g, '\/') else _
+exports.replaceBackSlashes = replaceBackSlashes = windowsStringReplace(/\\/g, '\/')
 
 exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
   return config unless isWindows
