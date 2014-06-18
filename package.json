@@ -39,7 +39,7 @@
     "mkdirp": "~0.3.5",
     "ncp": "~0.4.2",
     "debug": "~0.7.2",
-    "source-map": "~0.1.26",
+    "source-map": ">0.1.26 <0.1.34",
     "chokidar": "~0.8.1",
     "init-skeleton": "~0.2.0",
     "loggy": "~0.2.0",
