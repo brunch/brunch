@@ -69,8 +69,8 @@ startServer = (config, callback = (->)) ->
     unless server.startServer?
       throw new Error 'Brunch server file needs to have startServer function'
     if serverOpts.config
-      opts = {port, path: publicPath, logger}
-      server.startServer helpers.extend(opts, serverOpts.config)
+      opts = {port, path: publicPath}
+      server.startServer helpers.extend(opts, serverOpts.config), logger
     else
       server.startServer port, publicPath, log
   else
