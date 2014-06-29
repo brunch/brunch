@@ -68,7 +68,11 @@ startServer = (config, callback = (->)) ->
       logger.error "couldn\'t load server #{config.server.path}: #{error}"
     unless server.startServer?
       throw new Error 'Brunch server file needs to have startServer function'
-    server.startServer port, publicPath, log
+    if serverOpts.config
+      opts = {port, path: publicPath, logger}
+      server.startServer helpers.extend(opts, serverOpts.config)
+    else
+      server.startServer port, publicPath, log
   else
     opts = noLog: yes, path: publicPath
     pushserve helpers.extend(opts, serverOpts), log
