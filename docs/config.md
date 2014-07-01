@@ -35,11 +35,11 @@ paths:
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
         * before: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded before other files
         * after: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded after other files
-    * pluginHelpers: (optional) specify which output file plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
+    * pluginHelpers: (optional) specify which output file (or array of files) plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
 
 All files from `vendor` directory are by default concatenated before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty. Files from Bower packages are included by default before the `vendor` files.
 
-Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [after] 
+Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [after]
 
 Example:
 
@@ -197,17 +197,17 @@ server:
 
 ## `sourceMaps`
 
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
 `String`: set to `'old'` to use the old `@` control character instead of `#`.
 
 ## `fileListInterval`
 
 `Integer`: Sets an interval in ms which determines how often brunch file list should be
-checked for new files. Default `65`. 
+checked for new files. Default `65`.
 
-On large projects and/or environments with slow disk I/O, the value may need to be increased 
-to ensure a `brunch build` completes properly in one cycle. However, higher values harm 
-`brunch watch` performance, so consider changing it in an environment-specific way using 
+On large projects and/or environments with slow disk I/O, the value may need to be increased
+to ensure a `brunch build` completes properly in one cycle. However, higher values harm
+`brunch watch` performance, so consider changing it in an environment-specific way using
 `overrides`.
 
 ## `overrides`
