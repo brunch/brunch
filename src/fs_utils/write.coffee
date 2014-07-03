@@ -12,7 +12,7 @@ getPaths = (sourceFile, joinConfig) ->
       key isnt 'pluginHelpers'
     .filter (generatedFilePath) ->
       if sourceFile.isHelper
-        generatedFilePath in sourceFileJoinConfig.pluginHelpers
+        sourceFileJoinConfig.pluginHelpers is generatedFilePath
       else
         checker = sourceFileJoinConfig[generatedFilePath]
         checker sourceFile.path
