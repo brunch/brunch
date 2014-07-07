@@ -152,8 +152,10 @@ createJoinConfig = (configFiles) ->
   types.forEach (type) ->
     pluginHelpers = configFiles[type].pluginHelpers
     joinConfig[type].pluginHelpers =
-      if pluginHelpers
-        if Array.isArray(pluginHelpers) then pluginHelpers else [pluginHelpers]
+      if Array.isArray pluginHelpers
+        pluginHelpers
+      else if pluginHelpers
+        [pluginHelpers]
       else
         do ->
           destFiles = Object.keys joinConfig[type]
