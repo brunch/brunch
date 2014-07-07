@@ -77,7 +77,7 @@ exports.isWindows = isWindows = do -> os.platform() is 'win32'
 
 windowsStringReplace = (search, replacement) -> (_) ->
   if isWindows && typeof _ is 'string' then _.replace(search, replacement) else _
-    
+
 exports.replaceSlashes = replaceSlashes = windowsStringReplace(/\//g, '\\')
 
 exports.replaceBackSlashes = replaceBackSlashes = windowsStringReplace(/\\/g, '\/')
@@ -150,14 +150,18 @@ createJoinConfig = (configFiles) ->
 
   # special matching for plugin helpers
   types.forEach (type) ->
-    joinConfig[type].pluginHelpers = configFiles[type].pluginHelpers or
-      do ->
-        destFiles = Object.keys joinConfig[type]
-        joinMatch = destFiles.filter (file) -> joinConfig[type][file] 'vendor/.'
-        return joinMatch[0] if joinMatch.length > 0
-        nameMatch = destFiles.filter (file) -> /vendor/i.test file
-        return nameMatch[0] if nameMatch.length > 0
-        destFiles.shift()
+    pluginHelpers = configFiles[type].pluginHelpers
+    joinConfig[type].pluginHelpers =
+      if pluginHelpers
+        if Array.isArray(pluginHelpers) then pluginHelpers else [pluginHelpers]
+      else
+        do ->
+          destFiles = Object.keys joinConfig[type]
+          joinMatch = destFiles.filter (file) -> joinConfig[type][file] 'vendor/.'
+          return [joinMatch[0]] if joinMatch.length > 0
+          nameMatch = destFiles.filter (file) -> /vendor/i.test file
+          return [nameMatch[0]] if nameMatch.length > 0
+          [destFiles.shift()]
 
   Object.freeze(joinConfig)
 
