@@ -399,22 +399,22 @@ initialize = (options, configParams, onCompile, callback) ->
     if worker.isWorker
       return callback null, {config, fileList, compilers, linters}
 
-    serverIsLaunched = ->
-      # Initialise file watcher.
-      initWatcher config, (error, watcher) ->
-        return callback error if error?
-        # Get compile and reload functions.
-        compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
-        reload = getReloadFn config, options, onCompile, watcher, server, plugins
-        includes = getPluginIncludes(plugins)
-        callback error, {
-          config, watcher, server, fileList, compilers, linters, compile, reload, includes
-        }
+    serverIsLaunched = ->
+      # Initialise file watcher.
+      initWatcher config, (error, watcher) ->
+        return callback error if error?
+        # Get compile and reload functions.
+        compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
+        reload = getReloadFn config, options, onCompile, watcher, server, plugins
+        includes = getPluginIncludes(plugins)
+        callback error, {
+          config, watcher, server, fileList, compilers, linters, compile, reload, includes
+        }
 
-    if config.persistent and config.server.run
-      server = startServer config, serverIsLaunched
-    else
-      serverIsLaunched()
+    if config.persistent and config.server.run
+      server = startServer config, serverIsLaunched
+    else
+      serverIsLaunched()
 
 isConfigFile = (basename, configPath) ->
   files = Object.keys(require.extensions).map (_) -> configPath + _
@@ -465,8 +465,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
       isConfigFile = possibleConfigFiles[path]
       isPackageFile = path is packageConfig
       if isConfigFile or isPackageFile
-        logger.info "Detected removal of config.coffee / package.json.
-Exiting."
+        logger.info "Detected removal of config.coffee / package.json.\nExiting."
         process.exit(0)
       else
         onChange()
