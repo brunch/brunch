@@ -54,28 +54,34 @@ generateParams = (persistent, options) ->
     params.server.port = options.port if options.port
   params
 
-startServer = (config, callback = (->)) ->
+startServer = (config, callback = ->) ->
   serverOpts = config.server or {}
   port = parseInt config.server.port, 10
   publicPath = config.paths.public
-  log = ->
-    logger.info "application started on http://localhost:#{port}/"
+  serverCb = ->
+    logger.info if config.server.path
+      'custom server started, initializing watcher'
+    else
+       "application started on http://localhost:#{port}/"
     callback()
   if config.server.path
+    logger.info 'starting custom server'
     try
       server = require sysPath.resolve config.server.path
     catch error
-      logger.error "couldn\'t load server #{config.server.path}: #{error}"
+      logger.error "couldn't load server #{config.server.path}: #{error}"
     unless server.startServer?
       throw new Error 'Brunch server file needs to have startServer function'
-    if serverOpts.config
-      opts = {port, path: publicPath}
-      server.startServer helpers.extend(opts, serverOpts.config), callback
+    opts = {port, path: publicPath}
+    serverConfig = helpers.extend opts, serverOpts.config or {}
+    debug "Invoking custom startServer with: #{JSON.stringify serverConfig}"
+    if server.startServer.length is 2
+      server.startServer serverConfig, serverCb
     else
-      server.startServer port, publicPath, log
+      server.startServer port, publicPath, serverCb
   else
     opts = noLog: yes, path: publicPath
-    pushserve helpers.extend(opts, serverOpts), log
+    pushserve helpers.extend(opts, serverOpts), serverCb
 
 # Filter paths that exist and watch them with `chokidar` package.
 #
@@ -399,7 +405,7 @@ initialize = (options, configParams, onCompile, callback) ->
     if worker.isWorker
       return callback null, {config, fileList, compilers, linters}
 
-    serverIsLaunched = ->
+    launchWatcher = ->
       # Initialise file watcher.
       initWatcher config, (error, watcher) ->
         return callback error if error?
@@ -412,9 +418,9 @@ initialize = (options, configParams, onCompile, callback) ->
         }
 
     if config.persistent and config.server.run
-      server = startServer config, serverIsLaunched
+      server = startServer config, launchWatcher
     else
-      serverIsLaunched()
+      launchWatcher()
 
 isConfigFile = (basename, configPath) ->
   files = Object.keys(require.extensions).map (_) -> configPath + _
