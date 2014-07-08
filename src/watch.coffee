@@ -70,7 +70,7 @@ startServer = (config, callback = ->) ->
       server = require sysPath.resolve config.server.path
     catch error
       logger.error "couldn't load server #{config.server.path}: #{error}"
-    unless server.startServer?
+    unless typeof server.startServer is 'function'
       throw new Error 'Brunch server file needs to have startServer function'
     opts = {port, path: publicPath}
     serverConfig = helpers.extend opts, serverOpts.config or {}
