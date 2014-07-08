@@ -137,7 +137,7 @@ modules:
 
 modules:
   nameCleaner: (path) ->
-    path.replace /^app\//, "#{name}/"
+    path.replace /^app/, name
 ```
 
 ## `plugins`
