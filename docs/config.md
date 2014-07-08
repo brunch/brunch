@@ -122,14 +122,22 @@ require.define({#{path}: function(exports, require, module) {
     """
 ```
 
-`nameCleaner`: `Function` Allows you to set filterer function for module names,
-for example, change all app/file to file. Example:
+`modules.nameCleaner`: `Function` Allows you to set filterer function for module names,
+for example, change all 'app/file' to 'file'. Example:
 
 ```coffeescript
 # Default behaviour.
 modules:
   nameCleaner: (path) ->
-    path.replace(/^app\//, '')
+    path.replace /^app\//, ''
+```
+```coffeescript
+# Add namespacing to a project, such as for a component
+{name} = require './package' # or './bower'
+
+modules:
+  nameCleaner: (path) ->
+    path.replace /^app\//, "#{name}/"
 ```
 
 ## `plugins`
