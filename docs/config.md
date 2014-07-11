@@ -197,8 +197,10 @@ server:
 
 ## `sourceMaps`
 
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
-`String`: set to `'old'` to use the old `@` control character instead of `#`.
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
+`String`:
+  * set to `'old'` to use the old `@` control character instead of `#`.
+  * set to `'absoluteUrl'` to set the `sourceMappingURL` to the complete URL path starting from `config.paths.public`
 
 ## `fileListInterval`
 
