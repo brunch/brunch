@@ -171,7 +171,7 @@ plugins:
 
 ## `optimize`
 
-`Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --optimize`).
+`Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --production`).
 
 ## `server`
 
