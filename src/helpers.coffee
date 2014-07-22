@@ -347,8 +347,7 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
     fullPath = sysPath.resolve configPath
     fullPath = require.resolve fullPath
     delete require.cache[fullPath]
-    configFile = require fullPath
-    config = configFile.config
+    {config} = require fullPath
     unless config?.files
       throw new Error 'Brunch config must have "files" property'
   catch error
