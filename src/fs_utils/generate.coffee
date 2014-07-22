@@ -132,12 +132,17 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
     return callback error if error?
 
     if withMaps
-      base = sysPath.basename mapPath
+      mapRoute = if config.sourceMaps is 'absoluteUrl'
+        mapPath
+          .replace config.paths.public, ''
+          .replace '\\', '/'
+      else
+        sysPath.basename mapPath
       controlChar = if config.sourceMaps is 'old' then '@' else '#'
       data.code += if type is 'javascript'
-        "\n//#{controlChar} sourceMappingURL=#{base}"
+        "\n//#{controlChar} sourceMappingURL=#{mapRoute}"
       else
-        "\n/*#{controlChar} sourceMappingURL=#{base}*/"
+        "\n/*#{controlChar} sourceMappingURL=#{mapRoute}*/"
 
     common.writeFile path, data.code, ->
       if withMaps

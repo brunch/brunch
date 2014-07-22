@@ -31,10 +31,10 @@ paths:
     * joinTo: (required) describes how files will be compiled & joined together.
       Available formats:
         * 'outputFilePath' in order to have all source files compiled together to one
-        * map of ('outputFilePath': [anymatch set](https://github.com/es128/anymatch#anymatch))
+        * map of ('outputFilePath': [anymatch set](https://github.com/es128/anymatch#anymatch-))
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
-        * before: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded before other files
-        * after: [anymatch set](https://github.com/es128/anymatch#anymatch) defining files that will be loaded after other files
+        * before: [anymatch set](https://github.com/es128/anymatch#anymatch-) defining files that will be loaded before other files
+        * after: [anymatch set](https://github.com/es128/anymatch#anymatch-) defining files that will be loaded after other files
     * pluginHelpers: (optional) specify which output file (or array of files) plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
 
 All files from `vendor` directory are by default concatenated before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty. Files from Bower packages are included by default before the `vendor` files.
@@ -72,9 +72,9 @@ files:
 
 `Object`: `conventions` define tests, against which all file pathnames will be checked.
 
-* `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/` directory.
-* `assets` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Default value: `/assets[\\/]/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
-* `vendor` key: [anymatch set](https://github.com/es128/anymatch#anymatch). Default value: `/vendor[\\/]/`. If test gives true, file won't be wrapped in module, if there are any.
+* `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/` directory.
+* `assets` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Default value: `/assets[\\/]/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
+* `vendor` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Default value: `/vendor[\\/]/`. If test gives true, file won't be wrapped in module, if there are any.
 
 Keep in mind that default brunch regexps, as you see, consider **all** `vendor/` (etc.) directories as vendor (etc.) files. So, `app/views/vendor/thing/chaplin_view.coffee` will be treated as vendor file.
 
@@ -171,7 +171,7 @@ plugins:
 
 ## `optimize`
 
-`Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --optimize`).
+`Boolean`: determines if minifiers should be enabled or not. Default value is `false` (`true` if you run `brunch build --production`).
 
 ## `server`
 
@@ -205,8 +205,10 @@ server:
 
 ## `sourceMaps`
 
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
-`String`: set to `'old'` to use the old `@` control character instead of `#`.
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
+`String`:
+  * set to `'old'` to use the old `@` control character instead of `#`.
+  * set to `'absoluteUrl'` to set the `sourceMappingURL` to the complete URL path starting from `config.paths.public`
 
 ## `fileListInterval`
 
