@@ -347,7 +347,10 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
     fullPath = sysPath.resolve configPath
     fullPath = require.resolve fullPath
     delete require.cache[fullPath]
-    config = require(fullPath).config
+    configFile = require fullPath
+    config = configFile.config
+    unless config?.files
+      throw new Error 'Brunch config must have "files" property'
   catch error
     if configPath is 'brunch-config' and error.code is 'MODULE_NOT_FOUND'
       # start to warn about deprecation of 'config' with 1.8 release
