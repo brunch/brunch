@@ -2,8 +2,9 @@
 
 ## I want to start new project with Brunch. What's the workflow?
 
-* Create new project `brunch new <skeleton>`.
+* Create a new project with `brunch new <skeleton>`.
 * Create static HTML pages in `app/assets` directory (`login.html`, `user.html` etc.) and corresponding styles in `app/styles`.
+* If you need any app-specific scripts in the browser make sure they are loaded in your html via the `require('')` function. See the [Brunch conventions](https://github.com/brunch/brunch/tree/stable/docs#conventions).
 * Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically re-apply styles or reload the page when changes are saved.
 * When all mockups are done, create app classes for them with `scaffolt` ([scaffolt package](https://github.com/paulmillr/scaffolt)). E.g. `scaffolt view user` (you need to have `generators` directory in your app).
 * Debug your code in browser via `console.log` or `debugger` statements.
