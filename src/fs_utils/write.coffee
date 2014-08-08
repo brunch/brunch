@@ -4,6 +4,7 @@ each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
 helpers = require '../helpers'
+logger = require 'loggy'
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
@@ -26,6 +27,9 @@ getFiles = (fileList, config, joinConfig) ->
     paths.forEach (path) ->
       map[path] ?= []
       map[path].push file
+    unless paths.length
+      if file.error
+        logger.error formatError file
 
   Object.keys(map).map (generatedFilePath) ->
     sourceFiles = map[generatedFilePath]
