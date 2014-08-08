@@ -30,6 +30,8 @@ getFiles = (fileList, config, joinConfig) ->
     unless paths.length
       if file.error
         logger.error formatError file
+      if file.data
+        logger.warn "'#{file.path}' compiled, but not written. Check your #{file.type}.joinTo config."
 
   Object.keys(map).map (generatedFilePath) ->
     sourceFiles = map[generatedFilePath]
