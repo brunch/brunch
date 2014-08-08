@@ -18,7 +18,7 @@ getPaths = (sourceFile, joinConfig) ->
         checker = sourceFileJoinConfig[generatedFilePath]
         checker sourceFile.path
 
-getFiles = (fileList, config, joinConfig) ->
+getFiles = (fileList, config, joinConfig, startTime) ->
   map = {}
 
   fileList.files.forEach (file) ->
@@ -30,7 +30,7 @@ getFiles = (fileList, config, joinConfig) ->
     unless paths.length
       if file.error
         logger.error formatError file
-      if file.data
+      if file.data and file.compilationTime >= startTime
         logger.warn "'#{file.path}' compiled, but not written. Check your #{file.type}.joinTo config."
 
   Object.keys(map).map (generatedFilePath) ->
@@ -46,7 +46,7 @@ formatError = (sourceFile) ->
   helpers.formatError sourceFile.error, sourceFile.path
 
 module.exports = write = (fileList, config, joinConfig, optimizers, startTime, callback) ->
-  files = getFiles fileList, config, joinConfig
+  files = getFiles fileList, config, joinConfig, startTime
   errors = files
     .map (generated) ->
       generated.sourceFiles.filter((_) -> _.error?).map(formatError)
