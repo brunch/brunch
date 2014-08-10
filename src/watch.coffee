@@ -418,7 +418,7 @@ initialize = (options, configParams, onCompile, callback) ->
         }
 
     if config.persistent and config.server.run
-      server = startServer config, launchWatcher
+      server = startServer config, launchWatcher
     else
       launchWatcher()
 
