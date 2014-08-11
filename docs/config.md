@@ -203,7 +203,7 @@ server:
   stripSlashes: true
 ```
 
-* `command`: command to use insted of [pushserve](https://github.com/paulmillr/pushserve). Ex: `php -S 0.0.0.0:3000 -t public`
+* `command`: command to launch a non-node.js server. Ex: `php -S 0.0.0.0:3000 -t public`
 
 ## `sourceMaps`
 
