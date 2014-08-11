@@ -15,7 +15,7 @@ simple steps:
 It will allow you not to compile the source every time you change it.
 * Execute `npm install` to install packages.
 * Execute `npm uninstall -g brunch && npm link`
-* Change `package.json` `bin/brunchcoffee` back to `bin/brunch`.
+* Change `package.json` `bin/brunch.coffee` back to `bin/brunch`.
 * Use `git pull` to update to latest brunch.
 * Use `DEBUG='brunch:*' brunch build` to log all build steps.
 
