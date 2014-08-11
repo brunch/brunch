@@ -59,7 +59,7 @@ startServer = (config, callback = ->) ->
   port = parseInt config.server.port, 10
   publicPath = config.paths.public
   serverCb = ->
-    logger.info if config.server.path
+    logger.info if config.server.path or config.server.command
       'custom server started, initializing watcher'
     else
        "application started on http://localhost:#{port}/"
@@ -79,6 +79,13 @@ startServer = (config, callback = ->) ->
       server.startServer serverConfig, serverCb
     else
       server.startServer port, publicPath, serverCb
+  else if config.server.command
+      spawn = require('child_process').spawn
+      commandComponents = config.server.command.split " "
+      logger.info "Invoking custom server command with: #{config.server.command}"
+      throw new Error 'Server command needs to have at least one word' if(commandComponents.length == 0)
+      child = spawn(commandComponents.shift(), commandComponents, {stdio: 'inherit'});
+      serverCb()
   else
     opts = noLog: yes, path: publicPath
     pushserve helpers.extend(opts, serverOpts), serverCb
