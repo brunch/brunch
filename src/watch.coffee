@@ -85,7 +85,13 @@ startServer = (config, callback = ->) ->
       debug "Invoking custom server command with: #{config.server.command}"
       throw new Error 'Server command needs to have at least one word' if(commandComponents.length == 0)
       child = spawn(commandComponents.shift(), commandComponents, {stdio: 'inherit'});
+      # fn to kill the server
+      child.close= (cb)=>
+        child.kill()
+        cb?()
+
       serverCb()
+      child
   else
     opts = noLog: yes, path: publicPath
     pushserve helpers.extend(opts, serverOpts), serverCb
