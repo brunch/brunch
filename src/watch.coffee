@@ -80,18 +80,18 @@ startServer = (config, callback = ->) ->
     else
       server.startServer port, publicPath, serverCb
   else if config.server.command
-      spawn = require('child_process').spawn
-      commandComponents = config.server.command.split " "
-      debug "Invoking custom server command with: #{config.server.command}"
-      throw new Error 'Server command needs to have at least one word' if(commandComponents.length == 0)
-      child = spawn(commandComponents.shift(), commandComponents, {stdio: 'inherit'});
-      # fn to kill the server
-      child.close= (cb)=>
-        child.kill()
-        cb?()
+    spawn = require('child_process').spawn
+    commandComponents = config.server.command.split " "
+    debug "Invoking custom server command with: #{config.server.command}"
+    throw new Error 'Server command needs to have at least one word' if(commandComponents.length == 0)
+    child = spawn(commandComponents.shift(), commandComponents, {stdio: 'inherit'});
+    # fn to kill the server
+    child.close= (cb)=>
+      child.kill()
+      cb?()
 
-      serverCb()
-      child
+    serverCb()
+    child
   else
     opts = noLog: yes, path: publicPath
     pushserve helpers.extend(opts, serverOpts), serverCb
