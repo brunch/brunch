@@ -22,6 +22,7 @@ To add packages to your project:
 * Make sure you have `bower.json`, which can be generated with `bower init`
 * Add packages to the `dependencies` field of your `bower.json`
 * Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
+* Note that `overrides` do not impact Bower's behavior, so the original dependency graph will still be copied by `bower install`. But specifying `overrides` is effective for changing the dependencies that actually get built into your project.
 
 Example app with Bower integration: http://github.com/paulmillr/ostio
 
@@ -74,10 +75,15 @@ using the command `ulimit -n <number>` (10000 should be enough).
 *TL;DR*: Add a DEBUG environment variable, e.g. `DEBUG='brunch:*'`.
 Then, when you run `brunch watch`, you'll see debug output.
 
+Output can be filtered to particular parts of Brunch's internal workflow by modifying the command to something like `DEBUG='brunch:pipeline'`.
+
+This is useful for explicitly seeing the list of source files that are compiled into each output file (as well as their order).
+
 ### Linux/OS X:
 
-`export DEBUG='brunch:*'`
+Add `DEBUG='brunch:*'` in front of your `brunch` command for on-demand use, such as `DEBUG='brunch:*' brunch build`
 
+Or run `export DEBUG='brunch:*'` to persist the setting for the rest of your terminal session.
 Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.
 
 ### Windows:
