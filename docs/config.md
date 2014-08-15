@@ -203,6 +203,8 @@ server:
   stripSlashes: true
 ```
 
+* `command`: command to launch a non-node.js server. Ex: `php -S 0.0.0.0:3000 -t public`
+
 ## `sourceMaps`
 
 `Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
