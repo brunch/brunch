@@ -32,7 +32,17 @@ applyOverrides = (config, options) ->
     environments.unshift process.env.BRUNCH_ENV
 
   environments.forEach (override) ->
-    deepExtend config, config.overrides?[override] or {}, config.files
+    overrideProps = config.overrides?[override] or {}
+
+    # Special override handling for plugins.on|off arrays (gh-826)
+    for k, v of {on: 'off', off: 'on'}
+      if config.plugins?[v]
+        overrideProps.plugins ?= {}
+        overrideProps.plugins[v] = (overrideProps.plugins[v] or [])
+          .concat (config.plugins[v] or []).filter (plugin) ->
+            plugin not in (overrideProps.plugins[k] or [])
+
+    deepExtend config, overrideProps, config.files
   config
 
 deepExtend = (object, properties, rootFiles = {}) ->
