@@ -26,11 +26,6 @@ module.exports = class FileList extends EventEmitter
     @compiled = {}
     @copying = {}
     @initial = true
-
-    # increase default interval for `build`
-    @resetTime = 200 unless @config.persistent
-
-    # apply configured interval
     interval = @config.fileListInterval
     @resetTime = interval if typeof interval is 'number'
 
