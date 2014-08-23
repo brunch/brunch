@@ -513,7 +513,7 @@ class BrunchWatcher
         return unless worker {changeFileList, compilers, linters, fileList, @config}
 
       bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
-      fileList.on 'ready', => compile @_endCompilation()
+      fileList.on 'ready', => compile @_endCompilation() if @_start
       # Emit `change` event for each file that is included with plugins.
       # Wish it worked like `watcher.add includes`.
       includes.forEach (path) =>
