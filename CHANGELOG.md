@@ -1,9 +1,20 @@
+# Brunch 1.7.15 (10 September 2014)
+* Fix race condition that aborted build cycle on some systems
+* Better error/warning messages for source files that do not get concatenated 
+  (no `joinTo` match)
+* Improved handling of `plugins.on` and `plugins.off` when used with `overrides`
+* New [config](https://github.com/brunch/brunch/blob/stable/docs/config.md) options
+  * `server.command` for setting non-node.js custom server
+  * Pass `server.config` settings to custom server
+  * Create `absoluteUrl` option for source maps
+  * Support for array of files in `pluginHelpers` config setting
+
 # Brunch 1.7.14 (21 May 2014)
 * [component](https://github.com/component/component) integration
 * [anysort](https://github.com/es128/anysort)/[anymatch](https://github.com/es128/anymatch)
   integration, providing much more flexible ways to define source files in
   config such as in `joinTo` and `order`
-* [New config options](https://github.com/brunch/brunch/blob/master/docs/config.md#plugins)
+* [New config options](https://github.com/brunch/brunch/blob/stable/docs/config.md#plugins)
   to control which plugins are used (can be env-specific)
 * Allow `onCompile` method to be defined in Brunch config file for triggering
   custom project-specific functionality after every compile cycle
