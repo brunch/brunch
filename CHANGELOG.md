@@ -8,6 +8,7 @@
   * Pass `server.config` settings to custom server
   * Create `absoluteUrl` option for source maps
   * Support for array of files in `pluginHelpers` config setting
+* Build process now waits for [custom servers](https://github.com/brunch/brunch/blob/stable/docs/config.md#server) to call ```callback()```
 
 # Brunch 1.7.14 (21 May 2014)
 * [component](https://github.com/component/component) integration
