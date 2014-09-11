@@ -8,6 +8,9 @@
   * Pass `server.config` settings to custom server
   * Create `absoluteUrl` option for source maps
   * Support for array of files in `pluginHelpers` config setting
+* IMPORTANT NOTE: If providing a custom node server for `brunch watch`, ensure it 
+  invokes the callback when ready, as brunch now waits for that before proceeding
+  with build steps.
 
 # Brunch 1.7.14 (21 May 2014)
 * [component](https://github.com/component/component) integration
