@@ -1,3 +1,6 @@
+# Brunch 1.7.16 (13 September 2014)
+* Suppress warnings about unjoined filed meant for only specific envs
+
 # Brunch 1.7.15 (10 September 2014)
 * Fix race condition that aborted build cycle on some systems
 * Better error/warning messages for source files that do not get concatenated 
