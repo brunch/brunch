@@ -5,6 +5,7 @@ sysPath = require 'path'
 generate = require './generate'
 helpers = require '../helpers'
 logger = require 'loggy'
+{matcher} = require 'anysort'
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
@@ -21,6 +22,28 @@ getPaths = (sourceFile, joinConfig) ->
 getFiles = (fileList, config, joinConfig, startTime) ->
   map = {}
 
+  anyJoinTo = {}
+  checkAnyJoinTo = (file) ->
+    joinSpecs = anyJoinTo[file.type] ?=
+      Object.keys(config.overrides).map (_) ->
+        config.overrides[_].files
+      .concat [config.files]
+      .map (_) -> _?["#{file.type}s"]?.joinTo
+      .filter (_) -> _
+
+    if typeof joinSpecs is 'function'
+      joinSpecs file.path
+    else if joinSpecs.some((_) -> typeof _ is 'string')
+      anyJoinTo[file.type] = -> true
+    else if not joinSpecs.length
+      anyJoinTo[file.type] = -> false
+      false
+    else
+      anyJoinTo[file.type] = matcher joinSpecs.reduce (flat, aJoinTo) ->
+        flat.concat Object.keys(aJoinTo).map (_) -> aJoinTo[_]
+      , []
+      anyJoinTo[file.type] file.path
+
   fileList.files.forEach (file) ->
     return if not file.error? and not file.data?
     paths = getPaths file, joinConfig
@@ -31,7 +54,8 @@ getFiles = (fileList, config, joinConfig, startTime) ->
       if file.error
         logger.error formatError file
       if file.data and file.compilationTime >= startTime
-        logger.warn "'#{file.path}' compiled, but not written. Check your #{file.type}.joinTo config."
+        unless checkAnyJoinTo file
+          logger.warn "'#{file.path}' compiled, but not written. Check your #{file.type}s.joinTo config."
 
   Object.keys(map).map (generatedFilePath) ->
     sourceFiles = map[generatedFilePath]
