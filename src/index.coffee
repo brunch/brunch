@@ -1,9 +1,7 @@
 'use strict'
 
 initSkeleton = require 'init-skeleton'
-sysPath = require 'path'
 watch = require './watch'
-logger = require 'loggy'
 
 module.exports = {
   new: (skeleton, path) ->
