@@ -5,6 +5,7 @@ commands = require './'
 
 program
   .version(require('../package.json').version)
+  .usage('[command] [options]')
 
 program
   .command('new [skeleton] [path]')
