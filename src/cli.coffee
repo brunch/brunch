@@ -18,6 +18,7 @@ program
   .description('Build a brunch project. Short-cut: b')
   .option('-e, --env [setting]', 'specify a set of override settings to apply')
   .option('-P, --production', 'same as `--env production`')
+  .option('-d, --debug', 'print verbose debug output to stdout')
   .option('-c, --config [path]', '[DEPRECATED] path to config files')
   .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.build)
@@ -30,6 +31,7 @@ program
   .option('-s, --server', 'run a simple http server that would serve public dir')
   .option('-p, --port [port]', 'if a `server` option was specified, define on which port
  the server would run')
+  .option('-d, --debug', 'print verbose debug output to stdout')
   .option('-c, --config [path]', '[DEPRECATED] path to config files')
   .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.watch)
