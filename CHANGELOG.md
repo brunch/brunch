@@ -1,3 +1,8 @@
+# Brunch 1.7.17 (26 September 2014)
+* Fix warnings about files joined only under default config settings
+* Warning when custom server fails to callback
+* Add `-d`/`--debug` CLI switch to easily enable debug output
+
 # Brunch 1.7.16 (13 September 2014)
 * Suppress warnings about unjoined filed meant for only specific envs
 
