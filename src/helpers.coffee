@@ -31,6 +31,15 @@ applyOverrides = (config, options) ->
   if process.env.BRUNCH_ENV?
     environments.unshift process.env.BRUNCH_ENV
 
+  # Preserve default config before overriding
+  if environments.length and 'overrides' of config
+    config.overrides._default = {}
+    Object.keys(config).forEach (prop) ->
+      isObject = toString.call(config[prop]) is '[object Object]'
+      return if prop is 'overrides' or not isObject
+      config.overrides._default[prop] = {}
+      deepExtend config.overrides._default[prop], config[prop]
+
   environments.forEach (override) ->
     overrideProps = config.overrides?[override] or {}
 

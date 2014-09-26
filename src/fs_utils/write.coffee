@@ -27,7 +27,8 @@ getFiles = (fileList, config, joinConfig, startTime) ->
     joinSpecs = anyJoinTo[file.type] ?=
       Object.keys(config.overrides).map (_) ->
         config.overrides[_].files
-      .concat [config.files]
+      ### config.files was copied to config.overrides._default.files ###
+      #.concat [config.files]
       .map (_) -> _?["#{file.type}s"]?.joinTo
       .filter (_) -> _
 
