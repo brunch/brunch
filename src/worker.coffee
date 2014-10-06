@@ -26,8 +26,8 @@ initWorker = ({changeFileList, compilers, linters, fileList}) ->
   fileList.on 'compiled', (path) ->
     process.send fileList.files.filter (_) -> _.path is path
   process
-    .on 'message', (path) ->
-      changeFileList compilers, linters, fileList, path
+    .on 'message', ({path}) ->
+      changeFileList compilers, linters, fileList, path if path
     .send 'ready'
 
 # BrunchWorkers class invoked in the master process for wrangling all the workers
@@ -61,7 +61,7 @@ class BrunchWorkers
   next: (index) ->
     {path, handler} = @jobs.shift()
     @list[index].handlers[path] = handler
-    @list[index].send path
+    @list[index].send {path}
 
 module.exports = ({changeFileList, compilers, linters, fileList, config}) ->
   if cluster.isWorker
