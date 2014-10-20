@@ -1,3 +1,6 @@
+# Brunch 1.7.18 (20 October 2014)
+* File watching improvements via chokidar 0.10.1
+
 # Brunch 1.7.17 (26 September 2014)
 * Fix warnings about files joined only under default config settings
 * Warning when custom server fails to callback
