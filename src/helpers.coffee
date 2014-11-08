@@ -192,7 +192,10 @@ exports.identityNode = (code, source) ->
     new SourceNode index + 1, 0, source, (line + '\n')
 
 exports.cleanModuleName = cleanModuleName = (path, nameCleaner) ->
-  nameCleaner path.replace(new RegExp('\\\\', 'g'), '/')
+  nameCleaner(path
+    .replace(new RegExp('\\\\', 'g'), '/')
+    .replace(new RegExp('^(\.\.\/)*', 'g'), '')
+  )
 
 getModuleWrapper = (type, nameCleaner) -> (fullPath, data, isVendor) ->
   sourceURLPath = cleanModuleName fullPath, nameCleaner
