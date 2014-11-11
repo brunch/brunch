@@ -10,7 +10,7 @@ logger = require 'loggy'
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
-anysort = require 'anysort'
+anymatch = require 'anymatch'
 coffee = require 'coffee-script'
 coffee.register()
 
@@ -129,7 +129,7 @@ exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
 # item - RegExp or Function
 #
 # Returns Function.
-normalizeChecker = anysort.matcher
+normalizeChecker = anymatch
 
 # Converts `config.files[...].joinTo` to one format.
 # config.files[type].joinTo can be a string, a map of {str: regexp} or a map

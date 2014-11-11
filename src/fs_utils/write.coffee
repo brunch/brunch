@@ -5,7 +5,7 @@ sysPath = require 'path'
 generate = require './generate'
 helpers = require '../helpers'
 logger = require 'loggy'
-{matcher} = require 'anysort'
+anymatch = require 'anymatch'
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
@@ -40,7 +40,7 @@ getFiles = (fileList, config, joinConfig, startTime) ->
       anyJoinTo[file.type] = -> false
       false
     else
-      anyJoinTo[file.type] = matcher joinSpecs.reduce (flat, aJoinTo) ->
+      anyJoinTo[file.type] = anymatch joinSpecs.reduce (flat, aJoinTo) ->
         flat.concat Object.keys(aJoinTo).map (_) -> aJoinTo[_]
       , []
       anyJoinTo[file.type] file.path
