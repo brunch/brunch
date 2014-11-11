@@ -20,7 +20,7 @@ updateMap = (path, compiled, wrapped, sourceMap) ->
     prefix = wrapped.slice 0, sourcePos
     suffix = wrapped.slice sourcePos + compiled.length
 
-  node = if sourceMap?
+  node = if sourceMap
     mapping = if typeof sourceMap is 'string'
       JSON.parse sourceMap.replace /^\)\]\}'/, ''
     else
