@@ -260,7 +260,7 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
 # startTime  - Number. Timestamp of a moment when compilation started.
 #
 # Returns Function.
-getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> (startTime) ->
+getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> (startTime, watcherReady) ->
   assetErrors = fileList.getAssetErrors()
   if assetErrors?
     assetErrors.forEach (error) -> logger.error error
@@ -277,6 +277,10 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
         logger.error error
     else
       logger.info generateCompilationLog startTime, fileList.assets, generatedFiles, disposed
+      # pass `fs_utils.GeneratedFile` instances to callbacks.
+      callback generatedFiles
+
+    return unless watcherReady
 
     # If it’s single non-continuous build, close file watcher and
     # exit process with correct exit code.
@@ -287,10 +291,6 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
         process.exit (if logger.errorHappened then 1 else previousCode)
 
     fileList.initial = false
-
-    return if error?
-    # Just pass `fs_utils.GeneratedFile` instances to callbacks.
-    callback generatedFiles
 
   fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
 
@@ -523,7 +523,9 @@ class BrunchWatcher
         return unless worker {changeFileList, compilers, linters, fileList, @config}
 
       bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
-      fileList.on 'ready', => compile @_endCompilation() if @_start
+      watcherReady = false
+      watcher.once 'ready', -> watcherReady = true
+      fileList.on 'ready', => compile @_endCompilation(), watcherReady if @_start
       # Emit `change` event for each file that is included with plugins.
       # Wish it worked like `watcher.add includes`.
       includes.forEach (path) =>
