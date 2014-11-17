@@ -1,3 +1,8 @@
+# Brunch 1.7.19 (17 November 2014)
+* Bump chokidar to 0.11.0
+* Fix issue with undetected changes when using vim on Linux
+* Ensure `build` does not complete prematurely on slow file systems
+
 # Brunch 1.7.18 (20 October 2014)
 * File watching improvements via chokidar 0.10.1
 
