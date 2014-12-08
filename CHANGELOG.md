@@ -1,3 +1,6 @@
+# Brunch 1.7.20 (8 December 2014)
+* Bump chokidar to 0.12.0
+
 # Brunch 1.7.19 (17 November 2014)
 * Bump chokidar to 0.11.0
 * Fix issue with undetected changes when using vim on Linux
