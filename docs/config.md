@@ -165,7 +165,13 @@ plugins:
            [terminal-notifier](https://github.com/alloy/terminal-notifier#download) /
            [libnotify for Ubuntu](http://packages.ubuntu.com/search?keywords=libnotify-bin)
            notifications.
-           Default value is `true` (enabled).
+           Default value is `true` (enabled).  
+
+When set to `true`, only errors trigger notifications. If you want to display success, warning, or informational messages, set this to an array of strings with the levels you want to see, e.g. `['error', 'warn', 'info']`. See [documentation for the Loggy package](https://github.com/paulmillr/loggy) for complete details.
+
+## `notificationsTitle`
+
+`String`: sets the title used in notifications. Default value is `Brunch`. [The notifications setting](#notifications) must be enabled for this to have any effect.
 
 ## `optimize`
 
