@@ -379,15 +379,14 @@ loadPackages = (rootPath, callback) ->
 #
 # Returns nothing.
 initialize = (options, configParams, onCompile, callback) ->
-  if options.config?
-    logger.warn '`-c, --config` option is deprecated. Use `--env` and `config.overrides` instead'
-  if options.optimize?
-    logger.warn '`-o, --optimize` option is deprecated. Use `-P, --production` instead'
-
   # Load config, get brunch packages from package.json.
   helpers.loadConfig options.config, configParams, (error, config) ->
     logger.notifications = config.notifications
     logger.notificationsTitle = config.notificationsTitle or 'Brunch'
+    if options.config?
+      logger.warn '`-c, --config` option is deprecated. Use `--env` and `config.overrides` instead'
+    if options.optimize?
+      logger.warn '`-o, --optimize` option is deprecated. Use `-P, --production` instead'
     joinConfig = config._normalized.join
     packages = (loadPackages '.').filter ({brunchPluginName}) ->
       if config.plugins.off?.length and brunchPluginName in config.plugins.off
