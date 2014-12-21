@@ -2,6 +2,7 @@
 
 debug = require('debug')('brunch:asset')
 sysPath = require 'path'
+fs = require 'fs'
 common = require './common'
 
 # Get first parent directory that matches asset convention.
@@ -15,10 +16,13 @@ getAssetDirectory = (path, convention) ->
   split = path.split(common.sep)
   # Creates thing like this
   # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html/'
-  split
+  dir = split
     .map (part, index) ->
       split.slice(0, index).concat([part, '']).join(common.sep)
     .filter(convention)[0]
+  if !fs.existsSync(dir) && fs.existsSync(dir[0 ... dir.length - 1])
+    dir = sysPath.dirname(dir[0 ... dir.length - 1])
+  dir
 
 # A static file that shall be copied to public directory.
 module.exports = class Asset
