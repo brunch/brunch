@@ -400,10 +400,8 @@ initialize = (options, configParams, onCompile, callback) ->
         plugin.defaultEnv = '*'
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
       isOptimizer = typeof plugin.optimize is 'function'
-      plugin.defaultEnv ?= if not config.optimize and isOptimizer
-        'production'
-      else
-        '*'
+      return false if not config.optimize and isOptimizer
+      plugin.defaultEnv ?= '*'
       plugin.defaultEnv is '*' or plugin.defaultEnv in config.env
 
     # Get compilation methods.
