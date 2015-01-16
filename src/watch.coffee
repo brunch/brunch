@@ -395,14 +395,25 @@ initialize = (options, configParams, onCompile, callback) ->
         false
       else
         true
-    plugins = (getPlugins packages, config).filter (plugin) ->
-      if config.plugins.on?.length and plugin.brunchPluginName in config.plugins.on
-        plugin.defaultEnv = '*'
+
+    unfiltered = getPlugins packages, config
+    currentEnvs = config.env
+    alwaysEnabled = config.plugins.on or []
+
+    plugins = unfiltered.filter (plugin) ->
+      plugin.defaultEnv = '*' if plugin.brunchPluginName in alwaysEnabled
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
-      isOptimizer = typeof plugin.optimize is 'function'
-      return false if not config.optimize and isOptimizer
-      plugin.defaultEnv ?= '*'
-      plugin.defaultEnv is '*' or plugin.defaultEnv in config.env
+
+      # Optimizers are only enabled in production.
+      env = plugin.defaultEnv ?= if typeof plugin.optimize is 'function'
+        'production'
+      else
+        '*'
+
+      # Does it match the environment?
+      env is '*' or env in currentEnvs
+
+    debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
     # Get compilation methods.
     compilers  = plugins.filter propIsFunction 'compile'
