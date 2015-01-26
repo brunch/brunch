@@ -403,18 +403,21 @@ initialize = (options, configParams, onCompile, callback) ->
     plugins = unfiltered.filter (plugin) ->
       # backward compatibility for legacy optimizers
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
-      
+      isOptimizer = !!plugin.optimize
+
       # Use plugin-specified defaultEnv or assume it's meant for any env
-      env = plugin.defaultEnv ?= '*'
-      
+      env = plugin.defaultEnv or (if isOptimizer then 'production' else '*')
+
       # Does the user's config say this plugin should definitely be used?
-      plugin.brunchPluginName in alwaysEnabled or
+      alwaysUsed = plugin.brunchPluginName in alwaysEnabled
       # or Is it an optimizer while optimizers turned on?
-      (typeof plugin.optimize is 'function' and config.optimize) or
+      optimizer = isOptimizer and config.optimize
       # or Is it meant for any environment?
-      env is '*' or
+      matchesAny = env is '*'
       # or Is it meant for an active environment?
-      env in currentEnvs
+      matchesCurrent = env in currentEnvs
+
+      alwaysUsed or optimizer or matchesAny or matchesCurrent
 
     debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
