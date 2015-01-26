@@ -24,12 +24,15 @@ lint = (data, path, linters, callback) ->
     , callback
 
 # Extract files that depend on current file.
-getDependencies = (data, path, compiler, callback) ->
+getDependencies = (data, path, compilerDeps, compiler, callback) ->
   if compiler.getDependencies
-    debug "getDependencies '#{path}' with '#{compiler.constructor.name}'"
+    {name} = compiler.constructor
+    if compilerDeps
+      return callback "Compiler '#{name}' already passes dependencies. Remove `getDependencies` method."
+    debug "getDependencies '#{path}' with '#{name}'"
     compiler.getDependencies data, path, callback
   else
-    callback null, []
+    callback null, compilerDeps or []
 
 mapCompilerChain = (compiler) -> (params, next) ->
   return next() unless params
@@ -48,13 +51,14 @@ mapCompilerChain = (compiler) -> (params, next) ->
     return callback throwError 'Compiling', error if error?
     return next() unless result?
     if toString.call(result) is '[object Object]'
-      sourceMap = result.map if result.map?
       compiled = result.data
+      sourceMap = result.map
+      compilerDeps = result.dependencies
     else
       compiled = result
     unless compiled?
       throw new Error "Brunch SourceFile: file #{path} data is invalid"
-    getDependencies source, path, compiler, (error, dependencies) =>
+    getDependencies source, path, compilerDeps, compiler, (error, dependencies) =>
       return callback throwError 'Dependency parsing', error if error?
       next null, {dependencies, compiled, source, sourceMap, path, callback}
 
@@ -74,7 +78,7 @@ pipeline = (path, linters, compilers, callback) ->
         logger.warn "Linting of #{path}: #{error}"
       else
         return callback throwError 'Linting', error if error?
-      
+
       compile source, path, compilers, callback
 
 exports.pipeline = pipeline
