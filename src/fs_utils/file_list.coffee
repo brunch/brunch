@@ -5,6 +5,7 @@ debug = require('debug')('brunch:file-list')
 Asset = require './asset'
 SourceFile = require './source_file'
 helpers = require '../helpers'
+fcache = require 'fcache'
 sysPath = require 'path'
 
 startsWith = (string, substring) ->
@@ -84,10 +85,8 @@ module.exports = class FileList extends EventEmitter
   compileDependencyParents: (path) ->
     parents = @files
       .filter (dependent) =>
-        dependent.dependencies.length > 0
-      .filter (dependent) =>
-        path in dependent.dependencies
-      .filter (dependent) =>
+        dependent.dependencies.length > 0 and
+        path in dependent.dependencies and
         not @compiled[dependent.path]
 
     if parents.length
@@ -137,10 +136,16 @@ module.exports = class FileList extends EventEmitter
       unless ignored
         @copy (@findAsset(path) ? @_addAsset path)
     else
-      if not ignored and compiler?.length
-        @compile (@find(path) ? @_add path, compiler, linters, isHelper)
+      debug "Reading '#{path}'"
+      fcache.updateCache path, (error, source) =>
+        if error
+          return console.log 'Reading', error if error?
+        if not ignored and compiler?.length
+          sourceFile = @find(path) ?
+            @_add path, compiler, linters, isHelper
+          @compile sourceFile
 
-      @compileDependencyParents path unless @initial
+        @compileDependencyParents path unless @initial
 
   _unlink: (path) =>
     ignored = @isIgnored path

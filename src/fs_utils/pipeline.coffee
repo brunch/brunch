@@ -1,7 +1,7 @@
 each = require 'async-each'
 waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:pipeline')
-fs = require 'fs'
+fcache = require 'fcache'
 sysPath = require 'path'
 logger = require 'loggy'
 
@@ -69,9 +69,7 @@ compile = (source, path, compilers, callback) ->
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
 pipeline = (path, linters, compilers, callback) ->
-  debug "Reading '#{path}'"
-  fs.readFile path, 'utf-8', (error, source) ->
-    return callback throwError 'Reading', error if error?
+  fcache.readFile path, (error, source) =>
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
       if error?.toString().match /^warn\:\s/i
