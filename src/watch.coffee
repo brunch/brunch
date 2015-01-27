@@ -405,19 +405,22 @@ initialize = (options, configParams, onCompile, callback) ->
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
       isOptimizer = !!plugin.optimize
 
-      # Use plugin-specified defaultEnv or assume it's meant for any env
-      env = plugin.defaultEnv or (if isOptimizer then 'production' else '*')
-
       # Does the user's config say this plugin should definitely be used?
-      alwaysUsed = plugin.brunchPluginName in alwaysEnabled
-      # or Is it an optimizer while optimizers turned on?
-      optimizer = isOptimizer and config.optimize
-      # or Is it meant for any environment?
-      matchesAny = env is '*'
-      # or Is it meant for an active environment?
-      matchesCurrent = env in currentEnvs
-
-      alwaysUsed or optimizer or matchesAny or matchesCurrent
+      return true if plugin.brunchPluginName in alwaysEnabled
+      
+      if isOptimizer
+        # if the plugin specified a matching env, include the plugin
+        return true if plugin.defaultEnv and plugin.defaultEnv in currentEnvs
+        # otherwise decide based on the config.optimize setting
+        return config.optimize
+      
+      # if we've gotten this far:
+      
+      # Use plugin-specified defaultEnv or assume it's meant for any env
+      env = plugin.defaultEnv ?= '*'
+      
+      # Finally, is it meant for either any environment or an active environment?
+      env is '*' or env in currentEnvs
 
     debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
