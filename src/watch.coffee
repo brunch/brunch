@@ -397,30 +397,24 @@ initialize = (options, configParams, onCompile, callback) ->
         true
 
     unfiltered = getPlugins packages, config
-    currentEnvs = config.env
     alwaysEnabled = config.plugins.on or []
 
     plugins = unfiltered.filter (plugin) ->
       # backward compatibility for legacy optimizers
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
-      isOptimizer = !!plugin.optimize
 
       # Does the user's config say this plugin should definitely be used?
       return true if plugin.brunchPluginName in alwaysEnabled
       
-      if isOptimizer
-        # if the plugin specified a matching env, include the plugin
-        return true if plugin.defaultEnv and plugin.defaultEnv in currentEnvs
-        # otherwise decide based on the config.optimize setting
-        return config.optimize
-      
-      # if we've gotten this far:
+      # If the plugin is an optimizer that doesn't specify a defaultEnv
+      # decide based on the config.optimize setting
+      return config.optimize if plugin.optimize and not plugin.defaultEnv
       
       # Use plugin-specified defaultEnv or assume it's meant for any env
       env = plugin.defaultEnv ?= '*'
       
       # Finally, is it meant for either any environment or an active environment?
-      env is '*' or env in currentEnvs
+      env is '*' or env in config.env
 
     debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
