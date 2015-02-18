@@ -480,6 +480,9 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     onChange()
     changeFileList compilers, linters, fileList, path, false
 
+  process.stdin.on 'end', -> process.exit(0)
+  process.stdin.resume()
+
   watcher
     .on('error', logger.error)
     .on 'add', (absPath) ->
