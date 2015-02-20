@@ -27,18 +27,16 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "prepublish": "node setup.js prepublish",
-    "postpublish": "node setup.js postpublish",
-    "test": "node setup.js test",
-    "postinstall": "node setup.js postinstall"
+    "prepublish": "coffee -o lib/ src/",
+    "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
   },
   "preferGlobal": true,
   "dependencies": {
-    "anymatch": "~1.0.0",
+    "anymatch": "~1.1.0",
     "anysort": "~1.0.0",
     "async-each": "~0.1.2",
     "async-waterfall": "~0.1.2",
-    "chokidar": "~0.12.0",
+    "chokidar": "~1.0.0",
     "coffee-script": "~1.9.0",
     "commander": "~2.0.0",
     "commonjs-require-definition": "~0.1.0",
@@ -50,7 +48,7 @@
     "ncp": "~1.0.1",
     "pushserve": "~0.1.6",
     "read-components": "~0.6.0",
-    "source-map": "~0.1.35"
+    "source-map": "~0.3.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0",
