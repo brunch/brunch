@@ -28,6 +28,7 @@
   },
   "scripts": {
     "prepublish": "coffee -o lib/ src/",
+    "postinstall": "if [ ! -d lib ]; then coffee -o lib/ src/; fi",
     "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
   },
   "preferGlobal": true,
@@ -36,7 +37,7 @@
     "anysort": "~1.0.0",
     "async-each": "~0.1.2",
     "async-waterfall": "~0.1.2",
-    "chokidar": "~1.0.0",
+    "chokidar": "~1.0.0-rc3",
     "coffee-script": "~1.9.0",
     "commander": "~2.0.0",
     "commonjs-require-definition": "~0.1.0",
