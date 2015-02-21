@@ -27,7 +27,7 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "prepublish": "coffee -o lib/ src/",
+    "postinstall": "coffee -o lib/ src/",
     "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
   },
   "preferGlobal": true,
