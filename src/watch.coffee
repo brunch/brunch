@@ -1,6 +1,7 @@
 'use strict'
 
 each = require 'async-each'
+waterfall = require 'async-waterfall'
 chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
@@ -260,7 +261,7 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
 # startTime  - Number. Timestamp of a moment when compilation started.
 #
 # Returns Function.
-getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> (startTime, watcherReady) ->
+getCompileFn = (config, joinConfig, fileList, optimizers, watcher, preCompile, callback) -> (startTime, watcherReady) ->
   assetErrors = fileList.getAssetErrors()
   if assetErrors?
     assetErrors.forEach (error) -> logger.error error
@@ -292,7 +293,14 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, callback) -> 
 
     fileList.initial = false
 
-  fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
+  if preCompile
+    preCompile (error) ->
+      if error?
+        logger.error error
+      else
+        fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
+  else
+    fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
 
 # Generate function that restarts brunch process.
 #
@@ -405,14 +413,14 @@ initialize = (options, configParams, onCompile, callback) ->
 
       # Does the user's config say this plugin should definitely be used?
       return true if plugin.brunchPluginName in alwaysEnabled
-      
+
       # If the plugin is an optimizer that doesn't specify a defaultEnv
       # decide based on the config.optimize setting
       return config.optimize if plugin.optimize and not plugin.defaultEnv
-      
+
       # Use plugin-specified defaultEnv or assume it's meant for any env
       env = plugin.defaultEnv ?= '*'
-      
+
       # Finally, is it meant for either any environment or an active environment?
       env is '*' or env in config.env
 
@@ -422,6 +430,15 @@ initialize = (options, configParams, onCompile, callback) ->
     compilers  = plugins.filter propIsFunction 'compile'
     linters    = plugins.filter propIsFunction 'lint'
     optimizers = plugins.filter propIsFunction 'optimize'
+
+    # Get plugin preCompile callbacks
+    preCompilers = plugins.filter(propIsFunction 'preCompile').map((plugin) -> (args..., cb) -> plugin.preCompile(cb))
+
+    # Add preCompile callback from config
+    if typeof config.preCompile is 'function'
+      preCompilers.push (args..., cb) -> config.preCompile(cb)
+    callPreCompillers = (cb) ->
+      waterfall(preCompilers, cb)
 
     # Get plugin onCompile callbacks
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
@@ -445,7 +462,7 @@ initialize = (options, configParams, onCompile, callback) ->
       initWatcher config, (error, watcher) ->
         return callback error if error?
         # Get compile and reload functions.
-        compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callCompileCallbacks
+        compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callPreCompillers, callCompileCallbacks
         reload = getReloadFn config, options, onCompile, watcher, server, plugins
         includes = getPluginIncludes(plugins)
         callback error, {
