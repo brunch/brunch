@@ -28,7 +28,7 @@
   },
   "scripts": {
     "prepublish": "coffee -o lib/ src/",
-    "postinstall": "node -e 'fs=require(\"fs\");exec=require(\"child_process\").exec;fs.exists(\"lib\", function(e){e?0:exec(\"npm run prepublish\")})'",
+    "postinstall": "node -e 'require(\"fs\").readdir(\"lib\",function(e){e&&require(\"child_process\").exec(\"npm run prepublish\")})'",
     "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
   },
   "preferGlobal": true,
