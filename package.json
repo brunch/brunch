@@ -27,8 +27,10 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "prepublish": "coffee -o lib/ src/",
-    "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
+    "prepublish": "node setup.js prepublish",
+    "postpublish": "node setup.js postpublish",
+    "test": "node setup.js test",
+    "postinstall": "node setup.js postinstall"
   },
   "preferGlobal": true,
   "dependencies": {
@@ -36,7 +38,7 @@
     "anysort": "~1.0.0",
     "async-each": "~0.1.2",
     "async-waterfall": "~0.1.2",
-    "chokidar": "~1.0.0",
+    "chokidar": "~1.0.0-rc3",
     "coffee-script": "~1.9.0",
     "commander": "~2.0.0",
     "commonjs-require-definition": "~0.1.0",
