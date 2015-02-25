@@ -12,6 +12,9 @@ debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
 coffee = require 'coffee-script'
+deps = require 'module-deps'
+pack = require 'browser-pack'
+JSONStream = require 'JSONStream'
 coffee.register()
 
 # Extends the object with properties from another object.
@@ -363,6 +366,21 @@ loadComponents = (config, type, callback) ->
 
     callback {components, aliases, order}
 
+loadNpm = (config, cb) ->
+  rootPath = sysPath.resolve config.paths.root
+  jsonPath = sysPath.join(rootPath, 'package.json')
+  json = require(jsonPath)
+  Object.keys(json.dependencies)#.forEach (dep) ->
+    # depPath = sysPath.join rootPath, 'node_modules', dep
+    # depJson = require sysPath.join depPath, 'package.json'
+    # depMain = depJson.main || 'index.js'
+    # md = new deps()
+    # results = []
+    # pk = pack()
+    # md.pipe(JSONStream.stringify()).pipe(pk).pipe(process.stdout)
+    # md.end({ file: rootPath + '/node_modules/' + dep + '/' + depMain})
+
+
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
     # assign fullPath in two steps in case require.resolve throws
@@ -388,6 +406,9 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   replaceConfigSlashes config
   normalizeConfig config
   config._normalized.packageInfo = {}
+
+  loadNpm config, (bowerRes) ->
+    console.log bowerRes
 
   loadComponents config, 'bower', (bowerRes)->
     config._normalized.packageInfo.bower = bowerRes

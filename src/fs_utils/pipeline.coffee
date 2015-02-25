@@ -4,6 +4,9 @@ debug = require('debug')('brunch:pipeline')
 fcache = require 'fcache'
 sysPath = require 'path'
 logger = require 'loggy'
+deps = require 'module-deps'
+pack = require 'browser-pack'
+JSONStream = require 'JSONStream'
 
 throwError = (type, stringOrError) =>
   string = if stringOrError instanceof Error
@@ -68,7 +71,25 @@ compile = (source, path, compilers, callback) ->
   first = (next) -> next null, {source, path, callback}
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
+isNpm: (path) ->
+  path.indexOf('node_modules') >= 0
+
+readWithDeps: (src, cb) ->
+  srcPath = sysPath.join rootPath, 'node_modules', src
+  srcJson = require sysPath.join srcPath, 'package.json'
+  srcMain = srcJson.main || 'index.js'
+  md = deps()
+  pck = pack()
+  data = ''
+  md.pipe(JSONStream.stringify()).pipe(pck).pipe(process.stdout)
+  md.end({ file: rootPath + '/node_modules/' + src + '/' + srcMain})
+  md.on('end', -> cb(null, data))
+
+
 pipeline = (path, linters, compilers, callback) ->
+  # if isNpm(path)
+
+  # else
   fcache.readFile path, (error, source) =>
     debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
