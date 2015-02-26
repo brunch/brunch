@@ -83,6 +83,7 @@ readWithDeps: (src, cb) ->
   data = ''
   md.pipe(JSONStream.stringify()).pipe(pck).pipe(process.stdout)
   md.end({ file: rootPath + '/node_modules/' + src + '/' + srcMain})
+  md.on 'finish',  -> console.log(123123)
   md.on('end', -> cb(null, data))
 
 
