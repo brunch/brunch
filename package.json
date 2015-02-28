@@ -49,11 +49,7 @@
     "pushserve": "~0.1.6",
     "read-components": "~0.6.0",
     "source-map": "~0.3.0",
-    "module-deps": "3.7.2",
-    "browser-pack": "4.0.0",
-    "JSONStream": "0.7.1",
-    "through": ">=2.2.7 <3",
-    "browser-resolve": "~1.7.2"
+    "deppack": "~0.0.5"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

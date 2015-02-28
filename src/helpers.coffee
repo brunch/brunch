@@ -12,13 +12,8 @@ debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
 coffee = require 'coffee-script'
-deps = require 'module-deps'
-pack = require 'browser-pack'
-JSONStream = require 'JSONStream'
-through = require('through')
-browserResolve = require('browser-resolve')
-detective = require 'detective'
 each = require 'async-each'
+deppack = require 'deppack'
 coffee.register()
 
 # Extends the object with properties from another object.
@@ -266,7 +261,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     /[\\/]_/
     /vendor[\\/](node|j?ruby-.*|bundle)[\\/]/
   ]
-  conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
+  conventions.vendor  ?= /(^bower_components|node_modules|vendor)[\\/]/
 
   config.notifications ?= true
   config.sourceMaps   ?= true
@@ -371,106 +366,26 @@ loadComponents = (config, type, callback) ->
     callback {components, aliases, order}
 
 loadNpm = (config, cb) ->
-  rootPath = sysPath.resolve config.paths.root
-  jsonPath = sysPath.join(rootPath, 'package.json')
-  json = require(jsonPath)
-  Object.keys(json.dependencies).forEach (dep) ->
-    depPath = sysPath.join rootPath, 'node_modules', dep
-    depJson = require sysPath.join depPath, 'package.json'
-    depMain = depJson.main || 'index.js'
-    fullDepPath =  rootPath + '/node_modules/' + dep + '/' + depMain
-    load(fullDepPath, {}, (err, allFiles) ->
-      #console.log allFiles, 111
-    )
-    # md = new deps()
-    # results = []
-    # d = ''
-    # pk = pack()
-    # stream = through(((data) ->
-    #   #console.log 222
-    # ), (d) -> console.log(111))
-    # md.pipe(JSONStream.stringify()).pipe(pk)#.pipe(process.stdout)#.pipe stream#.pipe(pk).pipe(stream)#.pipe(stream)#.pipe(process.stdout)#.pipe(pk).pipe(process.stdout)
-    # d = ''
-    # md.on 'data', (da) ->
-    #   results.push da
-    # # console.log md
-    # # pk.on 'data', (data) -> console.log data
-    # #md.on 'end', -> console.log 'end'
-    # #md.on 'finish', -> console.log 'finish'
-    # md.on 'file', (filename) ->
-    #   # console.log d
-    #   md.end() if filename is 'path'
-    # md.end({ file: rootPath + '/node_modules/' + dep + '/' + depMain}, -> console.log 'END')
+  {paths} = config
+  rootPath = sysPath.resolve paths.root
+  jsonPath = sysPath.join(rootPath, paths.packageConfig)
+  try
+    json = require(jsonPath)
+  catch error
+    throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
+  items = Object.keys(json.dependencies)
+    .filter (dep) ->
+      dep isnt 'brunch' and dep.indexOf('brunch') is -1 and !anymatch(config.conventions.ignored, dep)
+    .map (dep) ->
+      depPath = sysPath.join rootPath, 'node_modules', dep
+      depJson = require sysPath.join depPath, 'package.json'
+      depMain = depJson.main || 'index.js'
+      file = 'node_modules/' + dep + '/' + depMain
+      name: dep
+      files: [file]
+      version: json.dependencies[dep]
+  cb components: items
 
-load = (filePath, opts, callback) ->
-  allFiles = []
-  cache = {}
-  visited = {}
-  basedir = opts.basedir or process.cwd()
-  paths = (opts.paths or process.env.NODE_PATH?.split(':') or [])
-    .map (path) => sysPath.resolve(basedir, path)
-
-  getModuleRootPath = (filePath) ->
-    pathArray = filePath.split('/')
-    rootIndex = pathArray.lastIndexOf('node_modules')
-    pathArray.slice(0, (rootIndex + 2)).join('/')
-
-  readFile = (filePath, cb) ->
-    fs.readFile filePath, encoding: 'utf8',(err, src) ->
-      cb err if err
-      cb null, src
-
-  getResolveFn = (resolved, parent) -> (dep) ->
-    if opts.ignore?(dep)
-      resolved[dep] = false
-    else
-      browserResolve dep, parent, (err, res) ->
-        resolved[dep] = res;
-
-  tryCallback = ->
-    if Object.keys(cache).every((key) -> cache[key])
-      console.log 'END!!!'
-      callback null, allFiles
-
-  loadDeps = (filePath) ->
-    cache[filePath] = false
-    modulePath = getModuleRootPath(filePath)
-
-    jsonPath = sysPath.join modulePath, 'package.json'
-    json = require jsonPath
-    jsonDeps = Object.keys(json.dependencies || {})
-
-    readFile filePath, (err, src) ->
-      callback err if err
-      deps = detective(src)
-      resolved = {}
-      item =
-        id: filePath
-        filename: filePath
-        paths: paths
-        package: json
-      getResult = ->
-        id: filePath
-        source: src
-        deps: resolved
-        file: filePath
-      if deps.length is 0
-        cache[filePath] = true
-        allFiles.push(getResult())
-        tryCallback()
-      else
-        itemHandler = (dep, cb) ->
-          browserResolve dep, item, (err, fullPath) ->
-            resolved[dep] = fullPath
-            cb null, fullPath
-
-        each deps, itemHandler, (err, fullPathDeps) ->
-          allFiles.push(getResult())
-          fullPathDeps.forEach (filePath) ->
-            loadDeps filePath
-          cache[filePath] = true
-
-  loadDeps(filePath)
 
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
@@ -498,13 +413,13 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   normalizeConfig config
   config._normalized.packageInfo = {}
 
-  loadNpm config, (bowerRes) ->
-    console.log bowerRes
+  loadNpm config, (npmRes) ->
+    config._normalized.packageInfo.npm = npmRes
 
-  loadComponents config, 'bower', (bowerRes)->
-    config._normalized.packageInfo.bower = bowerRes
+    loadComponents config, 'bower', (bowerRes)->
+      config._normalized.packageInfo.bower = bowerRes
 
-    loadComponents config, 'component', (componentRes) ->
-      config._normalized.packageInfo.component = componentRes
-      deepFreeze config
-      callback null, config
+      loadComponents config, 'component', (componentRes) ->
+        config._normalized.packageInfo.component = componentRes
+        deepFreeze config
+        callback null, config
