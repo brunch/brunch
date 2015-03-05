@@ -74,12 +74,12 @@ isNpm = (path) ->
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
-    deppack path, {basedir: '.', rollback: true}, (error, source) ->
+    deppack path, {basedir: '.', rollback: true, ignoreRequireDefinition: true}, (error, source) ->
       compile source, path, compilers, callback
   else
     fcache.readFile path, (error, source) =>
-      debug "Linting '#{path}'"
       lint source, path, linters, (error) ->
+        debug "Linting '#{path}'"
         if error?.toString().match /^warn\:\s/i
           logger.warn "Linting of #{path}: #{error}"
         else

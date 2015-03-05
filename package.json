@@ -49,7 +49,7 @@
     "pushserve": "~0.1.6",
     "read-components": "~0.6.0",
     "source-map": "~0.3.0",
-    "deppack": "~0.0.7"
+    "deppack": "~0.0.8"
   },
   "devDependencies": {
     "mocha": "~1.12.0",
