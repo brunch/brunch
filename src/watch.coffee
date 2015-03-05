@@ -116,11 +116,10 @@ startServer = (config, callback = ->) ->
 # Returns nothing.
 initWatcher = (config, callback) ->
   {allConfigFiles} = config._normalized.paths
-  {bower, component} = config._normalized.packageInfo
+  {npm, bower, component} = config._normalized.packageInfo
   getFiles = (pkgs) -> [].concat.apply [], pkgs.components.map (_) -> _.files
-
   watched = config.paths.watched.concat(
-    allConfigFiles, getFiles(bower), getFiles(component)
+    allConfigFiles, getFiles(npm), getFiles(bower), getFiles(component)
   )
 
   exists = (path, callback) ->

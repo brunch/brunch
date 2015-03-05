@@ -4,6 +4,7 @@ debug = require('debug')('brunch:pipeline')
 fcache = require 'fcache'
 sysPath = require 'path'
 logger = require 'loggy'
+deppack = require 'deppack'
 
 throwError = (type, stringOrError) =>
   string = if stringOrError instanceof Error
@@ -68,15 +69,22 @@ compile = (source, path, compilers, callback) ->
   first = (next) -> next null, {source, path, callback}
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
-pipeline = (path, linters, compilers, callback) ->
-  fcache.readFile path, (error, source) =>
-    debug "Linting '#{path}'"
-    lint source, path, linters, (error) ->
-      if error?.toString().match /^warn\:\s/i
-        logger.warn "Linting of #{path}: #{error}"
-      else
-        return callback throwError 'Linting', error if error?
+isNpm = (path) ->
+  path.indexOf('node_modules') >= 0
 
+pipeline = (path, linters, compilers, callback) ->
+  if isNpm path
+    deppack path, {basedir: '.', rollback: true, ignoreRequireDefinition: true}, (error, source) ->
       compile source, path, compilers, callback
+  else
+    fcache.readFile path, (error, source) =>
+      lint source, path, linters, (error) ->
+        debug "Linting '#{path}'"
+        if error?.toString().match /^warn\:\s/i
+          logger.warn "Linting of #{path}: #{error}"
+        else
+          return callback throwError 'Linting', error if error?
+
+        compile source, path, compilers, callback
 
 exports.pipeline = pipeline
