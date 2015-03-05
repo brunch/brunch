@@ -73,9 +73,8 @@ isNpm = (path) ->
   path.indexOf('node_modules') >= 0
 
 pipeline = (path, linters, compilers, callback) ->
-  if isNpm(path)
-    deppack path, {basedir: '.'}, (err, source) ->
-      console.log path
+  if isNpm path
+    deppack path, {basedir: '.', rollback: true}, (error, source) ->
       compile source, path, compilers, callback
   else
     fcache.readFile path, (error, source) =>

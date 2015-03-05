@@ -13,7 +13,6 @@ commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
 coffee = require 'coffee-script'
 each = require 'async-each'
-deppack = require 'deppack'
 coffee.register()
 
 # Extends the object with properties from another object.
