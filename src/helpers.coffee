@@ -203,9 +203,10 @@ getModuleWrapper = (type, nameCleaner) -> (fullPath, data, isVendor) ->
   path = JSON.stringify moduleName
 
   if isVendor
-    debug 'Wrapping is vendor'
+    debug "Not wrapping '#{path}', is vendor file"
     data
   else
+    debug "Wrapping '#{path}' with #{type}"
     # Wrap in common.js require definition.
     if type is 'commonjs'
       prefix: "require.register(#{path}, function(exports, require, module) {\n"

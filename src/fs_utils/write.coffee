@@ -1,5 +1,6 @@
 'use strict'
 
+debug = require('debug')('brunch:write')
 each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
@@ -79,6 +80,8 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
   return callback errors.join(' ; ') if errors.length > 0  # callback errors
 
   changed = files.filter(changedSince startTime)
+
+  debug "Writing #{changed.length}/#{files.length} files"
 
   # Remove files marked as such and dispose them, clean memory.
   disposed = generated: [], sourcePaths: []

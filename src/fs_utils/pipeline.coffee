@@ -20,6 +20,7 @@ lint = (data, path, linters, callback) ->
     callback null
   else
     each linters, (linter, callback) ->
+      debug "Linting '#{path}' with '#{linter.constructor.name}'"
       linter.lint data, path, callback
     , callback
 
@@ -70,7 +71,6 @@ compile = (source, path, compilers, callback) ->
 
 pipeline = (path, linters, compilers, callback) ->
   fcache.readFile path, (error, source) =>
-    debug "Linting '#{path}'"
     lint source, path, linters, (error) ->
       if error?.toString().match /^warn\:\s/i
         logger.warn "Linting of #{path}: #{error}"
