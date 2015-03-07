@@ -162,10 +162,6 @@ changeFileList = (compilers, linters, fileList, path, isHelper) ->
   currentLinters = linters.filter(isPluginFor path)
   fileList.emit 'change', path, compiler, currentLinters, isHelper
 
-changedSince = (startTime) -> (generated) ->
-  generated.sourceFiles.some (sourceFile) ->
-    sourceFile.compilationTime >= startTime or sourceFile.removed
-
 generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) ->
   # compiled 4 files and 145 cached files into app.js
   # compiled app.js and 10 cached files into app.js, copied 2 files
