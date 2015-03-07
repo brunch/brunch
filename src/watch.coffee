@@ -247,8 +247,9 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
         "copied #{copiedCount}"
 
   main = nonAssetsLog + sep + assetsLog
+  diff = Date.now() - startTime
 
-  "#{if main then main else 'compiled'} in #{Date.now() - startTime}ms"
+  "#{if main then main else 'compiled'} in #{diff}ms"
 
 # Generate function that consolidates all needed info and generate files.
 #
@@ -547,6 +548,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
 # start time. It is `null` when there are no compilations.
 class BrunchWatcher
   constructor: (persistent, options, onCompile) ->
+    @_start = Date.now()
     configParams = generateParams persistent, options
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
