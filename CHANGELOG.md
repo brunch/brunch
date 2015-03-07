@@ -1,3 +1,11 @@
+# Brunch 1.8.0 (unreleased)
+* Added `preCompile` plugins (gh-873).
+* Compilers can now return dependencies:
+    `{data: 'file-data', dependencies: ['a.js', 'b.js']}`
+* Fixed env handling for optimizers (gh-903)
+* Only listen to stdin if in persistent mode (gh-920)
+* Introduce fcache
+
 # Brunch 1.7.20 (8 December 2014)
 * Bump chokidar to 0.12.0
 
@@ -19,7 +27,7 @@
 
 # Brunch 1.7.15 (10 September 2014)
 * Fix race condition that aborted build cycle on some systems
-* Better error/warning messages for source files that do not get concatenated 
+* Better error/warning messages for source files that do not get concatenated
   (no `joinTo` match)
 * Improved handling of `plugins.on` and `plugins.off` when used with `overrides`
 * New [config](https://github.com/brunch/brunch/blob/stable/docs/config.md) options
@@ -27,7 +35,7 @@
   * Pass `server.config` settings to custom server
   * Create `absoluteUrl` option for source maps
   * Support for array of files in `pluginHelpers` config setting
-* IMPORTANT NOTE: If providing a custom node server for `brunch watch`, ensure it 
+* IMPORTANT NOTE: If providing a custom node server for `brunch watch`, ensure it
   invokes the callback when ready, as brunch now waits for that before proceeding
   with build steps.
 
