@@ -3,6 +3,10 @@
 debug = require('debug')('brunch:asset')
 sysPath = require 'path'
 common = require './common'
+{isWindows} = require '../helpers'
+
+# Directory separator.
+separator = sysPath.sep or (if isWindows then '\\' else '/')
 
 # Get first parent directory that matches asset convention.
 #
@@ -12,12 +16,12 @@ common = require './common'
 #
 # Returns String.
 getAssetDirectory = (path, convention) ->
-  split = path.split(common.sep)
+  split = path.split(separator)
   # Creates thing like this
   # 'app/', 'app/assets/', 'app/assets/thing/', 'app/assets/thing/thing2.html/'
   split
     .map (part, index) ->
-      split.slice(0, index).concat([part, '']).join(common.sep)
+      split.slice(0, index).concat([part, '']).join(separator)
     .filter(convention)[0]
 
 # A static file that shall be copied to public directory.

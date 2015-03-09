@@ -2,7 +2,6 @@ each = require 'async-each'
 waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:pipeline')
 fcache = require 'fcache'
-sysPath = require 'path'
 logger = require 'loggy'
 deppack = require 'deppack'
 

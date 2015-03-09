@@ -6,13 +6,9 @@ mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
 os = require 'os'
 sysPath = require 'path'
-{isWindows} = require '../helpers'
 
 # Shortcut to `exists` function that works on both node 0.6 and 0.8+.
 exports.exists = fs.exists or sysPath.exists
-
-# Directory separator.
-exports.sep = sysPath.sep or (if isWindows then '\\' else '/')
 
 # Writes data into a file.
 # Creates the file and/or all parent directories if they don't exist.

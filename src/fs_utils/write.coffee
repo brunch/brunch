@@ -4,9 +4,17 @@ debug = require('debug')('brunch:write')
 each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
-helpers = require '../helpers'
+{formatError} = require '../helpers'
 logger = require 'loggy'
 anymatch = require 'anymatch'
+
+
+changedSince = (startTime) -> (generated) ->
+  generated.sourceFiles.some (sourceFile) ->
+    sourceFile.compilationTime >= startTime or sourceFile.removed
+
+formatWriteError = (sourceFile) ->
+  formatError sourceFile.error, sourceFile.path
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
@@ -54,7 +62,7 @@ getFiles = (fileList, config, joinConfig, startTime) ->
       map[path].push file
     unless paths.length
       if file.error
-        logger.error formatError file
+        logger.error formatWriteError file
       if file.data and file.compilationTime >= startTime
         unless checkAnyJoinTo file
           logger.warn "'#{file.path}' compiled, but not written. Check your #{file.type}s.joinTo config."
@@ -64,18 +72,11 @@ getFiles = (fileList, config, joinConfig, startTime) ->
     fullPath = sysPath.join config.paths.public, generatedFilePath
     {sourceFiles, path: fullPath}
 
-changedSince = (startTime) -> (generated) ->
-  generated.sourceFiles.some (sourceFile) ->
-    sourceFile.compilationTime >= startTime or sourceFile.removed
-
-formatError = (sourceFile) ->
-  helpers.formatError sourceFile.error, sourceFile.path
-
 module.exports = write = (fileList, config, joinConfig, optimizers, startTime, callback) ->
   files = getFiles fileList, config, joinConfig, startTime
   errors = files
     .map (generated) ->
-      generated.sourceFiles.filter((_) -> _.error?).map(formatError)
+      generated.sourceFiles.filter((_) -> _.error?).map(formatWriteError)
     .reduce(((a, b) -> a.concat b), [])
   return callback errors.join(' ; ') if errors.length > 0  # callback errors
 

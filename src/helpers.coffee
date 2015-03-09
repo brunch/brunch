@@ -1,8 +1,6 @@
 'use strict'
 
 {exec} = require 'child_process'
-http = require 'http'
-fs = require 'fs'
 os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
@@ -12,7 +10,6 @@ debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
 coffee = require 'coffee-script'
-each = require 'async-each'
 coffee.register()
 
 # Extends the object with properties from another object.
@@ -93,7 +90,7 @@ exports.install = install = (rootPath, command, callback = (->)) ->
       return callback log
     callback null, stdout
 
-exports.isWindows = isWindows = do -> os.platform() is 'win32'
+exports.isWindows = isWindows = (os.platform() is 'win32')
 
 windowsStringReplace = (search, replacement) -> (_) ->
   if isWindows && typeof _ is 'string' then _.replace(search, replacement) else _
@@ -380,7 +377,7 @@ loadNpm = (config, cb) ->
       # Ignore Brunch plugins.
       dep isnt 'brunch' and
       dep.indexOf('brunch') is -1 and
-      not anymatch(config.conventions.ignored, dep)
+      not normalizeChecker(config.conventions.ignored, dep)
     .map (dep) ->
       depPath = sysPath.join rootPath, 'node_modules', dep
       depJson = require sysPath.join depPath, 'package.json'

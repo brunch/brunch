@@ -1,8 +1,6 @@
 'use strict'
 
 debug = require('debug')('brunch:source-file')
-sysPath = require 'path'
-os = require 'os'
 {pipeline} = require './pipeline'
 {identityNode, replaceBackSlashes, isWindows} = require '../helpers'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
