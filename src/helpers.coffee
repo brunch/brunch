@@ -366,6 +366,7 @@ loadComponents = (config, type, callback) ->
     callback {components, aliases, order}
 
 loadNpm = (config, cb) ->
+  return cb(components: []) unless global.isDevBrunch
   {paths} = config
   rootPath = sysPath.resolve paths.root
   jsonPath = sysPath.join(rootPath, paths.packageConfig)
