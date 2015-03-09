@@ -3,6 +3,11 @@
 program = require 'commander'
 commands = require './'
 
+aliases = {n: 'new', b: 'build', w: 'watch'}
+Object.keys(aliases).forEach (key) ->
+  value = aliases[key]
+  aliases[value] = value
+
 program
   .version(require('../package.json').version)
   .usage('[command] [options]')
@@ -68,11 +73,7 @@ exports.run = ->
     brunch new gh:paulmillr/brunch-with-chaplin
     '''
 
-  fullCommand = switch command
-    when 'n' then 'new'
-    when 'b' then 'build'
-    when 'w' then 'watch'
-    else command
-  args[2] = fullCommand if fullCommand?
+  cmd = aliases[command]
+  args[2] = cmd if cmd
   program.parse args
-  program.help() unless fullCommand?
+  program.help() unless cmd
