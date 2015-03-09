@@ -12,6 +12,7 @@ debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
 coffee = require 'coffee-script'
+each = require 'async-each'
 coffee.register()
 
 # Extends the object with properties from another object.
@@ -260,7 +261,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
     /[\\/]_/
     /vendor[\\/](node|j?ruby-.*|bundle)[\\/]/
   ]
-  conventions.vendor  ?= /(^bower_components|vendor)[\\/]/
+  conventions.vendor  ?= /(^bower_components|node_modules|vendor)[\\/]/
 
   config.notifications ?= true
   config.sourceMaps   ?= true
@@ -364,6 +365,31 @@ loadComponents = (config, type, callback) ->
 
     callback {components, aliases, order}
 
+loadNpm = (config, cb) ->
+  {paths} = config
+  rootPath = sysPath.resolve paths.root
+  jsonPath = sysPath.join(rootPath, paths.packageConfig)
+  try
+    json = require(jsonPath)
+  catch error
+    throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
+
+  items = Object.keys(json.dependencies)
+    .filter (dep) ->
+      # Ignore Brunch plugins.
+      dep isnt 'brunch' and
+      dep.indexOf('brunch') is -1 and
+      not anymatch(config.conventions.ignored, dep)
+    .map (dep) ->
+      depPath = sysPath.join rootPath, 'node_modules', dep
+      depJson = require sysPath.join depPath, 'package.json'
+      depMain = depJson.main or 'index.js'
+      file = sysPath.join 'node_modules', dep, depMain
+      name: dep
+      files: [file]
+      version: json.dependencies[dep]
+  cb components: items
+
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
     # assign fullPath in two steps in case require.resolve throws
@@ -390,10 +416,13 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   normalizeConfig config
   config._normalized.packageInfo = {}
 
-  loadComponents config, 'bower', (bowerRes)->
-    config._normalized.packageInfo.bower = bowerRes
+  loadNpm config, (npmRes) ->
+    config._normalized.packageInfo.npm = npmRes
 
-    loadComponents config, 'component', (componentRes) ->
-      config._normalized.packageInfo.component = componentRes
-      deepFreeze config
-      callback null, config
+    loadComponents config, 'bower', (bowerRes)->
+      config._normalized.packageInfo.bower = bowerRes
+
+      loadComponents config, 'component', (componentRes) ->
+        config._normalized.packageInfo.component = componentRes
+        deepFreeze config
+        callback null, config

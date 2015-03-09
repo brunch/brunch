@@ -1,8 +1,7 @@
 #!/usr/bin/env coffee
 
-path = require 'path'
-fs = require 'fs'
+sysPath = require('path')
 
-dir = path.dirname fs.realpathSync __filename
-src = path.join dir, '..', 'src', 'cli'
+global.isDevBrunch = true
+src = sysPath.join(__dirname, '..', 'src', 'cli')
 require(src).run()
