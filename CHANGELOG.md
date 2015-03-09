@@ -1,10 +1,15 @@
 # Brunch 1.8.0 (unreleased)
+* Added NPM support for client-side libraries.
 * Added `preCompile` plugins (gh-873).
 * Compilers can now return dependencies:
     `{data: 'file-data', dependencies: ['a.js', 'b.js']}`
 * Fixed env handling for optimizers (gh-903)
 * Only listen to stdin if in persistent mode (gh-920)
-* Introduce fcache
+* Added **fcache** - a simple way to speed-up your plugins like sass or jade.
+    fcache is a simple filesystem wrapper that allows to read files and
+    to update them in cache.
+    Brunch would usually update them on every change, after that your plugin
+    will pull the data from RAM and would be super fast.
 
 # Brunch 1.7.20 (8 December 2014)
 * Bump chokidar to 0.12.0
