@@ -4,7 +4,7 @@ debug = require('debug')('brunch:file-list')
 {EventEmitter} = require 'events'
 Asset = require './asset'
 SourceFile = require './source_file'
-helpers = require '../helpers'
+{formatError} = require '../helpers'
 fcache = require 'fcache'
 sysPath = require 'path'
 
@@ -34,7 +34,7 @@ module.exports = class FileList extends EventEmitter
     invalidAssets = @assets.filter((asset) -> asset.error?)
     if invalidAssets.length > 0
       invalidAssets.map (invalidAsset) ->
-        helpers.formatError invalidAsset.error, invalidAsset.path
+        formatError invalidAsset.error, invalidAsset.path
     else
       null
 

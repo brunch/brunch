@@ -1,13 +1,7 @@
 'use strict'
 
-{exists, ignored, reset} = require './common'
+{exists, ignored} = require './common'
 FileList = require './file_list'
 write = require './write'
 
-module.exports = {
-  exists
-  ignored
-  reset
-  write
-  FileList
-}
+module.exports = {exists, ignored, write, FileList}

@@ -4,7 +4,6 @@ debug = require('debug')('brunch:common')
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 {ncp} = require 'ncp'
-os = require 'os'
 sysPath = require 'path'
 
 # Shortcut to `exists` function that works on both node 0.6 and 0.8+.
