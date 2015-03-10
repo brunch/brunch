@@ -19,7 +19,7 @@ program
     commands.new program.args[0], program.args[1]
 
 program
-  .command('build')
+  .command('build [path]')
   .description('Build a brunch project. Short-cut: b')
   .option('-e, --env [setting]', 'specify a set of override settings to apply')
   .option('-P, --production', 'same as `--env production`')
@@ -29,7 +29,7 @@ program
   .action(commands.build)
 
 program
-  .command('watch')
+  .command('watch [path]')
   .description('Watch brunch directory and rebuild if something changed. Short-cut: w')
   .option('-e, --env [setting]', 'specify a set of override settings to apply')
   .option('-P, --production', 'same as `--env production`')
