@@ -573,5 +573,6 @@ class BrunchWatcher
     @_start = null
     start
 
-module.exports = watch = (persistent, options, callback = (->)) ->
+module.exports = watch = (persistent, path, options, callback = (->)) ->
+  process.chdir path if path
   new BrunchWatcher(persistent, options, callback)
