@@ -71,7 +71,8 @@ compile = (source, path, compilers, callback) ->
 
 isNpm = (path) ->
   return false unless global.isDevBrunch
-  path.indexOf('node_modules') >= 0
+  path.indexOf('node_modules') >= 0 and
+  not /brunch/.test(path)
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
@@ -79,6 +80,8 @@ pipeline = (path, linters, compilers, callback) ->
       compile source, path, compilers, callback
   else
     fcache.readFile path, (error, source) =>
+      return callback throwError 'Read', error if error?
+
       lint source, path, linters, (error) ->
         if error?.toString().match /^warn\:\s/i
           logger.warn "Linting of #{path}: #{error}"

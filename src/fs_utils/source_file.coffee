@@ -49,13 +49,15 @@ updateCache = (path, cache, error, result, wrap) ->
     cache.compilationTime = Date.now()
     return cache
 
+  {source, compiled} = result
+  wrapped = wrap compiled
+
   cache.error = null
   cache.dependencies = result.dependencies
-  cache.source = result.source
+  cache.source = source
   cache.compilationTime = Date.now()
-  cache.data = result.compiled
-  compiled = result.compiled
-  cache.node = updateMap path, compiled, (wrap compiled), result.sourceMap
+  cache.data = compiled
+  cache.node = updateMap path, compiled, wrapped, result.sourceMap
   cache
 
 makeWrapper = (wrapper, path, isWrapped, isntModule) ->
