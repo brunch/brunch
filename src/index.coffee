@@ -5,7 +5,7 @@ initSkeleton = require 'init-skeleton'
 start = ->
   isDebug = arguments[1]?.debug or arguments[2]?.debug
   process.env.DEBUG = 'brunch:*' if isDebug
-  (require './watch').apply null, arguments
+  (require './watch') arguments...
 
 module.exports = {
   new: (skeleton, path) ->
