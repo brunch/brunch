@@ -76,6 +76,7 @@ exports.copy = (source, destination, callback) ->
         process.nextTick copyQueue.shift()
       callback()
       fsStreamFinishHandler = ->
+    destination = sysPath.normalize(sysPath.join(destination,sysPath.basename(source)))
     input = fs.createReadStream source
     output = input.pipe fs.createWriteStream destination
     input.on  'error', fsStreamErrHandler
