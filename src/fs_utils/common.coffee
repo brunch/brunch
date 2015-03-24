@@ -33,8 +33,6 @@ exports.writeFile = (path, data, callback) ->
       write (error) ->
         callback error, path, data
 
-exports.copy = copyFile
-
 # RegExp that filters out invalid files (dotfiles, emacs caches etc).
 exports.ignored = ignored = do ->
   re1 = /\.(?!htaccess|rewrite)/
@@ -46,6 +44,10 @@ exports.ignored = ignored = do ->
 # Files that should always be ignored (git / mercurial metadata etc).
 exports.ignoredAlways = ignoredAlways = (path) ->
   /^\.(git|hg)$/.test sysPath.basename path
+
+exports.copy = (source, destination, callback) ->
+  return callback() if ignored source
+  copyFile source, destination, callback
 
 # Recursively copy files from one directory to another.
 # Ignores dotfiles and stuff in process.
