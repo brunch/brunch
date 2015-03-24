@@ -120,7 +120,9 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
     'stylesheet'
   optimizers = optimizers.filter((optimizer) -> optimizer.type is type)
 
-  joinToValue = config.files["#{type}s"].joinTo[path[config.paths.public.length+1..]]
+  len = config.paths.public.length + 1
+  joinKey = path[len..]
+  joinToValue = config.files["#{type}s"].joinTo[joinKey]
   sorted = sort sourceFiles, config, joinToValue
 
   {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo['component'].aliases
