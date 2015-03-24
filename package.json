@@ -42,15 +42,16 @@
     "commander": "~2.0.0",
     "commonjs-require-definition": "~0.1.0",
     "debug": "~2.1.1",
+    "deppack": "~0.0.8",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.3.0",
     "loggy": "~0.2.0",
     "mkdirp": "~0.5.0",
     "ncp": "~1.0.1",
     "pushserve": "~0.1.6",
+    "quickly-copy-file": "~0.1.0",
     "read-components": "~0.6.0",
-    "source-map": "~0.3.0",
-    "deppack": "~0.0.8"
+    "source-map": "~0.3.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0",
