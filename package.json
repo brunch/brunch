@@ -44,7 +44,7 @@
     "debug": "~2.1.1",
     "deppack": "~0.0.8",
     "fcache": "~0.1.0",
-    "init-skeleton": "~0.3.0",
+    "init-skeleton": "~0.4.0",
     "loggy": "~0.2.0",
     "mkdirp": "~0.5.0",
     "ncp": "~1.0.1",
