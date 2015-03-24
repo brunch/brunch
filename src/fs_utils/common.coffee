@@ -48,22 +48,3 @@ exports.ignoredAlways = ignoredAlways = (path) ->
 exports.copy = (source, destination, callback) ->
   return callback() if ignored source
   copyFile source, destination, callback
-
-# Recursively copy files from one directory to another.
-# Ignores dotfiles and stuff in process.
-
-# source      - String.
-# destination - String.
-# filter      - Boolean.
-# callback    - Function.
-#
-# Returns nothing.
-exports.copyIfExists = (source, destination, filter = true, callback) ->
-  options = stopOnError: true
-  options.filter = if filter
-    (path) -> not ignored path
-  else
-    (path) -> not ignoredAlways path
-  exports.exists source, (exists) ->
-    return callback() unless exists
-    ncp source, destination, options, callback
