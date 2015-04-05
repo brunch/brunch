@@ -75,8 +75,14 @@ startServer = (config, callback = ->) ->
       server = require sysPath.resolve config.server.path
     catch error
       logger.error "couldn't load server #{config.server.path}: #{error}"
-    unless typeof server.startServer is 'function'
+
+    startServer = if typeof server is 'function'
+      server
+    else if typeof server?.startServer is 'function'
+      server.startServer.bind(server)
+    else
       throw new Error 'Brunch server file needs to have startServer function'
+
     opts = {port, path: publicPath}
     serverConfig = helpers.extend opts, serverOpts.config or {}
     debug "Invoking custom startServer with: #{JSON.stringify serverConfig}"
@@ -86,10 +92,10 @@ startServer = (config, callback = ->) ->
       logger.warn '**don\'t forget to invoke callback()**'
     , 5000
 
-    if server.startServer.length is 2
-      server.startServer serverConfig, serverCb
+    if startServer.length is 2
+      startServer serverConfig, serverCb
     else
-      server.startServer port, publicPath, serverCb
+      startServer port, publicPath, serverCb
 
   else if config.server.command
     commandComponents = config.server.command.split ' '
