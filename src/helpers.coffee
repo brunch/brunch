@@ -1,5 +1,6 @@
 'use strict'
 
+fs_utils = require './fs_utils'
 {exec} = require 'child_process'
 os = require 'os'
 sysPath = require 'path'
@@ -338,10 +339,22 @@ normalizeConfig = (config) ->
     config.paths.packageConfig
     config.paths.bowerConfig
   ].concat Object.keys normalized.paths.possibleConfigFiles
+  normalized.packageInfo = {}
   config._normalized = normalized
   ['on', 'off', 'only'].forEach (key) ->
     if typeof config.plugins[key] is 'string'
       config.plugins[key] = [config.plugins[key]]
+  config
+
+addDefaultServer = (config) ->
+  return config if config.server.path
+  defaultServerPath = 'brunch-server'
+  try
+    resolved = require.resolve sysPath.resolve defaultServerPath
+    require resolved
+    config.server.path ?= resolved
+  catch e
+    # Do nothing.
   config
 
 loadComponents = (config, type, callback) ->
@@ -388,6 +401,18 @@ loadNpm = (config, cb) ->
       version: json.dependencies[dep]
   cb components: items
 
+addPackageManagers = (config, callback) ->
+  loadNpm config, (npmRes) ->
+    config._normalized.packageInfo.npm = npmRes
+
+    loadComponents config, 'bower', (bowerRes)->
+      config._normalized.packageInfo.bower = bowerRes
+
+      loadComponents config, 'component', (componentRes) ->
+        config._normalized.packageInfo.component = componentRes
+
+        callback()
+
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
     # assign fullPath in two steps in case require.resolve throws
@@ -407,20 +432,13 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
       throw new Error "couldn\'t load config #{fullPath}. #{error}"
 
   setConfigDefaults config, configPath
+  addDefaultServer config
   warnAboutConfigDeprecations config
   applyOverrides config, options
   deepExtend config, options
   replaceConfigSlashes config
   normalizeConfig config
-  config._normalized.packageInfo = {}
 
-  loadNpm config, (npmRes) ->
-    config._normalized.packageInfo.npm = npmRes
-
-    loadComponents config, 'bower', (bowerRes)->
-      config._normalized.packageInfo.bower = bowerRes
-
-      loadComponents config, 'component', (componentRes) ->
-        config._normalized.packageInfo.component = componentRes
-        deepFreeze config
-        callback null, config
+  addPackageManagers config, ->
+    deepFreeze config
+    callback null, config
