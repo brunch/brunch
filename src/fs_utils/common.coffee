@@ -1,13 +1,16 @@
 'use strict'
 
 debug = require('debug')('brunch:common')
-copyFile = require('quickly-copy-file')
+copyFile = require 'quickly-copy-file'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 
-# Shortcut to `exists` function that works on both node 0.6 and 0.8+.
-exports.exists = fs.exists or sysPath.exists
+# Supports node 0.12+, 0.8 and 0.6 styles.
+exports.exists = if fs.access
+  (path, callback) -> fs.access(path, (error) -> callback not error)
+else
+  fs.exists or sysPath.exists
 
 # Writes data into a file.
 # Creates the file and/or all parent directories if they don't exist.
