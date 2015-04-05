@@ -39,7 +39,7 @@
     "async-waterfall": "~0.1.2",
     "chokidar": "~1.0.0-rc5",
     "coffee-script": "~1.9.0",
-    "commander": "~2.0.0",
+    "commander": "~2.7.1",
     "commonjs-require-definition": "~0.1.0",
     "debug": "~2.1.1",
     "deppack": "~0.0.8",

@@ -18,17 +18,15 @@ program
   .action ->
     commands.new program.args[0], program.args[1]
 
-program
+buildCmd = program
   .command('build [path]')
   .description('Build a brunch project. Short-cut: b')
   .option('-e, --env [setting]', 'specify a set of override settings to apply')
   .option('-P, --production', 'same as `--env production`')
   .option('-d, --debug', 'print verbose debug output to stdout')
-  .option('-c, --config [path]', '[DEPRECATED] path to config files')
-  .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.build)
 
-program
+watchCmd = program
   .command('watch [path]')
   .description('Watch brunch directory and rebuild if something changed. Short-cut: w')
   .option('-e, --env [setting]', 'specify a set of override settings to apply')
@@ -37,14 +35,28 @@ program
   .option('-p, --port [port]', 'if a `server` option was specified, define on which port
  the server would run')
   .option('-d, --debug', 'print verbose debug output to stdout')
-  .option('-c, --config [path]', '[DEPRECATED] path to config files')
-  .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
   .action(commands.watch)
+
+addDeprecatedOpts = ->
+  add = (cmd) ->
+    cmd
+      .option('-c, --config [path]', '[DEPRECATED] path to config files')
+      .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
+  add buildCmd
+  add watchCmd
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->
   args = process.argv.slice()
   command = args[2]
+
+  if '-c' in args or '--config' in args
+    console.error '--config is deprecated. Use `-e / --environment` and custom envs in config'
+    addDeprecatedOpts()
+
+  if '-o' in args or '--optimize' in args
+    console.error '--optimize is deprecated. Use `-P / --production`'
+    addDeprecatedOpts()
 
   if command in ['g', 'd', 'generate', 'destroy']
     console.error '''`brunch generate / destroy` command was removed.
