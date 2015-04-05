@@ -76,7 +76,7 @@ startServer = (config, callback = ->) ->
     catch error
       logger.error "couldn't load server #{config.server.path}: #{error}"
 
-    startServer = if typeof server is 'function'
+    serverFn = if typeof server is 'function'
       server
     else if typeof server?.startServer is 'function'
       server.startServer.bind(server)
@@ -92,10 +92,10 @@ startServer = (config, callback = ->) ->
       logger.warn '**don\'t forget to invoke callback()**'
     , 5000
 
-    if startServer.length is 2
-      startServer serverConfig, serverCb
-    else
-      startServer port, publicPath, serverCb
+    switch serverFn.length
+      when 1 then serverFn serverCb
+      when 2 then serverFn serverConfig, serverCb
+      else serverFn port, publicPath, serverCb
 
   else if config.server.command
     commandComponents = config.server.command.split ' '
