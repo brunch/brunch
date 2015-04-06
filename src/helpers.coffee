@@ -26,6 +26,7 @@ exports.extend = extend = (object, properties) ->
 
 applyOverrides = (config, options) ->
   # Allow the environment to be set from environment variable
+  config.env = options.env
   environments = options.env
   if process.env.BRUNCH_ENV?
     environments.unshift process.env.BRUNCH_ENV

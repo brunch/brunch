@@ -167,7 +167,7 @@ plugins:
            [terminal-notifier](https://github.com/alloy/terminal-notifier#download) /
            [libnotify for Ubuntu](http://packages.ubuntu.com/search?keywords=libnotify-bin)
            notifications.
-           Default value is `true` (enabled).  
+           Default value is `true` (enabled).
 
 When set to `true`, only errors trigger notifications. If you want to display success, warning, or informational messages, set this to an array of strings with the levels you want to see, e.g. `['error', 'warn', 'info']`. See [documentation for the Loggy package](https://github.com/paulmillr/loggy) for complete details.
 
@@ -213,7 +213,7 @@ server:
 
 ## `sourceMaps`
 
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).  
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
 `String`:
   * set to `'old'` to use the old `@` control character instead of `#`.
   * set to `'absoluteUrl'` to set the `sourceMappingURL` to the complete URL path starting from `config.paths.public`
