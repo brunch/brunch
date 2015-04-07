@@ -1,5 +1,8 @@
 # Brunch 1.8.0 (8 April 2015)
-* Added **NPM support** for client-side libraries. Behind config option for now (`config.npm.enabled`)
+* Added **NPM support** for client-side libraries.
+    Just specify dependencies in `package.json` and load them within your app
+    with `require('package')`. Brunch would do all the hard job for you.
+    Behind config option for now (`config.npm = {enabled: true}`)
 * Brunch will now consume file `brunch-server.{js,coffee}` if it exists
    and its function would be used to launch a custom webserver.
    Basically this is a default value for `config.server.path`.
