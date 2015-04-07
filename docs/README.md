@@ -2,6 +2,7 @@
 
 Sections:
 
+* [Guide](https://github.com/brunch/brunch-guide#readme)
 * [FAQ](./faq.md), also tips on Bower integration
 * [Commands](./commands.md)
 * [Config](./config.md)
