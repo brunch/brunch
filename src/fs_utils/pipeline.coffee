@@ -1,3 +1,5 @@
+'use strict'
+
 each = require 'async-each'
 waterfall = require 'async-waterfall'
 debug = require('debug')('brunch:pipeline')
