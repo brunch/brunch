@@ -126,8 +126,7 @@ module.exports = class FileList extends EventEmitter
     file
 
   _addAsset: (path) ->
-    constructor: (@path, config) ->
-    file = new Asset path, config.paths.public, config._normalized.conventions.assets
+    file = new Asset path, @config.paths.public, @config._normalized.conventions.assets
     @assets.push file
     file
 

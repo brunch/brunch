@@ -4,7 +4,7 @@ debug = require('debug')('brunch:generate')
 {basename} = require 'path'
 waterfall = require 'async-waterfall'
 anysort = require 'anysort'
-{writeFile} = require './common'
+common = require './common'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 # Sorts by pattern.

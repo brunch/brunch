@@ -1,5 +1,5 @@
 # Brunch 1.8.0 (unreleased)
-* Added **NPM support** for client-side libraries.
+* Added **NPM support** for client-side libraries. Behind config option for now (`config.npm.enabled`)
 * Brunch will now consume file `brunch-server.{js,coffee}` if it exists
    and its function would be used to launch a custom webserver.
    Basically this is a default value for `config.server.path`.
