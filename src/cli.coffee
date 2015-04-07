@@ -38,12 +38,10 @@ watchCmd = program
   .action(commands.watch)
 
 addDeprecatedOpts = ->
-  add = (cmd) ->
+  [buildCmd, watchCmd].forEach (cmd) ->
     cmd
       .option('-c, --config [path]', '[DEPRECATED] path to config files')
       .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
-  add buildCmd
-  add watchCmd
 
 # The function would be executed every time user run `bin/brunch`.
 exports.run = ->

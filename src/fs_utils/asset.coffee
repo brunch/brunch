@@ -26,10 +26,10 @@ getAssetDirectory = (path, convention) ->
 
 # A static file that shall be copied to public directory.
 module.exports = class Asset
-  constructor: (@path, config) ->
-    directory = getAssetDirectory @path, config._normalized.conventions.assets
+  constructor: (@path, publicPath, assetsConvention) ->
+    directory = getAssetDirectory @path, assetsConvention
     @relativePath = sysPath.relative directory, @path
-    @destinationPath = sysPath.join config.paths.public, @relativePath
+    @destinationPath = sysPath.join publicPath, @relativePath
     debug "Initializing fs_utils.Asset %s", JSON.stringify {
       @path, directory, @relativePath, @destinationPath
     }

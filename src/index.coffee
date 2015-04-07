@@ -2,11 +2,12 @@
 
 initSkeleton = require 'init-skeleton'
 loggy = require 'loggy'
+watch = require './watch'
 
 start = ->
   isDebug = arguments[1]?.debug or arguments[2]?.debug
   process.env.DEBUG = 'brunch:*' if isDebug
-  (require './watch') arguments...
+  watch arguments...
 
 module.exports =
   new: (skeleton, path) ->

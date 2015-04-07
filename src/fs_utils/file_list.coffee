@@ -2,11 +2,11 @@
 
 debug = require('debug')('brunch:file-list')
 {EventEmitter} = require 'events'
+{normalize} = require 'path'
+fcache = require 'fcache'
 Asset = require './asset'
 SourceFile = require './source_file'
 {formatError} = require '../helpers'
-fcache = require 'fcache'
-sysPath = require 'path'
 
 startsWith = (string, substring) ->
   string.lastIndexOf(substring, 0) is 0
@@ -48,7 +48,7 @@ module.exports = class FileList extends EventEmitter
       when '[object Function]'
         test path
       when '[object String]'
-        startsWith sysPath.normalize(path), sysPath.normalize(test)
+        startsWith normalize(path), normalize(test)
       when '[object Array]'
         test.some((subTest) => @isIgnored path, subTest)
       else
@@ -126,7 +126,8 @@ module.exports = class FileList extends EventEmitter
     file
 
   _addAsset: (path) ->
-    file = new Asset path, @config
+    constructor: (@path, config) ->
+    file = new Asset path, config.paths.public, config._normalized.conventions.assets
     @assets.push file
     file
 

@@ -1,11 +1,10 @@
 'use strict'
 
 debug = require('debug')('brunch:generate')
-fs = require 'fs'
-sysPath = require 'path'
+{basename} = require 'path'
 waterfall = require 'async-waterfall'
 anysort = require 'anysort'
-common = require './common'
+{writeFile} = require './common'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
 
 # Sorts by pattern.
@@ -125,7 +124,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   joinToValue = config.files["#{type}s"].joinTo[joinKey]
   sorted = sort sourceFiles, config, joinToValue
 
-  {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo['component'].aliases
+  {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo.component.aliases
 
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
@@ -139,7 +138,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
           .replace config.paths.public, ''
           .replace '\\', '/'
       else
-        sysPath.basename mapPath
+        basename mapPath
       controlChar = if config.sourceMaps is 'old' then '@' else '#'
       data.code += if type is 'javascript'
         "\n//#{controlChar} sourceMappingURL=#{mapRoute}"
