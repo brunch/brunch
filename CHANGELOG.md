@@ -1,4 +1,4 @@
-# Brunch 1.8.0 (unreleased)
+# Brunch 1.8.0 (8 April 2015)
 * Added **NPM support** for client-side libraries. Behind config option for now (`config.npm.enabled`)
 * Brunch will now consume file `brunch-server.{js,coffee}` if it exists
    and its function would be used to launch a custom webserver.
@@ -15,6 +15,7 @@
     to update them in cache.
     Brunch would usually update them on every change, after that your plugin
     will pull the data from RAM and would be super fast.
+* Massive improvements to file watcher.
 
 # Brunch 1.7.20 (8 December 2014)
 * Bump chokidar to 0.12.0
