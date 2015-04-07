@@ -183,14 +183,35 @@ When set to `true`, only errors trigger notifications. If you want to display su
 
 `Object`: contains params of webserver that runs on `brunch watch --server`.
 
-* `path`: (optional) path to nodejs file that will be loaded to run your custom server. It must contain `exports.startServer` function:
+If a `brunch-server.js` or `brunch-server.coffee` file exists at the root of your project, Brunch will treat this as your custom web server. This can be overriden with the `server.path` option.
 
-    ```coffeescript
-    exports.startServer = (port, path, callback) ->
-      # callback doesn't take any parameters and (if provided) should be called after server is started
-      # should return an instance of http.Server
-    ```
-  If not specified, Brunch will use [pushserve](https://github.com/paulmillr/pushserve). If using your own, only `port` from the following options can be set from the config.
+The server script must export a function that starts your custom server, either as the default exported module or under the `startServer` property. This function should return an instance of [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server) or an object containing a `close` property assigned to a function that shuts down the server. Examples:
+
+  ```js
+  // javascript example using default export and node http core module
+  module.exports = function (port, path, callback) {
+    // your custom server code
+    // callback doesn't take any parameters and (if provided) should be called after server is started
+    // up to you to respect the `port` argument allowing users to change it from the CLI
+    var myServer = http.createServer();
+    myServer.listen(port, callback);
+    myServer.on('request', function(req, res) {/* do stuff */});
+    return myServer;
+  }
+  ```
+  
+  ```coffeescript
+  # coffeescript example using `startServer` property and custom `close` method
+  exports.startServer = (port, path, callback) ->
+  
+    # custom server code
+    
+    close: -> # code for shutting down server
+  ```
+
+* `path`: (optional) custom path to nodejs file that will be loaded to run your custom server. 
+
+If a custom server is not present, Brunch will use [pushserve](https://github.com/paulmillr/pushserve). If using your own, only `port` from the following options can be set from the config.
 
 * `port`: port on which server will run. Default: `3333`
 * `base`: base URL from which to serve the app. Default: `''`
@@ -203,13 +224,13 @@ Example:
 
 ```coffeescript
 server:
-  path: 'server.coffee'
+  path: 'my-server.coffee'
   port: 6832
   base: '/myapp'
   stripSlashes: true
 ```
 
-* `command`: command to launch a non-node.js server. Ex: `php -S 0.0.0.0:3000 -t public`
+* `command`: command to launch a non-nodejs server as a child process. Ex: `server: command: 'php -S 0.0.0.0:3000 -t public'`
 
 ## `sourceMaps`
 
