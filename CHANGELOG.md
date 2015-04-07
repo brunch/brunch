@@ -3,9 +3,9 @@
     Just specify dependencies in `package.json` and load them within your app
     with `require('package')`. Brunch would do all the hard job for you.
     Behind config option for now (`config.npm = {enabled: true}`)
-* Brunch will now consume file `brunch-server.{js,coffee}` if it exists
-   and its function would be used to launch a custom webserver.
-   Basically this is a default value for `config.server.path`.
+* Ultra-simple custom webservers.
+    Brunch will now consume file `brunch-server.{js,coffee}` if it exists
+    and it would be used to launch a custom webserver that launches with `brunch watch --server`.
 * No more need to write `startServer` function for custom servers —
   just export the function with `module.exports`
 * Added `preCompile` plugins (gh-873).
