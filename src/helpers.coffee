@@ -10,6 +10,7 @@ readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'
 anymatch = require 'anymatch'
+mediator = require './mediator'
 coffee = require 'coffee-script'
 coffee.register()
 
@@ -285,6 +286,9 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   production.plugins.autoReload ?= {}
   production.plugins.autoReload.enabled ?= false
 
+  npm = config.npm ?= {}
+  npm.enabled       = false
+
   config
 
 warnAboutConfigDeprecations = (config) ->
@@ -377,7 +381,8 @@ loadComponents = (config, type, callback) ->
     callback {components, aliases, order}
 
 loadNpm = (config, cb) ->
-  return cb(components: []) unless global.isDevBrunch
+  return cb(components: []) unless config.npm.enabled
+  mediator.npmIsEnabled = true
   {paths} = config
   rootPath = sysPath.resolve paths.root
   jsonPath = sysPath.join(rootPath, paths.packageConfig)

@@ -1,0 +1,1 @@
+exports.npmIsEnabled = false

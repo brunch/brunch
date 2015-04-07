@@ -4,6 +4,7 @@ debug = require('debug')('brunch:pipeline')
 fcache = require 'fcache'
 logger = require 'loggy'
 deppack = require 'deppack'
+mediator = require '../mediator'
 
 throwError = (type, stringOrError) =>
   string = if stringOrError instanceof Error
@@ -70,9 +71,9 @@ compile = (source, path, compilers, callback) ->
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
 isNpm = (path) ->
-  return false unless global.isDevBrunch
+  return false unless mediator.npmIsEnabled
   path.indexOf('node_modules') >= 0 and
-  not /brunch/.test(path)
+  not /brunch/.test(path) # Brunch modules.
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
