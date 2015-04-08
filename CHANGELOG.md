@@ -3,6 +3,7 @@
     Just specify dependencies in `package.json` and load them within your app
     with `require('package')`. Brunch would do all the hard job for you.
     Behind config option for now (`config.npm = {enabled: true}`)
+    *Update:* temporarily disabled until *v1.8.1*.
 * Ultra-simple custom webservers.
     Brunch will now consume file `brunch-server.{js,coffee}` if it exists
     and it would be used to launch a custom webserver that launches with `brunch watch --server`.
