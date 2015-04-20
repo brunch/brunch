@@ -83,7 +83,6 @@ depOptions = {basedir: '.', rollback: false, ignoreRequireDefinition: true}
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
     deppack path, depOptions, (error, source) ->
-      console.log 'Compiling', path, error
       # compile source, path, compilers, callback
       callback null, {compiled: source, source, path}
   else
