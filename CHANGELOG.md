@@ -1,9 +1,12 @@
+# Brunch 1.8.1 (20 April 2015)
+* Enabled NPM support by default. Just load any installed npm package in your code
+  via `require('package')`.
+
 # Brunch 1.8.0 (8 April 2015)
 * Added **NPM support** for client-side libraries.
     Just specify dependencies in `package.json` and load them within your app
     with `require('package')`. Brunch would do all the hard job for you.
     Behind config option for now (`config.npm = {enabled: true}`).
-    *Update:* temporarily disabled until *v1.8.1*.
 * Ultra-simple custom webservers.
     Brunch will now consume file `brunch-server.{js,coffee}` if it exists
     and it would be used to launch a custom webserver that launches with `brunch watch --server`.

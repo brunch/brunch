@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "keywords": [
     "assembler",
     "builder",
@@ -37,12 +37,12 @@
     "anysort": "~1.0.0",
     "async-each": "~0.1.2",
     "async-waterfall": "~0.1.2",
-    "chokidar": "~1.0.0",
+    "chokidar": "~1.0.1",
     "coffee-script": "~1.9.0",
     "commander": "~2.7.1",
     "commonjs-require-definition": "~0.2.0",
     "debug": "~2.1.1",
-    "deppack": "~0.0.8",
+    "deppack": "~0.1.0",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.4.0",
     "loggy": "~0.2.0",
