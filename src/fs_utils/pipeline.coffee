@@ -72,15 +72,20 @@ compile = (source, path, compilers, callback) ->
   first = (next) -> next null, {source, path, callback}
   waterfall [first].concat(compilers.map mapCompilerChain), callback
 
+brre = /brunch/
 isNpm = (path) ->
   return false unless mediator.npmIsEnabled
   path.indexOf('node_modules') >= 0 and
-  not /brunch/.test(path) # Brunch modules.
+  not brre.test(path) # Brunch modules.
+
+depOptions = {basedir: '.', rollback: false, ignoreRequireDefinition: true}
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
-    deppack path, {basedir: '.', rollback: true, ignoreRequireDefinition: true}, (error, source) ->
-      compile source, path, compilers, callback
+    deppack path, depOptions, (error, source) ->
+      console.log 'Compiling', path, error
+      # compile source, path, compilers, callback
+      callback null, {compiled: source, source, path}
   else
     fcache.readFile path, (error, source) =>
       return callback throwError 'Read', error if error?

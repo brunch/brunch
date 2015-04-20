@@ -7,7 +7,7 @@ debug = require('debug')('brunch:source-file')
 
 updateMap = (path, compiled, wrapped, sourceMap) ->
   if sourceMap
-    debug "Generated source map for '#{path}': " + JSON.stringify sourceMap
+    debug "Generated source map for '#{path}' "
 
   if typeof wrapped is 'object'
     {prefix, suffix} = wrapped

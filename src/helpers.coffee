@@ -287,7 +287,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   production.plugins.autoReload.enabled ?= false
 
   npm = config.npm ?= {}
-  npm.enabled       = false
+  npm.enabled      ?= false
 
   config
 
@@ -405,6 +405,7 @@ loadNpm = (config, cb) ->
       name: dep
       files: [file]
       version: json.dependencies[dep]
+
   cb components: items
 
 addPackageManagers = (config, callback) ->

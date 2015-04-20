@@ -6,8 +6,7 @@
 * Ultra-simple custom webservers.
     Brunch will now consume file `brunch-server.{js,coffee}` if it exists
     and it would be used to launch a custom webserver that launches with `brunch watch --server`.
-* No more need to write `startServer` function for custom servers —
-  just export the function with `module.exports`
+    Also, no more need to write `startServer` — just export the function with `module.exports`
 * Added `preCompile` plugins (gh-873).
 * Compilers can now return dependencies:
     `{data: 'file-data', dependencies: ['a.js', 'b.js']}`
