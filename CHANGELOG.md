@@ -1,3 +1,6 @@
+# Brunch 1.8.2 (21 April 2015)
+* Fix regression with `-d`/`--debug` CLI switch
+
 # Brunch 1.8.1 (20 April 2015)
 * Enabled NPM support by default. Just load any installed npm package in your code
   via `require('package')`.
