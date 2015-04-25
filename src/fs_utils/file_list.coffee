@@ -85,6 +85,7 @@ module.exports = class FileList extends EventEmitter
   compileDependencyParents: (path) ->
     parents = @files
       .filter (dependent) =>
+        dependent.dependencies and
         dependent.dependencies.length > 0 and
         path in dependent.dependencies and
         not @compiled[dependent.path]
