@@ -31,6 +31,7 @@ Brunch language is a CoffeeScript class that has `brunchPlugin` property. It wou
 * `optimize(params, callback)` or `optimize(data, path, callback)` where `params may contain data, path and map`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callback(error, {data, map})`).
 * `onCompile(generatedFiles)`: `(optional, function)` would be called every time after brunch walks through the whole compilation circle. Could be useful if you make browser autoreload plugin etc.
 * `teardown`: `(optional, function)` with it you can stop servers in your plugins and stuff. It will be called after each brunch stop.
+* `defaultEnv`: `(optional, string)` used to indicate which `env` a plugin should be applied to by default. `'*'` can be passed to indicate all environments, which is the default for all plugins except optimizers. For optimizers, if `defaultEnv` is not specified then they will be run only when `config.optimize` is true (which is the default setting for the `'production'` `env`).
 
 
 Example:
