@@ -1,3 +1,7 @@
+# Brunch 1.8.3 (19 May 2015)
+* Fix restarting watcher upon config change
+* Fix issue with npm includes that have no dependencies
+
 # Brunch 1.8.2 (21 April 2015)
 * Fix regression with `-d`/`--debug` CLI switch
 
