@@ -580,5 +580,11 @@ class BrunchWatcher
     start
 
 module.exports = watch = (persistent, path, options, callback = (->)) ->
-  process.chdir path if path
+  # If path isn't provided (by CL)
+  if path
+    if typeof path is 'string'
+      process.chdir path
+    else
+      callback = options if typeof 'options' is 'function'
+      options = path
   new BrunchWatcher(persistent, options, callback)
