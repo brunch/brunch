@@ -19,11 +19,9 @@ or
 
 * **[See Brunch documentation](https://github.com/brunch/brunch/tree/stable/docs)**
 * Check out the [Getting started guide](https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md)
-
-More information located on [brunch.io](http://brunch.io).
-
-* Project twitter: [@brunch](http://twitter.com/brunch)
-* Project forum: http://ost.io/@brunch/brunch
+* Follow us on Twitter: [@brunch](http://twitter.com/brunch)
+* Ask questions on forum (or stack overflow): http://ost.io/@brunch/brunch
+* Visit our site: [brunch.io](http://brunch.io).
 
 ## License
 Brunch is released under the [MIT License](https://raw.github.com/brunch/brunch/master/LICENSE)
