@@ -20,7 +20,7 @@ or
 * Create your project: `brunch new`
 * Continuously build it for development: `brunch watch [-s]`
 * Prepare it for production: `brunch build -P`
-* **[See Brunch documentation](https://github.com/brunch/brunch/tree/stable/docs)**
+* **[See Brunch documentation](https://github.com/brunch/brunch/tree/master/docs)**
 * Check out the [Getting started guide](https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md)
 * Follow us on Twitter: [@brunch](http://twitter.com/brunch)
 * Ask questions on forum (or stack overflow): http://ost.io/@brunch/brunch
