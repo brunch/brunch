@@ -3,11 +3,9 @@
 [![NPM](https://nodei.co/npm/brunch.png?compact=true)](https://nodei.co/npm/brunch/)  
 [![NPM](https://nodei.co/npm-dl/brunch.png)](https://nodei.co/npm/brunch/)
 
-HTML5 applications made easy.
+> HTML5 applications made easy.
 
-Brunch is a build tool for front-end web applications. It's agnostic to
-frameworks, libraries, programming, stylesheet & templating languages and
-backend technology.
+Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps
 
 **[Brunch Documentation](https://github.com/brunch/brunch/tree/stable/docs)**
 
