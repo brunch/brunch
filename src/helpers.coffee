@@ -391,7 +391,7 @@ loadNpm = (config, cb) ->
   catch error
     throw new Error "You probably need to execute `npm install` to install brunch plugins. #{error}"
 
-  items = Object.keys(json.dependencies)
+  items = Object.keys(json.dependencies or {})
     .filter (dep) ->
       # Ignore Brunch plugins.
       dep isnt 'brunch' and
