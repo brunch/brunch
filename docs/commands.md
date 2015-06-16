@@ -12,7 +12,7 @@ git / github repo address of project), contents of which will be copied to new d
 
 `.git` directory is automatically removed when copying.
 
-Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Creating new application with any skeleton is pretty simple: `brunch new <app> --skeleton <address>`.
+Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Creating new application with any skeleton is pretty simple: `brunch new <address> <app>`.
 
 `<address>` can be a:
 
