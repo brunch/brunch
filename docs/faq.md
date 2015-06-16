@@ -81,7 +81,7 @@ This is useful for explicitly seeing the list of source files that are compiled 
 
 ### Linux/OS X:
 
-Add `DEBUG='brunch:*'` in front of your `brunch` command for on-demand use, such as `DEBUG='brunch:*' brunch build`
+Use the `--debug` (`-d`) option, or add `DEBUG='brunch:*'` in front of your `brunch` command for on-demand use, such as `DEBUG='brunch:*' brunch build`
 
 Or run `export DEBUG='brunch:*'` to persist the setting for the rest of your terminal session.
 Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.

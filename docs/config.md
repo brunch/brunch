@@ -72,9 +72,9 @@ files:
 
 `Object`: `conventions` define tests, against which all file pathnames will be checked.
 
-* `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/` directory.
+* `ignored` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have `common.styl` file that you import in every stylus file, `common.styl` will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (`_common.styl`) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to [Sass partials](http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/). By default, files and directories that start with underscore (`_`) will be ignored, as well as anything under the `vendor/node/`, `vendor/ruby-*/`, `vendor/jruby-*/`, and `vendor/bundle/` directories.
 * `assets` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Default value: `/assets[\\/]/`. If test gives true, file won't be compiled and will be just moved to public directory instead.
-* `vendor` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Default value: `/vendor[\\/]/`. If test gives true, file won't be wrapped in module, if there are any.
+* `vendor` key: [anymatch set](https://github.com/es128/anymatch#anymatch-). Default value: `/(^bower_components|node_modules|vendor)[\\/]/`. If test gives true, file won't be wrapped in module, if there are any.
 
 Keep in mind that default brunch regexps, as you see, consider **all** `vendor/` (etc.) directories as vendor (etc.) files. So, `app/views/vendor/thing/chaplin_view.coffee` will be treated as vendor file.
 
@@ -95,7 +95,7 @@ conventions:
 * `commonjs` (Default) — CommonJS wrapper.
 * `amd` — AMD `r.js`-like wrapper.
 * `false` — no wrapping. Files will be compiled as-is.
-* Function that takes path and data
+* Function that takes path, data, and a boolean set to `true` if the file is in a vendor directory. 
 
 `modules.definition`: `String, Boolean or Function` a code that will be added on top of every generated JavaScript file. Values:
 
@@ -234,7 +234,7 @@ server:
 
 ## `sourceMaps`
 
-`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled).
+`Boolean`: enables or disables Source Map generation. Default value is `true` (enabled), `false` (disabled) if you run `brunch build --production`.
 `String`:
   * set to `'old'` to use the old `@` control character instead of `#`.
   * set to `'absoluteUrl'` to set the `sourceMappingURL` to the complete URL path starting from `config.paths.public`
