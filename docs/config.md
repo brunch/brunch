@@ -95,7 +95,7 @@ conventions:
 * `commonjs` (Default) — CommonJS wrapper.
 * `amd` — AMD `r.js`-like wrapper.
 * `false` — no wrapping. Files will be compiled as-is.
-* Function that takes path and data
+* Function that takes path, data, and a boolean set to `true` if the file is in a vendor directory. 
 
 `modules.definition`: `String, Boolean or Function` a code that will be added on top of every generated JavaScript file. Values:
 
