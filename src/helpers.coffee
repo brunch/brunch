@@ -272,6 +272,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
   modules.wrapper     ?= 'commonjs'
   modules.definition  ?= 'commonjs'
   modules.nameCleaner ?= (path) -> path.replace(/^app\//, '')
+  modules.appendRequire ?= {}
 
   server               = config.server        ?= {}
   server.base         ?= ''
@@ -329,6 +330,7 @@ normalizeConfig = (config) ->
   normalized.modules = {}
   normalized.modules.wrapper = normalizeWrapper mod.wrapper, config.modules.nameCleaner
   normalized.modules.definition = normalizeDefinition mod.definition
+  normalized.modules.appendRequire = mod.appendRequire
   normalized.conventions = {}
   Object.keys(config.conventions).forEach (name) ->
     normalized.conventions[name] = normalizeChecker config.conventions[name]
