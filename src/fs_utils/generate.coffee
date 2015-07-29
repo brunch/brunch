@@ -61,7 +61,7 @@ sort = (files, config, joinToValue) ->
     indexes[path]
 
 # New.
-concat = (files, path, type, definition, aliases) ->
+concat = (files, path, type, definition, aliases, autoRequire) ->
   # nodes = files.map toNode
   root = new SourceNode()
   debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
@@ -75,6 +75,9 @@ concat = (files, path, type, definition, aliases) ->
   aliases?.forEach (alias) ->
     key = Object.keys(alias)[0]
     root.add "require.alias('#{key}', '#{alias[key]}');"
+
+  autoRequire?.forEach (require) ->
+    root.add "require('#{require}');"
 
   root.toStringWithSourceMap file: path
 
@@ -124,7 +127,7 @@ generate = (path, sourceFiles, config, optimizers, callback) ->
   joinToValue = config.files["#{type}s"].joinTo[joinKey]
   sorted = sort sourceFiles, config, joinToValue
 
-  {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo.component.aliases
+  {code, map} = concat sorted, path, type, config._normalized.modules.definition, config._normalized.packageInfo.component.aliases, config._normalized.modules.autoRequire[joinKey]
 
   withMaps = (map and config.sourceMaps)
   mapPath = "#{path}.map"
