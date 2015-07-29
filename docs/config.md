@@ -122,6 +122,15 @@ require.define({#{path}: function(exports, require, module) {
     """
 ```
 
+`modules.appendRequire`: `Object` specifies requires to be automatically added at the end of joined file. The example below will require both 'app' and 'foo':
+
+```coffeescript
+# Default behaviour.
+modules:
+  appendRequire:
+    'javascripts/app.js': ['app', 'foo']
+```
+
 `modules.nameCleaner`: `Function` Allows you to set filterer function for module names,
 for example, change all 'app/file' to 'file'. Example:
 
