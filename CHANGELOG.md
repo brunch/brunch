@@ -1,3 +1,6 @@
+# Brunch 1.8.4 (31 July 2015)
+* Add `modules.autoRequire` option that would automatically append `require('module')` to your javascript outputs.
+
 # Brunch 1.8.3 (19 May 2015)
 * Fix restarting watcher upon config change
 * Fix issue with npm includes that have no dependencies
