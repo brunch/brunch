@@ -402,7 +402,7 @@ loadNpm = (config, cb) ->
     .map (dep) ->
       depPath = sysPath.join rootPath, 'node_modules', dep
       depJson = require sysPath.join depPath, 'package.json'
-      depJson = deepExtend(depJson, json.overrides[dep]) if json.overrides[dep]
+      depJson = deepExtend(depJson, json.overrides[dep]) if json.overrides?[dep]
       depMain = depJson.main or 'index.js'
       file = sysPath.join 'node_modules', dep, depMain
       name: dep
