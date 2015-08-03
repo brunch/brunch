@@ -3,7 +3,7 @@
 debug = require('debug')('brunch:asset')
 sysPath = require 'path'
 common = require './common'
-{isWindows} = require '../helpers'
+isWindows = require('../helpers').isWindows
 
 # Directory separator.
 separator = sysPath.sep or (if isWindows then '\\' else '/')

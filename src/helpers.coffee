@@ -1,11 +1,11 @@
 'use strict'
 
 fs_utils = require './fs_utils'
-{exec} = require 'child_process'
+exec = require('child_process').exec
 os = require 'os'
 sysPath = require 'path'
 logger = require 'loggy'
-{SourceNode} = require 'source-map'
+SourceNode = require('source-map').SourceNode
 readComponents = require 'read-components'
 debug = require('debug')('brunch:helpers')
 commonRequireDefinition = require 'commonjs-require-definition'

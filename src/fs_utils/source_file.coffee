@@ -1,9 +1,11 @@
 'use strict'
 
 debug = require('debug')('brunch:source-file')
-{pipeline} = require './pipeline'
-{identityNode, replaceBackSlashes, isWindows} = require '../helpers'
-{SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
+pipeline = require('./pipeline').pipeline
+helpers = require '../helpers'
+{identityNode, replaceBackSlashes, isWindows} = helpers
+smap = require 'source-map'
+{SourceMapConsumer, SourceMapGenerator, SourceNode} = smap
 
 updateMap = (path, compiled, wrapped, sourceMap) ->
   if sourceMap

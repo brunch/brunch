@@ -1,11 +1,12 @@
 'use strict'
 
 debug = require('debug')('brunch:generate')
-{basename} = require 'path'
+basename = require('path').basename
 waterfall = require 'async-waterfall'
 anysort = require 'anysort'
 common = require './common'
-{SourceMapConsumer, SourceMapGenerator, SourceNode} = require 'source-map'
+smap = require 'source-map'
+{SourceMapConsumer, SourceMapGenerator, SourceNode} = smap
 
 # Sorts by pattern.
 #

@@ -5,7 +5,7 @@ waterfall = require 'async-waterfall'
 chokidar = require 'chokidar'
 debug = require('debug')('brunch:watch')
 sysPath = require 'path'
-{spawn} = require 'child_process'
+spawn = require('child_process').spawn
 logger = require 'loggy'
 pushserve = require 'pushserve'
 # worker must be loaded before fs_utils

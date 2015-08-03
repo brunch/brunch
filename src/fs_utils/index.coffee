@@ -1,6 +1,7 @@
 'use strict'
 
-{exists, ignored} = require './common'
+common = require './common'
+{exists, ignored} = common
 FileList = require './file_list'
 write = require './write'
 

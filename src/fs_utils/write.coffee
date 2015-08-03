@@ -4,7 +4,8 @@ debug = require('debug')('brunch:write')
 each = require 'async-each'
 sysPath = require 'path'
 generate = require './generate'
-{formatError} = require '../helpers'
+_helpers = require '../helpers'
+formatError = _helpers.formatError
 logger = require 'loggy'
 anymatch = require 'anymatch'
 

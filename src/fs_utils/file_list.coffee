@@ -1,12 +1,12 @@
 'use strict'
 
 debug = require('debug')('brunch:file-list')
-{EventEmitter} = require 'events'
-{normalize} = require 'path'
+EventEmitter = require('events').EventEmitter
+normalize = require('path').normalize
 fcache = require 'fcache'
 Asset = require './asset'
 SourceFile = require './source_file'
-{formatError} = require '../helpers'
+formatError = require('../helpers').formatError
 
 startsWith = (string, substring) ->
   string.lastIndexOf(substring, 0) is 0
