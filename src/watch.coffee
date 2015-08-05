@@ -54,6 +54,7 @@ generateParams = (persistent, options) ->
     params.server = {}
     params.server.run = true if options.server
     params.server.port = options.port if options.port
+    params.stdin = true if options.stdin
   params
 
 startServer = (config, callback = ->) ->
@@ -499,7 +500,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     onChange()
     changeFileList compilers, linters, fileList, path, false
 
-  if config.persistent
+  if config.persistent and config.stdin
     process.stdin.on 'end', -> process.exit(0)
     process.stdin.resume()
 
