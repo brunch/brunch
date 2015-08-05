@@ -1,3 +1,6 @@
+# Brunch 1.8.5 (5 August 2015)
+* Only listen to stdin (and exit when stdin is closed) when the `--stdin` CLI switch is passed
+
 # Brunch 1.8.4 (31 July 2015)
 * Add `modules.autoRequire` option that would automatically append `require('module')` to your javascript outputs.
 
