@@ -47,6 +47,7 @@ generateParams = (persistent, options) ->
   if options.production? or options.optimize?
     params.env.unshift 'production'
   params.persistent = persistent
+  params.stdin = options.stdin?
   if options.publicPath
     params.paths = {}
     params.paths.public = options.publicPath
@@ -499,7 +500,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     onChange()
     changeFileList compilers, linters, fileList, path, false
 
-  if config.persistent
+  if config.persistent and config.stdin
     process.stdin.on 'end', -> process.exit(0)
     process.stdin.resume()
 

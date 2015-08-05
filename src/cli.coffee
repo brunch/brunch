@@ -35,6 +35,7 @@ watchCmd = program
   .option('-p, --port [port]', 'if a `server` option was specified, define on which port
  the server would run')
   .option('-d, --debug', 'print verbose debug output to stdout')
+  .option('--stdin', 'listen to stdin and exit when stdin closes')
   .action(commands.watch)
 
 addDeprecatedOpts = ->
