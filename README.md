@@ -1,6 +1,6 @@
 # Brunch
 
-[![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch)
+[![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch) [![Dependency Status](https://david-dm.org/brunch/brunch.svg)](https://david-dm.org/brunch/brunch) [![devDependency Status](https://david-dm.org/brunch/brunch/dev-status.svg)](https://david-dm.org/brunch/brunch#info=devDependencies)
 
 [![Join the chat at https://gitter.im/brunch/brunch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/brunch/brunch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
