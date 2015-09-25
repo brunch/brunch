@@ -40,7 +40,7 @@ module.exports = class FileList extends EventEmitter
 
   # Files that are not really app files.
   isIgnored: (path, test = @config.conventions.ignored) ->
-    return true if path in @config._normalized.paths.allConfigFiles
+    return true if @config._normalized.paths.allConfigFiles.indexOf(path) >= 0
 
     switch toString.call(test).slice(8, -1)
       when 'RegExp'
@@ -87,7 +87,7 @@ module.exports = class FileList extends EventEmitter
       .filter (dependent) =>
         dependent.dependencies and
         dependent.dependencies.length > 0 and
-        path in dependent.dependencies and
+        dependent.dependencies.indexOf(path) >= 0 and
         not @compiled[dependent.path]
 
     if parents.length

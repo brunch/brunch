@@ -50,7 +50,8 @@ applyOverrides = (config, options) ->
         overrideProps.plugins ?= {}
         overrideProps.plugins[v] = (overrideProps.plugins[v] or [])
           .concat (config.plugins[v] or []).filter (plugin) ->
-            plugin not in (overrideProps.plugins[k] or [])
+            list = overrideProps.plugins[k] or []
+            list.indexOf(plugin) is -1
 
     deepExtend config, overrideProps, config.files
   config
@@ -60,7 +61,7 @@ deepExtend = (object, properties, rootFiles = {}) ->
   Object.keys(properties).forEach (key) ->
     value = properties[key]
     # Special case for files[type]: don't merge nested objects.
-    if toString.call(value) is '[object Object]' and object not in nestedObjs
+    if toString.call(value) is '[object Object]' and nestedObjs.indexOf(object) is -1
       object[key] ?= {}
       deepExtend object[key], value, rootFiles
     else

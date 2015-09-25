@@ -40,7 +40,7 @@ extractOrder = (files, config) ->
   types = files.map (file) -> file.type + 's'
   orders = Object.keys(config.files)
     .filter (key) ->
-      key in types
+      types.indexOf(key) >= 0
     .map (key) ->
       config.files[key].order or {}
 
@@ -116,8 +116,9 @@ optimize = (data, map, path, optimizers, sourceFiles, callback) ->
   first = (next) -> next null, initial
   waterfall [first].concat(optimizers.map mapOptimizerChain), callback
 
+jsTypes = ['javascript', 'template']
 generate = (path, sourceFiles, config, optimizers, callback) ->
-  type = if sourceFiles.some((file) -> file.type in ['javascript', 'template'])
+  type = if sourceFiles.some((file) -> jsTypes.indexOf(file.type) >= 0)
     'javascript'
   else
     'stylesheet'

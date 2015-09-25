@@ -14,7 +14,8 @@ pipeline.pipeline = (args...) ->
   [path, linters, compilers, callback] = args
   cfg = workers and workers.config
   exts = cfg and cfg.extensions
-  if workers and (not exts or sysPath.extname(path).slice(1) in exts)
+  ext = sysPath.extname(path).slice(1)
+  if workers and (not exts or exts.indexOf(ext) >= 0)
     debug "Worker compilation of #{path}"
     workers.queue path, ([msg]) ->
       msg.compiled = msg.data

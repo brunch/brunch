@@ -19,12 +19,13 @@ formatWriteError = (sourceFile) ->
 
 getPaths = (sourceFile, joinConfig) ->
   sourceFileJoinConfig = joinConfig[sourceFile.type + 's'] or {}
+  hlprs = sourceFileJoinConfig.pluginHelpers
   Object.keys(sourceFileJoinConfig)
     .filter (key) ->
       key isnt 'pluginHelpers'
     .filter (generatedFilePath) ->
       if sourceFile.isHelper
-        generatedFilePath in sourceFileJoinConfig.pluginHelpers
+        hlprs.indexOf(generatedFilePath) >= 0
       else
         checker = sourceFileJoinConfig[generatedFilePath]
         checker sourceFile.path

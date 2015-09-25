@@ -48,16 +48,20 @@ addDeprecatedOpts = ->
 exports.run = ->
   args = process.argv.slice()
   command = args[2]
+  hasArg = (name) ->
+    args.indexOf(name) >= 0
+  hasCommand = (valid...) ->
+    valid.indexOf(command) >= 0
 
-  if '-c' in args or '--config' in args
+  if hasArg('-c') or hasArg('--config')
     console.error '--config is deprecated. Use `-e / --environment` and custom envs in config'
     addDeprecatedOpts()
 
-  if '-o' in args or '--optimize' in args
+  if hasArg('-o') or hasArg('--optimize')
     console.error '--optimize is deprecated. Use `-P / --production`'
     addDeprecatedOpts()
 
-  if command in ['g', 'd', 'generate', 'destroy']
+  if hasCommand('g', 'd', 'generate', 'destroy')
     console.error '''`brunch generate / destroy` command was removed.
 
     Use scaffolt (https://github.com/paulmillr/scaffolt)
@@ -66,7 +70,7 @@ exports.run = ->
         scaffolt <type> <name> [options]
         scaffolt <type> <name> [options] --revert
     '''
-  if command in ['t', 'test']
+  if hasCommand('t', 'test')
     console.error '''`brunch test` command was removed.
 
     Use mocha-phantomjs (http://metaskills.net/mocha-phantomjs/)
@@ -74,7 +78,7 @@ exports.run = ->
         npm install -g mocha-phantomjs
         mocha-phantomjs [options] <your-html-file-or-url>
     '''
-  if command in ['n', 'new'] and '--skeleton' in args
+  if hasCommand('n', 'new') and hasArg('--skeleton')
     return console.error '''`--skeleton` option has been removed from `brunch new`.
 
     The syntax is now simply:
