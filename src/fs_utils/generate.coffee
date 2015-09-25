@@ -20,12 +20,12 @@ smap = require 'source-map'
 sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
     criteria = [
-      config.before ? []
-      config.after ? []
-      config.joinToValue ? []
-      config.bower ? []
-      config.component ? []
-      config.vendorConvention ? -> no
+      config.before or []
+      config.after or []
+      config.joinToValue or []
+      config.bower or []
+      config.component or []
+      config.vendorConvention or (-> no)
     ]
     anysort.grouped files, criteria, [0, 2, 3, 4, 5, 6, 1]
   else
