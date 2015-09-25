@@ -12,7 +12,8 @@ workers = undefined
 origPipeline = pipeline.pipeline
 pipeline.pipeline = (args...) ->
   [path, linters, compilers, callback] = args
-  exts = workers?.config?.extensions
+  cfg = workers and workers.config
+  exts = cfg and cfg.extensions
   if workers and (not exts or sysPath.extname(path).slice(1) in exts)
     debug "Worker compilation of #{path}"
     workers.queue path, ([msg]) ->
@@ -44,7 +45,7 @@ class BrunchWorkers
         @handlers = {}
         list.push this
         do work
-      else if msg?[0]?.path
+      else if msg and msg[0] and msg[0].path
         @handlers[msg[0].path] msg
   queue: (path, handler) ->
     @jobs.push {path, handler}

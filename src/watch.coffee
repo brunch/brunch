@@ -43,7 +43,8 @@ propIsFunction = (prop) -> (object) ->
 #
 # Returns Object. ###
 generateParams = (persistent, options) ->
-  params = env: options.env?.split(',') or []
+  env = options.env
+  params = env: (env and env.split ',') or []
   if options.production? or options.optimize?
     params.env.unshift 'production'
   params.persistent = persistent
@@ -79,7 +80,7 @@ startServer = (config, callback = ->) ->
 
     serverFn = if typeof server is 'function'
       server
-    else if typeof server?.startServer is 'function'
+    else if server and typeof server.startServer is 'function'
       server.startServer.bind(server)
     else
       throw new Error 'Brunch server file needs to have startServer function'
@@ -135,7 +136,10 @@ initWatcher = (config, callback) ->
 
   each watched, exists, (err, existing) ->
     watchedFiles = watched.filter((_, index) -> existing[index])
-    params = ignored: fs_utils.ignored, persistent: config.persistent, usePolling: config.watcher?.usePolling
+    params =
+      ignored: fs_utils.ignored
+      persistent: config.persistent
+      usePolling: config.watcher and config.watcher.usePolling
     callback null, chokidar.watch watchedFiles, params
 
 ### Generate function that will check if plugin can work with file.
@@ -324,7 +328,7 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
       worker.close()
       watch config.persistent, null, options, onCompile
     plugins.forEach (plugin) -> plugin.teardown?()
-    if server?.close?
+    if server and typeof server.close is 'function'
       server.close restart
     else
       restart()
@@ -336,11 +340,14 @@ getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInsta
     reWatch()
 
 getPlugins = (packages, config) ->
+  exts = config.workers and config.workers.extensions
   packages
     .filter (plugin) ->
-      if worker.isWorker and config.workers?.extensions
-        return false unless plugin::?.extension in config.workers.extensions
-      plugin::?.brunchPlugin and (not worker.isWorker or plugin::?.compile or plugin::?.lint)
+      plugin and plugin.prototype and plugin::brunchPlugin
+    .filter (plugin) ->
+      if worker.isWorker and exts and (plugin::extension not in exts)
+        return false
+      not worker.isWorker or plugin::compile or plugin::lint
     .map (plugin) ->
       instance = new plugin config
       instance.brunchPluginName = plugin.brunchPluginName
@@ -400,10 +407,12 @@ initialize = (options, configParams, onCompile, callback) ->
     if options.optimize?
       logger.warn '`-o, --optimize` option is deprecated. Use `-P, --production` instead'
     joinConfig = config._normalized.join
+    offPlugins = config.plugins.off or []
+    onlyPlugins = config.plugins.only or []
     packages = (loadPackages '.').filter ({brunchPluginName}) ->
-      if config.plugins.off?.length and brunchPluginName in config.plugins.off
+      if offPlugins.length and brunchPluginName in offPlugins
         false
-      else if config.plugins.only?.length and brunchPluginName not in config.plugins.only
+      else if onlyPlugins.length and brunchPluginName not in onlyPlugins
         false
       else
         true
@@ -556,7 +565,7 @@ class BrunchWatcher
     initialize options, configParams, onCompile, (error, result) =>
       return logger.error error if error?
       {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
-      if @config.workers?.enabled
+      if @config.workers and @config.workers.enabled
         return unless worker {changeFileList, compilers, linters, fileList, @config}
 
       bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation

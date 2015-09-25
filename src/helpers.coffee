@@ -257,7 +257,7 @@ exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
 
   conventions          = config.conventions   ?= {}
   conventions.assets  ?= /assets[\\/]/
-  conventions.ignored ?= paths.ignored ? [
+  conventions.ignored ?= paths.ignored or [
     /[\\/]_/
     /vendor[\\/](node|j?ruby-.*|bundle)[\\/]/
   ]

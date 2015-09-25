@@ -135,7 +135,8 @@ module.exports = class FileList extends EventEmitter
     ignored = @isIgnored path
     if @is 'assets', path
       unless ignored
-        @copy (@findAsset(path) ? @_addAsset path)
+        asst = @findAsset(path) or @_addAsset path
+        @copy asst
     else
       debug "Reading '#{path}'"
       fcache.updateCache path, (error, source) =>

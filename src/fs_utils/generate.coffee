@@ -42,10 +42,10 @@ extractOrder = (files, config) ->
     .filter (key) ->
       key in types
     .map (key) ->
-      config.files[key].order ? {}
+      config.files[key].order or {}
 
-  before = flatten orders.map (type) -> (type.before ? [])
-  after = flatten orders.map (type) -> (type.after ? [])
+  before = flatten orders.map (type) -> (type.before or [])
+  after = flatten orders.map (type) -> (type.after or [])
   {conventions, packageInfo} = config._normalized
   vendorConvention = conventions.vendor
   bower = packageInfo.bower.order
