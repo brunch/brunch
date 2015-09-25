@@ -69,7 +69,7 @@ module.exports = class FileList
     clearTimeout @timer if @timer?
     @timer = setTimeout =>
       # Clean disposed files.
-      @files = @files.filter (file) => not file.disposed
+      @files = @files.filter (file) -> not file.disposed
 
       if Object.keys(@compiling).length is 0 and Object.keys(@copying).length is 0
         @emit 'ready'
@@ -85,12 +85,13 @@ module.exports = class FileList
     @assets.filter((file) -> file.path is path)[0]
 
   compileDependencyParents: (path) ->
+    compiled = @compiled
     parents = @files
-      .filter (dependent) =>
+      .filter (dependent) ->
         dependent.dependencies and
         dependent.dependencies.length > 0 and
         dependent.dependencies.indexOf(path) >= 0 and
-        not @compiled[dependent.path]
+        not compiled[dependent.path]
 
     if parents.length
       parentsList = parents.map((_) -> _.path).join ', '
@@ -137,16 +138,15 @@ module.exports = class FileList
     ignored = @isIgnored path
     if @is 'assets', path
       unless ignored
-        asst = @findAsset(path) or @_addAsset path
-        @copy asst
+        file = @findAsset(path) or @_addAsset path
+        @copy file
     else
       debug "Reading '#{path}'"
       fcache.updateCache path, (error, source) =>
         if error
           return console.log 'Reading', error if error?
         if not ignored and (compiler and compiler.length)
-          sourceFile = @find(path) ?
-            @_add path, compiler, linters, isHelper
+          sourceFile = @find(path) or @_add path, compiler, linters, isHelper
           @compile sourceFile
 
         @compileDependencyParents path unless @initial

@@ -106,7 +106,7 @@ startServer = (config, callback = ->) ->
       throw new Error 'Custom server command invalid'
     child = spawn commandComponents.shift(), commandComponents, stdio: 'inherit'
     ### fn to kill the custom server ###
-    child.close = (cb) =>
+    child.close = (cb) ->
       child.kill()
       cb?()
 
@@ -560,22 +560,24 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
 # start time. It is `null` when there are no compilations. ###
 class BrunchWatcher
   constructor: (persistent, options, onCompile) ->
-    @_start = Date.now()
+    _this = this
+    _this._start = Date.now()
     configParams = generateParams persistent, options
-    initialize options, configParams, onCompile, (error, result) =>
+    initialize options, configParams, onCompile, (error, result) ->
       return logger.error error if error?
-      {@config, watcher, fileList, compilers, linters, compile, reload, includes} = result
-      if @config.workers and @config.workers.enabled
-        return unless worker {changeFileList, compilers, linters, fileList, @config}
+      {config, watcher, fileList, compilers, linters, compile, reload, includes} = result
+      _this.config = config
+      if config.workers and config.workers.enabled
+        return unless worker {changeFileList, compilers, linters, fileList, config}
 
-      bindWatcherEvents @config, fileList, compilers, linters, watcher, reload, @_startCompilation
+      bindWatcherEvents config, fileList, compilers, linters, watcher, reload, _this._startCompilation
       watcherReady = false
       watcher.once 'ready', -> watcherReady = true
-      fileList.on 'ready', => compile @_endCompilation(), watcherReady if @_start
+      fileList.on 'ready', -> compile _this._endCompilation(), watcherReady if _this._start
       ### Emit `change` event for each file that is included with plugins.
       # Wish it worked like `watcher.add includes`. ###
-      includes.forEach (path) =>
-        relative = sysPath.relative @config.paths.root, path
+      includes.forEach (path) ->
+        relative = sysPath.relative _this.config.paths.root, path
         changeFileList compilers, linters, fileList, relative, true
 
   ### Set start time of last compilation to current time.

@@ -14,7 +14,7 @@ smap = require 'source-map'
 #
 #   sort ['b.coffee', 'c.coffee', 'a.coffee'],
 #     before: ['a.coffee'], after: ['b.coffee']
-#   # => ['a.coffee', 'c.coffee', 'b.coffee']
+#   # ['a.coffee', 'c.coffee', 'b.coffee']
 #
 # Returns new sorted array. ###
 sortByConfig = (files, config) ->

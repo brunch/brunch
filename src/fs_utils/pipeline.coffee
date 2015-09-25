@@ -8,7 +8,7 @@ logger = require 'loggy'
 deppack = require 'deppack'
 mediator = require '../mediator'
 
-throwError = (type, stringOrError) =>
+throwError = (type, stringOrError) ->
   string = if stringOrError instanceof Error
     stringOrError.toString().replace /^([^:]+:\s+)/, ''
   else
@@ -62,7 +62,7 @@ mapCompilerChain = (compiler) -> (params, next) ->
       compiled = result
     unless compiled?
       throw new Error "Brunch SourceFile: file #{path} data is invalid"
-    getDependencies source, path, compilerDeps, compiler, (error, dependencies) =>
+    getDependencies source, path, compilerDeps, compiler, (error, dependencies) ->
       return callback throwError 'Dependency parsing', error if error?
       next null, {dependencies, compiled, source, sourceMap, path, callback}
 
@@ -88,7 +88,7 @@ pipeline = (path, linters, compilers, callback) ->
       ### compile source, path, compilers, callback ###
       callback null, {compiled: source, source, path}
   else
-    fcache.readFile path, (error, source) =>
+    fcache.readFile path, (error, source) ->
       return callback throwError 'Read', error if error?
 
       lint source, path, linters, (error) ->

@@ -12,7 +12,7 @@ separator = sysPath.sep or (if isWindows then '\\' else '/')
 #
 # Example:
 #   getAssetDirectory 'app/assets/thing/thing2.html', /assets/
-#   # => app/assets/
+#   # app/assets/
 #
 # Returns String. ###
 getAssetDirectory = (path, convention) ->
@@ -26,12 +26,13 @@ getAssetDirectory = (path, convention) ->
 
 ### A static file that shall be copied to public directory. ###
 module.exports = class Asset
-  constructor: (@path, publicPath, assetsConvention) ->
-    directory = getAssetDirectory @path, assetsConvention
-    @relativePath = sysPath.relative directory, @path
+  constructor: (path, publicPath, assetsConvention) ->
+    directory = getAssetDirectory path, assetsConvention
+    @path = path
+    @relativePath = sysPath.relative directory, path
     @destinationPath = sysPath.join publicPath, @relativePath
     debug "Initializing fs_utils.Asset %s", JSON.stringify {
-      @path, directory, @relativePath, @destinationPath
+      path, directory, @relativePath, @destinationPath
     }
     @error = null
     @copyTime = null
@@ -39,12 +40,14 @@ module.exports = class Asset
 
   ### Copy file to public directory. ###
   copy: (callback) ->
-    common.copy @path, @destinationPath, (error) =>
+    _this = this
+    common.copy @path, @destinationPath, (error) ->
       if error?
         err = new Error error
         err.code = 'Copying'
-        @error = err
+        _this.error = err
       else
-        @error = null
-      @copyTime = Date.now()
-      callback @error
+        _this.error = null
+      _this.copyTime = Date.now()
+      callback _this.error
+    return

@@ -18,7 +18,7 @@ coffee.register()
 # Example
 #
 #   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
-#   # => {a: 5, b: 15, c: 20, e: 50}
+#   # {a: 5, b: 15, c: 20, e: 50}
 ###
 exports.extend = extend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
@@ -241,7 +241,7 @@ normalizeDefinition = (typeOrFunction) ->
 or one of: "commonjs", false'
 
 exports.setConfigDefaults = setConfigDefaults = (config, configPath) ->
-  join = (parent, name) =>
+  join = (parent, name) ->
     sysPath.join config.paths[parent], name
 
   joinRoot = (name) ->
