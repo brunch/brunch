@@ -1,6 +1,7 @@
 'use strict'
 
 debug = require('debug')('brunch:file-list')
+util = require 'util'
 EventEmitter = require('events').EventEmitter
 normalize = require('path').normalize
 fcache = require 'fcache'
@@ -13,12 +14,13 @@ startsWith = (string, substring) ->
 
 ### A list of `fs_utils.SourceFile` or `fs_utils.Asset`
 # with some additional methods used to simplify file reading / removing. ###
-module.exports = class FileList extends EventEmitter
+module.exports = class FileList
   ### Maximum time between changes of two files that will be considered
   # as a one compilation. ###
   resetTime: 65
 
   constructor: (@config) ->
+    EventEmitter.call(this)
     @files = []
     @assets = []
     @on 'change', @_change
@@ -161,3 +163,5 @@ module.exports = class FileList extends EventEmitter
         file = @find path
         file.removed = true if file and not file.disposed
     @resetTimer()
+
+util.inherits FileList, EventEmitter
