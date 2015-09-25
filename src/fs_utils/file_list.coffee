@@ -164,4 +164,4 @@ module.exports = class FileList
         file.removed = true if file and not file.disposed
     @resetTimer()
 
-util.inherits FileList, EventEmitter
+FileList.prototype.__proto__ = EventEmitter.prototype
