@@ -429,8 +429,11 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
     fullPath = sysPath.resolve configPath
     fullPath = require.resolve fullPath
     delete require.cache[fullPath]
-    {config} = require fullPath
-    unless config?.files
+    obj = require fullPath
+    config = obj.config or obj
+    unless config
+      throw new Error 'Brunch config must be a valid object'
+    unless config.files
       throw new Error 'Brunch config must have "files" property'
   catch error
     if configPath is 'brunch-config' and error.code is 'MODULE_NOT_FOUND'

@@ -80,6 +80,7 @@ isNpm = (path) ->
   ### Brunch modules. ###
 
 depOptions = {basedir: '.', rollback: false, ignoreRequireDefinition: true}
+warningRe = /^warn\:\s/i
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
@@ -91,10 +92,11 @@ pipeline = (path, linters, compilers, callback) ->
       return callback throwError 'Read', error if error?
 
       lint source, path, linters, (error) ->
-        if error?.toString().match /^warn\:\s/i
-          logger.warn "Linting of #{path}: #{error}"
-        else
-          return callback throwError 'Linting', error if error?
+        if error?
+          if error.toString().match warningRe
+            logger.warn "Linting of #{path}: #{error}"
+          else
+            return callback throwError 'Linting', error
 
         compile source, path, compilers, callback
 

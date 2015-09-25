@@ -141,7 +141,7 @@ module.exports = class FileList extends EventEmitter
       fcache.updateCache path, (error, source) =>
         if error
           return console.log 'Reading', error if error?
-        if not ignored and compiler?.length
+        if not ignored and (compiler and compiler.length)
           sourceFile = @find(path) ?
             @_add path, compiler, linters, isHelper
           @compile sourceFile
