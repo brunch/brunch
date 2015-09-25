@@ -8,17 +8,17 @@ sysPath = require 'path'
 spawn = require('child_process').spawn
 logger = require 'loggy'
 pushserve = require 'pushserve'
-# worker must be loaded before fs_utils
+### Worker must be loaded before fs_utils. ###
 worker = require './worker'
 fs_utils = require './fs_utils'
 helpers = require './helpers'
 
-# Get paths to files that plugins include. E.g. handlebars-brunch includes
+### Get paths to files that plugins include. E.g. handlebars-brunch includes
 # `../vendor/handlebars-runtime.js` with path relative to plugin.
 #
 # plugins - Array of brunch plugins.
 #
-# Returns Array of Strings.
+# Returns Array of Strings. ###
 getPluginIncludes = (plugins) ->
   getValue = (thing, context = this) ->
     if typeof thing is 'function' then thing.call(context) else thing
@@ -31,17 +31,17 @@ getPluginIncludes = (plugins) ->
     .filter((paths) -> paths?)
     .reduce(((acc, elem) -> acc.concat(ensureArray elem)), [])
 
-# Generate function that will check if object has property and it is a fn.
-# Returns Function.
+### Generate function that will check if object has property and it is a fn.
+# Returns Function. ###
 propIsFunction = (prop) -> (object) ->
   typeof object[prop] is 'function'
 
-# Generate params that will be used as default config values.
+### Generate params that will be used as default config values.
 #
 # persistent - Boolean. Determines if brunch should run a web server.
 # options    - Object. {optimize, publicPath, server, port}.
 #
-# Returns Object.
+# Returns Object. ###
 generateParams = (persistent, options) ->
   params = env: options.env?.split(',') or []
   if options.production? or options.optimize?
@@ -104,7 +104,7 @@ startServer = (config, callback = ->) ->
     unless commandComponents.length
       throw new Error 'Custom server command invalid'
     child = spawn commandComponents.shift(), commandComponents, stdio: 'inherit'
-    # fn to kill the custom server
+    ### fn to kill the custom server ###
     child.close = (cb) =>
       child.kill()
       cb?()
@@ -115,12 +115,12 @@ startServer = (config, callback = ->) ->
     opts = noLog: yes, path: publicPath
     pushserve helpers.extend(opts, serverOpts), serverCb
 
-# Filter paths that exist and watch them with `chokidar` package.
+### Filter paths that exist and watch them with `chokidar` package.
 #
 # config   - application config
 # callback - Function that will take (error, `chokidar.FSWatcher` instance).
 #
-# Returns nothing.
+# Returns nothing. ###
 initWatcher = (config, callback) ->
   {allConfigFiles} = config._normalized.paths
   {npm, bower, component} = config._normalized.packageInfo
@@ -138,22 +138,23 @@ initWatcher = (config, callback) ->
     params = ignored: fs_utils.ignored, persistent: config.persistent, usePolling: config.watcher?.usePolling
     callback null, chokidar.watch watchedFiles, params
 
-# Generate function that will check if plugin can work with file.
+### Generate function that will check if plugin can work with file.
 #
 # path   - Path to source file that can be compiled with plugin
 # plugin - Brunch plugin instance.
 #
-# Returns Function.
+# Returns Function. ###
 isPluginFor = (path) -> (plugin) ->
   pattern = if plugin.pattern
     plugin.pattern
   else if plugin.extension
     RegExp "\\.#{plugin.extension}$"
   else
-    /$0^/ # never match
+    ### never match ###
+    /$0^/
   pattern.test(path)
 
-# Determine which compiler should be used for path and
+### Determine which compiler should be used for path and
 # emit `change` event.
 #
 # compilers - Array. Brunch plugins that were treated as compilers.
@@ -162,14 +163,14 @@ isPluginFor = (path) -> (plugin) ->
 # path      - String. Path to file that was changed.
 # isHelper  - Boolean. Is current file included with brunch plugin?
 #
-# Returns nothing.
+# Returns nothing. ###
 changeFileList = (compilers, linters, fileList, path, isHelper) ->
   compiler = compilers.filter(isPluginFor path)
   currentLinters = linters.filter(isPluginFor path)
   fileList.emit 'change', path, compiler, currentLinters, isHelper
 
 generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) ->
-  # compiled 4 files and 145 cached files into app.js
+  ### compiled 4 files and 145 cached files into app.js
   # compiled app.js and 10 cached files into app.js, copied 2 files
   # `compiled 106 into 3 and copied 47 files` - initial compilation
   # `copied img.png` - 1 new/changed asset
@@ -180,7 +181,7 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
   # `compiled 5 files into ie7.css` - change all source files that go into 1 compiled
   # `compiled 2 and 3 cached files into ie7.css` - change some source files that go into 1 compiled
   # `compiled 4 files and 1 cached into ie7.css` - 1 cached should not switch to filename
-  # `compiled 5 and 101 cached into 3 files` - change >1 affecting >1 compiled
+  # `compiled 5 and 101 cached into 3 files` - change >1 affecting >1 compiled ###
   getName = (file) -> sysPath.basename file.path
   copied = allAssets.filter((_) -> _.copyTime > startTime).map(getName)
   generated = []
@@ -253,7 +254,7 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
 
   "#{if main then main else 'compiled'} in #{diff}ms"
 
-# Generate function that consolidates all needed info and generate files.
+### Generate function that consolidates all needed info and generate files.
 #
 # config     - Object. Application config.
 # joinConfig - Object. Generated from app config by `getJoinConfig()`
@@ -263,15 +264,15 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
 # callback   - Function. Will receive an array of `fs_utils.GeneratedFile`.
 # startTime  - Number. Timestamp of a moment when compilation started.
 #
-# Returns Function.
+# Returns Function. ###
 getCompileFn = (config, joinConfig, fileList, optimizers, watcher, preCompile, callback) -> (startTime, watcherReady) ->
   assetErrors = fileList.getAssetErrors()
   if assetErrors?
     assetErrors.forEach (error) -> logger.error error
     return
 
-  # Determine which files has been changed,
-  # create new `fs_utils.GeneratedFile` instances and write them.
+  ### Determine which files has been changed,
+  # create new `fs_utils.GeneratedFile` instances and write them. ###
   writeCb = (error, generatedFiles, disposed) ->
     if error?
       if Array.isArray error
@@ -281,13 +282,13 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, preCompile, c
         logger.error error
     else
       logger.info generateCompilationLog startTime, fileList.assets, generatedFiles, disposed
-      # pass `fs_utils.GeneratedFile` instances to callbacks.
+      ### pass `fs_utils.GeneratedFile` instances to callbacks. ###
       callback generatedFiles
 
     return unless watcherReady
 
-    # If it’s single non-continuous build, close file watcher and
-    # exit process with correct exit code.
+    ### If it’s single non-continuous build, close file watcher and
+    # exit process with correct exit code. ###
     unless config.persistent
       watcher.close()
       worker.close()
@@ -305,7 +306,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, preCompile, c
   else
     fs_utils.write fileList, config, joinConfig, optimizers, startTime, writeCb
 
-# Generate function that restarts brunch process.
+### Generate function that restarts brunch process.
 #
 # config    - application config.
 # options   - options that would be passed to new watcher.
@@ -315,7 +316,7 @@ getCompileFn = (config, joinConfig, fileList, optimizers, watcher, preCompile, c
 # plugins   - brunch plugins.
 # reInstall - should brunch run `npm install` before rewatching?
 #
-# Returns Function.
+# Returns Function. ###
 getReloadFn = (config, options, onCompile, watcher, server, plugins) -> (reInstall) ->
   reWatch = ->
     restart = ->
@@ -355,7 +356,7 @@ loadPackages = (rootPath, callback) ->
   catch err
     throw new Error "Current directory is not brunch application root path,
  as it does not contain package.json (#{err})"
-  # TODO: test if `brunch-plugin` is in dep’s package.json.
+  ### TODO: test if `brunch-plugin` is in dep’s package.json. ###
   loadDeps = (deps, isDev) ->
     requireModule = (depPath, dependencyName) ->
       plugin = require depPath
@@ -381,16 +382,16 @@ loadPackages = (rootPath, callback) ->
   optPlugins = loadDeps(Object.keys(json.optionalDependencies or {}), true)
   plugins.concat(devPlugins.concat(optPlugins).filter((_) -> _?))
 
-# Load brunch plugins, group them and initialise file watcher.
+### Load brunch plugins, group them and initialise file watcher.
 #
 # options      - Object. {config[, optimize, server, port]}.
 # configParams - Object. Optional. Params will be set as default config params.
 # onCompile    - Function. Will be executed after every successful compilation.
 # callback     - Function.
 #
-# Returns nothing.
+# Returns nothing. ###
 initialize = (options, configParams, onCompile, callback) ->
-  # Load config, get brunch packages from package.json.
+  ### Load config, get brunch packages from package.json. ###
   helpers.loadConfig options.config, configParams, (error, config) ->
     logger.notifications = config.notifications
     logger.notificationsTitle = config.notificationsTitle or 'Brunch'
@@ -411,46 +412,46 @@ initialize = (options, configParams, onCompile, callback) ->
     alwaysEnabled = config.plugins.on or []
 
     plugins = unfiltered.filter (plugin) ->
-      # backward compatibility for legacy optimizers
+      ### Backward compatibility for legacy optimizers. ###
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
 
-      # Does the user's config say this plugin should definitely be used?
+      ### Does the user's config say this plugin should definitely be used? ###
       return true if plugin.brunchPluginName in alwaysEnabled
 
-      # If the plugin is an optimizer that doesn't specify a defaultEnv
-      # decide based on the config.optimize setting
+      ### If the plugin is an optimizer that doesn't specify a defaultEnv
+      # decide based on the config.optimize setting ###
       return config.optimize if plugin.optimize and not plugin.defaultEnv
 
-      # Use plugin-specified defaultEnv or assume it's meant for any env
+      ### Use plugin-specified defaultEnv or assume it's meant for any env ###
       env = plugin.defaultEnv ?= '*'
 
-      # Finally, is it meant for either any environment or an active environment?
+      ### Finally, is it meant for either any environment or an active environment? ###
       env is '*' or env in config.env
 
     debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
-    # Get compilation methods.
+    ### Get compilation methods. ###
     compilers  = plugins.filter propIsFunction 'compile'
     linters    = plugins.filter propIsFunction 'lint'
     optimizers = plugins.filter propIsFunction 'optimize'
 
-    # Get plugin preCompile callbacks
+    ### Get plugin preCompile callbacks. ###
     preCompilers = plugins.filter(propIsFunction 'preCompile').map((plugin) -> (args..., cb) -> plugin.preCompile(cb))
 
-    # Add preCompile callback from config
+    ### Add preCompile callback from config. ###
     if typeof config.preCompile is 'function'
       preCompilers.push (args..., cb) -> config.preCompile(cb)
     callPreCompillers = (cb) ->
       waterfall(preCompilers, cb)
 
-    # Get plugin onCompile callbacks
+    ### Get plugin onCompile callbacks. ###
     callbacks  = plugins.filter(propIsFunction 'onCompile').map((plugin) -> (args...) -> plugin.onCompile args...)
 
-    # Add onCompile callback from config
+    ### Add onCompile callback from config. ###
     if typeof config.onCompile is 'function'
       callbacks.push config.onCompile
 
-    # Add default brunch callback.
+    ### Add default brunch callback. ###
     callbacks.push onCompile
     callCompileCallbacks = (generatedFiles) ->
       callbacks.forEach (callback) ->
@@ -461,10 +462,10 @@ initialize = (options, configParams, onCompile, callback) ->
       return callback null, {config, fileList, compilers, linters}
 
     launchWatcher = ->
-      # Initialise file watcher.
+      ### Initialise file watcher. ###
       initWatcher config, (error, watcher) ->
         return callback error if error?
-        # Get compile and reload functions.
+        ### Get compile and reload functions. ###
         compile = getCompileFn config, joinConfig, fileList, optimizers, watcher, callPreCompillers, callCompileCallbacks
         reload = getReloadFn config, options, onCompile, watcher, server, plugins
         includes = getPluginIncludes(plugins)
@@ -482,7 +483,7 @@ isConfigFile = (basename, configPath) ->
   files.some (file) ->
     basename is file
 
-# Binds needed events to watcher.
+### Binds needed events to watcher.
 #
 # config    - application config.
 # fileList  - `fs_utils.FileList` instance.
@@ -491,7 +492,7 @@ isConfigFile = (basename, configPath) ->
 # reload    - function that will reload the whole thing.
 # onChange  - callback that will be executed every time any file is changed.
 #
-# Returns nothing.
+# Returns nothing. ###
 bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onChange) ->
   {possibleConfigFiles} = config._normalized.paths
   {packageConfig, bowerConfig} = config.paths
@@ -514,7 +515,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
         changeHandler path
     .on 'change', (absPath) ->
       path = sysPath.relative config.paths.root, absPath
-      # If file is special (config.coffee, package.json), restart Brunch.
+      ### If file is special (config.coffee, package.json), restart Brunch. ###
       isConfigFile = possibleConfigFiles[path]
       isPackageFile = path is packageConfig
       if isConfigFile or isPackageFile
@@ -525,8 +526,8 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
         changeHandler path
     .on 'unlink', (absPath) ->
       path = sysPath.relative config.paths.root, absPath
-      # If file is special (config.coffee, package.json), exit.
-      # Otherwise, just update file list.
+      ### If file is special (config.coffee, package.json), exit.
+      # Otherwise, just update file list. ###
       isConfigFile = possibleConfigFiles[path]
       isPackageFile = path is packageConfig
       if isConfigFile or isPackageFile
@@ -539,7 +540,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     watcher.on 'all', (event, path) ->
       debug "File '#{path}' received event '#{event}'"
 
-# persistent - Boolean: should brunch build the app only once or watch it?
+### persistent - Boolean: should brunch build the app only once or watch it?
 # options    - Object: {configPath, optimize, server, port}. Only configPath is
 #              needed.
 # onCompile  - Function that will be executed after every successful
@@ -547,7 +548,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
 #
 # this.config is an application config.
 # this._start is a mutable timestamp that represents latest compilation
-# start time. It is `null` when there are no compilations.
+# start time. It is `null` when there are no compilations. ###
 class BrunchWatcher
   constructor: (persistent, options, onCompile) ->
     @_start = Date.now()
@@ -562,26 +563,26 @@ class BrunchWatcher
       watcherReady = false
       watcher.once 'ready', -> watcherReady = true
       fileList.on 'ready', => compile @_endCompilation(), watcherReady if @_start
-      # Emit `change` event for each file that is included with plugins.
-      # Wish it worked like `watcher.add includes`.
+      ### Emit `change` event for each file that is included with plugins.
+      # Wish it worked like `watcher.add includes`. ###
       includes.forEach (path) =>
         relative = sysPath.relative @config.paths.root, path
         changeFileList compilers, linters, fileList, relative, true
 
-  # Set start time of last compilation to current time.
-  # Returns Number.
+  ### Set start time of last compilation to current time.
+  # Returns Number. ###
   _startCompilation: =>
     @_start ?= Date.now()
 
-  # Get last compilation start time and reset the state.
-  # Returns Number.
+  ### Get last compilation start time and reset the state.
+  # Returns Number. ###
   _endCompilation: =>
     start = @_start
     @_start = null
     start
 
 module.exports = watch = (persistent, path, options, callback = (->)) ->
-  # If path isn't provided (by CL)
+  ### If path isn't provided (by CL) ###
   if path
     if typeof path is 'string'
       process.chdir path

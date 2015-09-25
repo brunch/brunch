@@ -73,7 +73,7 @@ makeCompiler = (path, cache, linters, compilers, wrap) ->
       updateCache normalizedPath, cache, error, data, wrap
       callback error, cache.data
 
-# A file that will be compiled by brunch.
+### A file that will be compiled by brunch. ###
 module.exports = class SourceFile
   constructor: (@path, compilers, linters, wrapper, @isHelper, isVendor) ->
     compiler = compilers[0]

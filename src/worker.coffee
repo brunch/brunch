@@ -8,7 +8,7 @@ pipeline = require './fs_utils/pipeline'
 
 workers = undefined
 
-# monkey-patch pipeline and override on master process
+### monkey-patch pipeline and override on master process ###
 origPipeline = pipeline.pipeline
 pipeline.pipeline = (args...) ->
   [path, linters, compilers, callback] = args
@@ -21,7 +21,7 @@ pipeline.pipeline = (args...) ->
   else
     origPipeline args...
 
-# method invoked on worker processes
+### method invoked on worker processes ###
 initWorker = ({changeFileList, compilers, linters, fileList}) ->
   fileList.on 'compiled', (path) ->
     process.send fileList.files.filter (_) -> _.path is path
@@ -30,7 +30,7 @@ initWorker = ({changeFileList, compilers, linters, fileList}) ->
       changeFileList compilers, linters, fileList, path if path
     .send 'ready'
 
-# BrunchWorkers class invoked in the master process for wrangling all the workers
+### BrunchWorkers class invoked in the master process for wrangling all the workers ###
 class BrunchWorkers
   constructor: (@config={}) ->
     counter = @count = @config.count or numCPUs - 1

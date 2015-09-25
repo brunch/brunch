@@ -6,13 +6,13 @@ fs = require 'fs'
 mkdirp = require 'mkdirp'
 sysPath = require 'path'
 
-# Supports node 0.12+, 0.8 and 0.6 styles.
+### Supports node 0.12+, 0.8 and 0.6 styles. ###
 exports.exists = if fs.access
   (path, callback) -> fs.access(path, (error) -> callback not error)
 else
   fs.exists or sysPath.exists
 
-# Writes data into a file.
+### Writes data into a file.
 # Creates the file and/or all parent directories if they don't exist.
 #
 # path - String. Path to the file.
@@ -24,7 +24,7 @@ else
 #
 #   writeFile 'test.txt', 'data', (error) -> console.log error if error?
 #
-# Returns nothing.
+# Returns nothing. ###
 exports.writeFile = (path, data, callback) ->
   debug "Writing file '#{path}'"
   write = (callback) -> fs.writeFile path, data, callback
@@ -35,7 +35,7 @@ exports.writeFile = (path, data, callback) ->
       write (error) ->
         callback error, path, data
 
-# RegExp that filters out invalid files (dotfiles, emacs caches etc).
+### RegExp that filters out invalid files (dotfiles, emacs caches etc). ###
 exports.ignored = ignored = do ->
   re1 = /\.(?!htaccess|rewrite)/
   re2 = /(^[.#]|(?:__|~)$)/
@@ -43,7 +43,7 @@ exports.ignored = ignored = do ->
     base = sysPath.basename path
     re1.test(base) and re2.test(base)
 
-# Files that should always be ignored (git / mercurial metadata etc).
+#### Files that should always be ignored (git / mercurial metadata etc). ###
 exports.ignoredAlways = ignoredAlways = (path) ->
   /^\.(git|hg)$/.test sysPath.basename path
 

@@ -11,11 +11,11 @@ formatError = require('../helpers').formatError
 startsWith = (string, substring) ->
   string.lastIndexOf(substring, 0) is 0
 
-# A list of `fs_utils.SourceFile` or `fs_utils.Asset`
-# with some additional methods used to simplify file reading / removing.
+### A list of `fs_utils.SourceFile` or `fs_utils.Asset`
+# with some additional methods used to simplify file reading / removing. ###
 module.exports = class FileList extends EventEmitter
-  # Maximum time between changes of two files that will be considered
-  # as a one compilation.
+  ### Maximum time between changes of two files that will be considered
+  # as a one compilation. ###
   resetTime: 65
 
   constructor: (@config) ->
@@ -42,14 +42,14 @@ module.exports = class FileList extends EventEmitter
   isIgnored: (path, test = @config.conventions.ignored) ->
     return true if path in @config._normalized.paths.allConfigFiles
 
-    switch toString.call(test)
-      when '[object RegExp]'
+    switch toString.call(test).slice(8, -1)
+      when 'RegExp'
         path.match test
-      when '[object Function]'
+      when 'Function'
         test path
-      when '[object String]'
+      when 'String'
         startsWith normalize(path), normalize(test)
-      when '[object Array]'
+      when 'Array'
         test.some((subTest) => @isIgnored path, subTest)
       else
         false

@@ -5,16 +5,16 @@ sysPath = require 'path'
 common = require './common'
 isWindows = require('../helpers').isWindows
 
-# Directory separator.
+### Directory separator. ###
 separator = sysPath.sep or (if isWindows then '\\' else '/')
 
-# Get first parent directory that matches asset convention.
+### Get first parent directory that matches asset convention.
 #
 # Example:
 #   getAssetDirectory 'app/assets/thing/thing2.html', /assets/
 #   # => app/assets/
 #
-# Returns String.
+# Returns String. ###
 getAssetDirectory = (path, convention) ->
   split = path.split(separator)
   # Creates thing like this
@@ -24,7 +24,7 @@ getAssetDirectory = (path, convention) ->
       split.slice(0, index).concat([part, '']).join(separator)
     .filter(convention)[0]
 
-# A static file that shall be copied to public directory.
+### A static file that shall be copied to public directory. ###
 module.exports = class Asset
   constructor: (@path, publicPath, assetsConvention) ->
     directory = getAssetDirectory @path, assetsConvention
@@ -37,7 +37,7 @@ module.exports = class Asset
     @copyTime = null
     Object.seal this
 
-  # Copy file to public directory.
+  ### Copy file to public directory. ###
   copy: (callback) ->
     common.copy @path, @destinationPath, (error) =>
       if error?

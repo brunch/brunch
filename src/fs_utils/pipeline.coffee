@@ -17,7 +17,7 @@ throwError = (type, stringOrError) =>
   error.code = type
   error
 
-# Run all linters.
+### Run all linters. ###
 lint = (data, path, linters, callback) ->
   if linters.length is 0
     callback null
@@ -27,7 +27,7 @@ lint = (data, path, linters, callback) ->
       linter.lint data, path, callback
     , callback
 
-# Extract files that depend on current file.
+### Extract files that depend on current file. ###
 getDependencies = (data, path, compilerDeps, compiler, callback) ->
   if compiler.getDependencies
     {name} = compiler.constructor
@@ -45,10 +45,10 @@ mapCompilerChain = (compiler) -> (params, next) ->
 
   compilerData = compiled or source
   compilerArgs = if compiler.compile.length is 2
-    # New API: compile({data, path}, callback)
+    ### New API: compile({data, path}, callback) ###
     [{data: compilerData, path, map: sourceMap}]
   else
-    # Old API: compile(data, path, callback)
+    ### Old API: compile(data, path, callback) ###
     [compilerData, path]
 
   compilerArgs.push (error, result) ->
@@ -76,14 +76,15 @@ brre = /brunch/
 isNpm = (path) ->
   return false unless mediator.npmIsEnabled
   path.indexOf('node_modules') >= 0 and
-  not brre.test(path) # Brunch modules.
+  not brre.test(path)
+  ### Brunch modules. ###
 
 depOptions = {basedir: '.', rollback: false, ignoreRequireDefinition: true}
 
 pipeline = (path, linters, compilers, callback) ->
   if isNpm path
     deppack path, depOptions, (error, source) ->
-      # compile source, path, compilers, callback
+      ### compile source, path, compilers, callback ###
       callback null, {compiled: source, source, path}
   else
     fcache.readFile path, (error, source) =>

@@ -14,25 +14,25 @@ mediator = require './mediator'
 coffee = require 'coffee-script'
 coffee.register()
 
-# Extends the object with properties from another object.
+### Extends the object with properties from another object.
 # Example
 #
 #   extend {a: 5, b: 10}, {b: 15, c: 20, e: 50}
 #   # => {a: 5, b: 15, c: 20, e: 50}
-#
+###
 exports.extend = extend = (object, properties) ->
   Object.keys(properties).forEach (key) ->
     object[key] = properties[key]
   object
 
 applyOverrides = (config, options) ->
-  # Allow the environment to be set from environment variable
+  ### Allow the environment to be set from environment variable ###
   config.env = options.env
   environments = options.env
   if process.env.BRUNCH_ENV?
     environments.unshift process.env.BRUNCH_ENV
 
-  # Preserve default config before overriding
+  ### Preserve default config before overriding ###
   if environments.length and 'overrides' of config
     config.overrides._default = {}
     Object.keys(config).forEach (prop) ->
@@ -44,7 +44,7 @@ applyOverrides = (config, options) ->
   environments.forEach (override) ->
     overrideProps = config.overrides?[override] or {}
 
-    # Special override handling for plugins.on|off arrays (gh-826)
+    ### Special override handling for plugins.on|off arrays (gh-826) ###
     for k, v of {on: 'off', off: 'on'}
       if config.plugins?[v]
         overrideProps.plugins ?= {}
@@ -109,30 +109,30 @@ exports.replaceConfigSlashes = replaceConfigSlashes = (config) ->
     lang = files[language] or {}
     order = lang.order or {}
 
-    # Modify order.
+    ### Modify order. ###
     Object.keys(order).forEach (orderKey) ->
       lang.order[orderKey] = lang.order[orderKey].map(replaceSlashes)
 
-    # Modify join configuration.
-    switch toString.call(lang.joinTo)
-      when '[object String]'
+    ### Modify join configuration. ###
+    switch toString.call(lang.joinTo).slice(8, -1)
+      when 'String'
         lang.joinTo = replaceSlashes lang.joinTo
-      when '[object Object]'
+      when 'Object'
         newJoinTo = {}
         Object.keys(lang.joinTo).forEach (joinToKey) ->
           newJoinTo[replaceSlashes joinToKey] = lang.joinTo[joinToKey]
         lang.joinTo = newJoinTo
   config
 
-# Config items can be a RegExp or a function.
+### Config items can be a RegExp or a function.
 # The function makes universal API to them.
 #
 # item - RegExp or Function
 #
-# Returns Function.
+# Returns Function. ###
 normalizeChecker = anymatch
 
-# Converts `config.files[...].joinTo` to one format.
+### Converts `config.files[...].joinTo` to one format.
 # config.files[type].joinTo can be a string, a map of {str: regexp} or a map
 # of {str: function}.
 #
@@ -143,9 +143,9 @@ normalizeChecker = anymatch
 #   templates: {'javascripts/app.js': checker2}
 # }
 #
-# Returns Object of Object-s.
+# Returns Object of Object-s. ###
 createJoinConfig = (configFiles) ->
-  # Can be used in `reduce` as `array.reduce(listToObj, {})`.
+  ### Can be used in `reduce` as `array.reduce(listToObj, {})`. ###
   listToObj = (acc, elem) ->
     acc[elem[0]] = elem[1]
     acc
@@ -168,7 +168,7 @@ createJoinConfig = (configFiles) ->
       [types[index], subConfig]
     .reduce(listToObj, {})
 
-  # special matching for plugin helpers
+  ### special matching for plugin helpers ###
   types.forEach (type) ->
     pluginHelpers = configFiles[type].pluginHelpers
     joinConfig[type].pluginHelpers =
@@ -208,7 +208,7 @@ getModuleWrapper = (type, nameCleaner) -> (fullPath, data, isVendor) ->
     data
   else
     debug "Wrapping '#{path}' with #{type}"
-    # Wrap in common.js require definition.
+    ### Wrap in common.js require definition. ###
     if type is 'commonjs'
       prefix: "require.register(#{path}, function(exports, require, module) {\n"
       suffix: "});\n\n"
@@ -361,7 +361,7 @@ addDefaultServer = (config) ->
     require resolved
     config.server.path ?= resolved
   catch e
-    # Do nothing.
+    ### Do nothing. ###
   config
 
 loadComponents = (config, type, callback) ->
@@ -395,7 +395,7 @@ loadNpm = (config, cb) ->
 
   items = Object.keys(json.dependencies or {})
     .filter (dep) ->
-      # Ignore Brunch plugins.
+      ### Ignore Brunch plugins. ###
       dep isnt 'brunch' and
       dep.indexOf('brunch') is -1 and
       not normalizeChecker(config.conventions.ignored, dep)
@@ -425,7 +425,7 @@ addPackageManagers = (config, callback) ->
 
 exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
   try
-    # assign fullPath in two steps in case require.resolve throws
+    ### Assign fullPath in two steps in case require.resolve throws. ###
     fullPath = sysPath.resolve configPath
     fullPath = require.resolve fullPath
     delete require.cache[fullPath]
@@ -434,10 +434,10 @@ exports.loadConfig = (configPath = 'brunch-config', options = {}, callback) ->
       throw new Error 'Brunch config must have "files" property'
   catch error
     if configPath is 'brunch-config' and error.code is 'MODULE_NOT_FOUND'
-      # start to warn about deprecation of 'config' with 1.8 release
-      # seamless and silent fallback until then
+      ### start to warn about deprecation of 'config' with 1.8 release
+      # seamless and silent fallback until then ###
       return exports.loadConfig 'config', options, callback
-      # 'config' should remain available as a working deprecated option until 2.0
+      ### 'config' should remain available as a working deprecated option until 2.0 ###
     else
       throw new Error "couldn\'t load config #{fullPath}. #{error}"
 

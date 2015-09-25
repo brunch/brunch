@@ -8,7 +8,7 @@ common = require './common'
 smap = require 'source-map'
 {SourceMapConsumer, SourceMapGenerator, SourceNode} = smap
 
-# Sorts by pattern.
+### Sorts by pattern.
 #
 # Examples
 #
@@ -16,7 +16,7 @@ smap = require 'source-map'
 #     before: ['a.coffee'], after: ['b.coffee']
 #   # => ['a.coffee', 'c.coffee', 'b.coffee']
 #
-# Returns new sorted array.
+# Returns new sorted array. ###
 sortByConfig = (files, config) ->
   if toString.call(config) is '[object Object]'
     criteria = [
@@ -61,9 +61,9 @@ sort = (files, config, joinToValue) ->
   sortByConfig(paths, order).map (path) ->
     indexes[path]
 
-# New.
+### New. ###
 concat = (files, path, type, definition, aliases, autoRequire) ->
-  # nodes = files.map toNode
+  ### nodes = files.map toNode ###
   root = new SourceNode()
   debug "Concatenating #{files.map((_) -> _.path).join(', ')} to #{path}"
   files.forEach (file) ->
@@ -87,10 +87,10 @@ mapOptimizerChain = (optimizer) -> (params, next) ->
   debug "Optimizing '#{path}' with '#{optimizer.constructor.name}'"
 
   optimizerArgs = if optimizer.optimize.length is 2
-    # New API: optimize({data, path, map}, callback)
+    ### New API: optimize({data, path, map}, callback) ###
     [params]
   else
-    # Old API: optimize(data, path, callback)
+    ### Old API: optimize(data, path, callback) ###
     [data, path]
 
   optimizerArgs.push (error, optimized) ->

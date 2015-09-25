@@ -44,7 +44,7 @@ addDeprecatedOpts = ->
       .option('-c, --config [path]', '[DEPRECATED] path to config files')
       .option('-o, --optimize', '[DEPRECATED] same as `--env production`')
 
-# The function would be executed every time user run `bin/brunch`.
+### The function would be executed every time user run `bin/brunch`. ###
 exports.run = ->
   args = process.argv.slice()
   command = args[2]

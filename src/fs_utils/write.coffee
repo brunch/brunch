@@ -37,11 +37,11 @@ getFiles = (fileList, config, joinConfig, startTime) ->
     joinSpecs = anyJoinTo[file.type] ?=
       Object.keys(config.overrides).map (_) ->
         config.overrides[_].files
-      ## config.files was copied to config.overrides._default.files
-      #.concat [config.files]
       .map (_) -> _?["#{file.type}s"]?.joinTo
       .filter (_) -> _
 
+    ### config.files was copied to config.overrides._default.files ###
+    ###.concat [config.files] ###
     if typeof joinSpecs is 'function'
       joinSpecs file.path
     else if joinSpecs.some((_) -> typeof _ is 'string')
@@ -85,7 +85,7 @@ module.exports = write = (fileList, config, joinConfig, optimizers, startTime, c
 
   debug "Writing #{changed.length}/#{files.length} files"
 
-  # Remove files marked as such and dispose them, clean memory.
+  ### Remove files marked as such and dispose them, clean memory. ###
   disposed = generated: [], sourcePaths: []
   changed.forEach (generated) ->
     sourceFiles = generated.sourceFiles
