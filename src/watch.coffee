@@ -191,6 +191,7 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
   generated = []
   compiled = []
   cachedCount = 0
+  dgen = disposedFiles.generated
 
   generatedFiles.forEach (generatedFile) ->
     isChanged = false
@@ -200,8 +201,8 @@ generateCompilationLog = (startTime, allAssets, generatedFiles, disposedFiles) -
         isChanged = true
         locallyCompiledCount += 1
         sourceName = getName sourceFile
-        compiled.push sourceName unless sourceName in compiled
-      isChanged = true if not isChanged and generatedFile in disposedFiles.generated
+        compiled.push sourceName if compiled.indexOf(sourceName) is -1
+      isChanged = true if not isChanged and dgen.indexOf(generatedFile) >= 0
     if isChanged
       generated.push getName generatedFile
       cachedCount += (generatedFile.sourceFiles.length - locallyCompiledCount)
@@ -345,7 +346,7 @@ getPlugins = (packages, config) ->
     .filter (plugin) ->
       plugin and plugin.prototype and plugin::brunchPlugin
     .filter (plugin) ->
-      if worker.isWorker and exts and (plugin::extension not in exts)
+      if worker.isWorker and exts and exts.indexOf(plugin::extension) is -1
         return false
       not worker.isWorker or plugin::compile or plugin::lint
     .map (plugin) ->
@@ -410,9 +411,9 @@ initialize = (options, configParams, onCompile, callback) ->
     offPlugins = config.plugins.off or []
     onlyPlugins = config.plugins.only or []
     packages = (loadPackages '.').filter ({brunchPluginName}) ->
-      if offPlugins.length and brunchPluginName in offPlugins
+      if offPlugins.length and offPlugins.indexOf(brunchPluginName) >= 0
         false
-      else if onlyPlugins.length and brunchPluginName not in onlyPlugins
+      else if onlyPlugins.length and onlyPlugins.indexOf(brunchPluginName) is -1
         false
       else
         true
@@ -425,7 +426,7 @@ initialize = (options, configParams, onCompile, callback) ->
       plugin.optimize ?= plugin.minify if typeof plugin.minify is 'function'
 
       ### Does the user's config say this plugin should definitely be used? ###
-      return true if plugin.brunchPluginName in alwaysEnabled
+      return true if alwaysEnabled.length and alwaysEnabled.indexOf(plugin.brunchPluginName) >= 0
 
       ### If the plugin is an optimizer that doesn't specify a defaultEnv
       # decide based on the config.optimize setting ###
@@ -435,7 +436,7 @@ initialize = (options, configParams, onCompile, callback) ->
       env = plugin.defaultEnv ?= '*'
 
       ### Finally, is it meant for either any environment or an active environment? ###
-      env is '*' or env in config.env
+      env is '*' or config.env.indexOf(env) >= 0
 
     debug "Loaded plugins: #{plugins.map((plugin) -> plugin.brunchPluginName).join(', ')}"
 
@@ -505,6 +506,7 @@ isConfigFile = (basename, configPath) ->
 bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onChange) ->
   {possibleConfigFiles} = config._normalized.paths
   {packageConfig, bowerConfig} = config.paths
+  jsonConfigs = [packageConfig, bowerConfig]
 
   changeHandler = (path) ->
     onChange()
@@ -518,9 +520,7 @@ bindWatcherEvents = (config, fileList, compilers, linters, watcher, reload, onCh
     .on('error', logger.error)
     .on 'add', (absPath) ->
       path = sysPath.relative config.paths.root, absPath
-      isConfigFile = possibleConfigFiles[path]
-      isPluginsFile = path in [packageConfig, bowerConfig]
-      unless isConfigFile or isPluginsFile
+      unless possibleConfigFiles[path] or jsonConfigs.indexOf(path) >= 0
         changeHandler path
     .on 'change', (absPath) ->
       path = sysPath.relative config.paths.root, absPath
