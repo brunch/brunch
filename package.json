@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "A lightweight approach to building HTML5 applications with emphasis on elegance and simplicity",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "keywords": [
     "assembler",
     "builder",
@@ -27,9 +27,7 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "prepublish": "coffee -bo lib/ src/",
-    "postinstall": "node -e \"require('fs').readdir('lib',function(e){e&&require('child_process').exec('npm run prepublish')})\"",
-    "test": "mocha --compilers coffee:coffee-script/register --require test/common.coffee --colors"
+    "test": "mocha --compilers coffee:coffee-script/register --require test/common.js --colors"
   },
   "preferGlobal": true,
   "dependencies": {
