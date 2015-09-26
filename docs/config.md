@@ -4,7 +4,7 @@ NOTE: This page may refer to new features that have not yet been published. To s
 
 Brunch uses configuration file (`brunch-config.coffee` or `brunch-config.js`) located in the root directory to control various aspects of your application.
 
-You can see all config default values in the `setConfigDefaults` function of [`src/helpers.coffee`](/src/helpers.coffee) in the brunch source code.
+You can see all config default values in the `setConfigDefaults` function of [`src/helpers.js`](/src/helpers.js) in the brunch source code.
 
 It is an executable script, so you can also do things like import Node.js modules in your configuration file.
 
@@ -95,7 +95,7 @@ conventions:
 * `commonjs` (Default) — CommonJS wrapper.
 * `amd` — AMD `r.js`-like wrapper.
 * `false` — no wrapping. Files will be compiled as-is.
-* Function that takes path, data, and a boolean set to `true` if the file is in a vendor directory. 
+* Function that takes path, data, and a boolean set to `true` if the file is in a vendor directory.
 
 `modules.definition`: `String, Boolean or Function` a code that will be added on top of every generated JavaScript file. Values:
 
@@ -208,17 +208,17 @@ The server script must export a function that starts your custom server, either 
     return myServer;
   }
   ```
-  
+
   ```coffeescript
   # coffeescript example using `startServer` property and custom `close` method
   exports.startServer = (port, path, callback) ->
-  
+
     # custom server code
-    
+
     close: -> # code for shutting down server
   ```
 
-* `path`: (optional) custom path to nodejs file that will be loaded to run your custom server. 
+* `path`: (optional) custom path to nodejs file that will be loaded to run your custom server.
 
 If a custom server is not present, Brunch will use [pushserve](https://github.com/paulmillr/pushserve). If using your own, only `port` from the following options can be set from the config.
 
