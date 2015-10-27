@@ -86,6 +86,19 @@ conventions:
   assets: /files[\\/]/  # vendor/jquery/files/jq.img
 ```
 
+If you want to add to the ignore pattern instead of replace, you must copy the defaults into your config.
+
+Default ignore pattern:
+
+```coffeescript
+conventions:
+  ignored: [
+    /[\\/]_/
+    /vendor[\\/]node[\\/]/
+    /vendor[\\/](j?ruby-.*|bundle)[\\/]/
+  ]
+```
+
 ## `modules`
 
 `Object`: consists of `wrapper` and `definition` subsettings.
