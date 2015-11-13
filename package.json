@@ -16,12 +16,7 @@
   "author": "Brunch team (http://brunch.io)",
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "http://github.com/brunch/brunch/issues",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/brunch/brunch/raw/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "main": "./lib/index",
   "bin": {
     "brunch": "./bin/brunch"
