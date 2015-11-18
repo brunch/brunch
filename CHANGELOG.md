@@ -1,4 +1,5 @@
 # Brunch 2.0.0 (unreleased)
+* General speed & stability improvements.
 * Rewritten in JavaScript. Now requires node 4.0+. Won't work with older versions.
 * Allow to clone skeletons to dirs with .git and more
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
