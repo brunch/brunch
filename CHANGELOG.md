@@ -1,3 +1,5 @@
+To install the latest version, execute `npm install -g brunch`.
+
 # Brunch 2.0.0 (19 November 2015)
 * `brunch new` reworked and simplified:
     * `brunch new .` to create a new project in current directory
