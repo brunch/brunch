@@ -2,12 +2,12 @@
 
 ## `brunch new`
 
-Full syntax: `brunch new [path] [-s skeleton]`
+Full syntax: `brunch new [path]`
 
 Create new brunch project. Options:
 
 * `path`: name of project directory that would be created. Default: '.'.
-* `skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir.
+* `-s, --skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir.
 
 `.git` directory is automatically removed when copying.
 
