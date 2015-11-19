@@ -1,4 +1,4 @@
-# Brunch 2.0.0 (18 November 2015)
+# Brunch 2.0.0 (19 November 2015)
 * `brunch new` reworked and simplified:
     * `brunch new .` to create a new project in current directory
     * `brunch new path` to create the project in `path`
