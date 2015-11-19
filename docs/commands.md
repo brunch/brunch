@@ -2,32 +2,30 @@
 
 ## `brunch new`
 
-Full syntax: `brunch new <url-or-path> [rootPath]`
+Full syntax: `brunch new [path] [-s skeleton]`
 
 Create new brunch project. Options:
 
-* `url-or-path`: (required) skeleton (path or
-git / github repo address of project), contents of which will be copied to new dir.
-* `rootPath`: name of project directory that would be created. Default: '.'.
+* `path`: name of project directory that would be created. Default: '.'.
+* `skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir.
 
 `.git` directory is automatically removed when copying.
 
-Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Creating new application with any skeleton is pretty simple: `brunch new <address> <app>`.
+Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. A few popular skeletons:
 
-`<address>` can be a:
+* `brunch new -s simple` — if you want no opinions. Just initializes configs and empty directories
+* `brunch new -s react` — React + React Router + Stylus + ES6 / JSX
+* `brunch new -s hipster` — Angular, Bootstrap, node-webkit, CoffeeScript + Less + Jade
+* `brunch new -s chaplin` — Backbone, Chaplin, CoffeeScript. One of the most popular skeletons
 
-* System directory (`~/skeletons/my-private-skel`)
-* Git URL (`git://github.com/user/skel.git`)
-* GitHub-sugared URL (`gh:user/skel`, `github:user/skel`)
-
-Each skeleton must have `config.(js,coffee)`.
+Each skeleton must have `brunch-config.(js,coffee)` file.
 
 Short-cut: `brunch n`.
 
 Examples:
 
-* `brunch n ~/brunch-templates/simple`
-* `brunch n gh:paulmillr/brunch-with-chaplin twitter`
+* `brunch new -s simple`
+* `brunch new -s https://github.com/brunch/dead-simple`
 
 ## `brunch build`
 
