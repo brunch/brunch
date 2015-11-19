@@ -35,7 +35,7 @@
     "debug": "~2.2.0",
     "deppack": "~0.1.0",
     "fcache": "~0.1.0",
-    "init-skeleton": "~0.5.0",
+    "init-skeleton": "~0.6.0",
     "loggy": "~0.2.0",
     "mkdirp": "~0.5.0",
     "pushserve": "~0.1.6",

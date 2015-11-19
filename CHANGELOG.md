@@ -1,7 +1,11 @@
 # Brunch 2.0.0 (18 November 2015)
+* `brunch new` reworked and simplified:
+    * `brunch new .` to create a new project in current directory
+    * `brunch new path` to create the project in `path`
+    * `brunch new . --skeleton react` to create the project with `React` skeleton
+    * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
-* Rewritten in JavaScript. Now requires node 4.0+. Won't work with older versions.
-* Allow to clone skeletons to dirs with .git and more
+* Rewritten in JavaScript. Now *requires node 4.0 or higher*.
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
 * `modules.autoRequire` should now work correctly on Windows.
 
