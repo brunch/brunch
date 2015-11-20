@@ -2,9 +2,9 @@ To install the latest version, execute `npm install -g brunch`.
 
 # Brunch 2.0.0 (19 November 2015)
 * `brunch new` reworked and simplified:
-    * `brunch new .` to create a new project in current directory
+    * `brunch new .` to create a new project in current directory from dead-simple skeleton
     * `brunch new path` to create the project in `path`
-    * `brunch new . --skeleton react` to create the project with `React` skeleton
+    * `brunch new . --skeleton react` to create the project from `React` skeleton
     * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
 * Rewritten in JavaScript. Now *requires node 4.0 or higher*.
