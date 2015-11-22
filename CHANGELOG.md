@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`.
 
+# Brunch 2.0.1 (unreleased)
+* Launching Brunch on node v4< would now throw an explicit error.
+
 # Brunch 2.0.0 (19 November 2015)
 * `brunch new` reworked and simplified:
     * `brunch new .` to create a new project in current directory from dead-simple skeleton
@@ -7,7 +10,7 @@ To install the latest version, execute `npm install -g brunch`.
     * `brunch new . --skeleton react` to create the project from `React` skeleton
     * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
-* Rewritten in JavaScript. Now *requires node 4.0 or higher*.
+* Rewritten in JavaScript (ES6 + Promises). Now *requires node 4.0 or higher*.
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
 * `modules.autoRequire` should now work correctly on Windows.
 
