@@ -5,6 +5,12 @@
 * Update `package.json` brunch plugins versions to `>= 1.0 < 1.y` where y = brunch minor version + 1. For example, if you use brunch 1.5, you need to use plugins `>= 1.0 < 1.6`. If you use brunch 2.4, you need to use `>= 2.0 < 2.5`
 * Run `npm install` to re-install all plugins.
 
+## Upgrading to 2.0
+
+* You must upgrade node.js 4.0 or higher. Older versions would not work.
+* `brunch new` has new syntax. Now: `brunch new <path> [-s skeleton]`. Was: `brunch new <skeleton> <path>`.
+  The command would now use a default skeleton when not specified.
+
 ## Upgrading to 1.7
 
 * Rename `config` to `brunch-config` starting with 1.7.6 (`config` is still supported).
