@@ -1,12 +1,26 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const fs = require('fs');
+// Not using ES6 in that file since we want it to "launch" on older nodes.
+var start = Date.now(); // For profiling.
+var path = require('path');
+var fs = require('fs');
+var version = parseInt(process.version.match(/^v(\d+)\./)[1]);
 
-try {
-  const localCli = path.join(path.resolve('.'), 'node_modules', 'brunch', 'lib', 'cli');
-  require(localCli).run();
-} catch (e) {
-  const globalCli = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'lib', 'cli');
-  require(globalCli).run();
+if (version < 4) {
+  return console.error(
+    'Error: Brunch 2+ requires node v4.0+. ' +
+    'Upgrade node or use older brunch for old node.js: npm i -g brunch@1'
+  );
 }
+
+var localPath = path.join(path.resolve('.'), 'node_modules', 'brunch', 'lib', 'cli.js');
+
+fs.access(localPath, function(error) {
+  // console.log('check', Date.now() - start);
+  var fullPath = error ?
+    path.join(fs.realpathSync(__dirname), '..', 'lib', 'cli.js') :
+    localPath;
+  var cli = require(fullPath);
+  // console.log('ready', Date.now() - start);
+  cli.run();
+});
