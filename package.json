@@ -33,7 +33,6 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.2.0",
     "debug": "~2.2.0",
-    "deppack": "~0.1.0",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.7.0",
     "loggy": "~0.2.0",
@@ -41,7 +40,11 @@
     "pushserve": "^1.0.0",
     "quickly-copy-file": "~0.1.0",
     "read-components": "~0.6.0",
-    "source-map": "~0.5.0"
+    "source-map": "~0.5.0",
+
+    "async-each": "~0.1.6",
+    "browser-resolve": "~1.7.2",
+    "detective": "~4.0.0"
   },
   "devDependencies": {
     "mocha": "~2.3.4",

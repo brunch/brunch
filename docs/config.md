@@ -99,6 +99,27 @@ conventions:
   ]
 ```
 
+## `npm` (experimental)
+
+`Object`: configures the NPM integration for the front-end packages.
+
+* `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled.
+* `npm.packages`: `Array`: a list of npm packages that should be included into the build.
+* `npm.globals`: `Object`: a mapping from global name (as a key) to the corresponding module name (string) to expose.
+* `npm.styles`: `Object`: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.
+
+Example:
+
+```coffeescript
+npm:
+  enabled: true
+  packages: ['react', 'react-dom', 'react-router', 'pikaday']
+  styles:
+    pikaday: ['css/pikaday.css']
+  globals:
+    Pikaday: 'pikaday'
+```
+
 ## `modules`
 
 `Object`: consists of `wrapper` and `definition` subsettings.
