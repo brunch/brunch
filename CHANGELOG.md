@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-# Brunch 2.0.2 (pending)
+# Brunch 2.0.2 (Dec 5, 2015)
 * Fix: Post `onCompile` string replaces not working.
 * Fix: Linters now get the correct `linter` context.
 
