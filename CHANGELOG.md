@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
+# Brunch 2.0.2 (pending)
+* Fix: Post `onCompile` string replaces not working.
+
 # Brunch 2.0.1 (22 November 2015)
 * Compilation log would now use seconds instead of milliseconds for long compilations.
 * Launching Brunch on node v4< would now throw an explicit error.
