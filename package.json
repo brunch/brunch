@@ -30,7 +30,7 @@
     "anysort": "~1.0.0",
     "chokidar": "~1.4.0",
     "coffee-script": "~1.10.0",
-    "commander": "~2.8.0",
+    "commander": "~2.9.0",
     "commonjs-require-definition": "~0.2.0",
     "debug": "~2.2.0",
     "deppack": "~0.1.0",
@@ -38,7 +38,7 @@
     "init-skeleton": "~0.6.0",
     "loggy": "~0.2.0",
     "mkdirp": "~0.5.0",
-    "pushserve": "~0.1.6",
+    "pushserve": "^1.0.0",
     "quickly-copy-file": "~0.1.0",
     "read-components": "~0.6.0",
     "source-map": "~0.5.0"
