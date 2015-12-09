@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-# Brunch 2.0.3 (unreleased)
+# Brunch 2.0.3 (Dec 9, 2015)
 * Brunch would now auto-expand the following syntax to a full GitHub user / repo URL: `brunch new --skeleton paulmillr/brunch-with-chaplin`
 
 # Brunch 2.0.2 (Dec 5, 2015)
