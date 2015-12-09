@@ -11,22 +11,20 @@ Fast front-end web app build tool with simple declarative config, seamless incre
 
 ## First steps
 
-Install the latest stable version: `npm install -g brunch`
-(use `sudo` if necessary)
+1. Install the latest stable version: `npm install -g brunch` (use `sudo` if necessary)
+    To install edge version (from github master branch): `npm install -g brunch/brunch` or
+    `npm install -g https://github.com/brunch/brunch/tarball/master`
+2. Create your project: `brunch new`
+3. Continuously build it for development: `brunch watch [-s]`
+4. Prepare it for production: `brunch build -p`
 
-To install edge version (from github master branch): 
-`npm install -g brunch/brunch`
-or
-`npm install -g https://github.com/brunch/brunch/tarball/master`
+## Resources
 
-* Create your project: `brunch new`
-* Continuously build it for development: `brunch watch [-s]`
-* Prepare it for production: `brunch build -p`
 * **[See Brunch documentation](https://github.com/brunch/brunch/tree/master/docs)**
 * Check out the [Getting started guide](https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md)
 * Follow us on Twitter: [@brunch](http://twitter.com/brunch)
 * Ask questions on forum (or stack overflow): http://ost.io/@brunch/brunch
-* Visit our site: [brunch.io](http://brunch.io).
+* Visit our site: [brunch.io](http://brunch.io)
 
 ## License
 Brunch is released under the [MIT License](https://raw.github.com/brunch/brunch/master/LICENSE)
