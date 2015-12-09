@@ -11,8 +11,10 @@ Fast front-end web app build tool with simple declarative config, seamless incre
 
 ## First steps
 
-1. Install the latest stable version: `npm install -g brunch` (use `sudo` if necessary)
-    To install edge version (from github master branch): `npm install -g brunch/brunch` or
+1. Install the latest stable version: `npm install -g brunch` (use `sudo` if necessary).
+    
+    To install edge version (from GitHub `master` branch): `npm install -g brunch/brunch` or
+
     `npm install -g https://github.com/brunch/brunch/tarball/master`
 2. Create your project: `brunch new`
 3. Continuously build it for development: `brunch watch [-s]`
