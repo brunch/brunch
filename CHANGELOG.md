@@ -7,7 +7,9 @@ To install the latest version, execute `npm install -g brunch`
 * Fixes using production flag (`-p`) with multiple optimizers ([gh-1056](https://github.com/brunch/brunch/issues/1056)).
 
 ## Brunch 2.0.3 (Dec 9, 2015)
-* Brunch would now auto-expand the following syntax to a full GitHub user / repo URL: `brunch new --skeleton paulmillr/brunch-with-chaplin`
+* Brunch would now auto-expand the following syntax to a full GitHub user / repo URL:
+
+    `brunch new --skeleton paulmillr/brunch-with-chaplin`
 
 ## Brunch 2.0.2 (Dec 5, 2015)
 * Fix: Post `onCompile` string replaces not working.
