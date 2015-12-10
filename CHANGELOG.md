@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
+# Brunch 2.0.5 (unreleased)
+* Massively improved debug output (`-d`) readability.
+
 # Brunch 2.0.4 (Dec 10, 2015)
 * Fixes using production flag (`-p`) with multiple optimizers.
 
