@@ -4,7 +4,7 @@ To install the latest version, execute `npm install -g brunch`
 * Massively improved debug output (`-d`) readability.
 
 ## Brunch 2.0.4 (Dec 10, 2015)
-* Fixes using production flag (`-p`) with multiple optimizers.
+* Fixes using production flag (`-p`) with multiple optimizers ([gh-1056](https://github.com/brunch/brunch/issues/1056)).
 
 ## Brunch 2.0.3 (Dec 9, 2015)
 * Brunch would now auto-expand the following syntax to a full GitHub user / repo URL: `brunch new --skeleton paulmillr/brunch-with-chaplin`
@@ -56,11 +56,11 @@ Thanks to Vincent Ricard for help.
     Brunch will now consume file `brunch-server.{js,coffee}` if it exists
     and it would be used to launch a custom webserver that launches with `brunch watch --server`.
     Also, no more need to write `startServer` — just export the function with `module.exports`
-* Added `preCompile` plugins (gh-873).
+* Added `preCompile` plugins ([gh-873](https://github.com/brunch/brunch/issues/873)).
 * Compilers can now return dependencies:
     `{data: 'file-data', dependencies: ['a.js', 'b.js']}`
-* Fixed env handling for optimizers (gh-903)
-* Only listen to stdin if in persistent mode (gh-920)
+* Fixed env handling for optimizers ([gh-903](https://github.com/brunch/brunch/issues/903))
+* Only listen to stdin if in persistent mode ([gh-920](https://github.com/brunch/brunch/issues/920))
 * Added **fcache** - a simple way to speed-up your plugins like sass or jade.
     fcache is a simple filesystem wrapper that allows to read files and
     to update them in cache.
@@ -235,8 +235,8 @@ If installed prior to this date, it will actually run as if it is 1.7.6.
 * Fixed `watch` command description.
 
 ## Brunch 1.6.4 (May 5, 2013)
-* Don’t throw on missing devdependencies. Closes gh-541.
-* Reload config correctly on change. Closes gh-540.
+* Don’t throw on missing devdependencies. Closes [gh-541](https://github.com/brunch/brunch/issues/541).
+* Reload config correctly on change. Closes [gh-540](https://github.com/brunch/brunch/issues/540).
 
 ## Brunch 1.6.3 (Apr 7, 2013)
 * Fixed watching after `npm install`.
