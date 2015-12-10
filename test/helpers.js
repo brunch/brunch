@@ -1,23 +1,19 @@
-var helpers, rewire;
-
-rewire = require('rewire');
-
-helpers = rewire('../lib/helpers');
+const rewire = require('rewire');
+const helpers = rewire('../lib/helpers')
+const application = rewire('../lib/application');
 
 describe('helpers', function() {
-  describe('replaceConfigSlashes()', function() {
-    return it('should replace slashes with backslashes in config', function() {
-      var unix, win;
-      helpers.__set__('isWindows', true);
-      unix = require('./fixtures/unix_config');
-      win = require('./fixtures/win_config');
-      return expect(helpers.replaceConfigSlashes(unix.config)).to.eql(win.config);
-    });
-  });
+  // describe('replaceConfigSlashes()', function() {
+  //   return it('should replace slashes with backslashes in config', function() {
+  //     application.__set__('isWindows', true);
+  //     const unix = require('./fixtures/unix_config');
+  //     const win = require('./fixtures/win_config');
+  //     return expect(application.replaceConfigSlashes(unix.config)).to.eql(win.config);
+  //   });
+  // });
   return describe('applyOverrides()', function() {
-    var applyOverrides;
-    applyOverrides = helpers.__get__('applyOverrides');
-    return it('should resolve plugins.on|off merge', function() {
+    const applyOverrides = application.__get__('applyOverrides');
+    it('should resolve plugins.on|off merge', function() {
       var config;
       config = {
         plugins: {
