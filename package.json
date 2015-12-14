@@ -41,6 +41,7 @@
     "quickly-copy-file": "~0.1.0",
     "read-components": "~0.6.0",
     "source-map": "~0.5.0",
+    "charm": "1.0.0",
 
     "async-each": "~0.1.6",
     "browser-resolve": "~1.7.2",
