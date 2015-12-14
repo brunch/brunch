@@ -1,6 +1,11 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.0.5 (unreleased)
+## Brunch 2.1.0 (unreleased)
+* Hugely reworked NPM integration. You would need to specify a config param with all packages explicitly for now.
+    This is a temporary solution:
+    `config.npm = {enabled: true, packages: ['react', 'react-dom', 'pikaday']}`
+* Brunch would now indicate progress for long builds, like that:
+    `(5s) Compiling => Compiling. => Compiling..`
 * Massively improved debug output (`-d`) readability.
 
 ## Brunch 2.0.4 (Dec 10, 2015)
