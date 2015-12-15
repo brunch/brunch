@@ -15,7 +15,7 @@ exports.runServer = function(appPath, callback) {
   }
   app = express.createServer();
   app.configure(function() {
-    app.use(express["static"](appPath));
+    app.use(express['static'](appPath));
     app.set('views', appPath);
     app.set('view options', {
       layout: false

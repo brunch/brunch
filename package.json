@@ -22,7 +22,7 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register --require test/common.js --colors"
+    "test": "eslint . && mocha --compilers coffee:coffee-script/register --require test/common.js --colors"
   },
   "preferGlobal": true,
   "dependencies": {
@@ -51,6 +51,7 @@
     "mocha": "~2.3.4",
     "chai": "~3.4.1",
     "rewire": "~2.5.0",
-    "express": "^4.13.0"
+    "express": "^4.13.0",
+    "eslint": "^1.10.0"
   }
 }
