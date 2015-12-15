@@ -7,9 +7,10 @@ To install the latest version, execute `npm install -g brunch`
 * Brunch would now indicate progress for long builds, like that:
     `(5s) Compiling => Compiling. => Compiling..`
 * Massively improved debug output (`-d`) readability.
+* Now throwing correct import errors ([gh-1053](https://github.com/brunch/brunch/issues/1053), [gh-1041](https://github.com/brunch/brunch/issues/1041)).
 
 ## Brunch 2.0.4 (Dec 10, 2015)
-* Fixes using production flag (`-p`) with multiple optimizers ([gh-1056](https://github.com/brunch/brunch/issues/1056)).
+* Fixes using production flag (`-p`) with multiple optimizers [(gh-1056)](https://github.com/brunch/brunch/issues/1056).
 
 ## Brunch 2.0.3 (Dec 9, 2015)
 * Brunch would now auto-expand the following syntax to a full GitHub user / repo URL:
