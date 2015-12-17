@@ -1,0 +1,10 @@
+{
+  "globals": {
+    "describe": true,
+    "it": true,
+    "expect": true
+  },
+  "rules": {
+    "prefer-arrow-callback": 0
+  }
+}

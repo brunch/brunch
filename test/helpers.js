@@ -1,5 +1,5 @@
 const rewire = require('rewire');
-const helpers = rewire('../lib/helpers')
+const helpers = rewire('../lib/helpers');
 const application = rewire('../lib/application');
 
 describe('helpers', function() {
