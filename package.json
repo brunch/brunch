@@ -42,16 +42,15 @@
     "read-components": "~0.6.0",
     "source-map": "~0.5.0",
     "charm": "1.0.0",
-
     "async-each": "~0.1.6",
     "browser-resolve": "~1.7.2",
     "detective": "~4.0.0"
   },
   "devDependencies": {
-    "mocha": "~2.3.4",
     "chai": "~3.4.1",
-    "rewire": "~2.5.0",
+    "eslint": "^1.10.3",
     "express": "^4.13.0",
-    "eslint": "^1.10.0"
+    "mocha": "~2.3.4",
+    "rewire": "~2.5.0"
   }
 }

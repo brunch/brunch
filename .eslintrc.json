@@ -78,6 +78,7 @@
     "space-unary-ops": [2, {"words": true, "nonwords": false}],
     "arrow-spacing": [2, {"before": true, "after": true}],
     "prefer-arrow-callback": 2,
-    "prefer-template": 0
+    "prefer-template": 0,
+    "prefer-const": 2
   }
 }
