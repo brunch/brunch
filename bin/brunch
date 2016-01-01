@@ -1,8 +1,21 @@
 #!/usr/bin/env node
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
-var start = Date.now(); // For profiling.
-var path = require('path');
+var startTime = Date.now();
+var _profiling = {}; // For profiling.
+var profile = function(item) {
+  var res = Date.now() - startTime;
+  _profiling[item] = res;
+  return item + ' ' + res + 'ms';
+};
+profile.show = function(item) {
+  console.log(_profiling[item]);
+};
+
+// Comment-out this to disable profiling.
+global.profileBrunch = profile;
+
+var sysPath = require('path');
 var fs = require('fs');
 var version = parseInt(process.version.match(/^v(\d+)\./)[1]);
 
@@ -13,14 +26,21 @@ if (version < 4) {
   );
 }
 
-var localPath = path.join(path.resolve('.'), 'node_modules', 'brunch', 'lib', 'cli.js');
+var localPath = sysPath.join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', 'cli.js');
+var loadBrunch = function(path) {
+  typeof profileBrunch === 'function' && profileBrunch('load brunch');
+  var cli = require(path);
+  typeof profileBrunch === 'function' && profileBrunch('loaded brunch');
+  cli.run();
+};
 
 fs.access(localPath, function(error) {
-  // console.log('check', Date.now() - start);
-  var fullPath = error ?
-    path.join(fs.realpathSync(__dirname), '..', 'lib', 'cli.js') :
-    localPath;
-  var cli = require(fullPath);
-  // console.log('ready', Date.now() - start);
-  cli.run();
+  if (error) {
+    fs.realpath(__dirname, function(err, real) {
+      if (err) throw err;
+      loadBrunch(sysPath.join(real, '..', 'lib', 'cli.js'));
+    });
+  } else {
+    loadBrunch(localPath);
+  }
 });
