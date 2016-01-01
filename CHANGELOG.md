@@ -1,11 +1,15 @@
 To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.1.0 (unreleased)
-* Hugely reworked NPM integration. You would need to specify a config param with all packages explicitly for now.
-    This is a temporary solution:
-    `config.npm = {enabled: true, packages: ['react', 'react-dom', 'pikaday']}`
+* Hugely reworked NPM integration.
+    1. With `config.npm.enabled = true`, all non-brunch NPM packages
+      would be loaded automatically.
+    2. To exclude packages, specify the blacklist:
+        `config.npm = {blacklist: ['express']}`
+    3. To include packages manually, specify the whitelist:
+        `config.npm = {whitelist: ['react', 'react-dom', 'pikaday']}`
 * Brunch would now indicate progress for long builds, like that:
-    `(5s) Compiling => Compiling. => Compiling..`
+    `(4s) Compiling => Compiling. => Compiling..`
 * Massively improved debug output (`-d`) readability.
 * Now throwing correct import errors ([gh-1053](https://github.com/brunch/brunch/issues/1053), [gh-1041](https://github.com/brunch/brunch/issues/1041)).
 
