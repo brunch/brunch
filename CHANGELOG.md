@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.1.0 (unreleased)
+## Brunch 2.1.0 (Jan 1, 2016)
 * Brunch would now indicate progress for long builds, like that:
     `(4s) Compiling => Compiling. => Compiling..`
 * Massively improved debug output (`-d`) readability.
