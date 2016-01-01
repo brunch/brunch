@@ -24,6 +24,9 @@
   "scripts": {
     "test": "eslint . && mocha --compilers coffee:coffee-script/register --require test/common.js --colors"
   },
+  "engines": {
+    "node": ">= 4.0"
+  },
   "preferGlobal": true,
   "dependencies": {
     "anymatch": "~1.3.0",
