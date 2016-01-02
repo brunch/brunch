@@ -1,12 +1,5 @@
-var express, path, spawn, util;
-
-util = require('util');
-
-path = require('path');
-
-express = require('express');
-
-spawn = require('child_process').spawn;
+const express = require('express');
+const serverPort = 8080;
 
 exports.runServer = function(appPath, callback) {
   var app;
@@ -25,7 +18,7 @@ exports.runServer = function(appPath, callback) {
   app.get('/', function(req, res) {
     return res.render('index.html');
   });
-  app.listen(8080);
+  app.listen(serverPort);
   app.on('listening', function() {
     return callback();
   });
