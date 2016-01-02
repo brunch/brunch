@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.1.1 (Jan 2, 2016)
+* Fixes an issue when sass-brunch or similar plugins weren't compiling files correctly.
+
 ## Brunch 2.1.0 (Jan 1, 2016)
 * Brunch would now indicate progress for long builds, like that:
     `(4s) Compiling => Compiling. => Compiling..`
