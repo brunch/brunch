@@ -47,7 +47,8 @@
     "charm": "1.0.0",
     "async-each": "~0.1.6",
     "browser-resolve": "~1.7.2",
-    "detective": "~4.0.0"
+    "detective": "~4.0.0",
+    "glob": "~6.0.0"
   },
   "devDependencies": {
     "chai": "~3.4.1",
