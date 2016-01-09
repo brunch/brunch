@@ -1,5 +1,9 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.1.3 (Jan 9, 2016)
+* Fixes an issue when NPM packages were included incorrectly on Windows.
+* `brunch build -d` is now able to receive an optional `filterer` argument
+
 ## Brunch 2.1.2 (Jan 7, 2016)
 * `brunch new` and `brunch build` hangup fixes.
 * NPM integration fixes
