@@ -104,19 +104,14 @@ conventions:
 `Object`: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your package.json `dependencies` section.
 
 * `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled, defaults to `false`.
-* `npm.whitelist`: `Array`: a list of npm packages that should be included in the build.
-* `npm.blacklist`: `Array`: a list of npm packages that should not be included in the build.
 * `npm.globals`: `Object`: a mapping from global name (as a key) to the corresponding module name (string) to expose.
 * `npm.styles`: `Object`: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.
-
-Use either `npm.packages` to explicitly whitelist, or `npm.exclude` to explicitly blacklist, or omit both to include everything.
 
 Example:
 
 ```coffeescript
 npm:
   enabled: true
-  packages: ['react', 'react-dom', 'react-router', 'pikaday']
   styles:
     pikaday: ['css/pikaday.css']
   globals:
