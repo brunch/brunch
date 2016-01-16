@@ -48,7 +48,7 @@ onCompile(files)
 
 Let's take a look at the [boilerplate plugin](https://github.com/brunch/brunch-boilerplate-plugin). Feel free to use it to create your own plugins:
 
-```
+```javascript
 'use strict';
 
 // Documentation for Brunch plugins:
