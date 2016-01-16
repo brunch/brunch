@@ -19,7 +19,7 @@ Examples:
 
 ## API
 
-Brunch language is a CoffeeScript class that has `brunchPlugin` property. It would be initialized with application config (you can access it by using `@config` instance variable).
+Brunch language is a CoffeeScript class that has `brunchPlugin` property. It would be initialized with application config (you can access it by using `this.config` instance variable).
 
 * `brunchPlugin`: `(required, boolean)` it's always truthy for brunch plugins. By this field, brunch determines if current package is a real plugin or just random server-side thing.
 * `type`: `(required in compilers, optimizers & linters, string)`: type of source file. `javascript`, `stylesheet` or `template`.
