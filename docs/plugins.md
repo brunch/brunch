@@ -21,7 +21,8 @@ Examples:
 
 Brunch plugins are simple JS classes which are initialized with brunch configs.
 
-Almost every plugin is usually working with so-called `File` entities. The `File` may contain:
+Almost every plugin is usually working with so-called `File` entities.
+Those are simple JS `Object`s, which may contain fields like:
 
 - `path` - system path to the file
 - `data` - file data as JS `String`
