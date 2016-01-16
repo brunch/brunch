@@ -21,8 +21,13 @@ Examples:
 
 Brunch plugins are simple JS classes which are initialized with brunch configs.
 
-Almost every plugin is usually working with so-called `File` entities.
-Those are simple JS `Object`s, which may contain fields like:
+Almost every plugin is usually working with so-called `File` entities:
+
+```
+{"data": "var hello = 42;\n", "path": "app/file.js"}
+```
+
+As you can see, `File`s are simple JS `Object`s, which may contain fields like:
 
 - `path` - system path to the file
 - `data` - file data as JS `String`
@@ -31,11 +36,13 @@ Those are simple JS `Object`s, which may contain fields like:
   For example, the linter plugin may add `babelTree` to the `File`,
   the compiler plugin in pipeline would see it and won't do the parsing twice.
 
-The simplest `File` looks like this: `{"data": "var hello = 42;\n", "path": "app/file.js"}`
-
-The Brunch pipeline looks like this:
+The Brunch execution pipeline looks like this:
 
 ```
+// [internal] Watch files with Chokidar.
+watch(files)
+|
+// When any file is added or changed, start the pipeline.
 // Check whether the file is correct.
 lint(file): Boolean
 |
