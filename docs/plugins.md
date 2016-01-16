@@ -38,38 +38,53 @@ Example:
 
 `CSSCompiler` would simply read the file and return its contents.
 
-```coffeescript
-module.exports = class CSSCompiler
-  brunchPlugin: yes
-  type: 'stylesheet'
-  extension: 'css'
-  compile: (params, callback) ->
-    callback null, {data: params.data}
+```javascript
+class CSSCompiler {
+  compile(params, callback) {
+    callback(null, {data: params.data});
+  }
+}
+
+CSSCompiler.prototype.brunchPlugin = true;
+CSSCompiler.prototype.type = 'stylesheet';
+CSSCompiler.prototype.extension = 'css';
+
+module.exports = CSSCompiler;
 ```
 
 Example 2:
 
 Some abstract minifier that consumes source maps.
 
-```coffeescript
-module.exports = class UglifyCompiler
-  brunchPlugin: yes
-  type: 'javascript'
-  extension: 'js'
+```javascript
+class UglifyCompiler {
+  constructor(config) {
+    this.pretty = config.plugins && config.plugins.uglify && config.plugins.uglify.pretty;
+  }
 
-  constructor: (config) ->
-    @pretty = !!@config?.plugins?.uglify?.pretty
+  optimize(params, callback) {
+    const {data, path, map} = params;
+    let error;
+    let optimized;
 
-  optimize: (params, callback) ->
-    {data, path, map} = params
-    try
-      optimized = minifier data,
-        fromString: true,
+    try {
+      optimized = minifier(data, {
+        fromString: trye,
         inSourceMap: map,
-        pretty: @pretty
-    catch err
+        pretty: this.pretty
+      });
+    } catch (err) {
       error = err
-    callback error, optimized
+    }
+    callback(error, optimized);
+  }
+}
+
+UglifyCompiler.prototype.brunchPlugin = true;
+UglifyCompiler.prototype.type = 'javascript';
+UglifyCompiler.prototype.extension = 'js';
+
+module.exports = UglifyCompiler;
 ```
 
 See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.jade](https://github.com/brunch/brunch.github.io/blob/brunch/app/plugins.jade) and sending a Pull Request.
