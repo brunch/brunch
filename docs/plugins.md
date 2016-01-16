@@ -21,6 +21,15 @@ Examples:
 
 Brunch plugins are simple JS classes which are initialized with brunch configs.
 
+Almost every plugin is usually working with so-called `File` entities. The `File` may contain:
+
+- `path` - system path to the file
+- `data` - file data as JS `String`
+- `map` - source map
+- and everything else that could be consumed by next plugins.
+  For example, the linter plugin may add `babelTree` to the `File`,
+  the compiler plugin in pipeline would see it and won't do the parsing twice.
+
 The Brunch pipeline looks like this:
 
 ```
