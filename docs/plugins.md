@@ -1,6 +1,6 @@
 # Plugins
 
-Brunch uses asynchronous node.js plugins to provide linting / compilation / optimization functionality.
+Brunch uses node.js plugins to provide linting / compilation / optimization functionality.
 
 ## Usage
 
@@ -19,24 +19,102 @@ Examples:
 
 ## API
 
-Brunch language is a CoffeeScript class that has `brunchPlugin` property. It would be initialized with application config (you can access it by using `this.config` instance variable).
+Brunch plugins are simple JS classes which are initialized with brunch configs.
 
-* `brunchPlugin`: `(required, boolean)` it's always truthy for brunch plugins. By this field, brunch determines if current package is a real plugin or just random server-side thing.
-* `type`: `(required in compilers, optimizers & linters, string)`: type of source file. `javascript`, `stylesheet` or `template`.
-* `extension`: `(required in compilers & linters, string)`: all files with this extension will be filtered and passed to plugin.
-* `pattern`: `(optional in compilers & linters, regexp)`: sometimes just extension isn't enough. For example, Sass compiler needs to support both scss and sass extensions. Regexp is applied against the whole file path. Overrides `extension` setting.
-* `lint(data, path, callback)`: `(optional, function)` would be called every time before compilation. If linter returns error to callback, compilation won't start.
-* `compile(params, callback)` or `compile(data, path, callback)` where `params may contain data, path and map`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Data is contents of source file which will be compiled, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callback(error, {data, map})`). May return `null` in `result` to skip file compilation.
-* `getDependencies(data, path, callback)`: `(required in compilers, function)` would be called every time brunch sees change in application source code. Used as chain compilation rule. For example, if `_user.styl` changes and `main.styl` depends on it, `main.styl` will be recompiled too. To know this, brunch needs to receive an array of dependent files from the function.
-* `optimize(params, callback)` or `optimize(data, path, callback)` where `params may contain data, path and map`: `(required in optimizers, function)` would be called every time brunch sees change in application source code. Data is contents of destination file which will be optimized/minified, path is path to the file and callback is a function that will be executed on compilation with arguments `error` and `result` (`callback(error, compiledData)` or `callback(error, {data, map})`).
-* `onCompile(generatedFiles)`: `(optional, function)` would be called every time after brunch walks through the whole compilation circle. Could be useful if you make browser autoreload plugin etc.
-* `teardown`: `(optional, function)` with it you can stop servers in your plugins and stuff. It will be called after each brunch stop.
-* `defaultEnv`: `(optional, string)` used to indicate which `env` a plugin should be applied to by default. `'*'` can be passed to indicate all environments, which is the default for all plugins except optimizers. For optimizers, if `defaultEnv` is not specified then they will be run only when `config.optimize` is true (which is the default setting for the `'production'` `env`).
+The Brunch pipeline looks like this:
 
+```
+// Check whether the file is correct.
+lint(file): Boolean
+|
+// Extract file's dependants & dependencies
+getDependencies(file): Array
+|
+// Transform file contents into js, css etc.
+compile(file): File
+|
+// [internal] wrap file into a module definition
+wrap(file): File
+|
+// [internal] concat many files into one
+concat(files): File
+|
+// Transform the output JS / CSS into different JS / CSS.
+optimize(file): File
+|
+// The compilation is finished.
+onCompile(files)
+```
 
-Example:
+Let's take a look at the [boilerplate plugin](https://github.com/brunch/brunch-boilerplate-plugin). Feel free to use it to create your own plugins:
 
-`CSSCompiler` would simply read the file and return its contents.
+```
+'use strict';
+
+// Documentation for Brunch plugins:
+// https://github.com/brunch/brunch/blob/master/docs/plugins.md
+
+class BrunchPlugin {
+  constructor(config) {
+    // Replace 'plugin' with your plugin's name;
+    this.config = config && config.plugins && config.plugins.plugin;
+  }
+
+  // file: File => Promise[Boolean]
+  // Called before every compilation.
+  // Stops the compilation if the error is returned.
+  // Examples: ESLint, JSHint, CSSCheck.
+  // lint(file) { return Promise.resolve(true); }
+
+  // file: File => Promise[File]
+  // Transforms a file data to different data.
+  // Could change the source map etc.
+  // Examples: JSX, CoffeeScript, Handlebars, SASS.
+  // compile(file) { return Promise.resolve(file); }
+
+  // file: File => Promise[Array: Path]
+  // Allows Brunch to calculate dependants of the current
+  // file and re-compile them accordingly.
+  // Examples: SASS '@import's, Jade 'include'-s.
+  // getDependencies(file) { return Promise.resolve(['dep.js']); }
+
+  // file: File => Promise[File]
+  // Usually called to minify or optimize the end-result.
+  // Examples: UglifyJS, CSSMin.
+  // optimize(file) { return Promise.resolve({data: minify(file.data)}); }
+
+  // files: [File] => null
+  // Executed when each compilation is finished.
+  // Examples: Hot-reload (send a websocket push).
+  // onCompile(files) {}
+
+  // Allows to stop web-servers & other long-running entities.
+  // Called before Brunch process is closed.
+  // teardown() {}
+}
+
+// Required for all Brunch plugins.
+BrunchPlugin.prototype.brunchPlugin = true;
+
+// Required for compilers, linters & optimizers.
+// 'javascript', 'stylesheet' or 'template'
+// BrunchPlugin.prototype.type = 'javascript';
+
+// Required for compilers & linters.
+// It would filter-out the list of files to operate on.
+// BrunchPlugin.prototype.extension = 'js';
+// BrunchPlugin.prototype.pattern = /\.js$/;
+
+// Indicates which environment a plugin should be applied to.
+// The default value is '*' for usual plugins and
+// 'production' for optimizers.
+// BrunchPlugin.prototype.defaultEnv = 'production';
+
+module.exports = BrunchPlugin;
+```
+
+### CSS compiler
+The plugin would simply read the file and return its contents.
 
 ```javascript
 class CSSCompiler {
@@ -52,17 +130,18 @@ CSSCompiler.prototype.extension = 'css';
 module.exports = CSSCompiler;
 ```
 
-Example 2:
+### Minifier
 
-Some abstract minifier that consumes source maps.
+An abstract minifier that consumes source maps.
 
 ```javascript
-class UglifyCompiler {
+class UglifyOptimizer {
   constructor(config) {
-    this.isPretty = config.plugins && config.plugins.uglify && config.plugins.uglify.pretty;
+    this.config = config && config.plugins && config.plugins.uglify;
+    this.isPretty = this.config.pretty;
   }
 
-  optimize(file, callback) {
+  optimize(file) {
     let error;
     let optimized;
 
@@ -79,11 +158,11 @@ class UglifyCompiler {
   }
 }
 
-UglifyCompiler.prototype.brunchPlugin = true;
-UglifyCompiler.prototype.type = 'javascript';
-UglifyCompiler.prototype.extension = 'js';
+UglifyOptimizer.prototype.brunchPlugin = true;
+UglifyOptimizer.prototype.type = 'javascript';
+UglifyOptimizer.prototype.extension = 'js';
 
-module.exports = UglifyCompiler;
+module.exports = UglifyOptimizer;
 ```
 
 See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.jade](https://github.com/brunch/brunch.github.io/blob/brunch/app/plugins.jade) and sending a Pull Request.
