@@ -54,6 +54,7 @@ Let's take a look at the [boilerplate plugin](https://github.com/brunch/brunch-b
 // Documentation for Brunch plugins:
 // https://github.com/brunch/brunch/blob/master/docs/plugins.md
 
+// Remove everything your plugin doesn't need.
 class BrunchPlugin {
   constructor(config) {
     // Replace 'plugin' with your plugin's name;
@@ -61,20 +62,17 @@ class BrunchPlugin {
   }
 
   // file: File => Promise[Boolean]
-  // Called before every compilation.
-  // Stops the compilation if the error is returned.
+  // Called before every compilation. Stops it when the error is returned.
   // Examples: ESLint, JSHint, CSSCheck.
   // lint(file) { return Promise.resolve(true); }
 
   // file: File => Promise[File]
-  // Transforms a file data to different data.
-  // Could change the source map etc.
+  // Transforms a file data to different data. Could change the source map etc.
   // Examples: JSX, CoffeeScript, Handlebars, SASS.
   // compile(file) { return Promise.resolve(file); }
 
   // file: File => Promise[Array: Path]
-  // Allows Brunch to calculate dependants of the current
-  // file and re-compile them accordingly.
+  // Allows Brunch to calculate dependants of the file and re-compile them too.
   // Examples: SASS '@import's, Jade 'include'-s.
   // getDependencies(file) { return Promise.resolve(['dep.js']); }
 
@@ -89,7 +87,7 @@ class BrunchPlugin {
   // onCompile(files) {}
 
   // Allows to stop web-servers & other long-running entities.
-  // Called before Brunch process is closed.
+  // Executed before Brunch process is closed.
   // teardown() {}
 }
 
