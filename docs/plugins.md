@@ -31,6 +31,8 @@ Those are simple JS `Object`s, which may contain fields like:
   For example, the linter plugin may add `babelTree` to the `File`,
   the compiler plugin in pipeline would see it and won't do the parsing twice.
 
+The simplest `File` looks like this: `{"data": "var hello = 42;\n", "path": "app/file.js"}`
+
 The Brunch pipeline looks like this:
 
 ```
