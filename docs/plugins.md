@@ -40,8 +40,8 @@ Example:
 
 ```javascript
 class CSSCompiler {
-  compile(params, callback) {
-    callback(null, {data: params.data});
+  compile(file) {
+    return Promise.resolve(file);
   }
 }
 
@@ -59,19 +59,18 @@ Some abstract minifier that consumes source maps.
 ```javascript
 class UglifyCompiler {
   constructor(config) {
-    this.pretty = config.plugins && config.plugins.uglify && config.plugins.uglify.pretty;
+    this.isPretty = config.plugins && config.plugins.uglify && config.plugins.uglify.pretty;
   }
 
-  optimize(params, callback) {
-    const {data, path, map} = params;
+  optimize(file, callback) {
     let error;
     let optimized;
 
     try {
-      optimized = minifier(data, {
-        fromString: trye,
-        inSourceMap: map,
-        pretty: this.pretty
+      optimized = minifier(file.data, {
+        fromString: true,
+        inSourceMap: file.map,
+        pretty: this.isPretty
       });
     } catch (err) {
       error = err
