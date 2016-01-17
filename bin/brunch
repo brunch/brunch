@@ -28,9 +28,9 @@ if (version < 4) {
 
 var localPath = sysPath.join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', 'cli.js');
 var loadBrunch = function(path) {
-  typeof profileBrunch === 'function' && profileBrunch('load brunch');
+  profile('load brunch');
   var cli = require(path);
-  typeof profileBrunch === 'function' && profileBrunch('loaded brunch');
+  profile('loaded brunch');
   cli.run();
 };
 
