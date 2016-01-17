@@ -1,8 +1,6 @@
 # Configuration file
 
-NOTE: This page may refer to new features that have not yet been published. To see the documentation that matches the current released version, take a look at this [document in the 'stable' branch](https://github.com/brunch/brunch/blob/stable/docs/config.md).
-
-Brunch uses configuration file (`brunch-config.coffee` or `brunch-config.js`) located in the root directory to control various aspects of your application.
+Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`) located in the root directory to control various aspects of your application.
 
 You can see all config default values in the `setConfigDefaults` function of [`src/helpers.js`](/src/helpers.js) in the brunch source code.
 
