@@ -2,18 +2,18 @@
 
 ## `brunch new`
 
-Full syntax: `brunch new [path]`
+Full syntax: `brunch new [path] [-s skeleton]`
 
 Create new brunch project. Options:
 
-* `path`: name of project directory that would be created. Default: '.'.
-* `-s, --skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir.
+* `path` (optional, default: `.`): name of project directory that would be created.
+* `-s, --skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir..
 
 `.git` directory is automatically removed when copying.
 
 Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. A few popular skeletons:
 
-* `brunch new .` — if you want no opinions. Just initializes configs and empty directories
+* `brunch new .` — if you want no opinions. Just initializes configs and empty directories from [dead-simple](https://github.com/brunch/dead-simple).
 * `brunch new -s react` — React + React Router + Stylus + ES6 / JSX
 * `brunch new -s hipster` — Angular, Bootstrap, node-webkit, CoffeeScript + Less + Jade
 * `brunch new -s chaplin` — Backbone, Chaplin, CoffeeScript. One of the most popular skeletons
