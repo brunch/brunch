@@ -13,19 +13,20 @@ Create new brunch project. Options:
 
 Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. A few popular skeletons:
 
-* `brunch new -s simple` — if you want no opinions. Just initializes configs and empty directories
+* `brunch new .` — if you want no opinions. Just initializes configs and empty directories
 * `brunch new -s react` — React + React Router + Stylus + ES6 / JSX
 * `brunch new -s hipster` — Angular, Bootstrap, node-webkit, CoffeeScript + Less + Jade
 * `brunch new -s chaplin` — Backbone, Chaplin, CoffeeScript. One of the most popular skeletons
+* `brunch new -s ember` — A skeleton for rapid Ember development. CoffeeScript + Stylus + Handlebars
+* `brunch new -s cordova` — Bare skeleton that includes support for building apps using Apache Cordova aka Phonegap.
+* `brunch new -s banana-pancakes` — A simple skeleton for Bootstrap.
+* `brunch new -s exim` — Neat Flux-based Exim framework on top of React and optional CoffeeScript.
 
-Each skeleton must have `brunch-config.(js,coffee)` file.
+Other 50+ boilerplates are available at http://brunch.io/skeletons
+
+Each skeleton must have `brunch-config.{js,coffee}` file.
 
 Short-cut: `brunch n`.
-
-Examples:
-
-* `brunch new -s simple`
-* `brunch new -s https://github.com/brunch/dead-simple`
 
 ## `brunch build`
 
