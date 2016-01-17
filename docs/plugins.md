@@ -4,22 +4,15 @@ Brunch uses node.js plugins to provide linting / compilation / optimization func
 
 ## Usage
 
-Install plugins with command `npm install --save plugin-name`. E.g. `npm install --save sass-brunch`. This adds `"<plugin-npm-name>": "<plugin-version>"` to package.json of your brunch app.
+Plugins can be installed with a simple console command:
 
-If you want to use git version of plugin, add `"<plugin-npm-name>": "<git-repo>"`.
+`npm install --save sass-brunch` - would add `"sass-brunch": "~1.9.2"` to package.json of your brunch app.
 
-Examples:
-
-```json
-{
-  "javascript-brunch": "1.3.5",
-  "sass-brunch": "git+ssh://git@github.com:brunch/sass-brunch.git"
-}
-```
+Sometimes you'll want to use plugins which have not yet been published to NPM and are available only through GIT. In this case you can specify GIT URL for the command: `npm install --save git@github.com:brunch/sass-brunch.git`.
 
 ## API
 
-Brunch plugins are simple JS classes which are initialized with brunch configs.
+Brunch plugins are plain JS classes which are initialized with brunch configs.
 
 Almost every plugin is usually working with so-called `File` entities:
 
@@ -27,7 +20,7 @@ Almost every plugin is usually working with so-called `File` entities:
 {"data": "var hello = 42;\n", "path": "app/file.js"}
 ```
 
-As you can see, `File`s are simple JS `Object`s, which may contain fields like:
+As you can see, `File`s are bald JS `Object`s, which may contain fields like:
 
 - `path` - system path to the file
 - `data` - file data as JS `String`
