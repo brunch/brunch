@@ -9,10 +9,6 @@
 * When all mockups are done, create app classes for them with `scaffolt` ([scaffolt package](https://github.com/paulmillr/scaffolt)). E.g. `scaffolt view user` (you need to have `generators` directory in your app).
 * Debug your code in browser via `console.log` or `debugger` statements.
 
-## I don't like CoffeeScript. Does brunch work for pure js projects?
-
-Yep, brunch is language-agnostic! Just create a project from [any JS skeleton](https://github.com/brunch/brunch/wiki/Skeletons) and customize it to your needs.
-
 ## How to use Bower?
 
 Brunch supports [Bower](http://bower.io) package manager.
