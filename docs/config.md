@@ -137,7 +137,7 @@ npm: {
 Example:
 
 ```javascript
-# Same as 'commonjs'.
+// Same as 'commonjs'.
 modules: {
   wrapper: (path, data) => {
     return `
@@ -152,7 +152,7 @@ require.define({${path}: function(exports, require, module) {
 `modules.autoRequire`: `Object` specifies requires to be automatically added at the end of joined file. The example below will require both 'app' and 'foo':
 
 ```javascript
-# Default behaviour.
+// Default behaviour.
 modules: {
   autoRequire: {
     'javascripts/app.js': ['app', 'foo']
@@ -235,7 +235,7 @@ The server script must export a function that starts your custom server, either 
   ```
 
   ```javascript
-  # Example using custom `close` method.
+  // Example using custom `close` method.
   module.exports = (port, path, callback) => {
     // custom server code
     return {close: () => { /* code for shutting down server */ }}
