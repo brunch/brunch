@@ -16,9 +16,10 @@ It is an executable script, so you can also do things like import Node.js module
 
 Example:
 
-```coffeescript
-paths:
+```javascript
+paths: {
   public: '/user/www/deploy'
+}
 ```
 
 ## `files`
@@ -41,29 +42,28 @@ Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [aft
 
 Example:
 
-```coffeescript
-files:
-  javascripts:
-    joinTo:
-      'javascripts/app.js': /^app/
+```javascripts
+files: {
+  javascripts: {
+    joinTo: {
+      'javascripts/app.js': /^app/,
       'javascripts/vendor.js': /^vendor/
-    order:
-      before: [
-        'vendor/scripts/console-helper.js',
-        'vendor/scripts/jquery-1.7.0.js',
-        'vendor/scripts/underscore-1.3.1.js',
-        'vendor/scripts/backbone-0.9.0.js'
-      ]
-    pluginHelpers: 'javascript/vendor.js'
-
-  stylesheets:
-    joinTo: 'stylesheets/app.css'
-    order:
-      before: ['vendor/styles/normalize.css']
-      after: ['vendor/styles/helpers.css']
-
-  templates:
+    },
+    order: {
+      before: ['vendor/console-helper.js']
+    }
+  },
+  stylesheets: {
+    joinTo: 'stylesheets/app.css',
+    order: {
+      before: ['vendor/normalize.css'],
+      after: ['vendor/print-helpers.css']
+    }
+  },
+  templates: {
     joinTo: 'javascripts/app.js'
+  }
+}
 ```
 
 ## `conventions`
@@ -78,26 +78,28 @@ Keep in mind that default brunch regexps, as you see, consider **all** `vendor/`
 
 Example:
 
-```coffeescript
-conventions:
-  ignored: -> false       # override defaults for no ignored files
-  assets: /files[\\/]/  # vendor/jquery/files/jq.img
+```javascript
+conventions: {
+  ignored: (() => false), // override defaults for no ignored files
+  assets: /files[\\/]/  // vendor/jquery/files/jq.img
+}
 ```
 
 If you want to add to the ignore pattern instead of replace, you must copy the defaults into your config.
 
 Default ignore pattern:
 
-```coffeescript
-conventions:
+```javascript
+conventions: {
   ignored: [
-    /[\\/]_/
-    /vendor[\\/]node[\\/]/
+    /[\\/]_/,
+    /vendor[\\/]node[\\/]/,
     /vendor[\\/](j?ruby-.*|bundle)[\\/]/
   ]
+}
 ```
 
-## `npm` (experimental)
+## `npm`
 
 `Object`: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your package.json `dependencies` section.
 
@@ -107,13 +109,12 @@ conventions:
 
 Example:
 
-```coffeescript
-npm:
-  enabled: true
-  styles:
-    pikaday: ['css/pikaday.css']
-  globals:
-    Pikaday: 'pikaday'
+```javascript
+npm: {
+  enabled: true,
+  styles: {pikaday: ['css/pikaday.css']}
+  globals: {Pikaday: 'pikaday'}
+}
 ```
 
 ## `modules`
@@ -135,48 +136,42 @@ npm:
 
 Example:
 
-```coffeescript
-# To use AMD, just add this and add require.js as
-# your first vendor file.
-modules:
-  wrapper: 'amd'
-  definition: 'amd'
-
+```javascript
 # Same as 'commonjs'.
-modules:
-  wrapper: (path, data) ->
-    """
-require.define({#{path}: function(exports, require, module) {
+modules: {
+  wrapper: (path, data) => {
+    return `
+require.define({${path}: function(exports, require, module) {
   #{data}
 }});\n\n
-    """
+    `
+  }
+}
 ```
 
 `modules.autoRequire`: `Object` specifies requires to be automatically added at the end of joined file. The example below will require both 'app' and 'foo':
 
-```coffeescript
+```javascript
 # Default behaviour.
-modules:
-  autoRequire:
+modules: {
+  autoRequire: {
     'javascripts/app.js': ['app', 'foo']
+  }
+}
 ```
 
 `modules.nameCleaner`: `Function` Allows you to set filterer function for module names,
 for example, change all 'app/file' to 'file'. Example:
 
-```coffeescript
-# Default behaviour.
-modules:
-  nameCleaner: (path) ->
-    path.replace /^app\//, ''
+```javascript
+// Default behaviour.
+modules: {nameCleaner: (path) => path.replace(/^app\//, ''); }
 ```
-```coffeescript
-# Add namespacing to a project, such as for a component
-{name} = require './package' # or './bower'
 
-modules:
-  nameCleaner: (path) ->
-    path.replace /^app/, name
+```javascript
+// Add namespacing to a project.
+const name = require('./package.json').name;
+modules: {nameCleaner: (path) => path.replace(/^app/, name); }
 ```
 
 ## `plugins`
@@ -190,12 +185,12 @@ modules:
 
 Example:
 
-```coffeescript
-plugins:
-  on: ['autoprefixer-brunch']
-  off: ['jade-brunch', 'static-jade-brunch']
-  autoReload:
-    enabled: true
+```javascript
+plugins: {
+  on: ['autoprefixer-brunch'],
+  off: ['jade-brunch', 'static-jade-brunch'],
+  autoReload: {enabled: true}
+}
 ```
 
 ## `notifications`
@@ -226,26 +221,25 @@ If a `brunch-server.js` or `brunch-server.coffee` file exists at the root of you
 
 The server script must export a function that starts your custom server, either as the default exported module or under the `startServer` property. This function should return an instance of [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server) or an object containing a `close` property assigned to a function that shuts down the server. Examples:
 
-  ```js
+  ```javascript
   // javascript example using default export and node http core module
-  module.exports = function (port, path, callback) {
+  module.exports = (port, path, callback) => {
     // your custom server code
     // callback doesn't take any parameters and (if provided) should be called after server is started
     // up to you to respect the `port` argument allowing users to change it from the CLI
-    var myServer = http.createServer();
+    const myServer = http.createServer();
     myServer.listen(port, callback);
     myServer.on('request', function(req, res) {/* do stuff */});
     return myServer;
   }
   ```
 
-  ```coffeescript
-  # coffeescript example using `startServer` property and custom `close` method
-  exports.startServer = (port, path, callback) ->
-
-    # custom server code
-
-    close: -> # code for shutting down server
+  ```javascript
+  # Example using `startServer` property and custom `close` method
+  module.exports = (port, path, callback) => {
+    // custom server code
+    return {close: () => { /* code for shutting down server */ }}
+  }
   ```
 
 * `path`: (optional) custom path to nodejs file that will be loaded to run your custom server.
@@ -261,12 +255,12 @@ If a custom server is not present, Brunch will use [pushserve](https://github.co
 
 Example:
 
-```coffeescript
-server:
-  path: 'my-server.coffee'
-  port: 6832
-  base: '/myapp'
+```javascript
+server: {
+  port: 6832,
+  base: '/myapp',
   stripSlashes: true
+}
 ```
 
 * `command`: command to launch a non-nodejs server as a child process. Ex: `server: command: 'php -S 0.0.0.0:3000 -t public'`
@@ -303,12 +297,14 @@ BRUNCH_ENV="testing" brunch build
 
 Defaults:
 
-```coffeescript
-overrides:
-  production:
-    optimize: true
-    sourceMaps: false
-    plugins: autoReload: enabled: false
+```javascript
+overrides: {
+  production: {
+    optimize: true,
+    sourceMaps: false,
+    plugins: {autoReload: {enabled: false}}
+  }
+}
 ```
 
 Caveats:
@@ -338,11 +334,12 @@ file watching library used in brunch.
 
 Example:
 
-```coffeescript
-workers:
-  enabled: true
-  count: 6
+```javascript
+workers: {
+  enabled: true,
+  count: 6,
   extensions: ['less']
+}
 ```
 
 ## `onCompile`
@@ -351,7 +348,8 @@ workers:
 
 Example
 
-```coffeescript
-onCompile: (generatedFiles) ->
-  console.log generatedFiles.map (f) -> f.path
+```javascript
+onCompile: (generatedFiles) => {
+  console.log(generatedFiles.map(f => f.path));
+}
 ```
