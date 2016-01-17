@@ -42,7 +42,7 @@ Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [aft
 
 Example:
 
-```javascripts
+```javascript
 files: {
   javascripts: {
     joinTo: {
