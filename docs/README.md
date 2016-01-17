@@ -43,7 +43,7 @@ root/         # Main brunch application directory.
 
 |-bower.json    # Contains info about Bower packages.
 |-package.json  # Contains all brunch plugins, like jshint-brunch, css-brunch.
-|-config.coffee # All params (you can concat to 2, 5, 10 files etc.)
+|-brunch-config.js # All params (you can concat to 2, 5, 10 files etc.)
                 # are set via this config. Just simple, 15 lines-of-code config
 ```
 

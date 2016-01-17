@@ -3,7 +3,7 @@
 If you want your issue to be resolved fast please write down:
 
 * Brunch version, node.js version, OS version
-* `brunch-config.coffee` and `package.json` contents
+* `brunch-config` and `package.json` contents
 * `bower.json` / `component.json` contents if you think the error is related to package managers
 
 # Contributing
