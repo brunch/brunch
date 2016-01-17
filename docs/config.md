@@ -219,7 +219,7 @@ When set to `true`, only errors trigger notifications. If you want to display su
 
 If a `brunch-server.js` or `brunch-server.coffee` file exists at the root of your project, Brunch will treat this as your custom web server. This can be overriden with the `server.path` option.
 
-The server script must export a function that starts your custom server, either as the default exported module or under the `startServer` property. This function should return an instance of [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server) or an object containing a `close` property assigned to a function that shuts down the server. Examples:
+The server script must export a function that starts your custom server, either as the default exported module. This function should return an instance of [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server) or an object containing a `close` property assigned to a function that shuts down the server. Examples:
 
   ```javascript
   // javascript example using default export and node http core module
@@ -235,7 +235,7 @@ The server script must export a function that starts your custom server, either 
   ```
 
   ```javascript
-  # Example using `startServer` property and custom `close` method
+  # Example using custom `close` method.
   module.exports = (port, path, callback) => {
     // custom server code
     return {close: () => { /* code for shutting down server */ }}
