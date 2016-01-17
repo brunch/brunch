@@ -1,10 +1,5 @@
 # Upgrading brunch
 
-## Upgrading to any minor (_.x) version
-
-* Update `package.json` brunch plugins versions to `>= 1.0 < 1.y` where y = brunch minor version + 1. For example, if you use brunch 1.5, you need to use plugins `>= 1.0 < 1.6`. If you use brunch 2.4, you need to use `>= 2.0 < 2.5`
-* Run `npm install` to re-install all plugins.
-
 ## Upgrading to 2.0
 
 * You must upgrade node.js 4.0 or higher. Older versions would not work.

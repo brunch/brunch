@@ -44,25 +44,6 @@ For example, you want to change default `Handlebars` templates to `eco`.
 * Remove the `"handlebars-brunch": "version"` line from `package.json`.
 * Install eco-brunch: `npm install eco-brunch --save`.
 
-## What version of each plugin do I need to use?
-
-You may have seen that there are eco-brunch 1.0.1, 1.1.0 etc.
-
-Brunch x.y.z releases are compatible with plugins (in this case `eco-brunch`)
-x.(<= y).*. This means that:
-
-You can use:
-
-* brunch 1.1.0 with plugin 1.0.0.
-* brunch 1.1.0 with plugin 1.1.9.
-* brunch 1.9.14 with plugin 1.5.6.
-
-You may encounter problems if you use:
-
-* brunch 1.1.0 with plugin 1.2.0.
-* brunch 1.1.0 with plugin 2.0.0.
-* brunch 2.0.0 with plugin 1.2.0.
-
 ## I get an EMFILE error when I build a Brunch project. WTF?
 
 `EMFILE` means there are too many open files.
@@ -81,10 +62,7 @@ This is useful for explicitly seeing the list of source files that are compiled 
 
 ### Linux/OS X:
 
-Use the `--debug` (`-d`) option, or add `DEBUG='brunch:*'` in front of your `brunch` command for on-demand use, such as `DEBUG='brunch:*' brunch build`
-
-Or run `export DEBUG='brunch:*'` to persist the setting for the rest of your terminal session.
-Optionally, add this to your `~/.bash_profile`, `~/.zshrc`, etc.
+Use the `--debug` (`-d`) option in front of your `brunch` command for on-demand use, such as `brunch build -d`
 
 ### Windows:
 
