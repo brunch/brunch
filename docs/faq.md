@@ -22,6 +22,56 @@ To add packages to your project:
 
 Example app with Bower integration: http://github.com/paulmillr/ostio
 
+## How to use NPM as client-side package manager?
+
+Brunch supports handling client-side dependencies using [NPM](https://npmjs.com) package manager.
+
+To do so, enable NPM integration in config. By default, brunch would look up for compatible node packages which can be used on client. You can tell branch to use explicit list of packages via `whitelist` attribute.
+
+Brunch can also handle styles of client-side libraries, but by providing `styles` attribute which is key-value object where key is package name and value is an array with relative to package path of styles which should be included.
+
+```coffeescript
+npm:
+    enabled: true
+    whitelist: [ 'react', 'react-dom', 'leaflet' ],
+    styles:
+        leaflet: [ 'dist/leaflet.css' ]
+files:
+    javascripts:
+        joinTo:
+            'js/vendor.js': /^node_modules/
+    styles:
+        joinTo:
+            'css/vendor.css': /^node_modules/
+```
+
+## How to handle other package assets?
+
+We're [working](https://github.com/brunch/brunch/issues/633) on it. As for now, you can solve it in different ways - by using `npm post-install` script, `onCompile` handler in config etc.
+
+```json
+"scripts": {
+  "postinstall": "brunch b && cp -r node_modules/font-awesome/fonts public/fonts"
+}
+```
+
+## How to override package manifest?
+
+You can override some dependent package manifest using `overrides` attribute in `package.json` / `bower.json`.
+
+Be aware, that `main` attribute in `package.json` is a string, but array in `bower.json`.
+
+```json
+"dependencies": {
+    "some-awesome-package": "~0.0.1"
+},
+"overrides": {
+    "some-awesome-package": {
+        "main": "./lib/just_one_component.js"
+    }
+}
+```
+
 ## I want to create a separate JavaScript file (for a bookmarklet, etc.). What's the best way?
 
 Use this joinTo config. It will compile all files in `app/` (except in `app/namespace`) to one file and all files in `app/namespace` to another.
@@ -84,4 +134,3 @@ window.require.list()
   .filter(function(name) {return /-test$/.test(name);})
   .forEach(require);
 ```
-
