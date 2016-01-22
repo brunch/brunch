@@ -1,5 +1,13 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.2.0 (Jan 22, 2016)
+* Massively improved NPM integration:
+    1. Brunch would now automatically detect and extract all npm packages.
+    2. Because of this, `whitelist` property is now not needed.
+    3. Windows implementation should now work correctly.
+* `brunch new` launched with old syntax would now throw a descriptive error.
+* Improved progress indicator. It would not allow plugins to write output on top of it.
+
 ## Brunch 2.1.3 (Jan 9, 2016)
 * Fixes an issue when NPM packages were included incorrectly on Windows.
 * `brunch build -d` is now able to receive an optional `filterer` argument
