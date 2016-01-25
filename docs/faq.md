@@ -26,14 +26,13 @@ Example app with Bower integration: http://github.com/paulmillr/ostio
 
 Brunch supports handling client-side dependencies using [NPM](https://npmjs.com) package manager.
 
-To do so, enable NPM integration in config. By default, brunch would look up for compatible node packages which can be used on client. You can tell branch to use explicit list of packages via `whitelist` attribute.
+To do so, enable NPM integration in config. Brunch will try to find all dependencies project needs when compiling your files.
 
 Brunch can also handle styles of client-side libraries, but by providing `styles` attribute which is key-value object where key is package name and value is an array with relative to package path of styles which should be included.
 
 ```coffeescript
 npm:
     enabled: true
-    whitelist: [ 'react', 'react-dom', 'leaflet' ],
     styles:
         leaflet: [ 'dist/leaflet.css' ]
 files:
