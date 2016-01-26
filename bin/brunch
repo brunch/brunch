@@ -5,11 +5,12 @@ global.brunchStartTime = Date.now();
 
 var sysPath = require('path');
 var fs = require('fs');
-var version = parseInt(process.version.match(/^v(\d+)\./)[1]);
+var version = process.version;
+var verDigit = parseInt(ver.match(/^v(\d+)\./)[1]);
 
-if (version < 4) {
+if (verDigit < 4) {
   return console.error(
-    'Error: Brunch 2+ requires node v4.0+. ' +
+    'Error: Brunch 2+ requires node v4 or higher (you have ' + version + ') ' +
     'Upgrade node or use older brunch for old node.js: npm i -g brunch@1'
   );
 }
