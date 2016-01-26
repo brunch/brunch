@@ -10,7 +10,7 @@ var verDigit = parseInt(ver.match(/^v(\d+)\./)[1]);
 
 if (verDigit < 4) {
   return console.error(
-    'Error: Brunch 2+ requires node v4 or higher (you have ' + version + ') ' +
+    'Error: Brunch 2+ requires node.js v4 or higher (you have ' + version + ') ' +
     'Upgrade node or use older brunch for old node.js: npm i -g brunch@1'
   );
 }
