@@ -15,20 +15,33 @@ if (version < 4) {
 }
 
 var cwd = sysPath.resolve('.');
-var localPath = sysPath.join(cwd, 'node_modules', 'brunch', 'lib', 'cli.js');
+var cliFile = sysPath.join('lib', 'cli.js');
+var localPath = sysPath.join(cwd, 'node_modules', 'brunch', cliFile);
 
 var loadBrunch = function(path) {
   var cli = require(path);
   cli.run();
 };
 
+var loadGlobalBrunch = function() {
+  fs.realpath(__dirname, function(err, real) {
+    if (err) throw err;
+    loadBrunch(sysPath.join(real, '..', cliFile));
+  });
+};
+
 fs.access(localPath, function(error) {
   if (error) {
-    fs.realpath(__dirname, function(err, real) {
-      if (err) throw err;
-      loadBrunch(sysPath.join(real, '..', 'lib', 'cli.js'));
-    });
+    loadGlobalBrunch();
   } else {
-    loadBrunch(localPath);
+    try {
+      loadBrunch(localPath);
+    } catch(error) {
+      console.error(
+        'Brunch: Local install exists, but failed to load it. ' +
+        'Continuing with global install:', error
+      );
+      loadGlobalBrunch();
+    }
   }
 });
