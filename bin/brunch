@@ -1,26 +1,7 @@
 #!/usr/bin/env node
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
-
-// A few helpers for profiling.
-var startTime = Date.now();
-var sinceStart = function() {
-  return Date.now() - startTime;
-};
-
-var profilings = {};
-var profile = function(item) {
-  var ms = sinceStart();
-  profilings[item] = ms;
-  return item + ' ' + ms + 'ms';
-};
-profile.show = function(item) {
-  console.log(profilings[item]);
-};
-profile.sinceStart = sinceStart;
-
-// Comment-out this to disable profiling.
-global.profileBrunch = profile;
+global.brunchStartTime = Date.now();
 
 var sysPath = require('path');
 var fs = require('fs');
@@ -37,10 +18,7 @@ var cwd = sysPath.resolve('.');
 var localPath = sysPath.join(cwd, 'node_modules', 'brunch', 'lib', 'cli.js');
 
 var loadBrunch = function(path) {
-  profile('load brunch');
   var cli = require(path);
-  cli.profile = profile;
-  profile('loaded brunch');
   cli.run();
 };
 
