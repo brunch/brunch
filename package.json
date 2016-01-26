@@ -48,7 +48,7 @@
     "browser-resolve": "~1.11.1",
     "detective": "~4.0.0",
     "glob": "~6.0.0",
-    "node-browser-modules": "github:brunch/node-browser-modules"
+    "node-browser-modules": "~0.1.0"
   },
   "devDependencies": {
     "chai": "~3.4.1",
