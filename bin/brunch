@@ -6,7 +6,7 @@ global.brunchStartTime = Date.now();
 var sysPath = require('path');
 var fs = require('fs');
 var version = process.version;
-var verDigit = parseInt(ver.match(/^v(\d+)\./)[1]);
+var verDigit = parseInt(version.match(/^v(\d+)\./)[1]);
 
 if (verDigit < 4) {
   return console.error(
