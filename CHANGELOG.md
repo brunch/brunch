@@ -14,6 +14,7 @@ To install the latest version, execute `npm install -g brunch`
     3. Windows implementation should now work correctly.
 * `brunch new` launched with old syntax would now throw a descriptive error.
 * Improved progress indicator. It would not allow plugins to write output on top of it.
+* Added support for promises in plugins.
 
 ## Brunch 2.1.3 (Jan 9, 2016)
 * Fixes an issue when NPM packages were included incorrectly on Windows.
