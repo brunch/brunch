@@ -1,5 +1,9 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.2.3 (Feb 2, 2016)
+* Windows-related fixed to NPM
+* Don't include some NPM packages twice (`process` etc).
+
 ## Brunch 2.2.2 (Jan 28, 2016)
 * Built-in node.js modules can now be loaded in your client-side apps.
 * Improve compatibility with Brunch 1.x.
