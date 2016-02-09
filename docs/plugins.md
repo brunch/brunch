@@ -161,10 +161,10 @@ class UglifyOptimizer {
         inSourceMap: file.map,
         pretty: this.isPretty
       });
+      return Promise.resolve(optimized);
     } catch (err) {
-      error = err
+      return Promise.reject(err);
     }
-    callback(error, optimized);
   }
 }
 
