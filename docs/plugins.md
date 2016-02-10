@@ -55,7 +55,7 @@ concat(files): File
 optimize(file): File
 |
 // The compilation is finished.
-onCompile(files)
+onCompile(files, assets)
 ```
 
 Let's take a look at the [boilerplate plugin](https://github.com/brunch/brunch-boilerplate-plugin). Feel free to use it to create your own plugins:

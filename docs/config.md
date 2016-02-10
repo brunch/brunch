@@ -345,12 +345,12 @@ workers: {
 
 ## `onCompile`
 
-`Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array. Each member of that array is an object with `path` (path of the compiled file) and `sourceFiles` (array of objects representing each source file)
+`Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array, as well as `changedAssets` array. Each member of `generatedFiles` array is an object with `path` (path of the compiled file) and `sourceFiles` (array of objects representing each source file), each member of `changedAssets` array is an object with `path` (original path of an asset) and `destinationPath` (path of an asset in the public directory).
 
 Example
 
 ```javascript
-onCompile: (generatedFiles) => {
+onCompile: (generatedFiles, changedAssets) => {
   console.log(generatedFiles.map(f => f.path));
 }
 ```
