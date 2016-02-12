@@ -1,5 +1,19 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.3.0 (Feb 12, 2016)
+* Enabled NPM support by default
+* NPM: Added aliases support
+* NPM: Added support for including static files.
+* NPM: Added support for different versions of the same package.
+* NPM: Watcher would detect removed packages from users source code and
+  then do a corresponding recompilation.
+* NPM: Added support for `json` files.
+* `onCompile` config option now receives modified `assets` as a second argument.
+* `server` config option now allows to specify custom `hostname`s
+* New warning: When `brunch w -s -p 3334` is used (instead of `-P`)
+* New warning: When `defaultExtension` option is used.
+  It has been removed in Brunch 1.1, but many configs still have it.
+
 ## Brunch 2.2.3 (Feb 2, 2016)
 * Windows-related fixed to NPM
 * Don't include some NPM packages twice (`process` etc).
