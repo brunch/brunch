@@ -37,7 +37,7 @@
     "commonjs-require-definition": "~0.2.0",
     "debug": "~2.2.0",
     "fcache": "~0.1.0",
-    "init-skeleton": "~0.7.0",
+    "init-skeleton": "~0.8.0",
     "loggy": "~0.2.0",
     "mkdirp": "~0.5.0",
     "pushserve": "^1.0.0",
@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "chai": "~3.4.1",
-    "eslint": "^1.10.3",
+    "eslint": "^2.0.0",
     "express": "^4.13.0",
     "mocha": "~2.3.4",
     "rewire": "~2.5.0"
