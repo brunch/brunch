@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.3.2 (Feb 17, 2016)
+* Small fix for `xBrowserResolve is not a function` error.
+
 ## Brunch 2.3.1 (Feb 17, 2016)
 * Fixed handling of custom web-servers for `brunch watch -s`.
 * Improved exposure of `process.env.NODE_ENV` when used in Brunch apps.
