@@ -1,5 +1,10 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.3.1 (Feb 17, 2016)
+* Fixed handling of custom web-servers for `brunch watch -s`.
+* Improved exposure of `process.env.NODE_ENV` when used in Brunch apps.
+* NPM: Fixed support for different versions of the same package.
+
 ## Brunch 2.3.0 (Feb 12, 2016)
 * Enabled NPM support by default
 * NPM: Added aliases support
