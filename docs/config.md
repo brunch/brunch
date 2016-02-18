@@ -248,6 +248,7 @@ The server script must export a function that starts your custom server, either 
 If a custom server is not present, Brunch will use [pushserve](https://github.com/paulmillr/pushserve). If using your own, only `port` from the following options can be set from the config.
 
 * `port`: port on which server will run. Default: `3333`
+* `hostname`: hostname on which server will run. Default `localhost`, which only permits connections from the same computer. Set to `0.0.0.0` to permit access from other computers.
 * `base`: base URL from which to serve the app. Default: `''`
 * `indexPath`: path to serve when base URL is requested. Default `index.html`
 * `noPushState`: respond with 404 instead of `indexPath` for unknown paths. Default `false`
