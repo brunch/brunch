@@ -78,6 +78,7 @@
     "arrow-spacing": [2, {"before": true, "after": true}],
     "prefer-arrow-callback": 2,
     "prefer-template": 0,
-    "prefer-const": 2
+    "prefer-const": 2,
+    "no-const-assign": 2
   }
 }
