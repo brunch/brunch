@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.4.1 (Feb 23, 2016)
+## Brunch 2.4.2 (Feb 23, 2016)
 * You can now simply set `config.modules = false` to disable module wrapping.
 
 ## Brunch 2.4.0 (Feb 22, 2016)
