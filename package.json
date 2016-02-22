@@ -35,7 +35,7 @@
     "chokidar": "~1.4.0",
     "coffee-script": "~1.10.0",
     "commander": "~2.9.0",
-    "commonjs-require-definition": "~0.2.0",
+    "commonjs-require-definition": "~0.3.0",
     "debug": "~2.2.0",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.8.0",
