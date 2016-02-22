@@ -1,9 +1,10 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.4.0 (unreleased)
+## Brunch 2.4.0 (Feb 22, 2016)
 * Brunch would now correctly include file-based aliases for NPM packages. For example, this means you would be able to load `require('moment/locales/en')` even though the file is not declared in moment's `package.json`.
 * You can now simply set `config.modules = false` to disable module wrapping.
 * Removed `component.js` support, which was barely supported since v2.0.
+* Added warning for versions of NPM <3, because Brunch does not work on those.
 * Improved error handling.
 
 ## Brunch 2.3.2 (Feb 17, 2016)
@@ -95,7 +96,7 @@ To install the latest version, execute `npm install -g brunch`
     * `brunch new . --skeleton react` to create the project from `React` skeleton
     * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
-* Rewritten in JavaScript (ES6 + Promises). Now *requires node 4.0 or higher*.
+* Rewritten in JavaScript (ES6 + Promises). Now *requires node 4.0 / npm 3.0 or higher*.
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
 * `modules.autoRequire` should now work correctly on Windows.
 
