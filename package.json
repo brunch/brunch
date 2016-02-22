@@ -18,6 +18,7 @@
   "bugs": "http://github.com/brunch/brunch/issues",
   "license": "MIT",
   "main": "./lib/index",
+  "files": ["bin", "lib"],
   "bin": {
     "brunch": "./bin/brunch"
   },
