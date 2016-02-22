@@ -2,6 +2,7 @@ To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.4.0 (Feb 22, 2016)
 * Brunch would now correctly include file-based aliases for NPM packages. For example, this means you would be able to load `require('moment/locales/en')` even though the file is not declared in moment's `package.json`.
+* Fixed auto-expanding of GH URLs in skeletons: `brunch new --skeleton paulmillr/brunch-with-chaplin`
 * You can now simply set `config.modules = false` to disable module wrapping.
 * Removed `component.js` support, which was barely supported since v2.0.
 * Added warning for versions of NPM <3, because Brunch does not work on those.
