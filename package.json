@@ -43,7 +43,7 @@
     "detective": "~4.3.0",
     "fcache": "~0.1.0",
     "glob": "~7.0.0",
-    "init-skeleton": "~0.8.0",
+    "init-skeleton": "~0.9.0",
     "loggy": "~0.3.0",
     "mkdirp": "~0.5.0",
     "node-browser-modules": "~0.1.0",
