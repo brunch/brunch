@@ -16,8 +16,8 @@ Install Brunch with a simple node.js package manager command: `npm install -g br
 1. Create a new Brunch project: `brunch new [--skeleton url]`
     - skeleton specifies a skeleton from which your application will be initialized.
     The default skeleton (dead-simple) doesn't have any opinions about frameworks or libraries.
-    - check out the list of over 50 boilerplate projects, which you can use to
-    init your app from: [brunch.io/skeletons](http://brunch.io/skeletons)
+    - [brunch.io/skeletons](http://brunch.io/skeletons) contains over 50
+    boilerplate projects, which you can use to init your app from.
 2. Develop with Brunch: `brunch watch --server`
     - tells Brunch to watch your project and incrementally rebuild it when source files are changed.
     The optional server flag launches a simple web server with push state support.
