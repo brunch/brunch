@@ -11,11 +11,23 @@ Fast front-end web app build tool with simple declarative config, seamless incre
 
 ## First steps
 
-1. Install the latest stable version: `npm install -g brunch` (use `sudo` if necessary).
-    - To install edge version (from GitHub `master` branch): `npm install -g brunch/brunch`.
-2. Create your project: `brunch new`
-3. Continuously build it for development: `brunch watch [-s]`
-4. Prepare it for production: `brunch build -p`
+1. Create a new Brunch project: `brunch new [--skeleton url]`
+    - skeleton specifies a skeleton from which your application will be initialized.
+    The default skeleton (dead-simple) doesn't have any opinions about frameworks or libraries.
+    - check out the list of over 50 boilerplate projects, which you can use to
+    init your app from: [brunch.io/skeletons](http://brunch.io/skeletons)
+2. Develop with Brunch: `brunch watch --server`
+    - tells Brunch to watch your project and incrementally rebuild it when source files are changed.
+    The optional server flag launches a simple web server with push state support.
+    - If you use OS X and want brunch to show system notification every time compilation error happens, you will need to install terminal notifier:
+    `brew install terminal-notifier`
+3. Deploy with Brunch: `brunch build --production`
+    - builds a project for distribution. By default it enables minification.
+
+## Development
+
+- To install edge version (from GitHub `master` branch): `npm install -g brunch/brunch`
+- To enable debug mode, simply pass `-d` flag to any comand like that: `brunch build -d`
 
 ## Resources
 
