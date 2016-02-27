@@ -53,10 +53,10 @@
     "source-map": "~0.5.0"
   },
   "devDependencies": {
-    "chai": "~3.4.1",
+    "chai": "^3.4.1",
     "eslint": "^2.0.0",
     "express": "^4.13.0",
-    "mocha": "~2.3.4",
-    "rewire": "~2.5.0"
+    "mocha": "^2.3.4",
+    "rewire": "^2.5.0"
   }
 }
