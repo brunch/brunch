@@ -103,7 +103,7 @@ conventions: {
 
 `Object`: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your package.json `dependencies` section.
 
-* `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled, defaults to `false`.
+* `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled, defaults to `true`.
 * `npm.globals`: `Object`: a mapping from global name (as a key) to the corresponding module name (string) to expose.
 * `npm.styles`: `Object`: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.
 * `npm.static`: `Array`: a list of files from installed npm modules to include statically, bypassing deppack.
@@ -112,7 +112,6 @@ Example:
 
 ```javascript
 npm: {
-  enabled: true,
   styles: {pikaday: ['css/pikaday.css']}
   globals: {Pikaday: 'pikaday'}
 }
