@@ -2,7 +2,7 @@
 
 ## I want to start new project with Brunch. What's the workflow?
 
-* Create a new project with `brunch new <skeleton>`.
+* Create a new project with `brunch new <skeleton>`. See available skeletons [here](http://brunch.io/skeletons).
 * Create static HTML pages in `app/assets` directory (`login.html`, `user.html` etc.) and corresponding styles in `app/styles`.
 * If you need any app-specific scripts in the browser make sure they are loaded in your html via the `require('')` function. See the [Brunch conventions](https://github.com/brunch/brunch/tree/stable/docs#conventions).
 * Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically re-apply styles or reload the page when changes are saved.
@@ -11,7 +11,10 @@
 
 ## How to use Bower?
 
-Brunch supports [Bower](http://bower.io) package manager.
+Brunch does support [Bower](http://bower.io), however NPM is becoming de-facto standard for front-end packages.
+You may still want/need to use bower for some of your packages that aren't on NPM yet, or just copy these to `vendor`.
+
+For more details on NPM integration, see the next section.
 
 To add packages to your project:
 
@@ -24,24 +27,34 @@ Example app with Bower integration: http://github.com/paulmillr/ostio
 
 ## How to use NPM as client-side package manager?
 
-Brunch supports handling client-side dependencies using [NPM](https://npmjs.com) package manager.
+Brunch supports handling client-side dependencies using the [NPM](https://npmjs.com) package manager.
 
-To do so, enable NPM integration in config. Brunch will try to find all dependencies project needs when compiling your files.
+NPM integration is enabled by default starting Brunch 2.3 so there's no additional setup!
+Simply `npm install --save` your front-end packages as you normally would, `require` them in your app, and Brunch will figure out the rest.
+
+Just make sure that your don't forget to join `/^node_modules/` somewhere!
+
+```coffeescript
+files:
+  javascripts:
+    joinTo:
+      'js/app.js': /^app/
+      'js/vendor.js': /^node_modules/
+```
 
 Brunch can also handle styles of client-side libraries, but by providing `styles` attribute which is key-value object where key is package name and value is an array with relative to package path of styles which should be included.
 
 ```coffeescript
 npm:
-    enabled: true
-    styles:
-        leaflet: [ 'dist/leaflet.css' ]
+  styles:
+    leaflet: [ 'dist/leaflet.css' ]
 files:
-    javascripts:
-        joinTo:
-            'js/vendor.js': /^node_modules/
-    styles:
-        joinTo:
-            'css/vendor.css': /^node_modules/
+  javascripts:
+    joinTo:
+      'js/vendor.js': /^node_modules/
+  styles:
+    joinTo:
+      'css/vendor.css': /^node_modules/
 ```
 
 ## How to handle other package assets?
