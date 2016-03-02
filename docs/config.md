@@ -325,24 +325,6 @@ file watching library used in brunch.
     (backed by polling), or fs.watch.
     Polling is slower but can be more reliable.
 
-## `workers`
-
-`Object`: Optional settings affecting experimental workers feature for multi-threaded compilation. May improve compilation speed of large projects with lots of cpu-bound compile operations on multi-core systems, but do not be surprised if the overhead involved actually slows down your compile times.
-
-* `enabled`: Boolean indicating whether to use experimental workers feature. Default value is `false` (disabled).
-* `count`: (optional) The number of worker processes to use. Defaults to the number of CPUs/cores on the system minus 1.
-* `extensions`: (optional) Array of file extensions to compile using worker processes. If not set, compiles all source files using workers.
-
-Example:
-
-```javascript
-workers: {
-  enabled: true,
-  count: 6,
-  extensions: ['less']
-}
-```
-
 ## `onCompile`
 
 `Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array, as well as `changedAssets` array. Each member of `generatedFiles` array is an object with `path` (path of the compiled file) and `sourceFiles` (array of objects representing each source file), each member of `changedAssets` array is an object with `path` (original path of an asset) and `destinationPath` (path of an asset in the public directory).

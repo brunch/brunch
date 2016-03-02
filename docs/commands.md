@@ -58,3 +58,13 @@ Examples:
 * `brunch w -s`: watch current project and run a webserver that would work on public directory.
 * `brunch w -sP 8841`: same as above, but run webserver on port 8841.
 * `brunch w -e ios`: watch current directory &amp; compile the output using settings from `config.overrides.ios`
+
+## Workers
+
+Both `brunch build` and `brunch watch` allow you to supply a flag to enable *experimental* workers support for multi-process compilation. It may improve compilation speed of large projects with lots of CPU-bound compile and optimize operations on multi-core systems, but don't be surprised if the overhead involved actually slows down your compilation time.
+
+To use it, pass the `-j` flag followed by a number of workers you want to spawn. Typically, this number should be no more than the number of cores on your machine. You can simply pass `-J` without a number to let Brunch figure out the number of cores.
+
+(Mac users, be ware that on newer MacBooks that support hyperthreading, OS X will report twice the number of actual hardware cores, e.g. 4 instead of 2, so you are better off explicitly passing the number of workers.)
+
+Experiment with the flag and the number of workers to see what configuration works best for your project *and* your machine.
