@@ -1,5 +1,20 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch `<unreleased>`
+* Allow to specify again `conventions.vendor` as an anymatch set.
+* Better output from deppack.
+* Fixed fully-qualified JSON requires from node modules (like `require('entities/xml.json')`).
+* Reset used node modules cache on watcher restart properly.
+* Brunch will now try to `npm install` if you try to require a package that is present in `package.json` but was not installed.
+* Won't throw errors when node modules' optional dependencies were not present.
+* Won't assume `peerDependencies` are optional.
+* Improperly-cased requires (like `React` instead of `react`) will now throw compile errors.
+* Added support for scoped npm packages, like `@cycle/dom`.
+* Fixed npm mail file resolving which was not working before in some cases (`rx`).
+* Brunch will now register CommonJS modules using full names of the files, and create aliases without extensions to allow you to use both styles of requires.
+* Reworked parallelized builds. You can use the `-j 2` flag with `build`/`watch` to parallelize your build. See [docs/commands.md](docs/commands.md#workers) for more details.
+* Bumped `commonjs-require-definition` to allow resetting modules, which can be used for live JS reloading with the updated `auto-reload-brunch`.
+
 ## Brunch 2.4.2 (Feb 23, 2016)
 * You can now simply set `config.modules = false` to disable module wrapping.
 
