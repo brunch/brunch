@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
-global.brunchStartTime = Date.now();
+global.appStartTime = Date.now();
 
 var sysPath = require('path');
 var fs = require('fs');
