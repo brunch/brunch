@@ -1,5 +1,5 @@
 const rewire = require('rewire');
-const application = rewire('../lib/application');
+const application = rewire('../lib/config');
 
 describe('helpers', function() {
   // describe('replaceConfigSlashes()', function() {
