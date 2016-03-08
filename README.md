@@ -13,17 +13,17 @@ Fast front-end web app build tool with simple declarative config, seamless incre
 
 Install Brunch with a simple node.js package manager command: `npm install -g brunch`
 
-1. Create a new Brunch project: `brunch new [--skeleton url]`
+1. **Create** a new Brunch project: `brunch new [--skeleton url]`
     - skeleton specifies a skeleton from which your application will be initialized.
     The default skeleton (dead-simple) doesn't have any opinions about frameworks or libraries.
     - [brunch.io/skeletons](http://brunch.io/skeletons) contains over 50
     boilerplate projects, which you can use to init your app from.
-2. Develop with Brunch: `brunch watch --server`
+2. **Develop** with Brunch: `brunch watch --server`
     - tells Brunch to watch your project and incrementally rebuild it when source files are changed.
     The optional server flag launches a simple web server with push state support.
     - If you use OS X and want brunch to show system notification every time compilation error happens, you will need to install terminal notifier:
     `brew install terminal-notifier`
-3. Deploy with Brunch: `brunch build --production`
+3. **Deploy** with Brunch: `brunch build --production`
     - builds a project for distribution. By default it enables minification.
 
 ## Development
