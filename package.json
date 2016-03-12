@@ -44,6 +44,7 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.4.1",
     "debug": "~2.2.0",
+    "deep-assign": "^2.0.0",
     "detective": "~4.3.0",
     "fcache": "~0.1.0",
     "glob": "~7.0.0",
