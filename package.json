@@ -63,7 +63,6 @@
   "devDependencies": {
     "ava": "^0.13.0",
     "eslint": "^2.0.0",
-    "express": "^4.13.0",
     "rewire": "^2.5.0"
   }
 }
