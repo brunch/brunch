@@ -26,7 +26,7 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "test": "eslint lib test && mocha --compilers coffee:coffee-script/register --require test/common.js --colors"
+    "test": "eslint lib test && ava"
   },
   "engines": {
     "node": ">= 4.0",
@@ -61,10 +61,9 @@
     "true-case-path": "~1.0.2"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
+    "ava": "^0.13.0",
     "eslint": "^2.0.0",
     "express": "^4.13.0",
-    "mocha": "^2.3.4",
     "rewire": "^2.5.0"
   }
 }
