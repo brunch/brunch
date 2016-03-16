@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.5.0 (unreleased)
+## Brunch 2.5.0 (Mar 16, 2016)
 * **Improved NPM support:**
     * Added support for scoped npm packages, like `@cycle/dom`.
     * Brunch will now try to `npm install` if you try to require a package that is present in `package.json` but was not installed.
@@ -10,7 +10,7 @@ To install the latest version, execute `npm install -g brunch`
     * Fixed npm mail file resolving which was not working before in some cases (`rx`).
 * **Support for file extensions:**
     * Brunch will now register CommonJS modules using full names of the files, and create aliases without extensions to allow you to use both styles of requires.
-    * Basically these cases are possible now: `require('file.json')` and `require('file.js')`
+    * Basically these cases are possible & different now: `require('file.json')` and `require('file.js')`
 * **Parallel builds:** Bringing up to 50% performance improvement with just one simple flag.
     * You can use the `-j 2 / 4` flag with `build` / `watch` to parallelize CPU-bould tasks in your build. See [docs/commands.md](docs/commands.md#workers) for more details.
 * **React hot load support:**
