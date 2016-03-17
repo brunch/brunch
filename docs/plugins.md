@@ -175,4 +175,4 @@ UglifyOptimizer.prototype.extension = 'js';
 module.exports = UglifyOptimizer;
 ```
 
-See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.jade](https://github.com/brunch/brunch.github.io/blob/brunch/app/plugins.jade) and sending a Pull Request.
+See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.json](https://github.com/brunch/brunch.github.io/blob/master/plugins.json) and sending a Pull Request.
