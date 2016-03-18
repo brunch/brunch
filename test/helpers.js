@@ -33,7 +33,8 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
           on: ['c']
         }
       }
-    }
+    },
+    files: {}
   };
   applyOverrides(config, {
     env: ['foo', 'bar', 'baz']
