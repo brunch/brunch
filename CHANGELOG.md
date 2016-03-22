@@ -1,5 +1,12 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.5.2 (Mar 22, 2016)
+* Fixed double inclusion of some files on Windows.
+* Fixed an issue when `joinTo` production override did not have any effect.
+
+## Brunch 2.5.1 (Mar 18, 2016)
+* Fixed loading of JSON files.
+
 ## Brunch 2.5.0 (Mar 16, 2016)
 * **Improved NPM support:**
     * Added support for scoped npm packages, like `@cycle/dom`.

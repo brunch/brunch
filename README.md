@@ -26,12 +26,12 @@ Install Brunch with a simple node.js package manager command: `npm install -g br
 3. **Deploy** with Brunch: `brunch build --production`
     - builds a project for distribution. By default it enables minification.
 
-## Development
+## Brunch development
 
 - To install edge version (from GitHub `master` branch): `npm install -g brunch/brunch`
 - To enable debug mode, simply pass `-d` flag to any comand like that: `brunch build -d`
 
-## Resources
+## Learn
 
 * Visit our site: [brunch.io](http://brunch.io)
 * **[See Brunch documentation](https://github.com/brunch/brunch/tree/master/docs)**
