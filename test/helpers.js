@@ -13,6 +13,7 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
   // });
   const applyOverrides = application.__get__('applyOverrides');
   const config = {
+    server: {},
     plugins: {
       on: ['a'],
       off: ['b']
@@ -34,7 +35,8 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
         }
       }
     },
-    files: {}
+    files: {},
+    paths: {}
   };
   applyOverrides(config, {
     env: ['foo', 'bar', 'baz']
