@@ -176,3 +176,41 @@ module.exports = UglifyOptimizer;
 ```
 
 See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.json](https://github.com/brunch/brunch.github.io/blob/master/plugins.json) and sending a Pull Request.
+
+### JS exports
+
+Starting Brunch (2.x.x `<unreleased>`), it is possible for non-JS compilers to output JavaScript modules **in addition** to whatever they do.
+
+A use case could be a styles compiler with CSS modules support that allows you to do something like this:
+
+```stylus
+.button
+  margin: 0
+```
+
+```javascript
+var style = require('./button.styl');
+// ...
+
+// style.button will return the obfuscated class name (something like "_button_xkplk_42" perhaps)
+<div className={style.button}>...</div>
+```
+
+All compiler needs to do is return `exports` in addition to `{data, map}`:
+
+```javascript
+class MyCompiler {
+  compile(params) {
+    const path = params.path;
+    const data = params.data;
+
+    const compiled = magic(data);
+    const mapping = mappingMagic(data);
+    const exports = 'module.exports = ' + JSON.stringify(mapping) + ';'
+
+    return Promise.resolve({ data: compiled, exports });
+  }
+}
+```
+
+Note: exported JS will not be compiled or linter by any other plugin and its `require` statements will not be resolved. Make sure your exported JS is self-contained.
