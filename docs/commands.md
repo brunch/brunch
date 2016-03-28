@@ -7,26 +7,25 @@ Full syntax: `brunch new [path] [-s skeleton]`
 Create new brunch project. Options:
 
 * `path` (optional, default: `.`): name of project directory that would be created.
-* `-s, --skeleton`: (optional) skeleton (name or git URL), contents of which will be copied to new dir..
-
-`.git` directory is automatically removed when copying.
+* `-s, --skeleton`: skeleton name or URL from [brunch.io/skeletons](http://brunch.io/skeletons)
 
 Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. A few popular skeletons:
 
-* `brunch new .` — if you want no opinions. Just initializes configs and empty directories from [dead-simple](https://github.com/brunch/dead-simple).
-* `brunch new -s react` — React + React Router + Stylus + ES6 / JSX
-* `brunch new -s hipster` — Angular, Bootstrap, node-webkit, CoffeeScript + Less + Jade
-* `brunch new -s chaplin` — Backbone, Chaplin, CoffeeScript. One of the most popular skeletons
-* `brunch new -s ember` — A skeleton for rapid Ember development. CoffeeScript + Stylus + Handlebars
-* `brunch new -s cordova` — Bare skeleton that includes support for building apps using Apache Cordova aka Phonegap.
-* `brunch new -s banana-pancakes` — A simple skeleton for Bootstrap.
-* `brunch new -s exim` — Neat Flux-based Exim framework on top of React and optional CoffeeScript.
+* `brunch new` — if you want no opinions. Just initializes configs and empty directories from [dead-simple](https://github.com/brunch/dead-simple).
+* `brunch new -s es6` — Super-simple skeleton that does compilation of ECMAScript 6 files out-of-box
+* `brunch new -s react` — Modern skeleton with React library.
+* `brunch new -s exim` — An ultra-lightweight Flux-like architecture for HTML5 apps using Facebook's React library.
+* `brunch new -s redux` — Redux: Predictable state container for React apps.
+* `brunch new -s hipster` — Ready to Use Skeleton to build Desktop Applications with all the Web goodies of today.
+* `brunch new -s chaplin` — Chaplin, Backbone, HTML5 Boilerplate, jQuery. Perfect for big applications
+* `brunch new -s ember` — Twitter Bootstrap, jQuery
+* `brunch new -s banana-pancakes` — Twitter Bootstrap, Mediator. Essentially the same as <a href='https://github.com/nezoomie/brunch-eggs-and-bacon'>Brunch with Eggs and Bacon</a>, but constantly updated to the latest library versions.
 
 Other 50+ boilerplates are available at http://brunch.io/skeletons
 
 Each skeleton must have `brunch-config.{js,coffee}` file.
 
-Short-cut: `brunch n`.
+Short-cut: `brunch n`
 
 ## `brunch build`
 
@@ -35,7 +34,7 @@ Build a brunch project. Options:
 * `-e SETTING, --env SETTING`: apply settings from `config.overrides[SETTING]`
 * `-p, --production`: run optimize/minify plugins during compilation, disable source maps and auto-reload; same as `-e production` and settings can be modified in `config.overrides.production`
 
-Short-cut: `brunch b`.
+Short-cut: `brunch b`
 
 Examples:
 
@@ -50,7 +49,7 @@ Watch brunch directory and rebuild if something changed. Options:
 * `-s, --server`: run a simple http server that would serve `public` dir in `/` and `test` dir in `/test/`
 * `-P PORT, --port PORT`: if a `server` option was specified, define on which port the server would run
 
-Short-cut: `brunch w`.
+Short-cut: `brunch w`
 
 Examples:
 
