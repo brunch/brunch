@@ -1,6 +1,6 @@
 # Brunch
 
-[**Guide**](https://github.com/brunch/brunch-guide#readme) | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
+[**First steps**] | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
 ## Getting started
 
@@ -9,6 +9,8 @@ Install Brunch with a simple node.js command: `npm install -g brunch`
 1. **Create** a new Brunch project: `brunch new [--skeleton url]`
 2. **Develop** with Brunch: `brunch watch --server`
 3. **Deploy** with Brunch: `brunch build --production`
+
+Check out [**Brunch Guide**](https://github.com/brunch/brunch-guide#readme)
 
 ## Diving in
 

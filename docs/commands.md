@@ -1,6 +1,6 @@
 # Brunch: Command Line Interface
 
-[**Guide**](https://github.com/brunch/brunch-guide#readme) | **Commands** | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
+[**First steps**](./README.md) | **Commands** | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
 ## `brunch new` / `brunch n`
 
