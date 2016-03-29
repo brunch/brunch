@@ -3,9 +3,7 @@
 [**Getting started**](./README.md) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
-located in the root directory to control various aspects of your application.
-The file is an executable script, so you can also execute arbitrary JS and
-import Node.js modules there.
+located in the root directory to manage various aspects of your app.
 
 * [**paths**](#paths) - where to take files from and where to put generated ones
 * [**files**](#files) - which files exactly should Brunch generate and how.
@@ -36,6 +34,9 @@ module.exports = {
   }
 }
 ```
+
+Each Brunch config is an executable script,
+so you can also execute arbitrary JS and import Node.js modules there.
 
 ## `paths`
 
