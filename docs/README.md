@@ -99,7 +99,7 @@ output exactly what you've entered here. jQuery is working!
 ### Using alternative tableware
 
 Let's say you want to try the new fancy **CoffeeScript** thing. Maybe your OCD would be eased by conforming
-to 66 **ESLint** rules. It doesn't matter, Brunch plugins aim to help with all kinds of crazy cases.
+to 66 **ESLint** rules. It doesn't matter, [more than 50 Brunch plugins](http://brunch.io/plugins) aim to help with all kinds of crazy cases.
 
 Install CoffeeScript plugin by executing `npm install --save coffee-script-brunch`.
 Then, create the `app/drink.coffee` file with some content:
