@@ -11,6 +11,8 @@
 - [Including third-party ingredients](#including-third-party-ingredients)
 - [Plugging alternative tableware](#plugging-alternative-tableware)
 
+---
+
 ### Tasting your first Brunch
 
 So, you've installed node.js and brunch itself (`npm install -g brunch`).
