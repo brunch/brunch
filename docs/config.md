@@ -4,6 +4,8 @@
 
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
 located in the root directory to control various aspects of your application.
+The file is an executable script, so you can also execute arbitrary JS and
+import Node.js modules there.
 
 * [**paths**](#paths) - where to take files from and where to put generated ones
 * [**files**](#files) - which files exactly should Brunch generate and how.
@@ -12,19 +14,14 @@ located in the root directory to control various aspects of your application.
 
 Less common options:
 
-* [modules](#modules) (wrapper, definition, autoRequire, nameCleaner)
-* [conventions](#conventions) (ignored, assets, vendor)
-* [watcher](#watcher) (usePolling)
-* [server](#server)
-* optimize
-* sourceMaps
-* notifications
-* notificationsTitle
-* onCompile
+* [modules](#modules) - specifies details of JS module implementation, such as `wrapper`, `definition`, `autoRequire` and `nameCleaner`.
+* [conventions](#conventions) - defines which files are treated as assets and which ones are ignored in your app.
+* [watcher](#watcher) - low-level configuration of the file watcher which empowers Brunch.
+* [server](#server) - allows to describe custom web-servers instead of the built-in one. Allows to
+* sourceMaps, optimize, notifications, notificationsTitle - simple true/false options
+* [onCompile](#oncompile) - describes post-compile hook, if you need one
 
 You can see all config default values in the `setConfigDefaults` function of [`lib/config.js`](/lib/config.js#L223) in the brunch source code.
-
-The config is an executable script, so you can also do things like import Node.js modules in your configuration file.
 
 ## `paths`
 
