@@ -4,7 +4,12 @@
 
 Brunch uses node.js plugins to provide compilation / linting / optimization functionality.
 
-- JS exports in stylesheets
+- [Usage](#usage)
+- [Internals](#internals)
+- [Boilerplate plugin](#boilerplate-plugin)
+- [CSS compiler example](#css-compiler-example)
+- [Minifier example](#minifier-example)
+- [Exporting JS from stylesheets](#exporting-js-from-stylesheets)
 
 ## Usage
 
@@ -14,7 +19,7 @@ Plugins can be installed with a simple console command:
 
 Sometimes you'll want to use plugins which have not yet been published to NPM and are available only through GIT. In this case you can specify GIT URL for the command: `npm install --save brunch/sass-brunch`.
 
-## API
+## Internals
 
 Brunch plugins are plain JS classes which are initialized with brunch configs.
 
@@ -61,6 +66,8 @@ optimize(file): File
 // The compilation is finished.
 onCompile(files, assets)
 ```
+
+### Boilerplate plugin
 
 Let's take a look at the [boilerplate plugin](https://github.com/brunch/brunch-boilerplate-plugin). Feel free to use it to create your own plugins:
 
@@ -182,7 +189,7 @@ module.exports = UglifyOptimizer;
 
 See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.json](https://github.com/brunch/brunch.github.io/blob/master/plugins.json) and sending a Pull Request.
 
-### JS exports in stylesheets
+### Exporting JS from stylesheets
 
 Starting Brunch 2.6, it is possible for non-JS compilers to output JavaScript modules **in addition** to whatever they do.
 
