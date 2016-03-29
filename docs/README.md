@@ -96,4 +96,21 @@ console.log('Tasty Brunch, just trying to use jQuery!', $('body'));
 Check our tiny web-server at [`localhost:3333`](http://localhost:3333) - and the browser console would
 output exactly what you've entered here. jQuery is working!
 
+### Using alternative tableware
+
+Let's say you want to try the new fancy **CoffeeScript** thing. Maybe your OCD would be eased by conforming
+to 66 **ESLint** rules. It doesn't matter, Brunch plugins aim to help with all kinds of crazy cases.
+
+Install CoffeeScript plugin by executing `npm install --save coffee-script-brunch`.
+Then, create the `app/drink.coffee` file with some content:
+
+```
+$ echo "console.log 'This is madness. Madness? This is Coffee!'" > app/drink.coffee
+```
+
+Since you've added CS plugin to the board, Brunch would *magically* recompile the app
+and include *compiled* content of `drink.coffee` in the output file. **Voila!**
+
+### Becoming professional cook
+
 Looking to learn the remaining 5%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme), which also describes using Brunch on a legacy codebase.
