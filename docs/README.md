@@ -6,7 +6,7 @@
 
 - [Tasting your first Brunch](#tasting-your-first-brunch)
 - [What is the dish made of?](#what-is-the-dish-made-of)
-- [Pouring some ketchup](#pouring-some-ketchup)
+- [Pouring some syrup](#pouring-some-syrup)
 - [Serving the Brunch](#serving-the-brunch)
 - [Including third-party ingredients](#including-third-party-ingredients)
 - [Plugging alternative tableware](#plugging-alternative-tableware)
@@ -57,7 +57,7 @@ public/             // The "output" Brunch will re-generate on every build.
   app.js.map        // Source mappings for simple debugging.
 ```
 
-### Pouring some ketchup
+### Pouring some syrup
 
 Let's add a few files to our app, then build the app one more time:
 
