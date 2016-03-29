@@ -2,13 +2,12 @@
 
 [**Getting started**](./README.md) | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | **FAQ**
 
-## I want to start new project with Brunch. What's the workflow?
-
-* Create a new project with `brunch new <skeleton>`. See available skeletons [here](http://brunch.io/skeletons).
-* Create static HTML pages in `app/assets` directory (`login.html`, `user.html` etc.) and corresponding styles in `app/styles`.
-* If you need any app-specific scripts in the browser make sure they are loaded in your html via the `require('')` function. See the [Brunch conventions](./docs#conventions).
-* Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically re-apply styles or reload the page when changes are saved.
-* Debug your code in browser via `console.log` or `debugger` statements.
+- [How to use NPM as client-side package manager?](#how-to-use-npm-as-client-side-package-manager)
+- [How to use Bower?](#how-to-use-bower)
+- [I want to create a separate JavaScript output. What's the best way?](#jointo)
+- [Uninstalling and installing plugins](#uninstalling-and-installing-plugins)
+- [I get an EMFILE error when I build a Brunch project](#emfile)
+- [How can Brunch help with testing?](#how-can-brunch-help-with-testing)
 
 ## How to use NPM as client-side package manager?
 
@@ -56,19 +55,13 @@ To add packages to your project:
 * Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
 * Note that `overrides` do not impact Bower's behavior, so the original dependency graph will still be copied by `bower install`. But specifying `overrides` is effective for changing the dependencies that actually get built into your project.
 
-Example app with Bower integration: http://github.com/paulmillr/ostio
-
-## How to handle other package assets?
-
-We're [working](https://github.com/brunch/brunch/issues/633) on it. As for now, you can solve it in different ways - by using `npm post-install` script, `onCompile` handler in config etc.
+As for now, you can solve it in different ways - by using `npm post-install` script, `onCompile` handler in config etc.
 
 ```json
 "scripts": {
   "postinstall": "brunch b && cp -r node_modules/font-awesome/fonts public/fonts"
 }
 ```
-
-## How to override package manifest?
 
 You can override some dependent package manifest using `overrides` attribute in `package.json` / `bower.json`.
 
@@ -85,9 +78,10 @@ Be aware, that `main` attribute in `package.json` is a string, but array in `bow
 }
 ```
 
-## I want to create a separate JavaScript file (for a bookmarklet, etc.). What's the best way?
+<a name="jointo"></a>
+## I want to create a separate JavaScript output. What's the best way?
 
-Use this joinTo config. It will compile all files in `app/` (except in `app/namespace`) to one file and all files in `app/namespace` to another.
+Sometimes it's useful to create separate JS files for bookmarklets etc. Use this joinTo config. It will compile all files in `app/` (except in `app/namespace`) to one file and all files in `app/namespace` to another.
 
 ```coffeescript
 joinTo:
@@ -96,35 +90,22 @@ joinTo:
   'javascripts/vendor.js': /^vendor/
 ```
 
-## How do I uninstall an old plugin and install a new one?
+## Uninstalling and installing plugins
 
 For example, you want to change default `Handlebars` templates to `eco`.
 
-* Remove the `"handlebars-brunch": "version"` line from `package.json`.
+* Remove the `"handlebars-brunch"` line from `package.json`.
 * Install eco-brunch: `npm install eco-brunch --save`.
 
-## I get an EMFILE error when I build a Brunch project. WTF?
+<a name="emfile"></a>
+## I get an EMFILE error when I build a Brunch project
 
 `EMFILE` means there are too many open files.
 Brunch watches all your project files and it's usually a pretty big number.
 You can fix this error with setting max opened file count to a bigger number
 using the command `ulimit -n <number>` (10000 should be enough).
 
-## How do I enable verbose mode for brunch commands?
-
-Simply pass `--debug` flag to any command.
-
-## I get an error like "MODULE_NOT_FOUND" when I try to run Brunch
-
-You need to install brunch plugins. It can be done simply by executing `npm install` in your project directory.
-
-## What languages do you recommend I use?
-
-* `CoffeeScript` is used because it plays nice with object-oriented Backbone.js nature.
-* `Stylus` is used because a) it has customizable syntax (you can use or drop braces / semicolons / colons), unlike less / sass; b) its mixins are transparent. If you're writing `border-radius` in stylus with `nib`, it's automatically expanded to all needed vendor prefixes. No need to use `LESS` / `SCSS` syntax. Example: https://gist.github.com/2005644.
-* `Handlebars` templates are used because they are logic-less, compatible with Mustache (which has implementations in many languages), and have a nice helpers system. If you're a fan of clear terse syntax, you might like `Jade` instead, which is similar to, but much clearer than `HAML`.
-
-## What is the recommended way of running tests?
+## How can Brunch help with testing?
 
 This simple function will load all your files that are ending with `-test` suffix (`user-view-test.coffee` etc).
 
