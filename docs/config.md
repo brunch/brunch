@@ -2,8 +2,8 @@
 
 [**Getting started**](./README.md) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-Brunch uses configuration file `brunch-config.js / coffee`
-located in the root directory to manage various aspects of your app.
+Brunch uses configuration file `brunch-config.js` to manage various
+aspects of your app.
 
 * [**paths**](#paths) - where to take files from and where to put generated ones
 * [**files**](#files) - which files exactly should Brunch generate and how.
@@ -371,3 +371,8 @@ onCompile: (generatedFiles, changedAssets) => {
   console.log(generatedFiles.map(f => f.path));
 }
 ```
+
+### Tips
+
+You can use CoffeeScript to write configuration files. This way they'll be
+much shorter and concise. Simply create a file called `brunch-config.coffee`.
