@@ -28,7 +28,7 @@ $ brunch build
 01 Apr 10:45:30 - info: compiled initialize.js into app.js, copied index.html in 857ms
 ```
 
-### What is the Brunch made of?
+### What is the dish made of?
 
 The app is there, let's take a quick look into the project's structure
 
