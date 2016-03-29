@@ -115,7 +115,7 @@ It is important to keep a few things in mind regarding entry points & their know
   }
   ```
 * all `config.npm.globals` will be included in **every** entry point and joinTo
-* `entryPoints` only work with javascript files. No stylesheets or templates
+* `entryPoints` only work with javascript files. If you want to also include your templates, keep a `joinTo` for them
 
 ## `npm`
 
