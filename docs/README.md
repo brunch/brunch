@@ -4,7 +4,7 @@
 
 *How to learn 95% of Brunch in 8 minutes? Follow the guide!*
 
-### Creating your first project
+### Eating your first Brunch
 
 So, you've installed node.js and brunch itself (`npm install -g brunch`).
 You're probably starving at this point. Let's get *straight to the business*.
@@ -28,7 +28,7 @@ $ brunch build
 01 Apr 10:45:30 - info: compiled initialize.js into app.js, copied index.html in 857ms
 ```
 
-### Structure
+### What is the Brunch made of?
 
 The app is there, let's take a quick look into the project's structure
 
@@ -48,7 +48,7 @@ public/             // The "output" Brunch will re-generate on every build.
   app.js.map        // Source mappings for simple debugging.
 ```
 
-### Concatenation
+### Pouring some ketchup
 
 Let's add a few files to our app, then build the app one more time:
 
@@ -66,7 +66,7 @@ Let's inspect files in `public` to understand what happened at this point:
   Each file is wrapped into a JS function, which defines a module. This
   allows us to do things like `require('./logger')`.
 
-### Watching the Brunch. Serving the Brunch.
+### Serving the Brunch
 
 Executing `brunch build` every time seems to take too much effort. Instead, let's
 just do `brunch watch --server`. The `watch` would **automatically & efficiently rebuild the
@@ -78,7 +78,7 @@ directory.
 Since the shell console would be busy with `brunch watch` command, we'll need
 to open a new window.
 
-### Using third-party libraries
+### Adding third-party ingredients
 
 Let's try to add jQuery to our app. Brunch makes the process absolutely effortless.
 
