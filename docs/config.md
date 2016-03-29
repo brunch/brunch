@@ -5,19 +5,17 @@
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
 located in the root directory to control various aspects of your application.
 
-Commonly used config sections:
+* [**paths**](#paths) (`watched`, `public`) - where to take files from and where to put generated ones
+* [**files**](#files) (`javascripts, stylesheets, templates`; `joinTo`s and `order`) - which files exactly should Brunch generate and how.
+* [**npm**](#npm) (`styles`, `globals`, `static`) - NPM settings
+* [**plugins**](#plugins) - individual plugin settings.
 
-* [`paths`](#paths) (`watched`, `public`) - where to take files from and where to put generated ones
-* [`files`](#files) (`javascripts, stylesheets, templates`; `joinTo`s and `order`) - which files exactly should Brunch generate and how.
-* [`npm`](#npm) (`styles`, `globals`, `static`) - NPM settings
-* [`plugins`](#plugins) - individual plugin settings.
-
-Not-so common:
+Less common options:
 
 * [modules](#modules) (wrapper, definition, autoRequire, nameCleaner)
-* conventions (ignored, assets, vendor)
-* watcher (usePolling)
-* server
+* [conventions](#conventions) (ignored, assets, vendor)
+* [watcher](#watcher) (usePolling)
+* [server](#server)
 * optimize
 * sourceMaps
 * notifications
