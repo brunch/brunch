@@ -4,6 +4,13 @@
 
 *How to learn 95% of Brunch in 8 minutes? Follow the guide!*
 
+- [Tasting your first Brunch](#tasting-your-first-brunch)
+- [What is the dish made of?](#what-is-the-dish-made-of)
+- [Pouring some ketchup](#pouring-some-ketchup)
+- [Serving the Brunch](#serving-the-brunch)
+- [Including third-party ingredients](#including-third-party-ingredients)
+- [Plugging alternative tableware](#plugging-alternative-tableware)
+
 ### Tasting your first Brunch
 
 So, you've installed node.js and brunch itself (`npm install -g brunch`).
@@ -102,7 +109,7 @@ Let's say you want to try the new fancy **CoffeeScript** thing. Maybe your OCD w
 to 66 **ESLint** rules. It doesn't matter, [more than 50 Brunch plugins](http://brunch.io/plugins) aim to help with all kinds of crazy cases.
 
 Install CoffeeScript plugin by executing `npm install --save coffee-script-brunch`.
-Hmm...that's exactly the same command from our previous step. Whatever. Let's create the `app/drink.coffee` file with some content:
+Hmm...that's exactly the same command from our previous step. Whatever. Let's create the `drink.coffee` file with some content:
 
 ```
 $ echo "console.log 'This is madness. Madness? This is Coffee!'" > app/drink.coffee
