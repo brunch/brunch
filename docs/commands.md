@@ -2,14 +2,14 @@
 
 [**Getting started**](./README.md) | **Commands** | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-## `brunch new` / `brunch n`
+### `brunch new` / `brunch n`
 
 Create new brunch project. Full syntax: `brunch new [path] [-s skeleton]`
 
 * `path` (optional, default: `.`): name of project directory that would be created.
 * `-s, --skeleton` (optional, default: `simple`): skeleton name or URL from [brunch.io/skeletons](http://brunch.io/skeletons)
 
-## `brunch build` / `brunch b`
+### `brunch build` / `brunch b`
 
 Builds a brunch project and places the output into `public` directory.
 
@@ -20,7 +20,7 @@ May improve compilation speed of large projects.
 Try different `WORKERS` amount to see which one works best for your system.
 * `-d, --debug` - enables verbose debug output.
 
-## `brunch watch` / `brunch w`
+### `brunch watch` / `brunch w`
 
 Watches brunch app directory for changes and rebuilds the whole project when they happen. Options:
 
