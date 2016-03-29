@@ -10,6 +10,7 @@ Brunch uses node.js plugins to provide compilation / linting / optimization func
 - [CSS compiler example](#css-compiler-example)
 - [Minifier example](#minifier-example)
 - [Exporting JS from stylesheets](#exporting-js-from-stylesheets)
+- [Tips](#tips)
 
 ## Usage
 
@@ -226,3 +227,12 @@ class MyCompiler {
 ```
 
 Note: exported JS will not be compiled or linter by any other plugin and its `require` statements will not be resolved. Make sure your exported JS is self-contained.
+
+## Tips
+
+- Add your own plugins to [brunch.io/plugins](http://brunch.io/plugins).
+  This will make more people use them.
+- Brunch plugins should be as simple as possible. Don't try to copy Grunt, Gulp or other
+  task runners approaches.
+- Don't include plugins for languages or technologies your app does not use.
+  They may unnecessarily slowdown the build process.
