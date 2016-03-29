@@ -1,4 +1,6 @@
-# Brunch config description
+# Brunch: Config
+
+[**Guide**](https://github.com/brunch/brunch-guide#readme) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
 located in the root directory to control various aspects of your application.

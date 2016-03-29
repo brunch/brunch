@@ -1,4 +1,6 @@
-# FAQ
+# Brunch: FAQ
+
+[**Guide**](https://github.com/brunch/brunch-guide#readme) | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | **FAQ**
 
 ## I want to start new project with Brunch. What's the workflow?
 
