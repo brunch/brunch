@@ -1,4 +1,4 @@
-# Command line API
+# Command line interface
 
 ## `brunch new` / `brunch n`
 

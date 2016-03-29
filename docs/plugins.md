@@ -16,7 +16,7 @@ Brunch plugins are plain JS classes which are initialized with brunch configs.
 
 Almost every plugin is usually working with so-called `File` entities:
 
-```
+```json
 {"data": "var hello = 42;\n", "path": "app/file.js"}
 ```
 

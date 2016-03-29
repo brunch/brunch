@@ -1,10 +1,7 @@
 # Brunch documentation
 
 * [Guide](https://github.com/brunch/brunch-guide#readme)
-* [Config](./config.md)
-* [Commands](./commands.md)
-* [FAQ](./faq.md)
-* [Plugins](./plugins.md)
+* [Commands](./commands.md) | [Config](./config.md) | [Plugins](./plugins.md) | [FAQ](./faq.md)
 
 ## Getting started
 

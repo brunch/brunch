@@ -1,4 +1,4 @@
-# Configuration file
+# Brunch config description
 
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
 located in the root directory to control various aspects of your application.
