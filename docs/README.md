@@ -4,7 +4,7 @@
 
 *How to learn 95% of Brunch in 8 minutes? Follow the guide!*
 
-### Eating your first Brunch
+### Tasting your first Brunch
 
 So, you've installed node.js and brunch itself (`npm install -g brunch`).
 You're probably starving at this point. Let's get *straight to the business*.
@@ -80,7 +80,7 @@ to open a new window.
 
 ### Adding third-party ingredients
 
-Let's try to add jQuery to our app. Brunch makes the process absolutely effortless.
+Let's try to add **jQuery** to our app. Brunch makes the process *absolutely effortless*.
 
 Execute `npm install --save jquery`, while keeping still keeping our Brunch watcher running.
 You may think that Brunch is too damn smart, but the command alone would not add
@@ -94,9 +94,9 @@ console.log('Tasty Brunch, just trying to use jQuery!', $('body'));
 ```
 
 Check our tiny web-server at [`localhost:3333`](http://localhost:3333) - and the browser console would
-output exactly what you've entered here. jQuery is working!
+output exactly what you've entered here. jQuery is up and running now.
 
-### Using alternative tableware
+### Plugging alternative tableware
 
 Let's say you want to try the new fancy **CoffeeScript** thing. Maybe your OCD would be eased by conforming
 to 66 **ESLint** rules. It doesn't matter, [more than 50 Brunch plugins](http://brunch.io/plugins) aim to help with all kinds of crazy cases.
@@ -113,4 +113,4 @@ and include *compiled* content of `drink.coffee` in the output file. **Voila!**
 
 ### Becoming professional cook
 
-Keen to learn the remaining 5%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme), which also describes using Brunch on a legacy codebase.
+Keen to learn the remaining 5%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme), which also describes using Brunch on a legacy codebase. Happy cooking!
