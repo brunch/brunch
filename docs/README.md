@@ -30,7 +30,7 @@ $ brunch build
 
 ### Structure
 
-After the app is there, let's take a quick look into project structure
+The app is there, let's take a quick look into the project's structure
 
 ```
 README.md
@@ -52,7 +52,7 @@ public/             // The "output" Brunch will re-generate on every build.
 
 Let's add a few files to our app, then build the app one more time:
 
-```
+```bash
 $ echo "body {font-family: 'Comic Sans MS'}" > app/main.css
 $ echo "console.log('Hello, world')" > app/logger.js
 $ brunch build
@@ -90,7 +90,7 @@ In any place of `initialize.js`, add the code:
 
 ```javascript
 var $ = require('jquery');
-console.log('Yo, just trying to use jQuery!', $('body'));
+console.log('Tasty Brunch, just trying to use jQuery!', $('body'));
 ```
 
 Check our tiny web-server @ `localhost:3333` - and the browser console would
