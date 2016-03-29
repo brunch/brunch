@@ -4,6 +4,8 @@
 
 Brunch uses node.js plugins to provide compilation / linting / optimization functionality.
 
+- JS exports in stylesheets
+
 ## Usage
 
 Plugins can be installed with a simple console command:
@@ -125,7 +127,8 @@ BrunchPlugin.prototype.brunchPlugin = true;
 module.exports = BrunchPlugin;
 ```
 
-### CSS compiler
+### CSS compiler example
+
 The plugin would simply read the file and return its contents.
 
 ```javascript
@@ -142,7 +145,7 @@ CSSCompiler.prototype.extension = 'css';
 module.exports = CSSCompiler;
 ```
 
-### Minifier
+### Minifier example
 
 An abstract minifier that consumes source maps.
 
@@ -179,9 +182,9 @@ module.exports = UglifyOptimizer;
 
 See the [plugins page](http://brunch.io/plugins.html) for a list of plugins. Feel free to add new plugins by editing [plugins.json](https://github.com/brunch/brunch.github.io/blob/master/plugins.json) and sending a Pull Request.
 
-### JS exports
+### JS exports in stylesheets
 
-Starting Brunch (2.x.x `<unreleased>`), it is possible for non-JS compilers to output JavaScript modules **in addition** to whatever they do.
+Starting Brunch 2.6, it is possible for non-JS compilers to output JavaScript modules **in addition** to whatever they do.
 
 A use case could be a styles compiler with CSS modules support that allows you to do something like this:
 
