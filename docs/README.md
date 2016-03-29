@@ -2,29 +2,17 @@
 
 **Getting started** | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-### First steps
-
-Install Brunch with a simple node.js command: `npm install -g brunch`
-
-1. **Create** a new Brunch project: `brunch new [--skeleton url]`
-2. **Develop** with Brunch: `brunch watch --server`
-3. **Deploy** with Brunch: `brunch build --production`
-
-Check out [**Brunch Guide**](https://github.com/brunch/brunch-guide#readme)
-
 ### Creating your first project
 
 `brunch new` would help you to initialize a new Brunch project from one of
-our [skeletons](http://brunch.io/skeletons)
+our [skeletons](http://brunch.io/skeletons). Let's pick popular ES6 skeleton and create a new app from it.
 
-Let's pick popular ES6 skeleton and create a new app from it.
+Do `brunch new proj -s es6` in your shell prompt. Executing the command will:
 
-Run `brunch new proj -s es6` in your shell prompt. This will:
-
-* create a dir `proj`
-* clone skeleton `git://github.com/brunch/with-es6.git` to the dir;
-  the skeleton is aliased to `es6`
-* run `npm install` to install app dependencies and brunch plugins
+* Create directory `proj`
+* Clone git repo `git://github.com/brunch/with-es6.git` to the dir;
+  which is our skeleton aliased to `es6`
+* Run `npm install` to install app dependencies and brunch plugins
 
 After the project is created, let's try to build it:
 
@@ -51,6 +39,18 @@ public/             // The "output" Brunch will re-generate on every build.
   index.html        // This was simply copied from our `app/assets`
   app.js            // `app.js`, in turn, was generated from `initialize.js`.
   app.js.map        // Source mappings for simple debugging.
+```
+
+### Concatenation
+
+Let's add a few files to our app; then build the app one more time:
+
+```
+$ echo "body {font-family: 'Comic Sans MS'}" > app/main.css
+$ echo "console.log('Hello, world')" > app/logger.js
+$ brunch build
+01 Apr 10:50:10 - info: compiled 3 files into 2 files, copied index.html in 947ms
+
 ```
 
 ### Concatenation
