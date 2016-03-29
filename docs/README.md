@@ -78,7 +78,7 @@ directory.
 Since the shell console would be busy with `brunch watch` command, we'll need
 to open a new window.
 
-### Adding third-party ingredients
+### Including third-party ingredients
 
 Let's try to add **jQuery** to our app. Brunch makes the process *absolutely effortless*.
 
