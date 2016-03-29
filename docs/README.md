@@ -23,7 +23,7 @@ Type `brunch new proj -s es6` in your shell prompt. Executing the command will:
 
 After the project is created, let's try to build it:
 
-```
+```bash
 $ brunch build
 01 Apr 10:45:30 - info: compiled initialize.js into app.js, copied index.html in 857ms
 ```
@@ -71,7 +71,7 @@ Let's inspect files in `public` to understand what happened at this point:
 Executing `brunch build` every time seems to take too much effort. Instead, let's
 just do `brunch watch --server`. The `watch` would **automatically & efficiently rebuild the
 app on every change**. `--server` flag would also launch a HTTP server. The default
-location for the server is `http://localhost:3333`, so open this URL in a browser
+location for the server is [`http://localhost:3333`](http://localhost:3333), so open this URL in a browser
 of your choice. You'll see our app and everything which was located in `public`
 directory.
 
@@ -93,5 +93,5 @@ var $ = require('jquery');
 console.log('Tasty Brunch, just trying to use jQuery!', $('body'));
 ```
 
-Check our tiny web-server @ `localhost:3333` - and the browser console would
+Check our tiny web-server at [`localhost:3333`](http://localhost:3333) - and the browser console would
 output exactly what you've entered here. jQuery is working!
