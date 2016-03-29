@@ -16,7 +16,7 @@ Builds a brunch project and places the output into `public` directory.
 * `-j, --jobs WORKERS` - enables *experimental* multi-process support.
 May improve compilation speed of large projects.
 Try different `WORKERS` amount to see which one works best for your system.
-* `-d, --debug` - simply enables debug output.
+* `-d, --debug` - enables verbose debug output.
 
 ## `brunch watch` / `brunch w`
 

@@ -8,22 +8,6 @@
 * Watch application files with `brunch watch --server` and see the results in browser on `localhost:3333`. Auto-debug in browser with `auto-reload-brunch` (`npm install --save auto-reload-brunch`) which will automatically re-apply styles or reload the page when changes are saved.
 * Debug your code in browser via `console.log` or `debugger` statements.
 
-## How to use Bower?
-
-Brunch does support [Bower](http://bower.io), however NPM is becoming de-facto standard for front-end packages.
-You may still want/need to use bower for some of your packages that aren't on NPM yet, or just copy these to `vendor`.
-
-For more details on NPM integration, see the next section.
-
-To add packages to your project:
-
-* Make sure you have `bower.json`, which can be generated with `bower init`
-* Add packages to the `dependencies` field of your `bower.json`
-* Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
-* Note that `overrides` do not impact Bower's behavior, so the original dependency graph will still be copied by `bower install`. But specifying `overrides` is effective for changing the dependencies that actually get built into your project.
-
-Example app with Bower integration: http://github.com/paulmillr/ostio
-
 ## How to use NPM as client-side package manager?
 
 Brunch supports handling client-side dependencies using the [NPM](https://npmjs.com) package manager.
@@ -55,6 +39,22 @@ files:
     joinTo:
       'css/vendor.css': /^node_modules/
 ```
+
+## How to use Bower?
+
+Brunch does support [Bower](http://bower.io), however NPM is becoming de-facto standard for front-end packages.
+You may still want/need to use bower for some of your packages that aren't on NPM yet, or just copy these to `vendor`.
+
+For more details on NPM integration, see the next section.
+
+To add packages to your project:
+
+* Make sure you have `bower.json`, which can be generated with `bower init`
+* Add packages to the `dependencies` field of your `bower.json`
+* Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
+* Note that `overrides` do not impact Bower's behavior, so the original dependency graph will still be copied by `bower install`. But specifying `overrides` is effective for changing the dependencies that actually get built into your project.
+
+Example app with Bower integration: http://github.com/paulmillr/ostio
 
 ## How to handle other package assets?
 
@@ -110,21 +110,7 @@ using the command `ulimit -n <number>` (10000 should be enough).
 
 ## How do I enable verbose mode for brunch commands?
 
-*TL;DR*: Add a DEBUG environment variable, e.g. `DEBUG='brunch:*'`.
-Then, when you run `brunch watch`, you'll see debug output.
-
-Output can be filtered to particular parts of Brunch's internal workflow by modifying the command to something like `DEBUG='brunch:pipeline'`.
-
-This is useful for explicitly seeing the list of source files that are compiled into each output file (as well as their order).
-
-### Linux/OS X:
-
-Use the `--debug` (`-d`) option in front of your `brunch` command for on-demand use, such as `brunch build -d`
-
-### Windows:
-
-Add a System Environment variable via `Control Panel > System > Advanced System Settings (Advanced Tab) > Environment Variables`:
-![Windows System Environment Variable](./windows.png?raw=true)
+Simply pass `--debug` flag to any command.
 
 ## I get an error like "MODULE_NOT_FOUND" when I try to run Brunch
 

@@ -6,9 +6,9 @@ Brunch uses node.js plugins to provide linting / compilation / optimization func
 
 Plugins can be installed with a simple console command:
 
-`npm install --save sass-brunch` - would add `"sass-brunch": "~1.9.2"` to package.json of your brunch app.
+`npm install --save sass-brunch` - would add `"sass-brunch": "^2.0.2"` to package.json of your brunch app.
 
-Sometimes you'll want to use plugins which have not yet been published to NPM and are available only through GIT. In this case you can specify GIT URL for the command: `npm install --save git@github.com:brunch/sass-brunch.git`.
+Sometimes you'll want to use plugins which have not yet been published to NPM and are available only through GIT. In this case you can specify GIT URL for the command: `npm install --save brunch/sass-brunch`.
 
 ## API
 

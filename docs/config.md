@@ -12,7 +12,7 @@ Commonly used config sections:
 
 Not-so common:
 
-* modules (wrapper, definition, autoRequire, nameCleaner)
+* [modules](#modules) (wrapper, definition, autoRequire, nameCleaner)
 * conventions (ignored, assets, vendor)
 * watcher (usePolling)
 * server
@@ -60,29 +60,59 @@ All files from `vendor` directory are by default concatenated before all files f
 
 Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [after]
 
-Example:
+Common example:
 
 ```javascript
 files: {
   javascripts: {
     joinTo: {
       'javascripts/app.js': /^app/,
-      'javascripts/vendor.js': /^vendor/
-    },
-    order: {
-      before: ['vendor/console-helper.js']
+      'javascripts/vendor.js': /^(?!app)/
     }
   },
   stylesheets: {
-    joinTo: 'stylesheets/app.css',
-    order: {
-      before: ['vendor/normalize.css'],
-      after: ['vendor/print-helpers.css']
-    }
+    joinTo: 'stylesheets/app.css'
   },
   templates: {
     joinTo: 'javascripts/app.js'
   }
+}
+```
+
+## `npm`
+
+`Object`: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your package.json `dependencies` section.
+
+* `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled, defaults to `true`.
+* `npm.globals`: `Object`: a mapping from global name (as a key) to the corresponding module name (string) to expose.
+* `npm.styles`: `Object`: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.
+* `npm.static`: `Array`: a list of files from installed npm modules to include statically, bypassing deppack.
+
+Example:
+
+```javascript
+npm: {
+  styles: {pikaday: ['css/pikaday.css']}
+  globals: {Pikaday: 'pikaday'}
+}
+```
+
+## `plugins`
+
+`Object`: Optional control to modify how plugins are loaded by default, as well as containing plugin-specific configuration.
+
+* `off`: Plugins that may be installed, but should not be run.
+* `on`: Forces listed plugins to be run, such as an optimizer even when the `optimize` flag is off.
+* `only`: Explicitly list the plugins to be used, ignoring any others that are installed.
+* _Per-Plugin_: Refer to each plugin's documentation for usage information.
+
+Example:
+
+```javascript
+plugins: {
+  on: ['autoprefixer-brunch'],
+  off: ['jade-brunch', 'static-jade-brunch'],
+  autoReload: {enabled: true}
 }
 ```
 
@@ -116,24 +146,6 @@ conventions: {
     /vendor[\\/]node[\\/]/,
     /vendor[\\/](j?ruby-.*|bundle)[\\/]/
   ]
-}
-```
-
-## `npm`
-
-`Object`: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your package.json `dependencies` section.
-
-* `npm.enabled`: `Boolean`: a toggle of whether the integration is enabled, defaults to `true`.
-* `npm.globals`: `Object`: a mapping from global name (as a key) to the corresponding module name (string) to expose.
-* `npm.styles`: `Object`: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.
-* `npm.static`: `Array`: a list of files from installed npm modules to include statically, bypassing deppack.
-
-Example:
-
-```javascript
-npm: {
-  styles: {pikaday: ['css/pikaday.css']}
-  globals: {Pikaday: 'pikaday'}
 }
 ```
 
@@ -191,25 +203,6 @@ modules: {nameCleaner: (path) => path.replace(/^app\//, ''); }
 // Add namespacing to a project.
 const name = require('./package.json').name;
 modules: {nameCleaner: (path) => path.replace(/^app/, name); }
-```
-
-## `plugins`
-
-`Object`: Optional control to modify how plugins are loaded by default, as well as containing plugin-specific configuration.
-
-* `off`: Plugins that may be installed, but should not be run.
-* `on`: Forces listed plugins to be run, such as an optimizer even when the `optimize` flag is off.
-* `only`: Explicitly list the plugins to be used, ignoring any others that are installed.
-* _Per-Plugin_: Refer to each plugin's documentation for usage information.
-
-Example:
-
-```javascript
-plugins: {
-  on: ['autoprefixer-brunch'],
-  off: ['jade-brunch', 'static-jade-brunch'],
-  autoReload: {enabled: true}
-}
 ```
 
 ## `notifications`

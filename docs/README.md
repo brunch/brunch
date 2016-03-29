@@ -5,7 +5,6 @@
 * [Commands](./commands.md)
 * [FAQ](./faq.md)
 * [Plugins](./plugins.md)
-* [Upgrading](./upgrading.md)
 
 ## Getting started
 

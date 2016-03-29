@@ -118,13 +118,16 @@ To install the latest version, execute `npm install -g brunch`
 * Launching Brunch on node v4< would now throw an explicit error.
 
 ## Brunch 2.0.0 (Nov 19, 2015)
-* `brunch new` reworked and simplified:
+
+Brunch v2 **requires node 4.0 / npm 3.0 or higher**.
+
+* `brunch new` reworked, simplified and receives new syntax:
     * `brunch new .` to create a new project in current directory from dead-simple skeleton
     * `brunch new path` to create the project in `path`
     * `brunch new . --skeleton react` to create the project from `React` skeleton
     * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
-* Rewritten in JavaScript (ES6 + Promises). Now *requires node 4.0 / npm 3.0 or higher*.
+* Rewritten in JavaScript (ES6 + Promises).
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
 * `modules.autoRequire` should now work correctly on Windows.
 
@@ -354,6 +357,14 @@ If installed prior to this date, it will actually run as if it is 1.7.6.
 * Removed `brunch test`.
   [Mocha-phantomjs](http://metaskills.net/mocha-phantomjs/) is its simpler
   successor.
+* Adjust config settings, if you have been using those:
+    * Rename `config` file itself to `brunch-config`
+    * Rename `config.minify` setting to `config.optimize`
+    * Rename `config.paths.{app,test,vendor,assets}` to `config.paths.watched`
+    * Rename `config.paths.ignored` to `config.conventions.ignored`
+    * Rename `buildPath` to `paths.public`
+    * Remove `defaultExtension` and `framework` settings
+* Use `--production` instead of `--optimize` flag, which has been deprecated.
 
 ## Brunch 1.5.4 (Mar 19, 2013)
 * Fixed `brunch generate`, switched to standalone modules for some features.
