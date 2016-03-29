@@ -148,7 +148,7 @@ Thanks to Vincent Ricard for help.
   via `require('package')`.
 
 ## Brunch 1.8.0 (Apr 8, 2015)
-* Added **NPM support** for client-side libraries.
+* Added experimental **NPM support** for client-side libraries.
     Just specify dependencies in `package.json` and load them within your app
     with `require('package')`. Brunch would do all the hard job for you.
     Behind config option for now (`config.npm = {enabled: true}`).

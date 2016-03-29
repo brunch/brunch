@@ -70,4 +70,3 @@ Brunch also has conventions. Conventions are filters for files with special mean
 * Any scripts in `app/` dirs are wrapped by default into modules. These modules are Common.JS / AMD abstractions that allow you to simply get rid of global vars as to avoid polluting the global namespace. This is especially useful for larger projects. Any module that you need to use in the browser will have to be loaded with the `require('')` function. For example, if you have a script `app/views/user_view`, then you could load that in your html file using `<script>require('views/user_view')</script>`. File extensions are optional here.
 * Scripts in `vendor/` dirs aren't wrapped in modules and as such do not require any further loading instructions.
 * Files whose name start with `_` (underscore) are ignored by compiler. They're useful for languages like sass / stylus, where you import all substyles in main style file.
-* Files named `-test.<extension>` are considered tests.
