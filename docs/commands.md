@@ -1,4 +1,4 @@
-# Brunch: Command Line Interface
+# Brunch: Commands
 
 [**Getting started**](./README.md) | **Commands** | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
