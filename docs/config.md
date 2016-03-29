@@ -23,6 +23,20 @@ Less common options:
 
 You can see all config default values in the `setConfigDefaults` function of [`lib/config.js`](/lib/config.js#L223) in the brunch source code.
 
+## Example
+
+Simplest Brunch config looks like that. Just 7 lines of pure configuration:
+
+```javascript
+module.exports = {
+  files: {
+    javascripts: {joinTo: 'app.js'},
+    stylesheets: {joinTo: 'app.css'},
+    templates: {joinTo: 'app.js'}
+  }
+}
+```
+
 ## `paths`
 
 `Object`: `paths` contains application paths to key directories. Paths are simple strings.
