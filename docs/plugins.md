@@ -42,7 +42,7 @@ watch(files)
 lint(file): Boolean
 |
 // Extract file's dependants & dependencies
-getDependencies(file): Array
+getDependencies(file): Array[Path]
 |
 // Transform file contents into js, css etc.
 compile(file): File
