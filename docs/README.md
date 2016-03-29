@@ -95,3 +95,5 @@ console.log('Tasty Brunch, just trying to use jQuery!', $('body'));
 
 Check our tiny web-server at [`localhost:3333`](http://localhost:3333) - and the browser console would
 output exactly what you've entered here. jQuery is working!
+
+That's it for now. Looking to learn the remaining 5%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme).
