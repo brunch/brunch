@@ -1,8 +1,8 @@
 # Brunch
 
-**First steps** | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
+**Getting started** | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-## Getting started
+## First steps
 
 Install Brunch with a simple node.js command: `npm install -g brunch`
 

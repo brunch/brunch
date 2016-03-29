@@ -1,6 +1,6 @@
 # Brunch: Plugins
 
-[**First steps**](./README.md) | [**Commands**](./commands.md) | [**Config**](./config.md) | **Plugins** | [**FAQ**](./faq.md)
+[**Getting started**](./README.md) | [**Commands**](./commands.md) | [**Config**](./config.md) | **Plugins** | [**FAQ**](./faq.md)
 
 Brunch uses node.js plugins to provide compilation / linting / optimization functionality.
 

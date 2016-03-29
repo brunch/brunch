@@ -1,6 +1,6 @@
 # Brunch: FAQ
 
-[**First steps**](./README.md) | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | **FAQ**
+[**Getting started**](./README.md) | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | **FAQ**
 
 ## I want to start new project with Brunch. What's the workflow?
 

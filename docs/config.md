@@ -1,6 +1,6 @@
 # Brunch: Config
 
-[**First steps**](./README.md) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
+[**Getting started**](./README.md) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
 Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
 located in the root directory to control various aspects of your application.
