@@ -2,18 +2,23 @@
 
 **Getting started** | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-How to learn 95% of Brunch in 8 minutes? Follow the guide!
+*How to learn 95% of Brunch in 8 minutes? Follow the guide!*
 
 ### Creating your first project
 
-`brunch new` would help you to initialize a new Brunch project from one of
-our [skeletons](http://brunch.io/skeletons). Let's pick popular ES6 skeleton and create a new app from it.
+So, you've installed node.js and brunch itself (`npm install -g brunch`).
+You're probably starving at this point. Let's get *straight to the business*.
 
-Do `brunch new proj -s es6` in your shell prompt. Executing the command will:
+`brunch new` helps to init new Brunch project from one of
+community-provided [skeletons](http://brunch.io/skeletons).
+The popular "ES6 skeleton" may sound scary, but it's actually very modern and nice.
+Let's try to create a new app from it!
+
+Type `brunch new proj -s es6` in your shell prompt. Executing the command will:
 
 * Create directory `proj`
-* Clone git repo `git://github.com/brunch/with-es6.git` to the dir,
-  which is our skeleton aliased to `es6`
+* Clone git repo `git://github.com/brunch/with-es6.git` to the dir.
+  The Git URL is basically full name of our `"es6"` skeleton.
 * Run `npm install` to install app dependencies and brunch plugins
 
 After the project is created, let's try to build it:
