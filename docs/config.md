@@ -1,10 +1,30 @@
 # Configuration file
 
-Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`) located in the root directory to control various aspects of your application.
+Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
+located in the root directory to control various aspects of your application.
+
+Commonly used config sections:
+
+* [`paths`](#paths) (`watched`, `public`) - where to take files from and where to put generated ones
+* [`files`](#files) (`javascripts, stylesheets, templates`; `joinTo`s and `order`) - which files exactly should Brunch generate and how.
+* [`npm`](#npm) (`styles`, `globals`, `static`) - NPM settings
+* [`plugins`](#plugins) - individual plugin settings.
+
+Not-so common:
+
+* modules (wrapper, definition, autoRequire, nameCleaner)
+* conventions (ignored, assets, vendor)
+* watcher (usePolling)
+* server
+* optimize
+* sourceMaps
+* notifications
+* notificationsTitle
+* onCompile
 
 You can see all config default values in the `setConfigDefaults` function of [`lib/config.js`](/lib/config.js#L223) in the brunch source code.
 
-It is an executable script, so you can also do things like import Node.js modules in your configuration file.
+The config is an executable script, so you can also do things like import Node.js modules in your configuration file.
 
 ## `paths`
 
@@ -148,7 +168,6 @@ require.define({${path}: function(exports, require, module) {
   }
 }
 ```
-
 `modules.autoRequire`: `Object` specifies requires to be automatically added at the end of joined file. The example below will require both 'app' and 'foo':
 
 ```javascript
