@@ -2,7 +2,7 @@
 
 [**Getting started**](./README.md) | [**Commands**](./commands.md) | **Config** | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-Brunch uses configuration file (`brunch-config.js` or `brunch-config.coffee`)
+Brunch uses configuration file `brunch-config.js / coffee`
 located in the root directory to manage various aspects of your app.
 
 * [**paths**](#paths) - where to take files from and where to put generated ones
