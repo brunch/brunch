@@ -65,6 +65,10 @@ paths: {
       Available formats:
         * 'outputFilePath' in order to have all source files compiled together to one
         * map of ('outputFilePath': [anymatch set](https://github.com/es128/anymatch#anymatch-))
+    * entryPoints: (optional) describes the entry points of an application. The specified file and all of its dependencies will then be joined into a single file. Resembles `joinTo` but allows to included only the files you need.
+      Available formats:
+        * `'entryFile.js': 'outputFilePath'`
+        * `'entryFile.js': map of ('outputFilePath': anymatch set)
     * order: (optional) defines compilation order. `vendor` files will be compiled before other ones even if they are not present here.
         * before: [anymatch set](https://github.com/es128/anymatch#anymatch-) defining files that will be loaded before other files
         * after: [anymatch set](https://github.com/es128/anymatch#anymatch-) defining files that will be loaded after other files
@@ -92,6 +96,26 @@ files: {
   }
 }
 ```
+
+### A note on entry points
+
+It is important to keep a few things in mind regarding entry points & their known limitations:
+
+* only the things you `require` will be included into an entryPoint bundle. This means non-app/non-npm deps won't be included. Also means only statically analyzable `require`s will work:
+  * `require('something')` — :+1:
+  * `['a', 'b', 'c'].forEach(dep => require(dep))` — :-1:
+  * `match('/', 'app/Home')` (where `app/Home` gets translated into `require('components/app/Home')`) — :-1:
+* two entry points can't write to the same file
+
+  ```javascript
+  javascripts: {
+    'app/initialize.coffee': 'javascripts/bundle.js',
+    // INVALID
+    'app/bookmarklet.coffee': 'javascripts/bundle.js'
+  }
+  ```
+* all `config.npm.globals` will be included in **every** entry point and joinTo
+* `entryPoints` only work with javascript files. If you want to also include your templates, keep a `joinTo` for them
 
 ## `npm`
 
