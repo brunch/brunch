@@ -1,5 +1,10 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.6 (unreleased)
+* **Improve hooks API**:
+    * Brunch now allows to specify `hooks` object to be able to describe handlers for different moments of building cycle.
+    * Config `onCompile` option is now deprecated and moved to `hooks.onCompile`.
+
 ## Brunch 2.5.2 (Mar 22, 2016)
 * Fixed double inclusion of some files on Windows.
 * Fixed an issue when `joinTo` production override did not have any effect.
