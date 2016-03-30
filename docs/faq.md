@@ -55,7 +55,7 @@ To add packages to your project:
 * Optionally specify the [`overrides` property](https://github.com/paulmillr/read-components#read-components) for packages without `bower.json`. This is needed because brunch automatically compiles bower dependencies in right order.
 * Note that `overrides` do not impact Bower's behavior, so the original dependency graph will still be copied by `bower install`. But specifying `overrides` is effective for changing the dependencies that actually get built into your project.
 
-As for now, you can solve it in different ways - by using `npm post-install` script, `onCompile` handler in config etc.
+As for now, you can solve it in different ways - by using `npm post-install` script, `onCompile` handler in config `hooks` etc.
 
 ```json
 "scripts": {
