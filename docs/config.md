@@ -17,7 +17,7 @@ Less common options:
 * [watcher](#watcher) - low-level configuration of the file watcher which empowers Brunch.
 * [server](#server) - allows to describe custom web-servers instead of the built-in one. Allows to
 * sourceMaps, optimize, notifications, notificationsTitle - simple true/false options
-* [onCompile](#oncompile) - describes post-compile hook, if you need one
+* [hooks](#hooks) - allows to specify handlers for different moments of building cycle
 
 You can see all config default values in the `setConfigDefaults` function of [`lib/config.js`](/lib/config.js#L223) in the brunch source code.
 
@@ -375,26 +375,29 @@ file watching library used in brunch.
     (backed by polling), or fs.watch.
     Polling is slower but can be more reliable.
 
-## `onCompile`
+## `hooks`
 
-`Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array, as well as `changedAssets` array. Each member of `generatedFiles` array is an object with:
+`Object`: Optional setting to specify handlers for different moments of building cycle.
+Possible values:
+* `onCompile` - `Function`: Optional callback to be called every time brunch completes a compilation cycle. It is passed a `generatedFiles` array, as well as `changedAssets` array. Each member of `generatedFiles` array is an object with:
+    * `path` — path of the compiled file
+    * `sourceFiles` — array of objects representing each source file
+    * `allSourceFiles` array of objects representing each source file — this one also includes files that don't belong to the original type (e.g. if a styles compiler adds a JS module, path would the the concated JS file, and one of the `allSourceFiles` will be a style file
 
-* `path` — path of the compiled file
-* `sourceFiles` — array of objects representing each source file
-* `allSourceFiles` array of objects representing each source file — this one also includes files that don't belong to the original type (e.g. if a styles compiler adds a JS module, path would the the concated JS file, and one of the `allSourceFiles` will be a style file
+    Each member of `changedAssets` array is an object with:
 
-Each member of `changedAssets` array is an object with:
+    * `path` — original path of an asset
+    * `destinationPath` — path of an asset in the public directory
 
-* `path` — original path of an asset
-* `destinationPath` — path of an asset in the public directory
+    Example:
 
-Example
-
-```javascript
-onCompile: (generatedFiles, changedAssets) => {
-  console.log(generatedFiles.map(f => f.path));
-}
-```
+    ```javascript
+    hooks: {
+      onCompile: (generatedFiles, changedAssets) => {
+        console.log(generatedFiles.map(f => f.path));
+      }
+    }
+    ```
 
 ## Tips
 
