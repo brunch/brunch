@@ -1,14 +1,17 @@
 To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.6 (unreleased)
-* **Improve hooks API**:
-    * Brunch now allows to specify `hooks` object to be able to describe handlers for different moments of building cycle.
-    * Config `onCompile` option is now deprecated and moved to `hooks.onCompile`.
+* Non-JS files can now output JS modules in addition.
+    * You are now able to import stylesheets from Sass, Less, CSS in JS.
+    * For this to work, don't forget to enable proper config option.
+* Added experimental support for `entryPoints`, a smart alternative to `joinTo`:
+    * `joinTo` concatenates all files that match the pattern into one
+    * `entryPoints` allow you to specify first input file. Then Brunch
+      automatically calculates which modules and dependencies will be used
+      in the output. This way, unused files would not get compiled.
 * Add support for `BRUNCH_JOBS` environment variable to be able to specify number of jobs to process your build.
-* Improve internal jobs implementation.
-* Add possibility for non-JS compilers to output JavaScript modules **in addition** to whatever they do.
 * Fixed an issue when Brunch was forking processes even if `-j` flag was not passed which caused some extreme CPU and memory issues.
-* Introduced a concept of an entry point. Specified in a config `entryPoints` file and all of its dependencies will be finally joined into a single file. Resembles `joinTo` but allows to included only the files you need.
+* Deprecated `onCompile` config option in favor of new `hooks.onCompile`.
 
 ## Brunch 2.5.2 (Mar 22, 2016)
 * Fixed double inclusion of some files on Windows.
