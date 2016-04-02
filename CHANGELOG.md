@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.6.0 (Apr 2, 2016)
+## Brunch 2.6.1 (Apr 2, 2016)
 * Non-JS files can now output JS modules.
     * You are now able to import stylesheets from Sass, Less, CSS in JS.
     * For this to work, don't forget to enable proper config option for each plugin.
