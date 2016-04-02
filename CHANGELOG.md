@@ -1,10 +1,10 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.6 (unreleased)
-* Non-JS files can now output JS modules in addition.
+## Brunch 2.6.0 (Apr 2, 2016)
+* Non-JS files can now output JS modules.
     * You are now able to import stylesheets from Sass, Less, CSS in JS.
-    * For this to work, don't forget to enable proper config option.
-* Added experimental support for `entryPoints`, a smart alternative to `joinTo`:
+    * For this to work, don't forget to enable proper config option for each plugin.
+* Added experimental support for `entryPoints`, a smarter alternative to `joinTo`:
     * `joinTo` concatenates all files that match the pattern into one
     * `entryPoints` allow you to specify first input file. Then Brunch
       automatically calculates which modules and dependencies will be used
