@@ -122,4 +122,4 @@ and include *compiled* content of `drink.coffee` in the output file. **Voila!**
 
 ### Becoming professional cook
 
-Keen to learn the remaining 5%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme), which also describes using Brunch on a legacy codebase. Happy cooking!
+Keen to learn the remaining 10%? Check out the [advanced guide to Brunch](https://github.com/brunch/brunch-guide#readme), which also describes using Brunch on a legacy codebase. Happy cooking!
