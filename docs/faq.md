@@ -41,6 +41,10 @@ files:
       'css/vendor.css': /^node_modules/
 ```
 
+## Does Brunch support Hot Module Replacement?
+
+Yes it does! Check out the [`hmr-brunch`](https://github.com/brunch/hmr-brunch) plugin for more details.
+
 ## How to use Bower?
 
 Brunch does support [Bower](http://bower.io), however NPM is becoming de-facto standard for front-end packages.
