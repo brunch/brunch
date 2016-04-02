@@ -2,7 +2,7 @@
 
 **Getting started** | [**Commands**](./commands.md) | [**Config**](./config.md) | [**Plugins**](./plugins.md) | [**FAQ**](./faq.md)
 
-*How to learn 95% of Brunch in 8 minutes? Follow the guide!*
+*How to learn 90% of Brunch in 8 minutes? Follow the guide!*
 
 - [Tasting your first Brunch](#tasting-your-first-brunch)
 - [What is the dish made of?](#what-is-the-dish-made-of)
