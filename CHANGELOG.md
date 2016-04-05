@@ -1,6 +1,14 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.6.2 (Apr 5, 2016)
+* Improved `npm install` behavior while Brunch is watching:
+    * Make sure Brunch waits for it before proceeding.
+    * Make it aware of `production` env flag for Heroku.
+
 ## Brunch 2.6.1 (Apr 2, 2016)
+* Small bugfix for dependency parser.
+
+## Brunch 2.6.0 (Apr 2, 2016)
 * Non-JS files can now output JS modules.
     * You are now able to import stylesheets from Sass, Less, CSS in JS.
     * For this to work, don't forget to enable proper config option for each plugin.
