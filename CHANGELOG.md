@@ -1,5 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.6.3 (Apr 6, 2016)
+* Fixes parent recompilation when a dependency changes.
+
 ## Brunch 2.6.2 (Apr 5, 2016)
 * Improved `npm install` behavior while Brunch is watching:
     * Make sure Brunch waits for it before proceeding.
