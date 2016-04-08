@@ -46,8 +46,6 @@ To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.4.2 (Feb 23, 2016)
 * You can now simply set `config.modules = false` to disable module wrapping.
-
-## Brunch 2.4.0 (Feb 22, 2016)
 * Brunch would now correctly include file-based aliases for NPM packages. For example, this means you would be able to load `require('moment/locales/en')` even though the file is not declared in moment's `package.json`.
 * Fixed auto-expanding of GH URLs in skeletons: `brunch new --skeleton paulmillr/brunch-with-chaplin`
 * Removed `component.js` support, which was barely supported since v2.0.
@@ -56,8 +54,6 @@ To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.3.2 (Feb 17, 2016)
 * Small fix for `xBrowserResolve is not a function` error.
-
-## Brunch 2.3.1 (Feb 17, 2016)
 * Fixed handling of custom web-servers for `brunch watch -s`.
 * Improved exposure of `process.env.NODE_ENV` when used in Brunch apps.
 * NPM: Fixed support for different versions of the same package.
@@ -79,12 +75,8 @@ To install the latest version, execute `npm install -g brunch`
 ## Brunch 2.2.3 (Feb 2, 2016)
 * Windows-related fixed to NPM
 * Don't include some NPM packages twice (`process` etc).
-
-## Brunch 2.2.2 (Jan 28, 2016)
 * Built-in node.js modules can now be loaded in your client-side apps.
 * Improve compatibility with Brunch 1.x.
-
-## Brunch 2.2.1 (Jan 26, 2016)
 * Some fixes for the NPM to work better on Windows systems.
 
 ## Brunch 2.2.0 (Jan 22, 2016)
@@ -99,12 +91,8 @@ To install the latest version, execute `npm install -g brunch`
 ## Brunch 2.1.3 (Jan 9, 2016)
 * Fixes an issue when NPM packages were included incorrectly on Windows.
 * `brunch build -d` is now able to receive an optional `filterer` argument
-
-## Brunch 2.1.2 (Jan 7, 2016)
 * `brunch new` and `brunch build` hangup fixes.
 * NPM integration fixes
-
-## Brunch 2.1.1 (Jan 2, 2016)
 * Fixes an issue when sass-brunch or similar plugins weren't compiling files correctly.
 
 ## Brunch 2.1.0 (Jan 1, 2016)
@@ -122,17 +110,10 @@ To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.0.4 (Dec 10, 2015)
 * Fixes using production flag (`-p`) with multiple optimizers [(gh-1056)](https://github.com/brunch/brunch/issues/1056).
-
-## Brunch 2.0.3 (Dec 9, 2015)
 * Brunch would now auto-expand the following syntax to a full GitHub user / repo URL:
-
     `brunch new --skeleton paulmillr/brunch-with-chaplin`
-
-## Brunch 2.0.2 (Dec 5, 2015)
 * Fix: Post `onCompile` string replaces not working.
 * Fix: Linters now get the correct `linter` context.
-
-## Brunch 2.0.1 (Nov 22, 2015)
 * Compilation log would now use seconds instead of milliseconds for long compilations.
 * Launching Brunch on node v4< would now throw an explicit error.
 
