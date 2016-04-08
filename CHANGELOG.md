@@ -1,14 +1,11 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.6.3 (Apr 6, 2016)
+## Brunch 2.6.5 (Apr 8, 2016)
+* Fixed brokenness of some plugins like `static-jade-brunch`.
 * Fixes parent recompilation when a dependency changes.
-
-## Brunch 2.6.2 (Apr 5, 2016)
 * Improved `npm install` behavior while Brunch is watching:
     * Make sure Brunch waits for it before proceeding.
     * Make it aware of `production` env flag for Heroku.
-
-## Brunch 2.6.1 (Apr 2, 2016)
 * Small bugfix for dependency parser.
 
 ## Brunch 2.6.0 (Apr 2, 2016)
@@ -27,9 +24,7 @@ To install the latest version, execute `npm install -g brunch`
 ## Brunch 2.5.2 (Mar 22, 2016)
 * Fixed double inclusion of some files on Windows.
 * Fixed an issue when `joinTo` production override did not have any effect.
-
-## Brunch 2.5.1 (Mar 18, 2016)
-* Fixed loading of JSON files.
+* Fixed JSON file loading.
 
 ## Brunch 2.5.0 (Mar 16, 2016)
 * **Improved NPM support:**
