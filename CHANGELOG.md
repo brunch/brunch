@@ -1,6 +1,8 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.6.5 (Apr 8, 2016)
+## Brunch 2.6.6 (Apr 14, 2016)
+* Fix a type error when checkin if a file was written.
+* Don't categorize node_modules as 'assets' even if they match the regexp
 * Fixed brokenness of some plugins like `static-jade-brunch`.
 * Fixes parent recompilation when a dependency changes.
 * Improved `npm install` behavior while Brunch is watching:
