@@ -1,6 +1,16 @@
 ### Description
 
-Tell us what happens.
+What's the essence of the issue?
+
+### Expected behavior
+
+Tell us what you think should happend.
+
+### Actual behavior
+
+Tell us what actually happens.
+
+If at all possible, please create a small demo app on GitHub that demonstrates the issue so it's easier for us to check and debug.
 
 ### Environment
 
@@ -11,12 +21,16 @@ Tell us what happens.
 
 ### `package.json` contents
 
+```json
+```
+
 ### brunch config contents
 
-### Other useful files, when present (`bower.json` etc.)
+```javascript
+```
 
-If there's an unexpected error during `brunch build`/`brunch watch`, please attach the compilation log with the debug flag (`-d`).
+### Other useful files, when present (log, `bower.json` etc.)
+
+If there's an unexpected error during `brunch build`/`brunch watch`, please attach the compilation log with the debug flag (`-d`) **and** stack traces enabled (`export LOGGY_STACKS=true`).
 
 If something worked with previous versions of brunch, but stopped with a newer one, please include these details as well.
-
-Finally, if at all possible, please create a small demo app on GitHub that demonstrates the issue so it's easier for us to check and debug.
