@@ -35,6 +35,8 @@ Install Brunch with a simple node.js package manager command: `npm install -g br
 
 ## Contributing
 
+See the [CONTRIBUTING.md](https://github.com/brunch/brunch/blob/master/CONTRIBUTING.md) document for more info on how to file issues or get your head into the Brunch's internals.
+
 - To install edge version (from GitHub `master` branch): `npm install -g brunch/brunch`
 - To enable debug mode, simply pass `-d` flag to any command like that: `brunch build -d`
 - To create your own plugin, check out our [plugin boilerplate](https://github.com/brunch/brunch-boilerplate-plugin) as a starting point.
