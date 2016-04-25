@@ -59,7 +59,7 @@
     "fcache": "~0.1.0",
     "init-skeleton": "~0.9.0",
     "skemata": "~0.1.0",
-    "loggy": "~0.3.0",
+    "loggy": "~0.3.3",
     "micro-promisify": "~0.1.0",
     "mkdirp": "~0.5.0",
     "quickly-copy-file": "~1.0.0",
