@@ -142,6 +142,7 @@ npm: {
 * `off`: Plugins that may be installed, but should not be run.
 * `on`: Forces listed plugins to be run, such as an optimizer even when the `optimize` flag is off.
 * `only`: Explicitly list the plugins to be used, ignoring any others that are installed.
+* `npm`: An array list of plugin names that will compile `node_modules/`. Defaults to `['babel-brunch']`. *(Note: for the time being, it works **only** with `.js` files)*
 * _Per-Plugin_: Refer to each plugin's documentation for usage information.
 
 Example:
