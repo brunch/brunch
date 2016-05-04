@@ -4,12 +4,12 @@ const generate = require('../lib/fs_utils/generate');
 test('should files by config.before', function(t) {
   const files = ['backbone.js', 'jquery.js', 'underscore.js'];
   const config = {before: ['jquery.js', 'underscore.js', 'backbone.js']};
-  t.same(generate.sortByConfig(files, config), config.before);
+  t.deepEqual(generate.sortByConfig(files, config), config.before);
 });
 test('should files by config.after', function(t) {
   const files = ['helper-1.js', 'backbone.js', 'helper-2.js'];
   const config = {after: ['helper-1.js', 'helper-2.js']};
-  t.same(generate.sortByConfig(files, config), ['backbone.js', 'helper-1.js', 'helper-2.js']);
+  t.deepEqual(generate.sortByConfig(files, config), ['backbone.js', 'helper-1.js', 'helper-2.js']);
 });
 test('should files by config.vendor', function(t) {
   const files = ['vendor/backbone.js', 'jquery.js', 'meh/underscore.js'];
@@ -18,12 +18,12 @@ test('should files by config.vendor', function(t) {
       return /^(meh|vendor)/.test(path);
     }
   };
-  t.same(generate.sortByConfig(files, config), ['meh/underscore.js', 'vendor/backbone.js', 'jquery.js']);
+  t.deepEqual(generate.sortByConfig(files, config), ['meh/underscore.js', 'vendor/backbone.js', 'jquery.js']);
 });
 test('should files alphabetically', function(t) {
   const files = ['z', 'e', 'a', 'd', 'c', 's', 'z'];
   const config = {};
-  t.same(generate.sortByConfig(files, config), ['a', 'c', 'd', 'e', 's', 'z', 'z']);
+  t.deepEqual(generate.sortByConfig(files, config), ['a', 'c', 'd', 'e', 's', 'z', 'z']);
 });
 test('should sort files by config correctly', function(t) {
   const files = ['a', 'b', 'c', 'vendor/5', 'vendor/4', 'd', 'vendor/1', 'vendor/3', 'vendor/6', 'e', 'vendor/2'];
@@ -35,5 +35,5 @@ test('should sort files by config correctly', function(t) {
     }
   };
   const res = ['vendor/1', 'vendor/2', 'vendor/3', 'vendor/4', 'vendor/5', 'vendor/6', 'a', 'c', 'd', 'e', 'b'];
-  t.same(generate.sortByConfig(files, config), res);
+  t.deepEqual(generate.sortByConfig(files, config), res);
 });
