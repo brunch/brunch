@@ -42,7 +42,7 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
   applyOverrides(config, {
     env: ['foo', 'bar', 'baz']
   });
-  t.same(config.plugins, {
+  t.deepEqual(config.plugins, {
     on: ['c', 'b'],
     off: ['a']
   });
