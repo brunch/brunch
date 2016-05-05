@@ -70,7 +70,9 @@
   },
   "devDependencies": {
     "ava": "^0.14.0",
-    "eslint": "^2.0.0",
+    "babel-eslint": "^6.0.4",
+    "eslint": "^2.9.0",
+    "eslint-plugin-ava": "^2.3.1",
     "rewire": "^2.5.0"
   }
 }
