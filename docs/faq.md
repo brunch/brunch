@@ -36,7 +36,7 @@ files:
   javascripts:
     joinTo:
       'js/vendor.js': /^node_modules/
-  styles:
+  stylesheets:
     joinTo:
       'css/vendor.css': /^node_modules/
 ```
