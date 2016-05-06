@@ -55,7 +55,7 @@
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
     "deep-assign": "^2.0.0",
-    "deppack": "~0.4.0",
+    "deppack": "~0.5.0",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.9.0",
     "skemata": "~0.1.0",
