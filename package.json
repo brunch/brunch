@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "2.7.6",
+  "version": "2.7.7",
   "keywords": [
     "assembler",
     "builder",
