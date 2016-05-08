@@ -17,6 +17,7 @@
     "expect": true
   },
   "rules": {
-    "prefer-arrow-callback": 0
+    "prefer-arrow-callback": 0,
+    "quotes": [2, "single", { "allowTemplateLiterals": true }]
   }
 }
