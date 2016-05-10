@@ -47,7 +47,7 @@ module.exports.fileContains = function fileContains(t, path, content) {
   }
 };
 
-module.exports.fileNotContains = function fileNotContains(t, path, content) {
+module.exports.fileDoesNotContains = function fileDoesNotContains(t, path, content) {
   try {
     t.false(fs.readFileSync(path, 'utf8').includes(content));
   } catch (e) {

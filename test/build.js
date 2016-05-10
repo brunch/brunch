@@ -1,7 +1,7 @@
 const test = require('ava');
 const cp = require('child_process');
 const brunch = require('../lib');
-const { prepareTestDir, teardownTestDir, fileContains, fileNotContains, fileExists } = require('./_test_helper');
+const { prepareTestDir, teardownTestDir, fileContains, fileDoesNotContains, fileExists } = require('./_test_helper');
 const fixturify = require('fixturify');
 
 test.beforeEach(() => {
@@ -124,10 +124,10 @@ vendora
 ;vendorc
 ;`;
     fileContains(t, 'public/javascripts/app.js', appJs);
-    fileNotContains(t, 'public/javascripts/app.js', vendorJs);
+    fileDoesNotContains(t, 'public/javascripts/app.js', vendorJs);
     fileContains(t, 'public/javascripts/vendor.js', vendorJs);
-    fileNotContains(t, 'public/javascripts/vendor.js', appJs);
-    fileNotContains(t, 'public/javascripts/vendor.js', 'require.register("');
+    fileDoesNotContains(t, 'public/javascripts/vendor.js', appJs);
+    fileDoesNotContains(t, 'public/javascripts/vendor.js', 'require.register("');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
     t.end();
   });
@@ -159,7 +159,7 @@ test.serial.cb('entry points', t => {
   brunch.build({}, () => {
     fileExists(t, 'public/bundle.js.map');
     fileContains(t, 'public/bundle.js', '//# sourceMappingURL=bundle.js.map');
-    fileNotContains(t, 'public/bundle.js', `notrequired`);
+    fileDoesNotContains(t, 'public/bundle.js', `notrequired`);
     fileContains(t, 'public/bundle.js', `require.register("a.js", function(exports, require, module) {
 filea
 });
@@ -212,8 +212,8 @@ test.serial.cb('multi entry points', t => {
     fileExists(t, 'public/bundle2.js.map');
     fileContains(t, 'public/bundle1.js', '//# sourceMappingURL=bundle1.js.map');
     fileContains(t, 'public/bundle2.js', '//# sourceMappingURL=bundle2.js.map');
-    fileNotContains(t, 'public/bundle1.js', `notrequired`);
-    fileNotContains(t, 'public/bundle2.js', `notrequired`);
+    fileDoesNotContains(t, 'public/bundle1.js', `notrequired`);
+    fileDoesNotContains(t, 'public/bundle2.js', `notrequired`);
     fileContains(t, 'public/bundle1.js', `require.register("a.js", function(exports, require, module) {
 require("./b"); filea
 });
