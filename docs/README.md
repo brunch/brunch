@@ -91,11 +91,11 @@ to open a new window.
 
 Let's try to add **jQuery** to our app. Brunch makes the process *absolutely effortless*.
 
-Execute `npm install --save jquery`, while keeping still keeping our Brunch watcher running.
+Execute `npm install --save jquery`, while keeping our Brunch watcher running.
 You may think that Brunch is too damn smart, but the command alone would not add
 jQuery to our app - we'll need to use it somewhere too.
 
-In any place of `initialize.js`, add the code:
+Add the following code anywhere in `initialize.js`:
 
 ```javascript
 var $ = require('jquery');
