@@ -5,6 +5,7 @@ global.appStartTime = Date.now();
 
 var sysPath = require('path');
 var fs = require('fs');
+var childProcess = require('child_process');
 var version = process.version;
 var verDigit = parseInt(version.match(/^v(\d+)\./)[1]);
 
@@ -16,33 +17,71 @@ if (verDigit < 4) {
 }
 
 var cwd = sysPath.resolve('.');
-var cliFile = sysPath.join('lib', 'cli.js');
+var cliFile = sysPath.join('lib', 'run-cli.js');
+// for compatibility with Brunch 2.7.7 and lower
+var cliOldFile = sysPath.join('lib', 'cli.js');
 var localPath = sysPath.join(cwd, 'node_modules', 'brunch', cliFile);
+var localOldPath = sysPath.join(cwd, 'node_modules', 'brunch', cliOldFile);
 
-var loadBrunch = function(path) {
-  var cli = require(path);
+var loadBrunch = function(path, oldPath) {
+  // this approach is only needed for watch command
+  if (path && process.argv[2] === 'w' || process.argv[2] === 'watch') {
+    try {
+      // this will spawn the watcher in a child process
+      // we needed it to handle brunch watcher restarts cleanly
+      // by killing the child process and starting it again
+      //
+      // the previous approach was to not reload the process but
+      // to simply to to clean require.cache - but it was not reliable
+      // and caused memory leaks
+      var proc = childProcess.fork(path, process.argv.slice(2));
+      proc.on('message', function(msg) {
+        if (msg === 'reload') {
+          proc.kill();
+          loadBrunch(path);
+        }
+      });
+      return;
+    } catch (e) {
+      // no op, proceed to the old approach (if the command wasn't `watch` or if local brunch version does not support forking)
+    }
+  }
+
+  // this is needed to support cases when the local brunch is of an older version
+  // and does not have a run-cli.js file
+  var cli = require(oldPath);
   cli.run();
 };
 
 var loadGlobalBrunch = function() {
   fs.realpath(__dirname, function(err, real) {
     if (err) throw err;
-    loadBrunch(sysPath.join(real, '..', cliFile));
+    loadBrunch(sysPath.join(real, '..', cliFile), sysPath.join(real, '..', cliOldFile));
   });
+};
+
+var tryLoadBrunch = function(path, oldPath) {
+  try {
+    loadBrunch(path, oldPath);
+  } catch(error) {
+    console.error(
+      'Brunch: Local install exists, but failed to load it. ' +
+      'Continuing with global install:', error
+    );
+    loadGlobalBrunch();
+  }
 };
 
 fs.access(localPath, function(error) {
   if (error) {
-    loadGlobalBrunch();
+    fs.access(localOldPath, function(error) {
+      if (error) {
+        loadGlobalBrunch();
+      } else {
+        tryLoadBrunch(null, localOldPath);
+      }
+    });
   } else {
-    try {
-      loadBrunch(localPath);
-    } catch(error) {
-      console.error(
-        'Brunch: Local install exists, but failed to load it. ' +
-        'Continuing with global install:', error
-      );
-      loadGlobalBrunch();
-    }
+    tryLoadBrunch(localPath, localOldPath);
   }
 });
