@@ -114,7 +114,7 @@ Install CoffeeScript plugin by executing `npm install --save coffee-script-brunc
 Hmm...that's exactly the same command from our previous step. Whatever. Let's create the `drink.coffee` file with some content:
 
 ```
-$ echo "console.log 'This is madness. Madness? This is Coffee!'" > app/drink.coffee
+$ echo 'console.log "This is madness. Madness? This is Coffee!"' > app/drink.coffee
 ```
 
 Since you've added CS plugin to the board, Brunch would *magically* recompile the app
