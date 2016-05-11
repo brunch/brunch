@@ -118,3 +118,24 @@ window.require.list()
   .filter(function(name) {return /-test$/.test(name);})
   .forEach(require);
 ```
+
+## My module is not included after changing sometimes...
+
+If you are running `brunch watch` and change something, to later find out that the changed file was included as completely *empty*... what do you do?
+
+It is caused by the way some editors write to files.
+It also can happen when you edit files over ssh.
+You can see these threads for more details: https://github.com/brunch/brunch/issues/1250 https://github.com/brunch/brunch/issues/1219 https://github.com/brunch/brunch/issues/1303
+
+Here's a quick summary on how to fix this:
+
+* see if there are write-related configuration options in your editor. In Sublime, `atomic_save: true` seems to do the trick.
+
+* add this to your config:
+
+  ```javascript
+  watcher: {
+    awaitWriteFinish: true,
+    usePolling: true
+  }
+  ```
