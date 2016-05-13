@@ -43,7 +43,7 @@ var loadBrunch = function(libPath) {
 
   // This approach is only needed for watch command.
   var runCli = join(libPath, files.new);
-  if (exists(runCli) && (arg === 'w' || arg === 'watch')) try {
+  if ((arg === 'w' || arg === 'watch') && exists(runCli)) try {
     return runSeparateWatchProcess(runCli);
   } catch (e) {}
 
