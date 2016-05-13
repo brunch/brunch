@@ -4,11 +4,12 @@
 global.appStartTime = Date.now();
 
 var sysPath = require('path');
+var join = sysPath.join;
 var fs = require('fs');
-var childProcess = require('child_process');
+var childProcessFork = require('child_process').fork;
+
 var version = process.version;
 var verDigit = parseInt(version.match(/^v(\d+)\./)[1]);
-
 if (verDigit < 4) {
   return console.error(
     'Error: Brunch 2+ requires node.js v4 or higher (you have ' + version + ') ' +
@@ -16,53 +17,49 @@ if (verDigit < 4) {
   );
 }
 
-var cwd = sysPath.resolve('.');
-var cliFile = sysPath.join('lib', 'run-cli.js');
-// for compatibility with Brunch 2.7.7 and lower
-var cliOldFile = sysPath.join('lib', 'cli.js');
-var localPath = sysPath.join(cwd, 'node_modules', 'brunch', cliFile);
-var localOldPath = sysPath.join(cwd, 'node_modules', 'brunch', cliOldFile);
+var files = {old: 'cli.js', new: 'run-cli.js'};
 
-var loadBrunch = function(path, oldPath) {
-  // this approach is only needed for watch command
-  if (path && process.argv[2] === 'w' || process.argv[2] === 'watch') {
-    try {
-      // this will spawn the watcher in a child process
-      // we needed it to handle brunch watcher restarts cleanly
-      // by killing the child process and starting it again
-      //
-      // the previous approach was to not reload the process but
-      // to simply to to clean require.cache - but it was not reliable
-      // and caused memory leaks
-      var proc = childProcess.fork(path, process.argv.slice(2));
-      proc.on('message', function(msg) {
-        if (msg === 'reload') {
-          proc.kill();
-          loadBrunch(path);
-        }
-      });
-      return;
-    } catch (e) {
-      // no op, proceed to the old approach (if the command wasn't `watch` or if local brunch version does not support forking)
-    }
+var exists = function(path) {
+  try {
+    fs.accessSync(path);
+  } catch (e) {
+    return false;
   }
-
-  // this is needed to support cases when the local brunch is of an older version
-  // and does not have a run-cli.js file
-  var cli = require(oldPath);
-  cli.run();
+  return true;
 };
 
-var loadGlobalBrunch = function() {
-  fs.realpath(__dirname, function(err, real) {
-    if (err) throw err;
-    loadBrunch(sysPath.join(real, '..', cliFile), sysPath.join(real, '..', cliOldFile));
+var runSeparateWatchProcess = function(cliPath) {
+  var proc = childProcessFork(cliPath, process.argv.slice(2));
+  proc.on('message', function(message) {
+    if (message === 'reload') {
+      proc.kill();
+      runSeparateWatchProcess(cliPath);
+    }
   });
 };
 
-var tryLoadBrunch = function(path, oldPath) {
+var loadBrunch = function(libPath) {
+  var arg = process.argv[2];
+
+  // This approach is only needed for watch command.
+  var runCli = join(libPath, files.new);
+  if (exists(runCli) && (arg === 'w' || arg === 'watch')) try {
+    return runSeparateWatchProcess(runCli);
+  } catch (e) {}
+
+  // This is needed to support cases when the local brunch is of an older version
+  // and does not have a run-cli.js file.
+  require(join(libPath, files.old)).run();
+};
+
+var loadGlobalBrunch = function() {
+  loadBrunch(join(fs.realpathSync(__dirname), '..'));
+};
+
+var localPath = join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', files.old);
+if (exists(localPath)) {
   try {
-    loadBrunch(path, oldPath);
+    loadBrunch(sysPath.dirname(localPath));
   } catch(error) {
     console.error(
       'Brunch: Local install exists, but failed to load it. ' +
@@ -70,18 +67,6 @@ var tryLoadBrunch = function(path, oldPath) {
     );
     loadGlobalBrunch();
   }
-};
-
-fs.access(localPath, function(error) {
-  if (error) {
-    fs.access(localOldPath, function(error) {
-      if (error) {
-        loadGlobalBrunch();
-      } else {
-        tryLoadBrunch(null, localOldPath);
-      }
-    });
-  } else {
-    tryLoadBrunch(localPath, localOldPath);
-  }
-});
+} else {
+  loadGlobalBrunch();
+}
