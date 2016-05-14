@@ -1,5 +1,21 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch `<unreleased>`
+* Changed `config.plugins.npm` to `config.npm.compilers`.
+* Brunch will not try to `npm install` if only the config was changed.
+* Fixed a memory leak issue after watcher reload (due to config change or update in `package.json`).
+* NPM: `require.alias` will now be inserted only in the bundles which contain the aliased file. Previous behavior was that all output file contained all possible aliases.
+* NPM: improved handling of added & removed files during `watch`. Adding a new file will now try to re-check files that previously failed due to module resolution errors. Removing a file will now cause the files that depended on it to be re-checked.
+* Changed back to `destinationPath` (intsead of `destPath` since 2.6) in `Asset` that is received in `onCompile`.
+
+## Brunch 2.7 (Apr 21, 2016)
+* Introduced support for Hot Module Replacement API with [hmr-brunch](https://github.com/brunch/hmr-brunch).
+* Added config file validation of format and types.
+* Allow JavaScript files from NPM packages to get processed with plugins (`config.plugins.npm`).
+* Fixed `entryPoint`-related warnings on Windows.
+* Brunch will now try to recover from `MODULE_NOT_FOUND` errors caused by the config, by trying to `npm install`.
+* The slashes in file paths are now normalized early. The plugins will always receive paths with UNIX-style slashes even on Windows (`/`).
+
 ## Brunch 2.6 (Apr 2, 2016)
 * Non-JS files can now output JS modules.
     * You are now able to import stylesheets from Sass, Less, CSS in JS.
