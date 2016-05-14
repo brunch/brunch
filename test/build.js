@@ -1,4 +1,5 @@
 const test = require('ava');
+const cp = require('child_process');
 const brunch = require('../lib');
 const { prepareTestDir, teardownTestDir, fileContains, fileNotContains, fileExists } = require('./_test_helper');
 const fixturify = require('fixturify');
@@ -267,5 +268,123 @@ test.serial.cb('customize paths.public config', t => {
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
     t.end();
+  });
+});
+
+test.serial.cb('npm integration', t => {
+  fixturify.writeSync('.', {
+    'package.json': `
+      {
+        "dependencies": {
+          "react": "0.14.0",
+          "react-dom": "0.14.0",
+          "socrates": "1.0.2",
+          "bignumber.js": "*"
+        },
+        "devDependencies": {
+          "javascript-brunch": "^2.0.0"
+        }
+      }
+    `,
+    'brunch-config.js': `
+      module.exports = {
+        files: {
+          javascripts: {
+            joinTo: 'app.js'
+          }
+        },
+        npm: {
+          globals: {
+            React: 'react'
+          }
+        }
+      };
+    `,
+    'app': {
+      'meaning.js': 'module.exports = 42;',
+      'initialize.js': `
+        var React = require('react');
+        var ReactDOM = require('react-dom');
+        var socrates = require('socrates');
+        require('./meaning.js');
+        require('bignumber.js');
+      `
+    }
+  });
+
+  cp.exec('npm install', () => {
+    brunch.build({}, () => {
+      const contains = text => fileContains(t, 'public/app.js', text);
+      const doesntContain = text => fileNotContains(t, 'public/app.js', text);
+
+      // sets globals
+      contains('window.React = require("react");');
+      // includes required files
+      contains('require.register("react/react.js",');
+      contains('require.register("react-dom/index.js",');
+      // and doesn't use windows slashes for module names
+      doesntContain('require.register("react\\react.js",');
+      doesntContain('require.register("react-dom\\index.js",');
+      // adds aliases for main files (that are not index.js)
+      contains('require.alias("react/react.js", "react");');
+      // also spot-replaces process.env.NODE_ENV
+      doesntContain('process.env.NODE_ENV');
+      contains(`'development' !== 'production'`);
+      // includes the process shim
+      contains('require.alias("process/browser.js", "process");');
+      contains(`process = require('process');`);
+      // indirectly-used @scoped modules should be fine, too
+      contains('require.register("@f/combine-reducers/lib/index.js",');
+      // finally, modules with .js in their name are correctly processed
+      contains('require.alias("bignumber.js/bignumber.js", "bignumber.js");');
+
+      t.end();
+    });
+  });
+});
+
+test.serial.cb('compiling npm packages', t => {
+  fixturify.writeSync('.', {
+    'package.json': `
+      {
+        "dependencies": {
+          "credit-card": "2.0.0"
+        },
+        "devDependencies": {
+          "javascript-brunch": "^2.0.0",
+          "babel-brunch": "^6.0.4"
+        }
+      }
+    `,
+    'brunch-config.js': `
+      module.exports = {
+        files: {
+          javascripts: {
+            joinTo: 'app.js'
+          }
+        },
+        npm: {
+          compilers: ['babel-brunch']
+        }
+      };
+    `,
+    'app': {
+      'initialize.js': `
+        var cc = require('credit-card');
+      `
+    }
+  });
+
+  cp.exec('npm install', () => {
+    brunch.build({}, () => {
+      const contains = text => fileContains(t, 'public/app.js', text);
+      const doesntContain = text => fileNotContains(t, 'public/app.js', text);
+
+      // credit-card is compiled, too
+      doesntContain('const Reach');
+      contains('var Reach');
+
+      t.end();
+    });
   });
 });
