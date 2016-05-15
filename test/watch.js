@@ -6,7 +6,9 @@ const {
   teardownTestDir,
   fileContains,
   fileDoesNotContains,
-  fileExists
+  fileExists,
+  fileDoesNotExists,
+  requestBrunchServer
 } = require('./_test_helper');
 const fixturify = require('fixturify');
 
@@ -16,14 +18,20 @@ const watch = function(...args) {
   watcher = brunch.watch(...args);
 };
 
-test.beforeEach(() => {
+test.beforeEach.cb((t) => {
   teardownTestDir();
   prepareTestDir();
 
   if (watcher) {
     // close chokidar to prevent that it understands the fixtures being copied as new files being added
     watcher.watcher.close();
-    watcher = null;
+    if (watcher.server) {
+      watcher.server.close(t.end);
+    } else {
+      t.end();
+    }
+  } else {
+    t.end();
   }
 });
 
@@ -176,4 +184,258 @@ fileb
   };
 
   watch({}, onCompile);
+});
+
+test.serial.cb('install npm packages if package.json changes', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      t.true(fs.readdirSync('./node_modules').indexOf('lodash') === -1);
+
+      const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+      packageJson.dependencies.lodash = '*';
+      fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
+    } else if (calls === 2) {
+      t.true(fs.readdirSync('./node_modules').indexOf('lodash') !== -1);
+      t.end();
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({}, onCompile);
+});
+
+test.serial.cb('install bower components if bower.json changes', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      t.true(fs.readdirSync('./bower_components').indexOf('jquery') === -1);
+
+      const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
+      bowerJson.dependencies.jquery = '*';
+      fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
+    } else if (calls === 2) {
+      t.true(fs.readdirSync('./bower_components').indexOf('jquery') !== -1);
+      t.end();
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({}, onCompile);
+});
+
+test.serial.cb('reload config if it changes', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      },
+      paths: {
+        public: 'public'
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      fileDoesNotExists(t, 'dist/app.js.map');
+      fileDoesNotExists(t, 'dist/app.js');
+      fileDoesNotExists(t, 'dist/index.html');
+      fileExists(t, 'public/app.js.map');
+      fileExists(t, 'public/app.js');
+      fileExists(t, 'public/index.html');
+      fs.writeFileSync('brunch-config.js', `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      },
+      paths: {
+        public: 'dist'
+      }
+    };`);
+    } else if (calls === 2) {
+      fileExists(t, 'dist/app.js.map');
+      fileExists(t, 'dist/app.js');
+      fileExists(t, 'dist/index.html');
+      t.end();
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({}, onCompile);
+});
+
+test.serial.cb('brunch server works', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      requestBrunchServer('/', (responseText) => {
+        t.is(responseText, '<h1>hello world</h1>');
+        t.end();
+      });
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({ server: true }, onCompile);
+});
+
+test.serial.cb('brunch server reload files', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      requestBrunchServer('/', (responseText) => {
+        t.is(responseText, '<h1>hello world</h1>');
+        fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
+      });
+    } else if (calls === 2) {
+      requestBrunchServer('/', (responseText) => {
+        t.is(responseText, '<h1>changed</h1>');
+        t.end();
+      });
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({ server: true }, onCompile);
+});
+
+test.serial.cb('brunch server accepts custom server', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'brunch-server.js': `
+var http = require('http');
+
+module.exports = {
+  startServer: function(port, path, callback) {
+    const server = http.createServer(function (req, res) {
+      res.end('hello from custom server');
+    });
+    return server.listen(port, callback);
+  }
+};`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  var calls = 0;
+
+  const onCompile = function() {
+    calls++;
+
+    if (calls === 1) {
+      requestBrunchServer('/', (responseText) => {
+        t.is(responseText, 'hello from custom server');
+        t.end();
+      });
+    } else {
+      t.fail(`Unexpected number of calls ${calls}`);
+    }
+  };
+
+  watch({ server: true }, onCompile);
 });
