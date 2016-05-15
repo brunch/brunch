@@ -1,7 +1,14 @@
 const test = require('ava');
 const cp = require('child_process');
 const brunch = require('../lib');
-const { prepareTestDir, teardownTestDir, fileContains, fileDoesNotContains, fileExists } = require('./_test_helper');
+const {
+  prepareTestDir,
+  teardownTestDir,
+  fileContains,
+  fileDoesNotContains,
+  fileExists,
+  fileEquals
+} = require('./_test_helper');
 const fixturify = require('fixturify');
 
 test.beforeEach(() => {
@@ -315,7 +322,7 @@ test.serial.cb('npm integration', t => {
   cp.exec('npm install', () => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
-      const doesntContain = text => fileNotContains(t, 'public/app.js', text);
+      const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
 
       // sets globals
       contains('window.React = require("react");');
@@ -378,7 +385,7 @@ test.serial.cb('compiling npm packages', t => {
   cp.exec('npm install', () => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
-      const doesntContain = text => fileNotContains(t, 'public/app.js', text);
+      const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
 
       // credit-card is compiled, too
       doesntContain('const Reach');
@@ -386,5 +393,71 @@ test.serial.cb('compiling npm packages', t => {
 
       t.end();
     });
+  });
+});
+
+test.serial.cb('config override', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      overrides: {
+        custom: {
+          paths: {
+            public: 'dist'
+          }
+        }
+      },
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  brunch.build({ env: 'custom' }, () => {
+    fileExists(t, 'dist/app.js.map');
+    fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
+    fileContains(t, 'dist/app.js', 'console.log("hello world")');
+    t.end();
+  });
+});
+
+test.serial.cb('modules.definition option', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      npm: {
+        enabled: false
+      },
+      modules: {
+       definition: false,
+       wrapper: function(path, data) {
+         return "(function() {" + data + "})()";
+       }
+     },
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'app': {
+      'assets': {
+        'index.html': '<h1>hello world</h1>'
+      },
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/app.js.map');
+    fileEquals(t, 'public/app.js', '(function() {console.log("hello world")\n})();\n//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    t.end();
   });
 });
