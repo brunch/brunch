@@ -229,6 +229,35 @@ class MyCompiler {
 
 Note: exported JS will not be compiled or linter by any other plugin and its `require` statements will not be resolved. Make sure your exported JS is self-contained.
 
+### Static file compilers
+
+Sometimes, you would want to process different kinds of files, to which the Brunch's general compile-join-write logic does not apply.
+Jade templates to HTML is one example.
+You want to have a `.jade` file compiled into `.html`.
+Previously, what you would do in this case was to hook into `onCompile` and look for jade files... and then compile them and write them manually. Sucks.
+
+So starting Brunch `<unreleased>`, there is a better way.
+
+```javascript
+class StaticJadeCompilerNew {
+  compile(params) {
+    const path = params.path;
+    const data = params.data;
+
+    return new Promise((resolve, reject) => {
+      toHtml(path, data, (err, data) => {
+        if (err) return reject(err);
+        resolve(data);
+      });
+    });
+  }
+}
+StaticJadeCompilerNew.prototype.brunchPlugin = true;
+StaticJadeCompilerNew.prototype.type = 'static';
+StaticJadeCompilerNew.prototype.extension = "jade";
+StaticJadeCompilerNew.prototype.targetExtension = "html";
+```
+
 ## Publishing
 
 Making your plugin available to everyone is as simple as

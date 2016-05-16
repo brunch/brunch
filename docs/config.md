@@ -74,6 +74,9 @@ paths: {
         * after: [anymatch set](https://github.com/es128/anymatch#anymatch-) defining files that will be loaded after other files
     * pluginHelpers: (optional) specify which output file (or array of files) plugins' include files concatenate into. Defaults to the output file that `vendor` files are being joined to, the first one with `vendor` in its name/path, or just the first output file listed in your joinTo object.
 
+* `statics` is a special case. It is used to configre static file compilation. The only option is:
+    * rootPath: a path that static files will be relative to. Defaults to `app`. For example, `rootPath = 'app'` will qualify `app/about.jade` as `about.jade`, writing it into `public/about.html`; if `rootPath = '.'`, then it would have been written into `public/app/about.jade`.
+
 All files from `vendor` directory are by default concatenated before all files from `app` directory. So, `vendor/scripts/jquery.js` would be loaded before `app/script.js` even if order config is empty. Files from Bower packages are included by default before the `vendor` files.
 
 Overall ordering is [before] -> [bower] -> [vendor] -> [everything else] -> [after]
