@@ -29,6 +29,7 @@ var exists = function(path) {
 };
 
 var runSeparateWatchProcess = function(cliPath) {
+  process.env.BRUNCH_FORKED_PROCESS = true;
   var proc = childProcessFork(cliPath, process.argv.slice(2));
   proc.on('message', function(message) {
     if (message === 'reload') {
