@@ -1,6 +1,6 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch `<unreleased>`
+## Brunch 2.8 (unreleased)
 * Changed `config.plugins.npm` to `config.npm.compilers`.
 * Brunch will not try to `npm install` if only the config was changed.
 * Fixed a memory leak issue after watcher reload (due to config change or update in `package.json`).
