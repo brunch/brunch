@@ -24,7 +24,7 @@ Try different `WORKERS` amount to see which one works best for your system.
 
 Watches brunch app directory for changes and rebuilds the whole project when they happen. Options:
 
-* all the same options available in `brunch build`, plus:
+* *all the same options* available in `brunch build`, plus:
 * `-s, --server`: run a simple HTTP + pushstate server that would serve `public` dir in `/`
     * `-P PORT, --port PORT`: define on which port the server would run
 
