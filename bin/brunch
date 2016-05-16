@@ -54,7 +54,7 @@ var loadBrunch = function(libPath) {
 };
 
 var loadGlobalBrunch = function() {
-  loadBrunch(join(fs.realpathSync(__dirname), '..'));
+  loadBrunch(join(fs.realpathSync(__dirname), '..', 'lib'));
 };
 
 var localPath = join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', files.old);
