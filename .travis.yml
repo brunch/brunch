@@ -5,6 +5,5 @@ os:
   - osx
 node_js:
   - '6'
-  - '5'
 before_install:
   - npm install bower@^1 -g
