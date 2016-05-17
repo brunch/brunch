@@ -7,6 +7,7 @@ const {
   fileContains,
   fileDoesNotContains,
   fileExists,
+  fileDoesNotExist,
   fileEquals,
   spyOnConsole,
   restoreConsole,
@@ -515,5 +516,61 @@ test.serial.cb('modules.definition option', t => {
     noError(t);
 
     t.end();
+  });
+});
+
+test.serial.cb('static compilation', t => {
+  fixturify.writeSync('.', {
+    'brunch-config': `module.exports = {
+      files: {}
+    };`,
+    'package.json': `{
+      "name": "brunch-app",
+      "description": "Description",
+      "author": "Your Name",
+      "version": "0.1.0",
+      "dependencies": {},
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "temp-brunch": "file:temp-brunch"
+      }
+    }`,
+    'app': {
+      'assets': {
+        'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?'
+      }
+    },
+    'temp-brunch': {
+      'package.json': `{
+        "name": "temp-brunch",
+        "version": "0.0.1",
+        "main": "index.js"
+      }`,
+      'index.js': `'use strict';
+        class TempCompiler {
+          compileStatic(params) {
+            const data = params.data;
+            const compiled = data.replace(new RegExp('-', 'g'), '^');
+            return Promise.resolve(compiled);
+          }
+        }
+
+        TempCompiler.prototype.brunchPlugin = true;
+        TempCompiler.prototype.type = 'template';
+        TempCompiler.prototype.extension = 'emp';
+        TempCompiler.prototype.staticTargetExtension = 'built';
+
+        module.exports = TempCompiler;
+      `
+    }
+  });
+
+  npmInstall(() => {
+    brunch.build({}, () => {
+      fileDoesNotExist(t, 'public/test.emp');
+      fileExists(t, 'public/test.built');
+      fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
+      t.end();
+    });
   });
 });
