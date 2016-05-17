@@ -64,7 +64,7 @@ module.exports.fileExists = function fileExists(t, path) {
   }
 };
 
-module.exports.fileDoesNotExists = function fileDoesNotExists(t, path) {
+module.exports.fileDoesNotExist = function fileDoesNotExist(t, path) {
   try {
     fs.accessSync(path, fs.F_OK);
     t.fail(`File ${path} should not exist`);
