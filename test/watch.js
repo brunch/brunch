@@ -22,17 +22,26 @@ test.beforeEach.cb((t) => {
   teardownTestDir();
   prepareTestDir();
 
+const closeWatcher = (cb) => {
   if (watcher) {
     // close chokidar to prevent that it understands the fixtures being copied as new files being added
     watcher.watcher.close();
     if (watcher.server) {
-      watcher.server.close(t.end);
+      return watcher.server.close(cb);
     } else {
-      t.end();
+      return cb();
     }
   } else {
-    t.end();
+    return cb();
   }
+};
+
+test.beforeEach.cb(t => {
+  closeWatcher(() => {
+    teardownTestDir();
+    prepareTestDir();
+    t.end();
+  });
 });
 
 test.serial.cb('compile on file changes', t => {
