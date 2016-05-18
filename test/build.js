@@ -1,19 +1,31 @@
 const test = require('ava');
-const cp = require('child_process');
 const brunch = require('../lib');
 const {
   prepareTestDir,
   teardownTestDir,
+  npmInstall,
   fileContains,
   fileDoesNotContains,
   fileExists,
-  fileEquals
+  fileEquals,
+  spyOnConsole,
+  restoreConsole,
+  outputContains,
+  eOutputContains,
+  noWarn,
+  noError
 } = require('./_test_helper');
 const fixturify = require('fixturify');
 
 test.beforeEach(() => {
   teardownTestDir();
   prepareTestDir();
+  spyOnConsole();
+});
+
+test.afterEach.always(() => {
+  restoreConsole();
+  teardownTestDir();
 });
 
 test.serial.cb('basic build', t => {
@@ -42,6 +54,11 @@ console.log("hello world")
 });`);
 
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+
+    outputContains(t, 'compiled initialize.js into app.js, copied index.html');
+    noWarn(t);
+    noError(t);
+
     t.end();
   });
 });
@@ -80,6 +97,11 @@ fileb
 filec
 });
 `);
+
+    outputContains(t, 'compiled 3 files into app.js, copied index.html');
+    noWarn(t);
+    noError(t);
+
     t.end();
   });
 });
@@ -136,6 +158,11 @@ vendora
     fileDoesNotContains(t, 'public/javascripts/vendor.js', appJs);
     fileDoesNotContains(t, 'public/javascripts/vendor.js', 'require.register("');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+
+    outputContains(t, 'compiled 3 files into 2 files, copied index.html');
+    noWarn(t);
+    noError(t);
+
     t.end();
   });
 });
@@ -184,6 +211,11 @@ require("./c"); initialize
 });`);
 
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+
+    outputContains(t, 'compiled 4 files into bundle.js, copied index.html');
+    eOutputContains(t, 'app/not-required.js compiled, but not written');
+    noError(t);
+
     t.end();
   });
 });
@@ -246,6 +278,11 @@ require("./c"); entry2
 });`);
 
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+
+    outputContains(t, 'compiled 6 files into 2 files, copied index.html');
+    eOutputContains(t, 'app/not-required.js compiled, but not written');
+    noError(t);
+
     t.end();
   });
 });
@@ -274,6 +311,12 @@ test.serial.cb('customize paths.public config', t => {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
+
+    outputContains(t, 'compiled initialize.js into app.js, copied index.html');
+    // in tests, this case will have a warning due to EventEmitter leak. Does not happen outside of tests, though.
+    //noWarn(t);
+    noError(t);
+
     t.end();
   });
 });
@@ -319,7 +362,7 @@ test.serial.cb('npm integration', t => {
     }
   });
 
-  cp.exec('npm install', () => {
+  npmInstall(() => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
@@ -344,6 +387,10 @@ test.serial.cb('npm integration', t => {
       contains('require.register("@f/combine-reducers/lib/index.js",');
       // finally, modules with .js in their name are correctly processed
       contains('require.alias("bignumber.js/bignumber.js", "bignumber.js");');
+
+      outputContains(t, 'compiled 180 files into app.js');
+      //noWarn(t);
+      noError(t);
 
       t.end();
     });
@@ -382,7 +429,7 @@ test.serial.cb('compiling npm packages', t => {
     }
   });
 
-  cp.exec('npm install', () => {
+  npmInstall(() => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
@@ -390,6 +437,10 @@ test.serial.cb('compiling npm packages', t => {
       // credit-card is compiled, too
       doesntContain('const Reach');
       contains('var Reach');
+
+      outputContains(t, 'compiled 2 files into app.js');
+      noWarn(t);
+      noError(t);
 
       t.end();
     });
@@ -458,6 +509,11 @@ test.serial.cb('modules.definition option', t => {
     fileExists(t, 'public/app.js.map');
     fileEquals(t, 'public/app.js', '(function() {console.log("hello world")\n})();\n//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+
+    outputContains(t, 'compiled initialize.js into app.js, copied index.html');
+    noWarn(t);
+    noError(t);
+
     t.end();
   });
 });

@@ -70,13 +70,14 @@
     "source-map": "~0.5.0"
   },
   "devDependencies": {
-    "ava": "^0.14.0",
+    "ava": "avajs/ava",
     "babel-eslint": "^6.0.4",
     "eslint": "^2.9.0",
     "eslint-plugin-ava": "^2.3.1",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
     "nyc": "^6.4.2",
-    "rewire": "^2.5.0"
+    "rewire": "^2.5.0",
+    "test-console": "^1.0.0"
   }
 }
