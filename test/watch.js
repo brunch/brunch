@@ -11,10 +11,10 @@ const {
   requestBrunchServer
 } = require('./_test_helper');
 const fixturify = require('fixturify');
-const EventEmitter = require('events');
 
 var watcher;
 
+const EventEmitter = require('events');
 const watch = function(params, fn) {
   const compileEmitter = new EventEmitter();
   const onCompile = function() {
@@ -45,10 +45,14 @@ const closeWatcher = (cb) => {
   }
 };
 
-test.beforeEach.cb(t => {
+test.beforeEach(() => {
+  teardownTestDir();
+  prepareTestDir();
+});
+
+test.afterEach.always.cb(t => {
   closeWatcher(() => {
     teardownTestDir();
-    prepareTestDir();
     t.end();
   });
 });

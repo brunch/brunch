@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const cp = require('child_process');
 
 const rootPath = process.cwd();
 const tmp = path.join(require('os').tmpDir(), 'brunch-tests');
@@ -96,6 +97,60 @@ module.exports.fileDoesNotContains = function fileDoesNotContains(t, path, conte
   }
 };
 
+const _stdout = require('test-console').stdout;
+const _stderr = require('test-console').stderr;
+var _inspect, _inspectE;
+
+module.exports.spyOnConsole = function() {
+  _inspect = _stdout.inspect();
+  _inspectE = _stderr.inspect();
+};
+
+module.exports.restoreConsole = function() {
+  _inspect.restore();
+  _inspect.output.forEach(line => process.stdout.write(line));
+  _inspect = null;
+
+  _inspectE.restore();
+  _inspectE.output.forEach(line => process.stderr.write(line));
+  _inspectE = null;
+};
+
+module.exports.outputContains = function(t, string) {
+  if (_inspect.output.join('\n').indexOf(string) !== -1) {
+    t.pass();
+  } else {
+    t.fail(`Expected console output (stdout) to contain '${string}' but it didn't`);
+  }
+};
+
+module.exports.outputDoesNotContain = function(t, string) {
+  if (_inspect.output.join('\n').indexOf(string) === -1) {
+    t.pass();
+  } else {
+    t.fail(`Expected console output (stdout) not to contain '${string}' but it did`);
+  }
+};
+
+module.exports.eOutputContains = function(t, string) {
+  if (_inspectE.output.join('\n').indexOf(string) !== -1) {
+    t.pass();
+  } else {
+    t.fail(`Expected console output (stderr) to contain '${string}' but it didn't`);
+  }
+};
+
+module.exports.eOutputDoesNotContain = function(t, string) {
+  if (_inspectE.output.join('\n').indexOf(string) === -1) {
+    t.pass();
+  } else {
+    t.fail(`Expected console output (stderr) not to contain '${string}' but it did`);
+  }
+};
+
+module.exports.noWarn = t => module.exports.eOutputDoesNotContain(t, 'warn');
+module.exports.noError = t => module.exports.eOutputDoesNotContain(t, 'error');
+
 module.exports.requestBrunchServer = function requestBrunchServer(path, callback) {
   const http = require('http');
   const options = {
@@ -109,4 +164,8 @@ module.exports.requestBrunchServer = function requestBrunchServer(path, callback
     response.on('data', chunk => responseText += chunk);
     response.on('end', () => callback(responseText));
   }).end();
+};
+
+module.exports.npmInstall = function(cb) {
+  cp.exec('npm install', cb);
 };
