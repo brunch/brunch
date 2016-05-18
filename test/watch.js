@@ -11,16 +11,25 @@ const {
   requestBrunchServer
 } = require('./_test_helper');
 const fixturify = require('fixturify');
+const EventEmitter = require('events');
 
 var watcher;
 
-const watch = function(...args) {
-  watcher = brunch.watch(...args);
-};
+const watch = function(params, fn) {
+  const compileEmitter = new EventEmitter();
+  const onCompile = function() {
+    compileEmitter.emit('compiled');
+  };
 
-test.beforeEach.cb((t) => {
-  teardownTestDir();
-  prepareTestDir();
+  const compilation = function() {
+    compileEmitter.once('compiled', () => it.next());
+  };
+
+  watcher = brunch.watch(params, onCompile);
+
+  var it = fn(compilation);
+  it.next();
+};
 
 const closeWatcher = (cb) => {
   if (watcher) {
@@ -61,34 +70,26 @@ test.serial.cb('compile on file changes', t => {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+  watch({}, function *main(compilation) {
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
 
-      fs.writeFileSync('app/initialize.js', 'console.log("changed")');
-    } else if (calls === 2) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fs.writeFileSync('app/initialize.js', 'console.log("changed")');
+
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("changed")
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({}, onCompile);
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    t.end();
+  });
 });
 
 test.serial.cb('detect file addition', t => {
@@ -108,37 +109,29 @@ test.serial.cb('detect file addition', t => {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+  watch({}, function *main(compilation) {
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
 
-      fs.writeFileSync('app/new-file.js', 'console.log("new")');
-    } else if (calls === 2) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fs.writeFileSync('app/new-file.js', 'console.log("new")');
+
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-      fileContains(t, 'public/app.js', `require.register("new-file.js", function(exports, require, module) {
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains(t, 'public/app.js', `require.register("new-file.js", function(exports, require, module) {
 console.log("new")
 });`);
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({}, onCompile);
+    t.end();
+  });
 });
 
 test.serial.cb('detect file removal', t => {
@@ -159,40 +152,32 @@ test.serial.cb('detect file removal', t => {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
+  watch({}, function *main(compilation) {
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
 filea
 });`);
-      fileContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
+    fileContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
 fileb
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
 
-      fs.unlinkSync('app/b.js');
-    } else if (calls === 2) {
-      fileExists(t, 'public/app.js.map');
-      fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-      fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
+    fs.unlinkSync('app/b.js');
+
+    yield compilation();
+    fileExists(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
 filea
 });`);
-      fileDoesNotContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
+    fileDoesNotContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
 fileb
 });`);
-      fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({}, onCompile);
+    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    t.end();
+  });
 });
 
 test.serial.cb('install npm packages if package.json changes', t => {
@@ -212,26 +197,18 @@ test.serial.cb('install npm packages if package.json changes', t => {
     }
   });
 
-  var calls = 0;
+  watch({}, function *main(compilation) {
+    yield compilation();
+    t.true(fs.readdirSync('./node_modules').indexOf('lodash') === -1);
 
-  const onCompile = function() {
-    calls++;
+    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    packageJson.dependencies.lodash = '*';
+    fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
-    if (calls === 1) {
-      t.true(fs.readdirSync('./node_modules').indexOf('lodash') === -1);
-
-      const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-      packageJson.dependencies.lodash = '*';
-      fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
-    } else if (calls === 2) {
-      t.true(fs.readdirSync('./node_modules').indexOf('lodash') !== -1);
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({}, onCompile);
+    yield compilation();
+    t.true(fs.readdirSync('./node_modules').indexOf('lodash') !== -1);
+    t.end();
+  });
 });
 
 test.serial.cb('install bower components if bower.json changes', t => {
@@ -251,26 +228,18 @@ test.serial.cb('install bower components if bower.json changes', t => {
     }
   });
 
-  var calls = 0;
+  watch({}, function *main(compilation) {
+    yield compilation();
+    t.true(fs.readdirSync('./bower_components').indexOf('jquery') === -1);
 
-  const onCompile = function() {
-    calls++;
+    const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
+    bowerJson.dependencies.jquery = '*';
+    fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
 
-    if (calls === 1) {
-      t.true(fs.readdirSync('./bower_components').indexOf('jquery') === -1);
-
-      const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
-      bowerJson.dependencies.jquery = '*';
-      fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
-    } else if (calls === 2) {
-      t.true(fs.readdirSync('./bower_components').indexOf('jquery') !== -1);
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({}, onCompile);
+    yield compilation();
+    t.true(fs.readdirSync('./bower_components').indexOf('jquery') !== -1);
+    t.end();
+  });
 });
 
 test.serial.cb('reload config if it changes', t => {
@@ -293,19 +262,15 @@ test.serial.cb('reload config if it changes', t => {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      fileDoesNotExists(t, 'dist/app.js.map');
-      fileDoesNotExists(t, 'dist/app.js');
-      fileDoesNotExists(t, 'dist/index.html');
-      fileExists(t, 'public/app.js.map');
-      fileExists(t, 'public/app.js');
-      fileExists(t, 'public/index.html');
-      fs.writeFileSync('brunch-config.js', `module.exports = {
+  watch({}, function *main(compilation) {
+    yield compilation();
+    fileDoesNotExists(t, 'dist/app.js.map');
+    fileDoesNotExists(t, 'dist/app.js');
+    fileDoesNotExists(t, 'dist/index.html');
+    fileExists(t, 'public/app.js.map');
+    fileExists(t, 'public/app.js');
+    fileExists(t, 'public/index.html');
+    fs.writeFileSync('brunch-config.js', `module.exports = {
       files: {
         javascripts: {
           joinTo: 'app.js'
@@ -315,17 +280,13 @@ test.serial.cb('reload config if it changes', t => {
         public: 'dist'
       }
     };`);
-    } else if (calls === 2) {
-      fileExists(t, 'dist/app.js.map');
-      fileExists(t, 'dist/app.js');
-      fileExists(t, 'dist/index.html');
-      t.end();
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
 
-  watch({}, onCompile);
+    yield compilation();
+    fileExists(t, 'dist/app.js.map');
+    fileExists(t, 'dist/app.js');
+    fileExists(t, 'dist/index.html');
+    t.end();
+  });
 });
 
 test.serial.cb('brunch server works', t => {
@@ -345,22 +306,13 @@ test.serial.cb('brunch server works', t => {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      requestBrunchServer('/', (responseText) => {
-        t.is(responseText, '<h1>hello world</h1>');
-        t.end();
-      });
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({ server: true }, onCompile);
+  watch({ server: true }, function *main(compilation) {
+    yield compilation();
+    requestBrunchServer('/', (responseText) => {
+      t.is(responseText, '<h1>hello world</h1>');
+      t.end();
+    });
+  });
 });
 
 test.serial.cb('brunch server reload files', t => {
@@ -380,27 +332,19 @@ test.serial.cb('brunch server reload files', t => {
     }
   });
 
-  var calls = 0;
+  watch({ server: true }, function *main(compilation) {
+    yield compilation();
+    requestBrunchServer('/', (responseText) => {
+      t.is(responseText, '<h1>hello world</h1>');
+      fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
+    });
 
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      requestBrunchServer('/', (responseText) => {
-        t.is(responseText, '<h1>hello world</h1>');
-        fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
-      });
-    } else if (calls === 2) {
-      requestBrunchServer('/', (responseText) => {
-        t.is(responseText, '<h1>changed</h1>');
-        t.end();
-      });
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({ server: true }, onCompile);
+    yield compilation();
+    requestBrunchServer('/', (responseText) => {
+      t.is(responseText, '<h1>changed</h1>');
+      t.end();
+    });
+  });
 });
 
 test.serial.cb('brunch server accepts custom server', t => {
@@ -431,20 +375,11 @@ module.exports = {
     }
   });
 
-  var calls = 0;
-
-  const onCompile = function() {
-    calls++;
-
-    if (calls === 1) {
-      requestBrunchServer('/', (responseText) => {
-        t.is(responseText, 'hello from custom server');
-        t.end();
-      });
-    } else {
-      t.fail(`Unexpected number of calls ${calls}`);
-    }
-  };
-
-  watch({ server: true }, onCompile);
+  watch({ server: true }, function *main(compilation) {
+    yield compilation();
+    requestBrunchServer('/', (responseText) => {
+      t.is(responseText, 'hello from custom server');
+      t.end();
+    });
+  });
 });
