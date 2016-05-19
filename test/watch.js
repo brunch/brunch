@@ -52,8 +52,10 @@ test.beforeEach(() => {
 
 test.afterEach.always.cb(t => {
   closeWatcher(() => {
-    teardownTestDir();
-    t.end();
+    setTimeout(() => {
+      teardownTestDir();
+      t.end();
+    }, 1000);
   });
 });
 
