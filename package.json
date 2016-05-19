@@ -73,7 +73,7 @@
     "ava": "avajs/ava",
     "babel-eslint": "^6.0.4",
     "eslint": "^2.9.0",
-    "eslint-plugin-ava": "^2.3.1",
+    "eslint-plugin-ava": "avajs/eslint-plugin-ava",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
     "nyc": "^6.4.2",
