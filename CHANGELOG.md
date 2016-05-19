@@ -1,12 +1,14 @@
 To install the latest version, execute `npm install -g brunch`
 
 ## Brunch 2.8 (unreleased)
+* Added plugin API for asset compilation (e.g. jade to html).
 * Changed `config.plugins.npm` to `config.npm.compilers`.
 * Brunch will not try to `npm install` if only the config was changed.
 * Fixed a memory leak issue after watcher reload (due to config change or update in `package.json`).
 * NPM: `require.alias` will now be inserted only in the bundles which contain the aliased file. Previous behavior was that all output file contained all possible aliases.
 * NPM: improved handling of added & removed files during `watch`. Adding a new file will now try to re-check files that previously failed due to module resolution errors. Removing a file will now cause the files that depended on it to be re-checked.
 * Changed back to `destinationPath` (intsead of `destPath` since 2.6) in `Asset` that is received in `onCompile`.
+* Print a warning if a plugin from `devDependencies` fails to load.
 
 ## Brunch 2.7 (Apr 21, 2016)
 * Introduced support for Hot Module Replacement API with [hmr-brunch](https://github.com/brunch/hmr-brunch).
