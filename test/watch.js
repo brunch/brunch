@@ -7,7 +7,7 @@ const {
   fileContains,
   fileDoesNotContains,
   fileExists,
-  fileDoesNotExists,
+  fileDoesNotExist,
   requestBrunchServer
 } = require('./_test_helper');
 const fixturify = require('fixturify');
@@ -268,9 +268,9 @@ test.serial.cb('reload config if it changes', t => {
 
   watch({}, function *main(compilation) {
     yield compilation();
-    fileDoesNotExists(t, 'dist/app.js.map');
-    fileDoesNotExists(t, 'dist/app.js');
-    fileDoesNotExists(t, 'dist/index.html');
+    fileDoesNotExist(t, 'dist/app.js.map');
+    fileDoesNotExist(t, 'dist/app.js');
+    fileDoesNotExist(t, 'dist/index.html');
     fileExists(t, 'public/app.js.map');
     fileExists(t, 'public/app.js');
     fileExists(t, 'public/index.html');
