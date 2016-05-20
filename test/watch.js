@@ -15,6 +15,8 @@ const fixturify = require('fixturify');
 var watcher;
 
 const EventEmitter = require('events');
+const tearDownInterval = 1000;
+
 const watch = function(params, fn) {
   const compileEmitter = new EventEmitter();
   const onCompile = function() {
@@ -56,7 +58,7 @@ test.afterEach.always.cb(t => {
     setTimeout(() => {
       teardownTestDir();
       t.end();
-    }, 1000);
+    }, tearDownInterval);
   });
 });
 
