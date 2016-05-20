@@ -25,6 +25,7 @@ const watch = function(params, fn) {
     compileEmitter.once('compiled', () => it.next());
   };
 
+  params._onReload = (newWatcher) => watcher = newWatcher;
   watcher = brunch.watch(params, onCompile);
 
   var it = fn(compilation);
