@@ -117,10 +117,18 @@ module.exports.restoreConsole = function() {
 };
 
 module.exports.outputContains = function(t, string) {
-  if (_inspect.output.join('\n').indexOf(string) !== -1) {
-    t.pass();
+  if (typeof string === 'string') {
+    if (_inspect.output.join('\n').indexOf(string) !== -1) {
+      t.pass();
+    } else {
+      t.fail(`Expected console output (stdout) to contain '${string}' but it didn't`);
+    }
   } else {
-    t.fail(`Expected console output (stdout) to contain '${string}' but it didn't`);
+    if (_inspect.output.some(function(line) { return string.test(line); })) {
+      t.pass();
+    } else {
+      t.fail(`Expected console output (stdout) to match '${string}' but it didn't`);
+    }
   }
 };
 

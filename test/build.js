@@ -389,7 +389,7 @@ test.serial.cb('npm integration', t => {
       // finally, modules with .js in their name are correctly processed
       contains('require.alias("bignumber.js/bignumber.js", "bignumber.js");');
 
-      outputContains(t, 'compiled 180 files into app.js');
+      outputContains(t, /compiled (180|181) files into app\.js/);
       //noWarn(t);
       noError(t);
 
@@ -521,7 +521,7 @@ test.serial.cb('modules.definition option', t => {
 
 test.serial.cb('static compilation', t => {
   fixturify.writeSync('.', {
-    'brunch-config': `module.exports = {
+    'brunch-config.js': `module.exports = {
       files: {}
     };`,
     'package.json': `{
@@ -565,12 +565,10 @@ test.serial.cb('static compilation', t => {
     }
   });
 
-  npmInstall(() => {
-    brunch.build({}, () => {
-      fileDoesNotExist(t, 'public/test.emp');
-      fileExists(t, 'public/test.built');
-      fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
-      t.end();
-    });
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/test.emp');
+    fileExists(t, 'public/test.built');
+    fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
+    t.end();
   });
 });
