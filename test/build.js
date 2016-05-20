@@ -389,7 +389,7 @@ test.serial.cb('npm integration', t => {
       // finally, modules with .js in their name are correctly processed
       contains('require.alias("bignumber.js/bignumber.js", "bignumber.js");');
 
-      outputContains(t, 'compiled 180 files into app.js');
+      outputContains(t, /compiled (180|181) files into app\.js/);
       //noWarn(t);
       noError(t);
 
