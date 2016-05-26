@@ -236,7 +236,7 @@ Jade templates to HTML is one example.
 You want to have a `.jade` file compiled into `.html`.
 Previously, what you would do in this case was to hook into `onCompile` and look for jade files... and then compile them and write them manually. Sucks.
 
-So starting Brunch `<unreleased>`, there is a better way.
+So starting Brunch `2.8.0`, there is a better way.
 
 ```javascript
 class JadeCompiler {
