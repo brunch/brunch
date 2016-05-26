@@ -53,7 +53,7 @@ To install the latest version, execute `npm install -g brunch`
     * Brunch will now register CommonJS modules using full names of the files, and create aliases without extensions to allow you to use both styles of requires.
     * Basically these cases are possible & different now: `require('file.json')` and `require('file.js')`
 * **Parallel builds:** Bringing up to 50% performance improvement with just one simple flag.
-    * You can use the `-j 2 / 4` flag with `build` / `watch` to parallelize CPU-bould tasks in your build. See [docs/commands.md](docs/commands.md#workers) for more details.
+    * You can use the `-j 2 / 4` flag with `build` / `watch` to parallelize CPU-bould tasks in your build. See [docs](http://brunch.io/docs/commands.html) for more details.
 * **React hot load support:**
     * Bumped `commonjs-require-definition` to allow resetting modules, which can be used for live JS reloading with the updated `auto-reload-brunch`
 * **Improved output** for JavaScript files.

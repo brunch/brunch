@@ -49,9 +49,8 @@ Some more:
 
 Where the documentation lives:
 
-* [brunch/brunch @ docs](https://github.com/brunch/brunch/tree/master/docs)
+* [brunch/brunch.github.io](https://github.com/brunch/brunch.github.io) @ `source/assets/_docs`
 * [brunch/brunch-guide](https://github.com/brunch/brunch-guide)
-* [brunch/brunch.github.io](https://github.com/brunch/brunch.github.io)
 
 #### How to set up the dev env
 
