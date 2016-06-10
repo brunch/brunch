@@ -45,7 +45,6 @@
     "node": ">= 4.0",
     "npm": ">= 3.0"
   },
-  "preferGlobal": true,
   "dependencies": {
     "anymatch": "~1.3.0",
     "anysort": "~1.0.0",
