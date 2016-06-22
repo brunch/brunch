@@ -16,7 +16,7 @@ If at all possible, please create a small demo app on GitHub that demonstrates t
 
 1. Brunch: *(make sure you're on the latest release!)*
 2. Node:
-3. NPM:
+3. NPM: *(npm v2 is not supported)*
 4. Operating system:
 
 ### `package.json` contents
