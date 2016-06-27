@@ -37,6 +37,10 @@ var runSeparateWatchProcess = function(cliPath) {
       runSeparateWatchProcess(cliPath);
     }
   });
+
+  process.on('SIGTERM', function() {
+    proc.kill();
+  });
 };
 
 var loadBrunch = function(libPath) {
