@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
 global.appStartTime = Date.now();
