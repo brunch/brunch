@@ -26,7 +26,7 @@
   ],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
-  "repository": "https://github.com/brunch/brunch.git",
+  "repository": "brunch/brunch",
   "bugs": "http://github.com/brunch/brunch/issues",
   "license": "MIT",
   "main": "./lib/index",
@@ -38,7 +38,8 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "test": "eslint lib test && ava -s",
+    "lint": "eslint lib test",
+    "test": "npm run lint && ava -s",
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
@@ -54,7 +55,6 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
-    "deep-assign": "^2.0.0",
     "deppack": "~0.6.0",
     "fcache": "~0.1.0",
     "init-skeleton": "~0.9.0",
