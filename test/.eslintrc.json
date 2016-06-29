@@ -1,10 +1,23 @@
 {
+  "extends": ["plugin:ava/recommended"],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  },
+  "plugins": [
+    "ava"
+  ],
   "globals": {
     "describe": true,
     "it": true,
     "expect": true
   },
   "rules": {
-    "prefer-arrow-callback": 0
+    "prefer-arrow-callback": 0,
+    "quotes": [2, "single", { "allowTemplateLiterals": true }]
   }
 }

@@ -1,5 +1,10 @@
 sudo: false
 language: node_js
+os:
+  - linux
+  - osx
 node_js:
   - '5'
-  - '4'
+  - '6'
+before_install:
+  - npm install bower@^1 -g

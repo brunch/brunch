@@ -1,36 +1,68 @@
-# Filing an issue
+# Contributing to Brunch
 
-If you want your issue to be resolved fast please write down:
+### Did you find a bug?
 
-* Brunch version, node.js version, OS version
-* `brunch-config.coffee` and `package.json` contents
-* `bower.json` / `component.json` contents if you think the error is related to package managers
+First, **make sure it was not already reported** by taking a look at the currently open [Issues on GitHub](https://github.com/brunch/brunch/issues).
 
-# Contributing
-You can install the latest `master` version of brunch by following these
-simple steps:
+If nothing resembling what you are experiencing was reported, feel free to [open a new issue](https://github.com/brunch/brunch/issues/new).
+Make sure your description of the issue is clear and contains as much relevant information as possible.
+The issue will be handled more quickly if it includes a link to a sample repo that demonstrates incorrect behavior.
 
-* Clone the repo, navigate to its directory.
-* Execute `npm install` to install packages.
-* Execute `npm uninstall -g brunch && npm link`
-* Use `git pull` to update to latest brunch.
-* Use `brunch build --debug` to log all build steps.
+We never ask you to share your private, possibly NDA'd, application with us.
+Just create a tiny application that includes a resembling config as well as just enough code to reproduce the issue.A
 
-Test suite can be run via `npm test`.
 
-The usual contributing steps are:
+### Do you want to write a patch yourself?
 
-* Fork the [official repository](https://github.com/brunch/brunch).
-* Clone your fork: git clone `git@github.com:<your-username>/brunch.git`
-* Make sure tests are passing for you: npm install && npm test
-* Create a topic branch: git checkout -b topics/new-feature-name
-* Add tests and code for your changes.
-* Once you‘re done, make sure all tests still pass: npm install && npm test
-* Make sure your code conforms [coffee style guide](https://github.com/paulmillr/code-style-guides#coffeescript).
-* Commit and push to your fork.
-* Create an pull request from your branch.
-* Sit back and enjoy.
+#### The Process
 
-If you want to create your own plugin, you can use
-[brunch-boilerplate-plugin](https://github.com/brunch/brunch-boilerplate-plugin)
-as a base.
+* Open a new Pull Request with the patch.
+* Clearly describe what is being fixed. If possible, reference a bug report or a feature request.
+* Update the docs if the new functionality is added.
+
+#### Brunch internals overview
+
+Brunch, the tool, is split across several modules:
+
+* [brunch/brunch](https://github.com/brunch/brunch) is the main repo.
+  It ties everything together to provide the build tool you'll love.
+  Generally, if something doesn't fit into the other repos, it goes here.
+
+* [brunch/deppack](https://github.com/brunch/deppack) is at heart of Brunch 2's new NPM integration.
+  If it has to do with exposing NPM modules to the browser, it most likely belongs here.
+
+* [brunch/node-browser-modules](https://github.com/brunch/node-browser-modules) exposes browser shims for Node modules.
+  This one is used by `deppack`.
+
+* [brunch/commonjs-require-definition](https://github.com/brunch/commonjs-require-definition) is the CommonJS runtime.
+  It handles how modules are registered and required.
+  This probably shouldn't be touched unless there is a new deppack feature that needs some changes to the runtime.
+
+* [brunch/init-skeleton](https://github.com/brunch/init-skeleton) helps you create new Brunch apps.
+  It uses the list of skeletons from [brunch/skeletons](https://github.com/brunch/skeletons)
+
+Some more:
+
+* [paulmillr/loggy](https://github.com/paulmillr/loggy) is a lightweight logging library.
+* [paulmillr/chokidar](https://github.com/paulmillr/chokidar) is behind Brunch's file watching magic.
+* [paulmillr/pushserver](https://github.com/paulmillr/pushserve) is the default http server.
+
+Where the documentation lives:
+
+* [brunch/brunch.github.io](https://github.com/brunch/brunch.github.io) @ `source/assets/_docs`
+* [brunch/brunch-guide](https://github.com/brunch/brunch-guide)
+
+#### How to set up the dev env
+
+It won't make much sense to blindly edit the Brunch's sources and get no feedback on whether you are heading in the right direction.
+If you are making changes, you most likely are either a) fixing a bug, or b) adding a feature — in both of which cases you probably already have a sample app.
+
+To use your local fork of Brunch, as you need to do is:
+
+1. run `npm link` in the Brunch fork directory. This will make your fork the globally available Brunch on your system.
+2. run `npm link brunch` in your sample application. This will make `node_modules/brunch` in your app a symlink to your Brunch fork.
+
+Additionally, if your changes span past `brunch/brunch`, you will also need to:
+
+1. run `npm link` from the forked module.
+2. run `npm link <module name>` from the Brunch fork directory to link it to Brunch.

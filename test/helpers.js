@@ -1,7 +1,8 @@
+const test = require('ava');
 const rewire = require('rewire');
-const application = rewire('../lib/application');
+const application = rewire('../lib/config');
 
-describe('helpers', function() {
+test('applyOverrides / should resolve plugins.on|off merge', t => {
   // describe('replaceConfigSlashes()', function() {
   //   return it('should replace slashes with backslashes in config', function() {
   //     application.__set__('isWindows', true);
@@ -10,40 +11,39 @@ describe('helpers', function() {
   //     return expect(application.replaceConfigSlashes(unix.config)).to.eql(win.config);
   //   });
   // });
-  return describe('applyOverrides()', function() {
-    const applyOverrides = application.__get__('applyOverrides');
-    it('should resolve plugins.on|off merge', function() {
-      var config;
-      config = {
+  const applyOverrides = application.__get__('applyOverrides');
+  const config = {
+    server: {},
+    plugins: {
+      on: ['a'],
+      off: ['b']
+    },
+    overrides: {
+      foo: {
         plugins: {
-          on: ['a'],
-          off: ['b']
-        },
-        overrides: {
-          foo: {
-            plugins: {
-              on: ['b']
-            }
-          },
-          bar: {
-            plugins: {
-              off: ['a']
-            }
-          },
-          baz: {
-            plugins: {
-              on: ['c']
-            }
-          }
+          on: ['b']
         }
-      };
-      applyOverrides(config, {
-        env: ['foo', 'bar', 'baz']
-      });
-      return expect(config.plugins).to.eql({
-        on: ['c', 'b'],
-        off: ['a']
-      });
-    });
+      },
+      bar: {
+        plugins: {
+          off: ['a']
+        }
+      },
+      baz: {
+        plugins: {
+          on: ['c']
+        }
+      }
+    },
+    files: {},
+    paths: {},
+    hooks: {}
+  };
+  applyOverrides(config, {
+    env: ['foo', 'bar', 'baz']
+  });
+  t.deepEqual(config.plugins, {
+    on: ['c', 'b'],
+    off: ['a']
   });
 });

@@ -8,3 +8,6 @@ CVS/
 .DS_Store
 /docs
 /test
+CHANGELOG.md
+CONTRIBUTING.md
+ISSUE_TEMPLATE.md

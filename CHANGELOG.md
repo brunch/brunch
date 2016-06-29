@@ -1,17 +1,105 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.1.3 (Jan 9, 2016)
-* Fixes an issue when NPM packages were included incorrectly on Windows.
-* `brunch build -d` is now able to receive an optional `filterer` argument
+## Brunch 2.8 (May 21, 2016)
+* Added plugin API for asset compilation e.g. jade to html.
+* Watcher improvements:
+    * Brunch will not try to `npm install` if only the config was changed.
+    * NPM: improved handling of added & removed files during `watch`. Adding a new file will now try to re-check files that previously failed due to module resolution errors. Removing a file will now cause the files that depended on it to be re-checked.
+    * Fixed a memory leak issue after watcher reload (due to config change or update in `package.json`).
+* Small API improvements:
+    * Changed back to `destinationPath` (intsead of `destPath` since 2.6) in `Asset` that is received in `onCompile`
+    * Moved `config.plugins.npm` to `config.npm.compilers`
+* Print a warning if a plugin from `devDependencies` fails to load.
+* NPM: `require.alias` will now be inserted only in the bundles which contain the aliased file. Previous behavior was that all output file contained all possible aliases.
 
-## Brunch 2.1.2 (Jan 7, 2016)
-* `brunch new` and `brunch build` hangup fixes.
-* NPM integration fixes
+## Brunch 2.7 (Apr 21, 2016)
+* Introduced support for Hot Module Replacement API with [hmr-brunch](https://github.com/brunch/hmr-brunch).
+* Added config file validation of format and types.
+* Allow JavaScript files from NPM packages to get processed with plugins (`config.plugins.npm`).
+* Fixed `entryPoint`-related warnings on Windows.
+* Brunch will now try to recover from `MODULE_NOT_FOUND` errors caused by the config, by trying to `npm install`.
+* The slashes in file paths are now normalized early. The plugins will always receive paths with UNIX-style slashes even on Windows (`/`).
 
-## Brunch 2.1.1 (Jan 2, 2016)
-* Fixes an issue when sass-brunch or similar plugins weren't compiling files correctly.
+## Brunch 2.6 (Apr 2, 2016)
+* Non-JS files can now output JS modules.
+    * You are now able to import stylesheets from Sass, Less, CSS in JS.
+    * For this to work, don't forget to enable proper config option for each plugin.
+* Added experimental support for `entryPoints`, a smarter alternative to `joinTo`:
+    * `joinTo` concatenates all files that match the pattern into one
+    * `entryPoints` allow you to specify first input file. Then Brunch
+      automatically calculates which modules and dependencies will be used
+      in the output. This way, unused files would not get compiled.
+* Add support for `BRUNCH_JOBS` environment variable to be able to specify number of jobs to process your build.
+* Fixed an issue when Brunch was forking processes even if `-j` flag was not passed which caused some extreme CPU and memory issues.
+* Deprecated `onCompile` config option in favor of new `hooks.onCompile`.
+* Fix a type error when checkin if a file was written.
+* Don't categorize node_modules as 'assets' even if they match the regexp
+* Fixed brokenness of some plugins like `static-jade-brunch`.
+* Fixes parent recompilation when a dependency changes.
+* Improved `npm install` behavior while Brunch is watching:
+    * Make sure Brunch waits for it before proceeding.
+    * Make it aware of `production` env flag for Heroku.
+* Small bugfix for dependency parser.
 
-## Brunch 2.1.0 (Jan 1, 2016)
+## Brunch 2.5 (Mar 22, 2016)
+* **Improved NPM support:**
+    * Added support for scoped npm packages, like `@cycle/dom`.
+    * Brunch will now try to `npm install` if you try to require a package that is present in `package.json` but was not installed.
+    * `optionalDependencies` are now correctly ignored when not present.
+    * `peerDepdenencides` are treated as required ones.
+    * Improperly-cased requires (like `React` instead of `react`) will now throw compile errors.
+    * Fixed npm mail file resolving which was not working before in some cases (`rx`).
+* **Support for file extensions:**
+    * Brunch will now register CommonJS modules using full names of the files, and create aliases without extensions to allow you to use both styles of requires.
+    * Basically these cases are possible & different now: `require('file.json')` and `require('file.js')`
+* **Parallel builds:** Bringing up to 50% performance improvement with just one simple flag.
+    * You can use the `-j 2 / 4` flag with `build` / `watch` to parallelize CPU-bould tasks in your build. See [docs](http://brunch.io/docs/commands.html) for more details.
+* **React hot load support:**
+    * Bumped `commonjs-require-definition` to allow resetting modules, which can be used for live JS reloading with the updated `auto-reload-brunch`
+* **Improved output** for JavaScript files.
+* Allow to specify again `conventions.vendor` as an anymatch set.
+* Fixed double inclusion of some files on Windows.
+* Fixed an issue when `joinTo` production override did not have any effect.
+* Fixed JSON file loading.
+
+## Brunch 2.4 (Feb 23, 2016)
+* You can now simply set `config.modules = false` to disable module wrapping.
+* Brunch would now correctly include file-based aliases for NPM packages. For example, this means you would be able to load `require('moment/locales/en')` even though the file is not declared in moment's `package.json`.
+* Fixed auto-expanding of GH URLs in skeletons: `brunch new --skeleton paulmillr/brunch-with-chaplin`
+* Removed `component.js` support, which was barely supported since v2.0.
+* Added warning for versions of NPM <3, because Brunch does not work on those.
+* Improved error handling.
+
+## Brunch 2.3 (Feb 17, 2016)
+* Small fix for `xBrowserResolve is not a function` error.
+* Fixed handling of custom web-servers for `brunch watch -s`.
+* Improved exposure of `process.env.NODE_ENV` when used in Brunch apps.
+* NPM: Fixed support for different versions of the same package.
+* Enabled NPM support by default
+* NPM: Added aliases support
+* NPM: Added support for including static files.
+* NPM: Added support for different versions of the same package.
+* NPM: Watcher would detect removed packages from users source code and
+  then do a corresponding recompilation.
+* NPM: Added support for `json` files.
+* `onCompile` config option now receives modified `assets` as a second argument.
+* `server` config option now allows to specify custom `hostname`s
+* New warning: When `brunch w -s -p 3334` is used (instead of `-P`)
+* New warning: When `defaultExtension` option is used.
+  It has been removed in Brunch 1.1, but many configs still have it.
+
+## Brunch 2.2 (Jan 22, 2016)
+* Massively improved NPM integration:
+    1. Brunch would now automatically detect and extract all npm packages.
+    2. Because of this, `whitelist` property is no longer required.
+    3. Windows implementation should now work correctly.
+* `brunch new` launched with old syntax would now throw a descriptive error.
+* Improved progress indicator. It would not allow plugins to write output on top of it.
+* Added support for promises in plugins.
+* Improve compatibility with Brunch 1.x.
+* Built-in node.js modules can now be loaded in your client-side apps.
+
+## Brunch 2.1 (Jan 1, 2016)
 * Brunch would now indicate progress for long builds, like that:
     `(4s) Compiling => Compiling. => Compiling..`
 * Massively improved debug output (`-d`) readability.
@@ -23,35 +111,33 @@ To install the latest version, execute `npm install -g brunch`
         `config.npm = {blacklist: ['express']}`
     3. To include packages manually, specify the whitelist:
         `config.npm = {whitelist: ['react', 'react-dom', 'pikaday']}`
+* Fixes an issue when NPM packages were included incorrectly on Windows.
+* `brunch build -d` is now able to receive an optional `filterer` argument
+* `brunch new` and `brunch build` hangup fixes.
+* NPM integration fixes
+* Fixes an issue when sass-brunch or similar plugins weren't compiling files correctly.
 
-## Brunch 2.0.4 (Dec 10, 2015)
-* Fixes using production flag (`-p`) with multiple optimizers [(gh-1056)](https://github.com/brunch/brunch/issues/1056).
+## Brunch 2.0 (Nov 19, 2015)
 
-## Brunch 2.0.3 (Dec 9, 2015)
-* Brunch would now auto-expand the following syntax to a full GitHub user / repo URL:
+Brunch v2 **requires node 4.0 / npm 3.0 or higher**.
 
-    `brunch new --skeleton paulmillr/brunch-with-chaplin`
-
-## Brunch 2.0.2 (Dec 5, 2015)
-* Fix: Post `onCompile` string replaces not working.
-* Fix: Linters now get the correct `linter` context.
-
-## Brunch 2.0.1 (Nov 22, 2015)
-* Compilation log would now use seconds instead of milliseconds for long compilations.
-* Launching Brunch on node v4< would now throw an explicit error.
-
-## Brunch 2.0.0 (Nov 19, 2015)
-* `brunch new` reworked and simplified:
+* `brunch new` reworked, simplified and receives new syntax:
     * `brunch new .` to create a new project in current directory from dead-simple skeleton
     * `brunch new path` to create the project in `path`
     * `brunch new . --skeleton react` to create the project from `React` skeleton
     * Now allowing to clone skeletons to dirs with `.git` directory.
 * General speed & stability improvements.
-* Rewritten in JavaScript (ES6 + Promises). Now *requires node 4.0 or higher*.
+* Rewritten in JavaScript (ES6 + Promises).
 * Switched `-p` and `-P`. `-p` now specifies `--production` build and `-P` now specifies watch server port.
 * `modules.autoRequire` should now work correctly on Windows.
+* Fixes using production flag (`-p`) with multiple optimizers [(gh-1056)](https://github.com/brunch/brunch/issues/1056).
+* Brunch would now auto-expand the following syntax to a full GitHub user / repo URL:
+    `brunch new --skeleton paulmillr/brunch-with-chaplin`
+* Fix: Post `onCompile` string replaces not working.
+* Fix: Linters now get the correct `linter` context.
+* Compilation log would now use seconds instead of milliseconds for long compilations.
+* Launching Brunch on node v4< would now throw an explicit error.
 
-Thanks to Vincent Ricard for help.
 
 ## Brunch 1.8.5 (Aug 5, 2015)
 * Only listen to stdin (and exit when stdin is closed) when the `--stdin` CLI switch is passed
@@ -71,7 +157,7 @@ Thanks to Vincent Ricard for help.
   via `require('package')`.
 
 ## Brunch 1.8.0 (Apr 8, 2015)
-* Added **NPM support** for client-side libraries.
+* Added experimental **NPM support** for client-side libraries.
     Just specify dependencies in `package.json` and load them within your app
     with `require('package')`. Brunch would do all the hard job for you.
     Behind config option for now (`config.npm = {enabled: true}`).
@@ -277,6 +363,14 @@ If installed prior to this date, it will actually run as if it is 1.7.6.
 * Removed `brunch test`.
   [Mocha-phantomjs](http://metaskills.net/mocha-phantomjs/) is its simpler
   successor.
+* Adjust config settings, if you have been using those:
+    * Rename `config` file itself to `brunch-config`
+    * Rename `config.minify` setting to `config.optimize`
+    * Rename `config.paths.{app,test,vendor,assets}` to `config.paths.watched`
+    * Rename `config.paths.ignored` to `config.conventions.ignored`
+    * Rename `buildPath` to `paths.public`
+    * Remove `defaultExtension` and `framework` settings
+* Use `--production` instead of `--optimize` flag, which has been deprecated.
 
 ## Brunch 1.5.4 (Mar 19, 2013)
 * Fixed `brunch generate`, switched to standalone modules for some features.
