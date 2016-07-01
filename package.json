@@ -26,7 +26,7 @@
   ],
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
-  "repository": "brunch/brunch",
+  "repository": "https://github.com/brunch/brunch.git",
   "bugs": "http://github.com/brunch/brunch/issues",
   "license": "MIT",
   "main": "./lib/index",
