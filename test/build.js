@@ -407,7 +407,10 @@ test.serial.cb('compiling npm packages', t => {
         },
         "devDependencies": {
           "javascript-brunch": "^2.0.0",
-          "babel-brunch": "^6.0.4"
+          "babel-brunch": "^6.0.4",
+          "babel-preset-es2015": "^6.0.0",
+          "babel-preset-es2016": "^6.0.0",
+          "babel-plugin-syntax-exponentiation-operator": "^6.0.0"
         }
       }
     `,
