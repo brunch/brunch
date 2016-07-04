@@ -56,7 +56,7 @@
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
     "deppack": "~0.6.0",
-    "fcache": "~0.1.0",
+    "fcache": "~1.0.0",
     "init-skeleton": "~0.9.0",
     "skemata": "~0.1.0",
     "loggy": "~0.3.3",
