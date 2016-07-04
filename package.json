@@ -38,7 +38,9 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "test": "eslint lib test && ava -s",
+    "lint": "eslint bin/brunch lib test",
+    "lint:fix": "eslint --fix bin/brunch lib test",
+    "test": "npm run lint && ava -s",
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
@@ -54,9 +56,8 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
-    "deep-assign": "^2.0.0",
     "deppack": "~0.6.0",
-    "fcache": "~0.1.0",
+    "fcache": "~0.2.0",
     "init-skeleton": "~0.9.0",
     "skemata": "~0.1.0",
     "loggy": "~0.3.3",
@@ -69,10 +70,8 @@
     "source-map": "~0.5.0"
   },
   "devDependencies": {
-    "ava": "avajs/ava",
-    "babel-eslint": "^6.0.4",
-    "eslint": "^2.9.0",
-    "eslint-plugin-ava": "avajs/eslint-plugin-ava",
+    "ava": "shvaikalesh/ava-no-babel",
+    "eslint": "^3.0.0",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
     "nyc": "^6.4.2",
