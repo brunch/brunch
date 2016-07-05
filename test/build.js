@@ -488,11 +488,11 @@ test.serial.cb('modules.definition option', t => {
         enabled: false
       },
       modules: {
-       definition: false,
-       wrapper: function(path, data) {
-         return "(function() {" + data + "})()";
-       }
-     },
+        definition: false,
+        wrapper: function(path, data) {
+          return "(function() {" + data + "})()";
+        }
+      },
       files: {
         javascripts: {
           joinTo: 'app.js'
@@ -520,56 +520,140 @@ test.serial.cb('modules.definition option', t => {
   });
 });
 
+const TempCompiler = {
+  'package.json': `{
+    "name": "brunch-app",
+    "description": "Description",
+    "author": "Your Name",
+    "version": "0.1.0",
+    "dependencies": {},
+    "devDependencies": {
+      "javascript-brunch": "^2.0.0",
+      "temp-brunch": "file:temp-brunch"
+    }
+  }`,
+  'temp-brunch': {
+    'package.json': `{
+      "name": "temp-brunch",
+      "version": "0.0.1",
+      "main": "index.js"
+    }`,
+    'index.js': `'use strict';
+      class TempCompiler {
+        compile(file) {
+          const compiled = file.data.replace(/-/g, '^');
+          return Promise.resolve(compiled);
+        }
+        compileStatic(file) {
+          return this.compile(file);
+        }
+      }
+
+      TempCompiler.prototype.brunchPlugin = true;
+      TempCompiler.prototype.type = 'template';
+      TempCompiler.prototype.extension = 'emp';
+      TempCompiler.prototype.staticTargetExtension = 'built';
+
+      module.exports = TempCompiler;
+    `
+  }
+};
+
 test.serial.cb('static compilation', t => {
-  fixturify.writeSync('.', {
+  const files = {
     'brunch-config.js': `module.exports = {
       files: {}
     };`,
-    'package.json': `{
-      "name": "brunch-app",
-      "description": "Description",
-      "author": "Your Name",
-      "version": "0.1.0",
-      "dependencies": {},
-      "devDependencies": {
-        "javascript-brunch": "^2.0.0",
-        "temp-brunch": "file:temp-brunch"
-      }
-    }`,
     app: {
       assets: {
         'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?'
       }
-    },
-    'temp-brunch': {
-      'package.json': `{
-        "name": "temp-brunch",
-        "version": "0.0.1",
-        "main": "index.js"
-      }`,
-      'index.js': `'use strict';
-        class TempCompiler {
-          compileStatic(params) {
-            const data = params.data;
-            const compiled = data.replace(new RegExp('-', 'g'), '^');
-            return Promise.resolve(compiled);
-          }
-        }
-
-        TempCompiler.prototype.brunchPlugin = true;
-        TempCompiler.prototype.type = 'template';
-        TempCompiler.prototype.extension = 'emp';
-        TempCompiler.prototype.staticTargetExtension = 'built';
-
-        module.exports = TempCompiler;
-      `
     }
-  });
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
   brunch.build({}, () => {
     fileDoesNotExist(t, 'public/test.emp');
     fileExists(t, 'public/test.built');
     fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
+    t.end();
+  });
+});
+
+test.serial.cb('join templates according to joinTo option', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        templates: {
+          joinTo: 'all.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/a.emp');
+    fileDoesNotExist(t, 'public/b.built');
+    fileContains(t, 'public/all.js', 'hello^world');
+    fileContains(t, 'public/all.js', 'module^exports');
+    t.end();
+  });
+});
+
+test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'all.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileContains(t, 'public/all.js', 'hello^world');
+    fileContains(t, 'public/all.js', 'module^exports');
+    t.end();
+  });
+});
+
+test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'scripts.js'
+        },
+        templates: {
+          joinTo: 'templates.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileContains(t, 'public/templates.js', 'hello^world');
+    fileContains(t, 'public/templates.js', 'module^exports');
     t.end();
   });
 });
