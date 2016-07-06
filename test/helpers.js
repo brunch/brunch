@@ -1,3 +1,4 @@
+'use strict';
 const test = require('ava');
 const rewire = require('rewire');
 const application = rewire('../lib/config');

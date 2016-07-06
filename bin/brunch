@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+'use strict';
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
+/* eslint-disable prefer-arrow-callback, prefer-template */
+/* eslint-env es6:false */
 global.appStartTime = Date.now();
 
 var sysPath = require('path');
@@ -48,9 +51,13 @@ var loadBrunch = function(libPath) {
 
   // This approach is only needed for watch command.
   var runCli = join(libPath, files.new);
-  if ((arg === 'w' || arg === 'watch') && exists(runCli)) try {
-    return runSeparateWatchProcess(runCli);
-  } catch (e) {}
+  if ((arg === 'w' || arg === 'watch') && exists(runCli)) {
+    try {
+      return runSeparateWatchProcess(runCli);
+    } catch (e) {
+      // empty
+    }
+  }
 
   // This is needed to support cases when the local brunch is of an older version
   // and does not have a run-cli.js file.
@@ -65,7 +72,7 @@ var localPath = join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', file
 if (exists(localPath)) {
   try {
     loadBrunch(sysPath.dirname(localPath));
-  } catch(error) {
+  } catch (error) {
     console.error(
       'Brunch: Local install exists, but failed to load it. ' +
       'Continuing with global install:', error
