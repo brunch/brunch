@@ -657,3 +657,29 @@ test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t 
     t.end();
   });
 });
+
+test.serial.cb('inline source maps', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      sourceMaps: 'inline',
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    app: {
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=data:application/json;charset=utf-8;base64,');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
