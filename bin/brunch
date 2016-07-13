@@ -19,6 +19,8 @@ if (verDigit < 4) {
   process.exit(1);
 }
 
+global[Symbol.for('start-time')] = Date.now();
+
 var files = {old: 'cli.js', new: 'run-cli.js'};
 
 var exists = function(path) {
