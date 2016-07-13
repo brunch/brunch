@@ -1,0 +1,22 @@
+{
+  "PKG_JSON_MISSING": "No package.json was found. That's where Brunch plugins need to be listed. Plugins tell Brunch how to compile your files, so without any plugins Brunch won't know what to do. To get started, run `npm init` to generate a package.json file and `npm install --save javascript-brunch css-brunch` to install and save plugins for regular JS and CSS.",
+  "PKG_JSON_INVALID": "package.json has invalid syntax.",
+  "NPM_NOT_COMMONJS": "Can't use npm integration with non-CommonJS modules format (current: `#{definition}`/`#{wrapper}`). Either set `config.modules.definition` and `config.modules.wrapper` to `commonjs` or disable npm integration (`config.npm.enabled: false`).",
+  "HMR_PLUGIN_MISSING": "Hot Module Reloading should only be used with `auto-reload-brunch`.",
+  "HMR_PLUGIN_UNSUPPORTED": "Currently used version of `auto-reload-brunch` does not support Hot Module Reloading.",
+  "MODULES_WRAP_INVALID": "`config.modules.wrapper` should be a function or one of: 'commonjs', 'amd', false.",
+  "MODULES_DEF_INVALID": "`config.modules.definition` should be a function or one of: 'commonjs', 'amd', false.",
+  "RUN_NPM_INSTALL": "You probably need to execute `npm install` to install Brunch plugins.",
+  "CWD_INVALID": "Current directory is not Brunch application root path, as it does not contain package.json.",
+  "CFG_NOT_OBJECT": "#{basename} must be a valid object.",
+  "CFG_INVALID": "Config is not valid.",
+  "CFG_NO_FILES": "#{basename} must have `files` property. Here's a minimal brunch-config.js to get you started:\n#{minimalConfig}",
+  "CFG_LOAD_FAILED": "Failed to load Brunch config file.",
+  "COPY_FAILED": "Can't copy #{path}.",
+  "ALREADY_DISPOSED": "#{path} was already disposed.",
+  "OPTIMIZER_INVALID": "Invalid optimizer run #{optimizer}.",
+  "CONVENTION_INVALID": "#{convention} in invalid convention.",
+  "FILE_DATA_INVALID": "File #{path} data is invalid.",
+  "REMOVE_GET_DEPS": "Compiler '#{name}' already passes dependencies. Remove 'getDependencies' method.",
+  "READ_FAILED": "Failed to read file #{path}."
+}
