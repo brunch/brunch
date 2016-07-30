@@ -31,3 +31,16 @@ test('overrides the config using the specified env', function* (t) {
   t.is(brunchConfig.paths.public, 'tmp');
   t.deepEqual(watched, ['app', 'test']);
 });
+
+test('removes trailing slash from paths', function* (t) {
+  const opts = {
+    config: path.relative(__dirname, './fixtures/config-with-trailing-slashes.js')
+  };
+
+  const brunchConfig = yield config.loadConfig(false, opts, true);
+
+  t.deepEqual(brunchConfig.paths.watched, [
+    'app/assets'
+  ]);
+  t.is(brunchConfig.paths.public, 'app/builds');
+});
