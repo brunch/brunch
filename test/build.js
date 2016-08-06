@@ -40,10 +40,10 @@ test.serial.cb('basic build', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   brunch.build({}, () => {
@@ -75,12 +75,12 @@ test.serial.cb('basic file joining', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
       'a.js': 'filea',
       'b.js': 'fileb',
-      'c.js': 'filec'
-    }
+      'c.js': 'filec',
+    },
   });
 
   brunch.build({}, () => {
@@ -121,17 +121,17 @@ test.serial.cb('multi file output', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
       'a.js': 'filea',
       'b.js': 'fileb',
-      'c.js': 'filec'
+      'c.js': 'filec',
     },
     vendor: {
       'a.js': 'vendora',
       'b.js': 'vendorb',
-      'c.js': 'vendorc'
-    }
+      'c.js': 'vendorc',
+    },
   });
 
   brunch.build({}, () => {
@@ -181,14 +181,14 @@ test.serial.cb('entry points', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
       'initialize.js': 'require("./c"); initialize',
       'c.js': 'require("b"); filec',
       'b.js': 'require("a"); fileb',
       'a.js': 'filea',
-      'not-required.js': 'notrequired'
-    }
+      'not-required.js': 'notrequired',
+    },
   });
 
   brunch.build({}, () => {
@@ -235,7 +235,7 @@ test.serial.cb('multi entry points', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
       'entry1.js': 'require("./a"); entry1',
       'entry2.js': 'require("./c"); entry2',
@@ -243,8 +243,8 @@ test.serial.cb('multi entry points', t => {
       'b.js': 'fileb',
       'c.js': 'require("./d"); filec',
       'd.js': 'filed',
-      'not-required.js': 'notrequired'
-    }
+      'not-required.js': 'notrequired',
+    },
   });
 
   brunch.build({}, () => {
@@ -302,10 +302,10 @@ test.serial.cb('customize paths.public config', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   brunch.build({}, () => {
@@ -358,8 +358,8 @@ test.serial.cb('npm integration', t => {
         var socrates = require('socrates');
         require('./meaning.js');
         require('bignumber.js');
-      `
-    }
+      `,
+    },
   });
 
   npmInstall(() => {
@@ -427,8 +427,8 @@ test.serial.cb('compiling npm packages', t => {
     app: {
       'initialize.js': `
         var cc = require('credit-card');
-      `
-    }
+      `,
+    },
   });
 
   npmInstall(() => {
@@ -467,10 +467,10 @@ test.serial.cb('config override', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   brunch.build({env: 'custom'}, () => {
@@ -501,10 +501,10 @@ test.serial.cb('modules.definition option', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   brunch.build({}, () => {
@@ -555,8 +555,8 @@ const TempCompiler = {
       TempCompiler.prototype.staticTargetExtension = 'built';
 
       module.exports = TempCompiler;
-    `
-  }
+    `,
+  },
 };
 
 test.serial.cb('static compilation', t => {
@@ -566,9 +566,9 @@ test.serial.cb('static compilation', t => {
     };`,
     app: {
       assets: {
-        'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?'
-      }
-    }
+        'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?',
+      },
+    },
   };
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
@@ -592,8 +592,8 @@ test.serial.cb('join templates according to joinTo option', t => {
     };`,
     app: {
       'a.emp': 'hello-world',
-      'b.emp': 'module-exports'
-    }
+      'b.emp': 'module-exports',
+    },
   };
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
@@ -618,8 +618,8 @@ test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
     };`,
     app: {
       'a.emp': 'hello-world',
-      'b.emp': 'module-exports'
-    }
+      'b.emp': 'module-exports',
+    },
   };
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
@@ -645,8 +645,8 @@ test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t 
     };`,
     app: {
       'a.emp': 'hello-world',
-      'b.emp': 'module-exports'
-    }
+      'b.emp': 'module-exports',
+    },
   };
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
@@ -669,8 +669,8 @@ test.serial.cb('inline source maps', t => {
       }
     };`,
     app: {
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   brunch.build({}, () => {
@@ -726,8 +726,8 @@ test.serial.cb('include getter', t => {
         });
         module.exports = IncludeCompiler;
       `,
-      'pow.js': 'window.pow = Math.pow;'
-    }
+      'pow.js': 'window.pow = Math.pow;',
+    },
   });
 
   brunch.build({}, () => {

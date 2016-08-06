@@ -19,7 +19,7 @@ test('should files by config.vendor', t => {
   const config = {
     vendorConvention: path => {
       return /^(meh|vendor)/.test(path);
-    }
+    },
   };
   t.deepEqual(generate.sortByConfig(files, config), ['meh/underscore.js', 'vendor/backbone.js', 'jquery.js']);
 });
@@ -37,7 +37,7 @@ test('should sort files by config correctly', t => {
     after: ['b'],
     vendorConvention: path => {
       return /vendor\//.test(path);
-    }
+    },
   };
   const res = ['vendor/1', 'vendor/2', 'vendor/3', 'vendor/4', 'vendor/5', 'vendor/6', 'a', 'c', 'd', 'e', 'b'];
   t.deepEqual(generate.sortByConfig(files, config), res);
