@@ -72,10 +72,10 @@ test.serial.cb('compile on file changes', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -111,10 +111,10 @@ test.serial.cb('detect file addition', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -153,11 +153,11 @@ test.serial.cb('detect file removal', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
       'a.js': 'filea',
-      'b.js': 'fileb'
-    }
+      'b.js': 'fileb',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -199,10 +199,10 @@ test.serial.cb('install npm packages if package.json changes', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -230,10 +230,10 @@ test.serial.cb('install bower components if bower.json changes', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -264,10 +264,10 @@ test.serial.cb('reload config if it changes', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({}, function* (compilation) {
@@ -308,10 +308,10 @@ test.serial.cb('brunch server works', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({server: true}, function* (compilation) {
@@ -334,10 +334,10 @@ test.serial.cb('brunch server reload files', t => {
     };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({server: true}, function* (compilation) {
@@ -377,10 +377,10 @@ module.exports = {
 };`,
     app: {
       assets: {
-        'index.html': '<h1>hello world</h1>'
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
   watch({server: true}, function* (compilation) {

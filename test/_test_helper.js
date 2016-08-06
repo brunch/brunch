@@ -167,7 +167,7 @@ const requestBrunchServer = (path, callback) => {
   const options = {
     host: 'localhost',
     port: 3333,
-    path
+    path,
   };
 
   http.request(options, response => {
@@ -200,5 +200,5 @@ module.exports = {
   noWarn,
   noError,
   requestBrunchServer,
-  npmInstall
+  npmInstall,
 };

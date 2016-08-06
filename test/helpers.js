@@ -17,34 +17,34 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
     server: {},
     plugins: {
       on: ['a'],
-      off: ['b']
+      off: ['b'],
     },
     overrides: {
       foo: {
         plugins: {
-          on: ['b']
-        }
+          on: ['b'],
+        },
       },
       bar: {
         plugins: {
-          off: ['a']
-        }
+          off: ['a'],
+        },
       },
       baz: {
         plugins: {
-          on: ['c']
-        }
-      }
+          on: ['c'],
+        },
+      },
     },
     files: {},
     paths: {},
-    hooks: {}
+    hooks: {},
   };
   applyOverrides(config, [
-    'foo', 'bar', 'baz'
+    'foo', 'bar', 'baz',
   ]);
   t.deepEqual(config.plugins, {
     on: ['c', 'b'],
-    off: ['a']
+    off: ['a'],
   });
 });
