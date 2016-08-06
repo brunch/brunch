@@ -1,21 +1,25 @@
 #!/usr/bin/env node
+'use strict';
 
 // Not using ES6 in that file since we want it to "launch" on older nodes.
-global.appStartTime = Date.now();
-
+/* eslint-disable prefer-arrow-callback, prefer-template */
+/* eslint-env es6:false */
 var sysPath = require('path');
 var join = sysPath.join;
 var fs = require('fs');
 var childProcessFork = require('child_process').fork;
 
 var version = process.version;
-var verDigit = parseInt(version.match(/^v(\d+)\./)[1]);
+var verDigit = +version.match(/^v(\d+)/)[1];
 if (verDigit < 4) {
-  return console.error(
+  console.error(
     'Error: Brunch 2+ requires node.js v4 or higher (you have ' + version + ') ' +
     'Upgrade node or use older brunch for old node.js: npm i -g brunch@1'
   );
+  process.exit(1);
 }
+
+global[Symbol.for('start-time')] = Date.now();
 
 var files = {old: 'cli.js', new: 'run-cli.js'};
 
@@ -48,9 +52,13 @@ var loadBrunch = function(libPath) {
 
   // This approach is only needed for watch command.
   var runCli = join(libPath, files.new);
-  if ((arg === 'w' || arg === 'watch') && exists(runCli)) try {
-    return runSeparateWatchProcess(runCli);
-  } catch (e) {}
+  if ((arg === 'w' || arg === 'watch') && exists(runCli)) {
+    try {
+      return runSeparateWatchProcess(runCli);
+    } catch (e) {
+      // empty
+    }
+  }
 
   // This is needed to support cases when the local brunch is of an older version
   // and does not have a run-cli.js file.
@@ -65,7 +73,7 @@ var localPath = join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', file
 if (exists(localPath)) {
   try {
     loadBrunch(sysPath.dirname(localPath));
-  } catch(error) {
+  } catch (error) {
     console.error(
       'Brunch: Local install exists, but failed to load it. ' +
       'Continuing with global install:', error

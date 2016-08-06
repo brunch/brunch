@@ -1,3 +1,4 @@
+'use strict';
 const test = require('ava');
 const rewire = require('rewire');
 const application = rewire('../lib/config');
@@ -39,9 +40,9 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
     paths: {},
     hooks: {}
   };
-  applyOverrides(config, {
-    env: ['foo', 'bar', 'baz']
-  });
+  applyOverrides(config, [
+    'foo', 'bar', 'baz'
+  ]);
   t.deepEqual(config.plugins, {
     on: ['c', 'b'],
     off: ['a']
