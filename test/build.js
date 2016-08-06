@@ -1,21 +1,21 @@
+'use strict';
 const test = require('ava');
 const brunch = require('../lib');
-const {
-  prepareTestDir,
-  teardownTestDir,
-  npmInstall,
-  fileContains,
-  fileDoesNotContains,
-  fileExists,
-  fileDoesNotExist,
-  fileEquals,
-  spyOnConsole,
-  restoreConsole,
-  outputContains,
-  eOutputContains,
-  noWarn,
-  noError
-} = require('./_test_helper');
+const helpers = require('./_test_helper');
+const prepareTestDir = helpers.prepareTestDir;
+const teardownTestDir = helpers.teardownTestDir;
+const npmInstall = helpers.npmInstall;
+const fileContains = helpers.fileContains;
+const fileDoesNotContain = helpers.fileDoesNotContain;
+const fileExists = helpers.fileExists;
+const fileDoesNotExist = helpers.fileDoesNotExist;
+const fileEquals = helpers.fileEquals;
+const spyOnConsole = helpers.spyOnConsole;
+const restoreConsole = helpers.restoreConsole;
+const outputContains = helpers.outputContains;
+const eOutputContains = helpers.eOutputContains;
+const noWarn = helpers.noWarn;
+const noError = helpers.noError;
 const fixturify = require('fixturify');
 
 test.beforeEach(() => {
@@ -38,8 +38,8 @@ test.serial.cb('basic build', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'initialize.js': 'console.log("hello world")'
@@ -73,8 +73,8 @@ test.serial.cb('basic file joining', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'a.js': 'filea',
@@ -119,15 +119,15 @@ test.serial.cb('multi file output', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'a.js': 'filea',
       'b.js': 'fileb',
       'c.js': 'filec'
     },
-    'vendor': {
+    vendor: {
       'a.js': 'vendora',
       'b.js': 'vendorb',
       'c.js': 'vendorc'
@@ -154,10 +154,10 @@ vendora
 ;vendorc
 ;`;
     fileContains(t, 'public/javascripts/app.js', appJs);
-    fileDoesNotContains(t, 'public/javascripts/app.js', vendorJs);
+    fileDoesNotContain(t, 'public/javascripts/app.js', vendorJs);
     fileContains(t, 'public/javascripts/vendor.js', vendorJs);
-    fileDoesNotContains(t, 'public/javascripts/vendor.js', appJs);
-    fileDoesNotContains(t, 'public/javascripts/vendor.js', 'require.register("');
+    fileDoesNotContain(t, 'public/javascripts/vendor.js', appJs);
+    fileDoesNotContain(t, 'public/javascripts/vendor.js', 'require.register("');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
 
     outputContains(t, 'compiled 3 files into 2 files, copied index.html');
@@ -179,8 +179,8 @@ test.serial.cb('entry points', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'initialize.js': 'require("./c"); initialize',
@@ -194,7 +194,7 @@ test.serial.cb('entry points', t => {
   brunch.build({}, () => {
     fileExists(t, 'public/bundle.js.map');
     fileContains(t, 'public/bundle.js', '//# sourceMappingURL=bundle.js.map');
-    fileDoesNotContains(t, 'public/bundle.js', `notrequired`);
+    fileDoesNotContain(t, 'public/bundle.js', `notrequired`);
     fileContains(t, 'public/bundle.js', `require.register("a.js", function(exports, require, module) {
 filea
 });
@@ -233,8 +233,8 @@ test.serial.cb('multi entry points', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'entry1.js': 'require("./a"); entry1',
@@ -252,8 +252,8 @@ test.serial.cb('multi entry points', t => {
     fileExists(t, 'public/bundle2.js.map');
     fileContains(t, 'public/bundle1.js', '//# sourceMappingURL=bundle1.js.map');
     fileContains(t, 'public/bundle2.js', '//# sourceMappingURL=bundle2.js.map');
-    fileDoesNotContains(t, 'public/bundle1.js', `notrequired`);
-    fileDoesNotContains(t, 'public/bundle2.js', `notrequired`);
+    fileDoesNotContain(t, 'public/bundle1.js', `notrequired`);
+    fileDoesNotContain(t, 'public/bundle2.js', `notrequired`);
     fileContains(t, 'public/bundle1.js', `require.register("a.js", function(exports, require, module) {
 require("./b"); filea
 });
@@ -300,8 +300,8 @@ test.serial.cb('customize paths.public config', t => {
         public: 'dist'
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'initialize.js': 'console.log("hello world")'
@@ -315,7 +315,6 @@ test.serial.cb('customize paths.public config', t => {
 
     outputContains(t, 'compiled initialize.js into app.js, copied index.html');
     // in tests, this case will have a warning due to EventEmitter leak. Does not happen outside of tests, though.
-    //noWarn(t);
     noError(t);
 
     t.end();
@@ -351,7 +350,7 @@ test.serial.cb('npm integration', t => {
         }
       };
     `,
-    'app': {
+    app: {
       'meaning.js': 'module.exports = 42;',
       'initialize.js': `
         var React = require('react');
@@ -366,7 +365,7 @@ test.serial.cb('npm integration', t => {
   npmInstall(() => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
-      const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
+      const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
       // sets globals
       contains('window.React = require("react");');
@@ -389,8 +388,7 @@ test.serial.cb('npm integration', t => {
       // finally, modules with .js in their name are correctly processed
       contains('require.alias("bignumber.js/bignumber.js", "bignumber.js");');
 
-      outputContains(t, /compiled (180|181) files into app\.js/);
-      //noWarn(t);
+      outputContains(t, /compiled (\d{3}) files into app\.js/);
       noError(t);
 
       t.end();
@@ -407,7 +405,10 @@ test.serial.cb('compiling npm packages', t => {
         },
         "devDependencies": {
           "javascript-brunch": "^2.0.0",
-          "babel-brunch": "^6.0.4"
+          "babel-brunch": "^6.0.4",
+          "babel-preset-es2015": "^6.0.0",
+          "babel-preset-es2016": "^6.0.0",
+          "babel-plugin-syntax-exponentiation-operator": "^6.0.0"
         }
       }
     `,
@@ -423,7 +424,7 @@ test.serial.cb('compiling npm packages', t => {
         }
       };
     `,
-    'app': {
+    app: {
       'initialize.js': `
         var cc = require('credit-card');
       `
@@ -433,7 +434,7 @@ test.serial.cb('compiling npm packages', t => {
   npmInstall(() => {
     brunch.build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
-      const doesntContain = text => fileDoesNotContains(t, 'public/app.js', text);
+      const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
       // credit-card is compiled, too
       doesntContain('const Reach');
@@ -464,15 +465,15 @@ test.serial.cb('config override', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'initialize.js': 'console.log("hello world")'
     }
   });
 
-  brunch.build({ env: 'custom' }, () => {
+  brunch.build({env: 'custom'}, () => {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
@@ -487,19 +488,19 @@ test.serial.cb('modules.definition option', t => {
         enabled: false
       },
       modules: {
-       definition: false,
-       wrapper: function(path, data) {
-         return "(function() {" + data + "})()";
-       }
-     },
+        definition: false,
+        wrapper: function(path, data) {
+          return "(function() {" + data + "})()";
+        }
+      },
       files: {
         javascripts: {
           joinTo: 'app.js'
         }
       }
     };`,
-    'app': {
-      'assets': {
+    app: {
+      assets: {
         'index.html': '<h1>hello world</h1>'
       },
       'initialize.js': 'console.log("hello world")'
@@ -519,11 +520,172 @@ test.serial.cb('modules.definition option', t => {
   });
 });
 
+const TempCompiler = {
+  'package.json': `{
+    "name": "brunch-app",
+    "description": "Description",
+    "author": "Your Name",
+    "version": "0.1.0",
+    "dependencies": {},
+    "devDependencies": {
+      "javascript-brunch": "^2.0.0",
+      "temp-brunch": "file:temp-brunch"
+    }
+  }`,
+  'temp-brunch': {
+    'package.json': `{
+      "name": "temp-brunch",
+      "version": "0.0.1",
+      "main": "index.js"
+    }`,
+    'index.js': `'use strict';
+      class TempCompiler {
+        compile(file) {
+          const compiled = file.data.replace(/-/g, '^');
+          return Promise.resolve(compiled);
+        }
+        compileStatic(file) {
+          return this.compile(file);
+        }
+      }
+
+      TempCompiler.prototype.brunchPlugin = true;
+      TempCompiler.prototype.type = 'template';
+      TempCompiler.prototype.extension = 'emp';
+      TempCompiler.prototype.staticTargetExtension = 'built';
+
+      module.exports = TempCompiler;
+    `
+  }
+};
+
 test.serial.cb('static compilation', t => {
-  fixturify.writeSync('.', {
+  const files = {
     'brunch-config.js': `module.exports = {
       files: {}
     };`,
+    app: {
+      assets: {
+        'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?'
+      }
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/test.emp');
+    fileExists(t, 'public/test.built');
+    fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
+    t.end();
+  });
+});
+
+test.serial.cb('join templates according to joinTo option', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        templates: {
+          joinTo: 'all.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/a.emp');
+    fileDoesNotExist(t, 'public/b.built');
+    fileContains(t, 'public/all.js', 'hello^world');
+    fileContains(t, 'public/all.js', 'module^exports');
+    t.end();
+  });
+});
+
+test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'all.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileContains(t, 'public/all.js', 'hello^world');
+    fileContains(t, 'public/all.js', 'module^exports');
+    t.end();
+  });
+});
+
+test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t => {
+  const files = {
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'scripts.js'
+        },
+        templates: {
+          joinTo: 'templates.js'
+        }
+      }
+    };`,
+    app: {
+      'a.emp': 'hello-world',
+      'b.emp': 'module-exports'
+    }
+  };
+
+  fixturify.writeSync('.', Object.assign(files, TempCompiler));
+
+  brunch.build({}, () => {
+    fileContains(t, 'public/templates.js', 'hello^world');
+    fileContains(t, 'public/templates.js', 'module^exports');
+    t.end();
+  });
+});
+
+test.serial.cb('inline source maps', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      sourceMaps: 'inline',
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    app: {
+      'initialize.js': 'console.log("hello world")'
+    }
+  });
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/app.js.map');
+    fileContains(t, 'public/app.js', '//# sourceMappingURL=data:application/json;charset=utf-8;base64,');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
+
+test.serial.cb('include getter', t => {
+  fixturify.writeSync('.', {
     'package.json': `{
       "name": "brunch-app",
       "description": "Description",
@@ -532,43 +694,45 @@ test.serial.cb('static compilation', t => {
       "dependencies": {},
       "devDependencies": {
         "javascript-brunch": "^2.0.0",
-        "temp-brunch": "file:temp-brunch"
+        "include-brunch": "file:include-brunch"
       }
     }`,
-    'app': {
-      'assets': {
-        'test.emp': 'Some-stuff-is-better-expressed-with-dashes.-Oh-wait-or-should-it-be-carets?'
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
       }
-    },
-    'temp-brunch': {
+    };`,
+    'include-brunch': {
       'package.json': `{
-        "name": "temp-brunch",
-        "version": "0.0.1",
+        "name": "include-brunch",
+        "version": "0.1.0",
         "main": "index.js"
       }`,
       'index.js': `'use strict';
-        class TempCompiler {
-          compileStatic(params) {
-            const data = params.data;
-            const compiled = data.replace(new RegExp('-', 'g'), '^');
-            return Promise.resolve(compiled);
+        class IncludeCompiler {
+          compile(file) {
+            return Promise.resolve(file);
+          }
+          get include() {
+            return [ __dirname + '/pow.js' ];
           }
         }
-
-        TempCompiler.prototype.brunchPlugin = true;
-        TempCompiler.prototype.type = 'template';
-        TempCompiler.prototype.extension = 'emp';
-        TempCompiler.prototype.staticTargetExtension = 'built';
-
-        module.exports = TempCompiler;
-      `
+        Object.assign(IncludeCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'javascript',
+          extension: 'js'
+        });
+        module.exports = IncludeCompiler;
+      `,
+      'pow.js': 'window.pow = Math.pow;'
     }
   });
 
   brunch.build({}, () => {
-    fileDoesNotExist(t, 'public/test.emp');
-    fileExists(t, 'public/test.built');
-    fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
+    fileExists(t, 'public/app.js');
+    fileContains(t, 'public/app.js', 'Math.pow');
     t.end();
   });
 });

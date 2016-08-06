@@ -1,33 +1,46 @@
+'use strict';
 const path = require('path');
 const test = require('ava');
 const config = require('../lib/config');
 
-const getFolderName = function(path) {
-  return path.match(/([^\/]*)\/*$/)[1];
+const getFolderName = path => {
+  return /([^\/]*)\/*$/.exec(path)[1];
 };
 
-test('loads the config without overriding', async t => {
+test('loads the config without overriding', function* (t) {
   const opts = {
     config: path.relative(__dirname, './fixtures/config-with-overrides.js')
   };
 
-  const brunchConfig = await config.loadConfig(false, opts, true);
-  brunchConfig.paths.public = getFolderName(brunchConfig.paths.public);
-  brunchConfig.paths.watched[0] = getFolderName(brunchConfig.paths.watched[0]);
-  brunchConfig.paths.watched[1] = getFolderName(brunchConfig.paths.watched[1]);
-  t.is(brunchConfig.paths.public, 'public');
-  t.deepEqual(brunchConfig.paths.watched, ['app', 'test']);
+  const brunchConfig = yield config.loadConfig(false, opts, true);
+  const watched = brunchConfig.paths.watched.map(getFolderName);
+
+  t.is(getFolderName(brunchConfig.paths.public), 'public');
+  t.deepEqual(watched, ['app', 'test']);
 });
 
-test('overrides the config using the specified env', async t => {
+test('overrides the config using the specified env', function* (t) {
   const opts = {
     env: 'test',
     config: path.relative(__dirname, './fixtures/config-with-overrides.js')
   };
 
-  const brunchConfig = await config.loadConfig(false, opts, true);
-  brunchConfig.paths.watched[0] = getFolderName(brunchConfig.paths.watched[0]);
-  brunchConfig.paths.watched[1] = getFolderName(brunchConfig.paths.watched[1]);
+  const brunchConfig = yield config.loadConfig(false, opts, true);
+  const watched = brunchConfig.paths.watched.map(getFolderName);
+
   t.is(brunchConfig.paths.public, 'tmp');
-  t.deepEqual(brunchConfig.paths.watched, ['app', 'test']);
+  t.deepEqual(watched, ['app', 'test']);
+});
+
+test('removes trailing slash from paths', function* (t) {
+  const opts = {
+    config: path.relative(__dirname, './fixtures/config-with-trailing-slashes.js')
+  };
+
+  const brunchConfig = yield config.loadConfig(false, opts, true);
+
+  t.deepEqual(brunchConfig.paths.watched, [
+    'app/assets'
+  ]);
+  t.is(brunchConfig.paths.public, 'app/builds');
 });
