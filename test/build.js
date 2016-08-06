@@ -683,3 +683,56 @@ test.serial.cb('inline source maps', t => {
     t.end();
   });
 });
+
+test.serial.cb('include getter', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "description": "Description",
+      "author": "Your Name",
+      "version": "0.1.0",
+      "dependencies": {},
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "include-brunch": "file:include-brunch"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      }
+    };`,
+    'include-brunch': {
+      'package.json': `{
+        "name": "include-brunch",
+        "version": "0.1.0",
+        "main": "index.js"
+      }`,
+      'index.js': `'use strict';
+        class IncludeCompiler {
+          compile(file) {
+            return Promise.resolve(file);
+          }
+          get include() {
+            return [ __dirname + '/pow.js' ];
+          }
+        }
+        Object.assign(IncludeCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'javascript',
+          extension: 'js'
+        });
+        module.exports = IncludeCompiler;
+      `,
+      'pow.js': 'window.pow = Math.pow;'
+    }
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/app.js');
+    fileContains(t, 'public/app.js', 'Math.pow');
+    t.end();
+  });
+});
