@@ -1,51 +1,50 @@
+'use strict';
 const test = require('ava');
 const fs = require('fs');
 const brunch = require('../lib');
-const {
-  prepareTestDir,
-  teardownTestDir,
-  fileContains,
-  fileDoesNotContains,
-  fileExists,
-  fileDoesNotExist,
-  requestBrunchServer
-} = require('./_test_helper');
+const helpers = require('./_test_helper');
+const prepareTestDir = helpers.prepareTestDir;
+const teardownTestDir = helpers.teardownTestDir;
+const fileContains = helpers.fileContains;
+const fileDoesNotContain = helpers.fileDoesNotContain;
+const fileExists = helpers.fileExists;
+const fileDoesNotExist = helpers.fileDoesNotExist;
+const requestBrunchServer = helpers.requestBrunchServer;
 const fixturify = require('fixturify');
 
-var watcher;
+let watcher;
 
 const EventEmitter = require('events');
 const tearDownInterval = 1000;
 
-const watch = function(params, fn) {
+const watch = (params, fn) => {
   const compileEmitter = new EventEmitter();
-  const onCompile = function() {
+  const onCompile = () => {
     compileEmitter.emit('compiled');
   };
 
-  const compilation = function() {
+  const compilation = () => {
     compileEmitter.once('compiled', () => it.next());
   };
 
-  params._onReload = (newWatcher) => watcher = newWatcher;
+  params._onReload = newWatcher => {
+    watcher = newWatcher;
+  };
   watcher = brunch.watch(params, onCompile);
 
-  var it = fn(compilation);
+  const it = fn(compilation);
   it.next();
 };
 
-const closeWatcher = (cb) => {
+const closeWatcher = cb => {
   if (watcher) {
     // close chokidar to prevent that it understands the fixtures being copied as new files being added
     watcher.watcher.close();
     if (watcher.server) {
       return watcher.server.close(cb);
-    } else {
-      return cb();
     }
-  } else {
-    return cb();
   }
+  return cb();
 };
 
 test.beforeEach(() => {
@@ -71,15 +70,15 @@ test.serial.cb('compile on file changes', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
@@ -110,15 +109,15 @@ test.serial.cb('detect file addition', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
@@ -152,16 +151,16 @@ test.serial.cb('detect file removal', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
       'a.js': 'filea',
-      'b.js': 'fileb'
-    }
+      'b.js': 'fileb',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
@@ -181,7 +180,7 @@ fileb
     fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
 filea
 });`);
-    fileDoesNotContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
+    fileDoesNotContain(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
 fileb
 });`);
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
@@ -198,24 +197,24 @@ test.serial.cb('install npm packages if package.json changes', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
-    t.true(fs.readdirSync('./node_modules').indexOf('lodash') === -1);
+    t.false(fs.readdirSync('./node_modules').includes('lodash'));
 
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     packageJson.dependencies.lodash = '*';
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
     yield compilation();
-    t.true(fs.readdirSync('./node_modules').indexOf('lodash') !== -1);
+    t.true(fs.readdirSync('./node_modules').includes('lodash'));
     t.end();
   });
 });
@@ -229,24 +228,24 @@ test.serial.cb('install bower components if bower.json changes', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
-    t.true(fs.readdirSync('./bower_components').indexOf('jquery') === -1);
+    t.false(fs.readdirSync('./bower_components').includes('jquery'));
 
     const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
     bowerJson.dependencies.jquery = '*';
     fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
 
     yield compilation();
-    t.true(fs.readdirSync('./bower_components').indexOf('jquery') !== -1);
+    t.true(fs.readdirSync('./bower_components').includes('jquery'));
     t.end();
   });
 });
@@ -263,15 +262,15 @@ test.serial.cb('reload config if it changes', t => {
         public: 'public'
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({}, function *main(compilation) {
+  watch({}, function* (compilation) {
     yield compilation();
     fileDoesNotExist(t, 'dist/app.js.map');
     fileDoesNotExist(t, 'dist/app.js');
@@ -307,17 +306,17 @@ test.serial.cb('brunch server works', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({ server: true }, function *main(compilation) {
+  watch({server: true}, function* (compilation) {
     yield compilation();
-    requestBrunchServer('/', (responseText) => {
+    requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>hello world</h1>');
       t.end();
     });
@@ -333,23 +332,23 @@ test.serial.cb('brunch server reload files', t => {
         }
       }
     };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({ server: true }, function *main(compilation) {
+  watch({server: true}, function* (compilation) {
     yield compilation();
-    requestBrunchServer('/', (responseText) => {
+    requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>hello world</h1>');
       fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
     });
 
     yield compilation();
-    requestBrunchServer('/', (responseText) => {
+    requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>changed</h1>');
       t.end();
     });
@@ -376,17 +375,17 @@ module.exports = {
     return server.listen(port, callback);
   }
 };`,
-    'app': {
-      'assets': {
-        'index.html': '<h1>hello world</h1>'
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
       },
-      'initialize.js': 'console.log("hello world")'
-    }
+      'initialize.js': 'console.log("hello world")',
+    },
   });
 
-  watch({ server: true }, function *main(compilation) {
+  watch({server: true}, function* (compilation) {
     yield compilation();
-    requestBrunchServer('/', (responseText) => {
+    requestBrunchServer('/', responseText => {
       t.is(responseText, 'hello from custom server');
       t.end();
     });

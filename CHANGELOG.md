@@ -1,5 +1,10 @@
 To install the latest version, execute `npm install -g brunch`
 
+## Brunch 2.8.3 (Jul 6, 2016)
+* Improved performance of loading configs and writing source maps to disk.
+* If `templates.joinTo` is empty, `javascripts.joinTo` will be used.
+* Added `bower.enabled: false` option to ignore [bower](https://github.com/bower/bower).
+
 ## Brunch 2.8 (May 21, 2016)
 * Added plugin API for asset compilation e.g. jade to html.
 * Watcher improvements:
