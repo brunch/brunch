@@ -1,5 +1,5 @@
 'use strict';
-const test = require('ava');
+const test = require('ava-no-babel');
 const generate = require('../lib/fs_utils/generate');
 
 test('should files by config.before', t => {
