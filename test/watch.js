@@ -1,5 +1,5 @@
 'use strict';
-const test = require('ava');
+const test = require('ava-no-babel');
 const fs = require('fs');
 const brunch = require('../lib');
 const helpers = require('./_test_helper');
