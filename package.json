@@ -27,7 +27,7 @@
   "homepage": "http://brunch.io/",
   "author": "Brunch team (http://brunch.io)",
   "repository": "https://github.com/brunch/brunch.git",
-  "bugs": "http://github.com/brunch/brunch/issues",
+  "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
   "main": "./lib/index",
   "files": [
@@ -38,8 +38,10 @@
     "brunch": "./bin/brunch"
   },
   "scripts": {
-    "test": "eslint lib test && ava -s",
-    "test:coverage": "nyc ava -s && nyc report --reporter=html"
+    "lint": "eslint bin/brunch lib test",
+    "lint:fix": "eslint --fix bin/brunch lib test",
+    "test": "npm run lint && ava-no-babel -s",
+    "test:coverage": "nyc ava-no-babel -s && nyc report --reporter=html"
   },
   "engines": {
     "node": ">= 4.0",
@@ -54,25 +56,24 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
-    "deep-assign": "^2.0.0",
-    "deppack": "~0.6.0",
-    "fcache": "~0.1.0",
+    "deppack": "~0.6.3",
+    "fcache": "~0.2.0",
     "init-skeleton": "~0.9.0",
-    "skemata": "~0.1.0",
     "loggy": "~0.3.3",
+    "micro-es7-shim": "^0.1.0",
     "micro-promisify": "~0.1.0",
     "mkdirp": "~0.5.0",
     "quickly-copy-file": "~1.0.0",
     "read-components": "~0.7.0",
     "serve-brunch": "~0.1.0",
-    "since-app-start": "~0.1.0",
-    "source-map": "~0.5.0"
+    "since-app-start": "~0.3.0",
+    "skemata": "~0.1.0",
+    "source-map": "~0.5.0",
+    "universal-path": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "avajs/ava",
-    "babel-eslint": "^6.0.4",
-    "eslint": "^2.9.0",
-    "eslint-plugin-ava": "avajs/eslint-plugin-ava",
+    "ava-no-babel": "~0.15.2",
+    "eslint": "^3.0.0",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
     "nyc": "^6.4.2",
