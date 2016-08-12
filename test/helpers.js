@@ -1,7 +1,7 @@
 'use strict';
 const test = require('ava-no-babel');
 const rewire = require('rewire');
-const application = rewire('../lib/config');
+const application = rewire('../lib/utils/config');
 
 test('applyOverrides / should resolve plugins.on|off merge', t => {
   // describe('replaceConfigSlashes()', function() {

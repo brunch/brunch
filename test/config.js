@@ -1,7 +1,7 @@
 'use strict';
 const path = require('path');
 const test = require('ava-no-babel');
-const config = require('../lib/config');
+const config = require('../lib/utils/config');
 
 const getFolderName = path => {
   return /([^\/]*)\/*$/.exec(path)[1];
