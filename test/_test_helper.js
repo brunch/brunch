@@ -1,3 +1,4 @@
+'use strict';
 const path = require('path');
 const fs = require('fs-extra');
 const cp = require('child_process');
@@ -5,7 +6,7 @@ const cp = require('child_process');
 const rootPath = process.cwd();
 const tmp = path.join(require('os').tmpDir(), 'brunch-tests');
 
-const createPackageJson = function() {
+const createPackageJson = () => {
   const minimalJson = `{
     "name": "brunch-app",
     "description": "Description",
@@ -20,12 +21,12 @@ const createPackageJson = function() {
   fs.writeFileSync('package.json', minimalJson);
 };
 
-const createBowerJson = function() {
+const createBowerJson = () => {
   const minimalJson = `{
     "name": "brunch-app",
     "description": "Description",
     "main": "",
-    "authors": ["Your Name"],
+    "authors": "Your Name",
     "license": "MIT",
     "homepage": "",
     "ignore": [
@@ -43,19 +44,19 @@ const createBowerJson = function() {
   fs.mkdirSync('bower_components');
 };
 
-module.exports.prepareTestDir = function prepareTestDir() {
+const prepareTestDir = () => {
   fs.mkdirsSync(tmp);
   process.chdir(tmp);
   createPackageJson();
   createBowerJson();
 };
 
-module.exports.teardownTestDir = function teardownTestDir() {
+const teardownTestDir = () => {
   process.chdir(rootPath);
   fs.removeSync(tmp);
 };
 
-module.exports.fileExists = function fileExists(t, path) {
+const fileExists = (t, path) => {
   try {
     fs.accessSync(path, fs.F_OK);
     t.pass();
@@ -64,7 +65,7 @@ module.exports.fileExists = function fileExists(t, path) {
   }
 };
 
-module.exports.fileDoesNotExist = function fileDoesNotExist(t, path) {
+const fileDoesNotExist = (t, path) => {
   try {
     fs.accessSync(path, fs.F_OK);
     t.fail(`File ${path} should not exist`);
@@ -73,7 +74,7 @@ module.exports.fileDoesNotExist = function fileDoesNotExist(t, path) {
   }
 };
 
-module.exports.fileContains = function fileContains(t, path, content) {
+const fileContains = (t, path, content) => {
   try {
     t.true(fs.readFileSync(path, 'utf8').includes(content));
   } catch (e) {
@@ -81,7 +82,7 @@ module.exports.fileContains = function fileContains(t, path, content) {
   }
 };
 
-module.exports.fileEquals = function fileEquals(t, path, content) {
+const fileEquals = (t, path, content) => {
   try {
     t.is(fs.readFileSync(path, 'utf8'), content);
   } catch (e) {
@@ -89,7 +90,7 @@ module.exports.fileEquals = function fileEquals(t, path, content) {
   }
 };
 
-module.exports.fileDoesNotContains = function fileDoesNotContains(t, path, content) {
+const fileDoesNotContain = (t, path, content) => {
   try {
     t.false(fs.readFileSync(path, 'utf8').includes(content));
   } catch (e) {
@@ -99,14 +100,14 @@ module.exports.fileDoesNotContains = function fileDoesNotContains(t, path, conte
 
 const _stdout = require('test-console').stdout;
 const _stderr = require('test-console').stderr;
-var _inspect, _inspectE;
+let _inspect, _inspectE;
 
-module.exports.spyOnConsole = function() {
+const spyOnConsole = () => {
   _inspect = _stdout.inspect();
   _inspectE = _stderr.inspect();
 };
 
-module.exports.restoreConsole = function() {
+const restoreConsole = () => {
   _inspect.restore();
   _inspect.output.forEach(line => process.stdout.write(line));
   _inspect = null;
@@ -116,64 +117,88 @@ module.exports.restoreConsole = function() {
   _inspectE = null;
 };
 
-module.exports.outputContains = function(t, string) {
-  if (typeof string === 'string') {
-    if (_inspect.output.join('\n').indexOf(string) !== -1) {
+const outputContains = (t, msg) => {
+  if (typeof msg === 'string') {
+    if (_inspect.output.join('\n').includes(msg)) {
       t.pass();
     } else {
-      t.fail(`Expected console output (stdout) to contain '${string}' but it didn't`);
+      t.fail(`Expected console output (stdout) to contain '${msg}' but it didn't`);
     }
-  } else {
-    if (_inspect.output.some(function(line) { return string.test(line); })) {
-      t.pass();
-    } else {
-      t.fail(`Expected console output (stdout) to match '${string}' but it didn't`);
-    }
+    return;
   }
-};
 
-module.exports.outputDoesNotContain = function(t, string) {
-  if (_inspect.output.join('\n').indexOf(string) === -1) {
+  const test = line => msg.test(line);
+  if (_inspect.output.some(test)) {
     t.pass();
   } else {
-    t.fail(`Expected console output (stdout) not to contain '${string}' but it did`);
+    t.fail(`Expected console output (stdout) to match '${msg}' but it didn't`);
   }
 };
 
-module.exports.eOutputContains = function(t, string) {
-  if (_inspectE.output.join('\n').indexOf(string) !== -1) {
+const outputDoesNotContain = (t, msg) => {
+  if (_inspect.output.join('\n').includes(msg)) {
+    t.fail(`Expected console output (stdout) not to contain '${msg}' but it did`);
+  } else {
+    t.pass();
+  }
+};
+
+const eOutputContains = (t, msg) => {
+  if (_inspectE.output.join('\n').includes(msg)) {
     t.pass();
   } else {
-    t.fail(`Expected console output (stderr) to contain '${string}' but it didn't`);
+    t.fail(`Expected console output (stderr) to contain '${msg}' but it didn't`);
   }
 };
 
-module.exports.eOutputDoesNotContain = function(t, string) {
-  if (_inspectE.output.join('\n').indexOf(string) === -1) {
-    t.pass();
+const eOutputDoesNotContain = (t, msg) => {
+  if (_inspectE.output.join('\n').includes(msg)) {
+    t.fail(`Expected console output (stderr) not to contain '${msg}' but it did`);
   } else {
-    t.fail(`Expected console output (stderr) not to contain '${string}' but it did`);
+    t.pass();
   }
 };
 
-module.exports.noWarn = t => module.exports.eOutputDoesNotContain(t, 'warn');
-module.exports.noError = t => module.exports.eOutputDoesNotContain(t, 'error');
+const noWarn = t => eOutputDoesNotContain(t, 'warn');
+const noError = t => eOutputDoesNotContain(t, 'error');
 
-module.exports.requestBrunchServer = function requestBrunchServer(path, callback) {
+const requestBrunchServer = (path, callback) => {
   const http = require('http');
   const options = {
     host: 'localhost',
     port: 3333,
-    path: path
+    path,
   };
 
   http.request(options, response => {
-    var responseText = '';
-    response.on('data', chunk => responseText += chunk);
+    let responseText = '';
+    response.on('data', chunk => {
+      responseText += chunk;
+    });
     response.on('end', () => callback(responseText));
   }).end();
 };
 
-module.exports.npmInstall = function(cb) {
-  cp.exec('npm install', cb);
+const npmInstall = callback => {
+  cp.exec('npm install', callback);
+};
+
+module.exports = {
+  prepareTestDir,
+  teardownTestDir,
+  fileExists,
+  fileDoesNotExist,
+  fileContains,
+  fileEquals,
+  fileDoesNotContain,
+  spyOnConsole,
+  restoreConsole,
+  outputContains,
+  outputDoesNotContain,
+  eOutputContains,
+  eOutputDoesNotContain,
+  noWarn,
+  noError,
+  requestBrunchServer,
+  npmInstall,
 };
