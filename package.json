@@ -72,7 +72,7 @@
     "universal-path": "^0.1.0"
   },
   "devDependencies": {
-    "ava-no-babel": "~0.15.2",
+    "ava-no-babel": "~0.15.3",
     "eslint": "^3.0.0",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
