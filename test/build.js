@@ -736,3 +736,43 @@ test.serial.cb('include getter', t => {
     t.end();
   });
 });
+
+test.serial.cb('plugins order', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "babel-brunch": "^6.0.4",
+        "babel-preset-es2015": "^6.0.0",
+        "babel-preset-es2016": "^6.0.0",
+        "babel-preset-react": "^6.0.0"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js',
+        },
+      },
+      plugins: {
+        babel: {
+          presets: ['es2015', 'es2016', 'react'],
+        },
+        order: [
+          'babel-brunch',
+          'javascript-brunch',
+        ],
+      },
+    }`,
+    app: {
+      'Foo.js': `<Foo />`,
+    },
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/app.js');
+    fileContains(t, 'public/app.js', 'React.createElement(Foo');
+
+    t.end();
+  });
+});
