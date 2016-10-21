@@ -40,7 +40,7 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && ava-no-babel -s",
+    "test": "npm run lint && ava-no-babel -s --verbose --fail-fast",
     "test:coverage": "nyc ava-no-babel -s && nyc report --reporter=html"
   },
   "engines": {
