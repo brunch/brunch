@@ -18,5 +18,6 @@
   "CONVENTION_INVALID": "#{convention} in invalid convention.",
   "FILE_DATA_INVALID": "File #{path} data is invalid.",
   "REMOVE_GET_DEPS": "Compiler '#{name}' already passes dependencies. Remove 'getDependencies' method.",
-  "READ_FAILED": "Failed to read file #{path}."
+  "READ_FAILED": "Failed to read file #{path}.",
+  "LEGACY_NEW_SYNTAX": "The 'brunch new #{skeleton} #{path}' syntax is no longer supported. Use 'brunch new #{path} -s #{skeleton}'."
 }
