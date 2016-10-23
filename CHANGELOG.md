@@ -1,19 +1,20 @@
 To install the latest version, execute `npm install -g brunch`
 
-## Brunch 2.9 (unreleased)
+## Brunch 2.9 (Oct 23, 2016)
+* Added new CLI option `--network`: sets server's hostname to `0.0.0.0`. Thanks @shreeve.
+* Reduced installation size of Brunch by 5Mb.
+* Fixed Brunch not quitting immediately after compilation finished.
 * Improved performance of loading configs and writing source maps to disk.
-* If `templates.joinTo` is empty, `javascripts.joinTo` will be used.
+* Improved config handling:
+    * Trailing slashes from `config.path` are now removed. Thanks @herenow.
+    * Fixed warning on `hot` option set in config.
+    * Added `"inline"` option to `config.sourceMaps`.
+    * Allow specifying watched globs in `getDependencies`.
+    * Allow specifying `teardown` in `config.hooks`.
+    * If `templates.joinTo` is empty, `javascripts.joinTo` will be used.
 * Added `bower.enabled: false` option to ignore [bower](https://github.com/bower/bower).
 * `lint` and `getDependencies` now support new promise-based single-parameter plugin API.
 * `include` supports returning Promise that resolves to an Array. Thanks @jacksonrayhamilton.
-* Trailing slashes from `config.path` are now removed. Thanks @herenow.
-* Fixed warning on `hot` option set in config.
-* Allow specifying watched globs in `getDependencies`.
-* Allow specifying `teardown` in `config.hooks`.
-* Added `"inline"` option to `config.sourceMaps`. Thanks @jacksonrayhamilton again.
-* Added new CLI option `--network`: sets server's hostname to `0.0.0.0`. Thanks @shreeve.
-* Fixed Brunch not exiting immediately after compilation finished.
-* Reduced by 5Mb installation size of Brunch.
 * Various performance improvements and refactorings.
 
 ## Brunch 2.8 (May 21, 2016)
