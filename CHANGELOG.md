@@ -12,7 +12,7 @@ To install the latest version, execute `npm install -g brunch`
     * Allow specifying watched globs in `getDependencies`.
     * Allow specifying `teardown` in `config.hooks`.
     * If `templates.joinTo` is empty, `javascripts.joinTo` will be used.
-* Added `bower.enabled: false` option to ignore [bower](https://github.com/bower/bower).
+    * Added `bower.enabled: false` option to ignore [bower](https://github.com/bower/bower).
 * `lint` and `getDependencies` now support new promise-based single-parameter plugin API.
 * `include` supports returning Promise that resolves to an Array. Thanks @jacksonrayhamilton.
 * Various performance improvements and refactorings.
