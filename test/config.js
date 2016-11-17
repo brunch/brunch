@@ -4,7 +4,7 @@ const test = require('ava-no-babel');
 const config = require('../lib/utils/config');
 
 const getFolderName = path => {
-  return /([^\/]*)\/*$/.exec(path)[1];
+  return /([^/]*)\/*$/.exec(path)[1];
 };
 
 test('loads the config without overriding', function* (t) {
