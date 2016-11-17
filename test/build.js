@@ -103,9 +103,67 @@ test.serial.cb('compiler chaining: returning path', t => {
 
   brunch.build({}, () => {
     fileExists(t, 'public/style.css');
-    const fs = require('fs');
-    console.log(fs.readFileSync('public/style.css', 'utf8'));
     fileContains(t, 'public/style.css', '{-webkit-backdrop');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
+
+test.serial.cb('compiler chaining: compiler.targetExtension', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "dependencies": {},
+      "devDependencies": {
+        "sass-brunch": "file:sass-brunch",
+        "postcss-brunch": "file:postcss-brunch"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        stylesheets: {
+          joinTo: 'style.css'
+        }
+      }
+    }`,
+    app: {
+      'style.sass': 'header\n\tbackdrop-filter: blur(10px)',
+    },
+    'sass-brunch': {
+      'package.json': `{
+        "name": "sass-brunch",
+        "version": "0.1.0"
+      }`,
+      'index.js': `
+        class SassCompiler {
+          compile(file) {
+            const data = file.data.replace(/\\t/, '{') + ';}';
+
+            return Promise.resolve({data});
+          }
+        }
+
+        Object.assign(SassCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'stylesheet',
+          extension: 'sass',
+          targetExtension: 'css',
+        });
+
+        module.exports = SassCompiler;
+      `,
+    },
+    'postcss-brunch': postcssBrunch,
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/style.css');
+    fileContains(t, 'public/style.css', '{-webkit-backdrop');
+
     noWarn(t);
     noError(t);
 
