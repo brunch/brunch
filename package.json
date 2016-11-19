@@ -40,7 +40,7 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && ava-no-babel -s --verbose --fail-fast",
+    "test": "npm run lint && LOGGY_STACKS=true ava-no-babel -s --verbose --fail-fast",
     "test:coverage": "nyc ava-no-babel -s && nyc report --reporter=html"
   },
   "engines": {
@@ -69,6 +69,7 @@
     "since-app-start": "~0.3.0",
     "skemata": "~0.1.0",
     "source-map": "~0.5.0",
+    "promise.prototype.finally": "^2",
     "universal-path": "^0.1.0"
   },
   "devDependencies": {
