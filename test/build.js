@@ -53,6 +53,59 @@ const postcssBrunch = {
   `,
 };
 
+test.serial.cb('compileStatic changes path', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {},
+    }`,
+    app: {
+      assets: {
+        'test.emp': 'Hello, world!',
+      },
+    },
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "compiler-brunch": "file:compiler-brunch"
+      }
+    }`,
+    'compiler-brunch': {
+      'package.json': `{
+        "name": "compiler-brunch",
+        "version": "0.1.0",
+        "main": "index.js"
+      }`,
+      'index.js': `
+        class Compiler {
+          compileStatic(file) {
+            const data = file.data;
+            const path = file.path.replace('test', 'hello');
+            return Promise.resolve({data, path});
+          }
+        }
+
+        Object.assign(Compiler.prototype, {
+          brunchPlugin: true,
+          type: 'template',
+          extension: 'emp',
+          staticTargetExtension: 'built',
+        });
+
+        module.exports = Compiler;
+      `,
+    },
+  });
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/test.built');
+    fileExists(t, 'public/hello.built');
+    fileEquals(t, 'public/hello.built', 'Hello, world!');
+    t.end();
+  });
+});
+
 test.serial.cb('compiler chaining: returning path', t => {
   fixturify.writeSync('.', {
     'package.json': `{
