@@ -15,7 +15,6 @@
   "COPY_FAILED": "Can't copy #{path}.",
   "ALREADY_DISPOSED": "#{path} was already disposed.",
   "OPTIMIZER_INVALID": "Invalid optimizer run #{optimizer}.",
-  "CONVENTION_INVALID": "#{convention} in invalid convention.",
   "FILE_DATA_INVALID": "File #{path} data is invalid.",
   "REMOVE_GET_DEPS": "Compiler '#{name}' already passes dependencies. Remove 'getDependencies' method.",
   "READ_FAILED": "Failed to read file #{path}.",
