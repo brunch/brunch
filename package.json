@@ -63,7 +63,6 @@
     "micro-es7-shim": "^0.1.0",
     "micro-promisify": "~0.1.0",
     "mkdirp": "~0.5.0",
-    "quickly-copy-file": "~1.0.0",
     "read-components": "~0.7.0",
     "serve-brunch": "~0.1.0",
     "since-app-start": "~0.3.0",
