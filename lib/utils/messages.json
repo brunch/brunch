@@ -16,5 +16,6 @@
   "FILE_DATA_INVALID": "File #{path} data is invalid.",
   "REMOVE_GET_DEPS": "Compiler '#{name}' already passes dependencies. Remove 'getDependencies' method.",
   "READ_FAILED": "Failed to read file #{path}.",
+  "MOVED_ASSET": "Asset file #{path} was moved from assets directory",
   "LEGACY_NEW_SYNTAX": "The 'brunch new #{skeleton} #{path}' syntax is no longer supported. Use 'brunch new #{path} -s #{skeleton}'."
 }
