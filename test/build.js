@@ -53,6 +53,64 @@ const postcssBrunch = {
   `,
 };
 
+test.serial.cb('compiler chaining: compiler.targetExtension', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "sass-brunch": "file:sass-brunch",
+        "postcss-brunch": "file:postcss-brunch"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        stylesheets: {
+          joinTo: 'style.css'
+        }
+      }
+    }`,
+    app: {
+      'style.sass': 'header\n\tbackdrop-filter: blur(10px)',
+    },
+    'sass-brunch': {
+      'package.json': `{
+        "name": "sass-brunch",
+        "version": "0.1.0"
+      }`,
+      'index.js': `
+        class SassCompiler {
+          compile(file) {
+            const data = file.data.replace(/\\t/, '{') + ';}';
+
+            return Promise.resolve({data});
+          }
+        }
+
+        Object.assign(SassCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'stylesheet',
+          extension: 'sass',
+          targetExtension: 'css',
+        });
+
+        module.exports = SassCompiler;
+      `,
+    },
+    'postcss-brunch': postcssBrunch,
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/style.css');
+    fileContains(t, 'public/style.css', '{-webkit-backdrop');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
+
 test.serial.cb('compileStatic changes path', t => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
@@ -67,15 +125,13 @@ test.serial.cb('compileStatic changes path', t => {
       "name": "brunch-app",
       "version": "0.1.0",
       "devDependencies": {
-        "javascript-brunch": "^2.0.0",
         "compiler-brunch": "file:compiler-brunch"
       }
     }`,
     'compiler-brunch': {
       'package.json': `{
         "name": "compiler-brunch",
-        "version": "0.1.0",
-        "main": "index.js"
+        "version": "0.1.0"
       }`,
       'index.js': `
         class Compiler {
@@ -125,7 +181,7 @@ test.serial.cb('compiler chaining: returning path', t => {
       }
     }`,
     app: {
-      'style.sass': 'header\n\tbackdrop-filter: blur(10px)',
+      'style2.sass': 'header\n\tbackdrop-filter: blur(10px)',
     },
     'sass-brunch': {
       'package.json': `{
@@ -146,65 +202,6 @@ test.serial.cb('compiler chaining: returning path', t => {
           brunchPlugin: true,
           type: 'stylesheet',
           extension: 'sass',
-        });
-
-        module.exports = SassCompiler;
-      `,
-    },
-    'postcss-brunch': postcssBrunch,
-  });
-
-  brunch.build({}, () => {
-    fileExists(t, 'public/style.css');
-    fileContains(t, 'public/style.css', '{-webkit-backdrop');
-
-    noWarn(t);
-    noError(t);
-
-    t.end();
-  });
-});
-
-test.serial.cb('compiler chaining: compiler.targetExtension', t => {
-  fixturify.writeSync('.', {
-    'package.json': `{
-      "name": "brunch-app",
-      "version": "0.1.0",
-      "dependencies": {},
-      "devDependencies": {
-        "sass-brunch": "file:sass-brunch",
-        "postcss-brunch": "file:postcss-brunch"
-      }
-    }`,
-    'brunch-config.js': `module.exports = {
-      files: {
-        stylesheets: {
-          joinTo: 'style.css'
-        }
-      }
-    }`,
-    app: {
-      'style.sass': 'header\n\tbackdrop-filter: blur(10px)',
-    },
-    'sass-brunch': {
-      'package.json': `{
-        "name": "sass-brunch",
-        "version": "0.1.0"
-      }`,
-      'index.js': `
-        class SassCompiler {
-          compile(file) {
-            const data = file.data.replace(/\\t/, '{') + ';}';
-
-            return Promise.resolve({data});
-          }
-        }
-
-        Object.assign(SassCompiler.prototype, {
-          brunchPlugin: true,
-          type: 'stylesheet',
-          extension: 'sass',
-          targetExtension: 'css',
         });
 
         module.exports = SassCompiler;
@@ -721,9 +718,7 @@ const TempCompiler = {
     "description": "Description",
     "author": "Your Name",
     "version": "0.1.0",
-    "dependencies": {},
     "devDependencies": {
-      "javascript-brunch": "^2.0.0",
       "temp-brunch": "file:temp-brunch"
     }
   }`,
