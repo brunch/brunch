@@ -29,6 +29,198 @@ test.afterEach.always(() => {
   teardownTestDir();
 });
 
+const postcssBrunch = {
+  'package.json': `{
+    "name": "postcss-brunch",
+    "version": "0.1.0"
+  }`,
+  'index.js': `
+    class PostCSSCompiler {
+      compile(file) {
+        const data = file.data.replace('backdrop', '-webkit-$&');
+
+        return Promise.resolve({data});
+      }
+    }
+
+    Object.assign(PostCSSCompiler.prototype, {
+      brunchPlugin: true,
+      type: 'stylesheet',
+      extension: 'css',
+    });
+
+    module.exports = PostCSSCompiler;
+  `,
+};
+
+test.serial.cb('compiler chaining: compiler.targetExtension', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "sass-brunch": "file:sass-brunch",
+        "postcss-brunch": "file:postcss-brunch"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        stylesheets: {
+          joinTo: 'style.css'
+        }
+      }
+    }`,
+    app: {
+      'style.sass': 'header\n\tbackdrop-filter: blur(10px)',
+    },
+    'sass-brunch': {
+      'package.json': `{
+        "name": "sass-brunch",
+        "version": "0.1.0"
+      }`,
+      'index.js': `
+        class SassCompiler {
+          compile(file) {
+            const data = file.data.replace(/\\t/, '{') + ';}';
+
+            return Promise.resolve({data});
+          }
+        }
+
+        Object.assign(SassCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'stylesheet',
+          extension: 'sass',
+          targetExtension: 'css',
+        });
+
+        module.exports = SassCompiler;
+      `,
+    },
+    'postcss-brunch': postcssBrunch,
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/style.css');
+    fileContains(t, 'public/style.css', '{-webkit-backdrop');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
+
+test.serial.cb('compileStatic changes path', t => {
+  fixturify.writeSync('.', {
+    'brunch-config.js': `module.exports = {
+      files: {},
+    }`,
+    app: {
+      assets: {
+        'test.emp': 'Hello, world!',
+      },
+    },
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "compiler-brunch": "file:compiler-brunch"
+      }
+    }`,
+    'compiler-brunch': {
+      'package.json': `{
+        "name": "compiler-brunch",
+        "version": "0.1.0"
+      }`,
+      'index.js': `
+        class Compiler {
+          compileStatic(file) {
+            const data = file.data;
+            const path = file.path.replace('test', 'hello');
+            return Promise.resolve({data, path});
+          }
+        }
+
+        Object.assign(Compiler.prototype, {
+          brunchPlugin: true,
+          type: 'template',
+          extension: 'emp',
+          staticTargetExtension: 'built',
+        });
+
+        module.exports = Compiler;
+      `,
+    },
+  });
+
+  brunch.build({}, () => {
+    fileDoesNotExist(t, 'public/test.built');
+    fileExists(t, 'public/hello.built');
+    fileEquals(t, 'public/hello.built', 'Hello, world!');
+    t.end();
+  });
+});
+
+test.serial.cb('compiler chaining: returning path', t => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "dependencies": {},
+      "devDependencies": {
+        "sass-brunch": "file:sass-brunch",
+        "postcss-brunch": "file:postcss-brunch"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        stylesheets: {
+          joinTo: 'style.css'
+        }
+      }
+    }`,
+    app: {
+      'style2.sass': 'header\n\tbackdrop-filter: blur(10px)',
+    },
+    'sass-brunch': {
+      'package.json': `{
+        "name": "sass-brunch",
+        "version": "0.1.0"
+      }`,
+      'index.js': `
+        class SassCompiler {
+          compile(file) {
+            const data = file.data.replace(/\\t/, '{') + ';}';
+            const path = file.path.replace(/sass$/, 'css');
+
+            return Promise.resolve({data, path});
+          }
+        }
+
+        Object.assign(SassCompiler.prototype, {
+          brunchPlugin: true,
+          type: 'stylesheet',
+          extension: 'sass',
+        });
+
+        module.exports = SassCompiler;
+      `,
+    },
+    'postcss-brunch': postcssBrunch,
+  });
+
+  brunch.build({}, () => {
+    fileExists(t, 'public/style.css');
+    fileContains(t, 'public/style.css', '{-webkit-backdrop');
+
+    noWarn(t);
+    noError(t);
+
+    t.end();
+  });
+});
+
 test.serial.cb('basic build', t => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
@@ -526,9 +718,7 @@ const TempCompiler = {
     "description": "Description",
     "author": "Your Name",
     "version": "0.1.0",
-    "dependencies": {},
     "devDependencies": {
-      "javascript-brunch": "^2.0.0",
       "temp-brunch": "file:temp-brunch"
     }
   }`,

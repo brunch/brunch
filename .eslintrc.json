@@ -130,6 +130,7 @@
     "space-unary-ops": 2,
     "spaced-comment": 2,
 
+    "max-params": [1, 4],
     "arrow-parens": [2, "as-needed"],
     "arrow-spacing": 2,
     "constructor-super": 2,

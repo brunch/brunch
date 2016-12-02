@@ -40,7 +40,7 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && ava-no-babel -s --verbose --fail-fast",
+    "test": "npm run lint && LOGGY_STACKS=true ava-no-babel -s --verbose --fail-fast",
     "test:coverage": "nyc ava-no-babel -s && nyc report --reporter=html"
   },
   "engines": {
@@ -56,19 +56,19 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
-    "deppack": "~0.6.3",
-    "fcache": "~0.2.0",
+    "deppack": "brunch/deppack",
+    "fcache": "~0.3.0",
     "init-skeleton": "~0.9.0",
     "loggy": "~0.3.3",
     "micro-es7-shim": "^0.1.0",
     "micro-promisify": "~0.1.0",
     "mkdirp": "~0.5.0",
-    "quickly-copy-file": "~1.0.0",
     "read-components": "~0.7.0",
     "serve-brunch": "~0.1.0",
     "since-app-start": "~0.3.0",
     "skemata": "~0.1.0",
     "source-map": "~0.5.0",
+    "promise.prototype.finally": "^2",
     "universal-path": "^0.1.0"
   },
   "devDependencies": {
