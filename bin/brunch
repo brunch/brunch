@@ -34,7 +34,7 @@ var exists = function(path) {
 
 var runSeparateWatchProcess = function(cliPath) {
   process.env.BRUNCH_FORKED_PROCESS = 'true';
-  var args = process.env.NODE_ENV === 'development' ? ['--inspect', '--debug-brk'] : process.execArgv;
+  var args = process.env.BRUNCH_DEVTOOLS ? ['--inspect', '--debug-brk'] : process.execArgv;
   var proc = childProcessFork(cliPath, process.argv.slice(2), {execArgv: args});
   proc.on('message', function(message) {
     if (message === 'reload') {
