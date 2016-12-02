@@ -4,8 +4,6 @@
   "NPM_NOT_COMMONJS": "Can't use npm integration with non-CommonJS modules format (current: `#{definition}`/`#{wrapper}`). Either set `config.modules.definition` and `config.modules.wrapper` to `commonjs` or disable npm integration (`config.npm.enabled: false`).",
   "HMR_PLUGIN_MISSING": "Hot Module Reloading should only be used with `auto-reload-brunch`.",
   "HMR_PLUGIN_UNSUPPORTED": "Currently used version of `auto-reload-brunch` does not support Hot Module Reloading.",
-  "MODULES_WRAP_INVALID": "`config.modules.wrapper` should be a function or one of: 'commonjs', 'amd', false.",
-  "MODULES_DEF_INVALID": "`config.modules.definition` should be a function or one of: 'commonjs', 'amd', false.",
   "RUN_NPM_INSTALL": "You probably need to execute `npm install` to install Brunch plugins.",
   "CWD_INVALID": "Current directory is not Brunch application root path, as it does not contain package.json.",
   "CFG_NOT_OBJECT": "#{basename} must be a valid object.",
@@ -15,10 +13,10 @@
   "COPY_FAILED": "Can't copy #{path}.",
   "ALREADY_DISPOSED": "#{path} was already disposed.",
   "OPTIMIZER_INVALID": "Invalid optimizer run #{optimizer}.",
-  "CONVENTION_INVALID": "#{convention} in invalid convention.",
   "FILE_DATA_INVALID": "File #{path} data is invalid.",
   "REMOVE_GET_DEPS": "Compiler '#{name}' already passes dependencies. Remove 'getDependencies' method.",
   "READ_FAILED": "Failed to read file #{path}.",
+  "MOVED_ASSET": "Asset file #{path} was moved from assets directory",
   "WRITE_FAILED": "Failed to write files.",
   "LEGACY_NEW_SYNTAX": "The 'brunch new #{skeleton} #{path}' syntax is no longer supported. Use 'brunch new #{path} -s #{skeleton}'."
 }

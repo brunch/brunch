@@ -24,7 +24,7 @@ To install the latest version, execute `npm install -g brunch`
     * NPM: improved handling of added & removed files during `watch`. Adding a new file will now try to re-check files that previously failed due to module resolution errors. Removing a file will now cause the files that depended on it to be re-checked.
     * Fixed a memory leak issue after watcher reload (due to config change or update in `package.json`).
 * Small API improvements:
-    * Changed back to `destinationPath` (intsead of `destPath` since 2.6) in `Asset` that is received in `onCompile`
+    * Changed back to `destinationPath` (instead of `destPath` since 2.6) in `Asset` that is received in `onCompile`
     * Moved `config.plugins.npm` to `config.npm.compilers`
 * Print a warning if a plugin from `devDependencies` fails to load.
 * NPM: `require.alias` will now be inserted only in the bundles which contain the aliased file. Previous behavior was that all output file contained all possible aliases.
