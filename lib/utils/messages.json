@@ -1,5 +1,5 @@
 {
-  "PKG_JSON_MISSING": "No package.json was found. That's where Brunch plugins need to be listed. Plugins tell Brunch how to compile your files, so without any plugins Brunch won't know what to do. To get started, run `npm init` to generate a package.json file and `npm install --save javascript-brunch css-brunch` to install and save plugins for regular JS and CSS.",
+  "PKG_JSON_MISSING": "No package.json was found. That's where Brunch plugins need to be listed. Plugins tell Brunch how to compile your files, so without any plugins Brunch won't know what to do. To get started, run `npm init` to generate a package.json file and `npm install --save-dev javascript-brunch css-brunch` to install and save plugins for regular JS and CSS.",
   "PKG_JSON_INVALID": "package.json has invalid syntax.",
   "NPM_NOT_COMMONJS": "Can't use npm integration with non-CommonJS modules format (current: `#{definition}`/`#{wrapper}`). Either set `config.modules.definition` and `config.modules.wrapper` to `commonjs` or disable npm integration (`config.npm.enabled: false`).",
   "HMR_PLUGIN_MISSING": "Hot Module Reloading should only be used with `auto-reload-brunch`.",
