@@ -40,8 +40,8 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && LOGGY_STACKS=true ava-no-babel -s --verbose --fail-fast",
-    "test:coverage": "nyc ava-no-babel -s && nyc report --reporter=html"
+    "test": "npm run lint && LOGGY_STACKS=true ava -s --verbose --fail-fast",
+    "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
     "node": ">= 4.0",
@@ -72,7 +72,7 @@
     "universal-path": "^0.1.0"
   },
   "devDependencies": {
-    "ava-no-babel": "~0.15.3",
+    "ava": "~0.17.0",
     "eslint": "^3.0.0",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",

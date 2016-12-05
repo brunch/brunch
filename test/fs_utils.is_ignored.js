@@ -1,5 +1,5 @@
 'use strict';
-const test = require('ava-no-babel');
+const test = require('ava');
 const isIgnored = require('../lib/fs_utils/is_ignored');
 
 test('isIgnored: ignored: should ignore invalid files', t => {

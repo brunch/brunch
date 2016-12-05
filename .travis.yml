@@ -5,8 +5,8 @@ os:
   - osx
 node_js:
   - 4
-  - 5
   - 6
+  - 7
 before_install:
   - npm install bower@^1 -g
   - npm install npm@3 -g
