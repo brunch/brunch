@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const test = require('ava-no-babel');
+const test = require('ava');
 const config = require('../lib/utils/config');
 
 const getFolderName = path => {
@@ -9,7 +9,7 @@ const getFolderName = path => {
 
 test('loads the config without overriding', function* (t) {
   const opts = {
-    config: path.relative(__dirname, './fixtures/config-with-overrides.js'),
+    config: path.join(__dirname, './fixtures/config-with-overrides.js'),
   };
 
   const brunchConfig = yield config.loadConfig(false, opts, true);
@@ -22,7 +22,7 @@ test('loads the config without overriding', function* (t) {
 test('overrides the config using the specified env', function* (t) {
   const opts = {
     env: 'test',
-    config: path.relative(__dirname, './fixtures/config-with-overrides.js'),
+    config: path.join(__dirname, './fixtures/config-with-overrides.js'),
   };
 
   const brunchConfig = yield config.loadConfig(false, opts, true);
@@ -34,7 +34,7 @@ test('overrides the config using the specified env', function* (t) {
 
 test('removes trailing slash from paths', function* (t) {
   const opts = {
-    config: path.relative(__dirname, './fixtures/config-with-trailing-slashes.js'),
+    config: path.join(__dirname, './fixtures/config-with-trailing-slashes.js'),
   };
 
   const brunchConfig = yield config.loadConfig(false, opts, true);
