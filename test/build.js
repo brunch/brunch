@@ -18,6 +18,8 @@ const noWarn = helpers.noWarn;
 const noError = helpers.noError;
 const fixturify = require('fixturify');
 
+process.setMaxListeners(0);
+
 test.beforeEach(() => {
   teardownTestDir();
   prepareTestDir();
