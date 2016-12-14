@@ -1,5 +1,5 @@
 'use strict';
-const test = require('ava-no-babel');
+const test = require('ava');
 const rewire = require('rewire');
 const application = rewire('../lib/utils/config');
 

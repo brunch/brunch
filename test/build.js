@@ -1,5 +1,5 @@
 'use strict';
-const test = require('ava-no-babel');
+const test = require('ava');
 const brunch = require('../lib');
 const helpers = require('./_test_helper');
 const prepareTestDir = helpers.prepareTestDir;
@@ -18,6 +18,8 @@ const noWarn = helpers.noWarn;
 const noError = helpers.noError;
 const fixturify = require('fixturify');
 
+process.setMaxListeners(0);
+
 test.beforeEach(() => {
   teardownTestDir();
   prepareTestDir();
@@ -34,7 +36,7 @@ const postcssBrunch = {
     "name": "postcss-brunch",
     "version": "0.1.0"
   }`,
-  'index.js': `
+  'index.js': `'use strict';
     class PostCSSCompiler {
       compile(file) {
         const data = file.data.replace('backdrop', '-webkit-$&');
@@ -78,7 +80,7 @@ test.serial.cb('compiler chaining: compiler.targetExtension', t => {
         "name": "sass-brunch",
         "version": "0.1.0"
       }`,
-      'index.js': `
+      'index.js': `'use strict';
         class SassCompiler {
           compile(file) {
             const data = file.data.replace(/\\t/, '{') + ';}';
@@ -133,7 +135,7 @@ test.serial.cb('compileStatic changes path', t => {
         "name": "compiler-brunch",
         "version": "0.1.0"
       }`,
-      'index.js': `
+      'index.js': `'use strict';
         class Compiler {
           compileStatic(file) {
             const data = file.data;
@@ -188,7 +190,7 @@ test.serial.cb('compiler chaining: returning path', t => {
         "name": "sass-brunch",
         "version": "0.1.0"
       }`,
-      'index.js': `
+      'index.js': `'use strict';
         class SassCompiler {
           compile(file) {
             const data = file.data.replace(/\\t/, '{') + ';}';
