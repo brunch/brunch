@@ -13,8 +13,8 @@ var version = process.version;
 var verDigit = +version.match(/^v(\d+)/)[1];
 if (verDigit < 4) {
   console.error(
-    'Error: Brunch 2+ requires node.js v4 or higher (you have ' + version + ') ' +
-    'Upgrade node or use older brunch for old node.js: npm i -g brunch@1'
+    'Error: Brunch 2+ requires Node.js v4 or higher (you have v' + version + ') ' +
+    'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1'
   );
   process.exit(1);
 }
@@ -22,7 +22,6 @@ if (verDigit < 4) {
 global[Symbol.for('start-time')] = Date.now();
 
 var files = {old: 'cli.js', new: 'run-cli.js'};
-
 var exists = function(path) {
   try {
     fs.accessSync(path);
