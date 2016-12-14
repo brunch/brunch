@@ -9,9 +9,8 @@ var join = sysPath.join;
 var fs = require('fs');
 var childProcessFork = require('child_process').fork;
 
-var version = process.version;
-var verDigit = +version.match(/^v(\d+)/)[1];
-if (verDigit < 4) {
+var version = process.versions.node;
+if (parseInt(version) < 4) {
   console.error(
     'Error: Brunch 2+ requires Node.js v4 or higher (you have v' + version + ') ' +
     'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1'
