@@ -74,10 +74,14 @@
   "devDependencies": {
     "ava": "~0.17.0",
     "eslint": "^3.0.0",
+    "eslint-config-brunch": "brunch/eslint-config-brunch",
     "fixturify": "^0.2.0",
     "fs-extra": "^0.30.0",
     "nyc": "^6.4.2",
     "rewire": "^2.5.0",
     "test-console": "^1.0.0"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
   }
 }
