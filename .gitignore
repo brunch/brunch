@@ -5,3 +5,4 @@ npm-debug.log*
 .idea/
 .nyc_output
 coverage
+yarn.lock
