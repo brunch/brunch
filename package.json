@@ -58,7 +58,6 @@
     "debug": "~2.2.0",
     "deppack": "brunch/deppack",
     "deps-install": "brunch/deps-install",
-    "fcache": "~0.3.0",
     "init-skeleton": "brunch/init-skeleton#yarn",
     "loggy": "~0.3.3",
     "micro-es7-shim": "^0.1.0",
