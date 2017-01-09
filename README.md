@@ -32,7 +32,7 @@ Install Brunch with a simple node.js package manager command: `npm install -g br
 * Visit [**brunch.io**](http://brunch.io)
 * Read [**brunch docs**](http://brunch.io/docs/getting-started)
 * Follow us on Twitter: [@brunch](http://twitter.com/brunch)
-* Ask questions on stack overflow with #brunch tag.
+* Ask questions on Stack Overflow with [#brunch](http://stackoverflow.com/questions/tagged/brunch) tag
 
 ## Contributing
 
