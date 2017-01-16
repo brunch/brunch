@@ -5,7 +5,6 @@ To install the latest version, execute `npm install -g brunch`
 * CLI improvements:
   * Allowed usage of `--config` param to specify a path to Brunch config file.
   * Fixed `--debug` option. It works now.
-  * Added ability to debug using `node --inspect`.
 * `bower install` is running automatically now.
 * Improved error messages.
 * Fixed copying of binary files.
