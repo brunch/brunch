@@ -8,10 +8,9 @@ To install the latest version, execute `npm install -g brunch`
   * Added ability to debug using `node --inspect`.
 * `bower install` is running automatically now.
 * Improved error messages.
-* Added proper escaping of symbols in terminal notifications.
 * Fixed copying of binary files.
 * Various Node 7 improvements.
-* Other minor code refactorings and fixes.
+* Other code refactorings and fixes.
 
 ## Brunch 2.9 (Oct 23, 2016)
 * Added new CLI option `--network`: sets server's hostname to `0.0.0.0`. Thanks @shreeve.
