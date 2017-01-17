@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "2.9.1",
+  "version": "2.10.0",
   "keywords": [
     "assembler",
     "builder",
@@ -56,10 +56,10 @@
     "commander": "~2.9.0",
     "commonjs-require-definition": "~0.5.0",
     "debug": "~2.2.0",
-    "deppack": "brunch/deppack",
-    "deps-install": "brunch/deps-install",
+    "deppack": "~0.7.0",
+    "deps-install": "~0.1.0",
     "fcache": "~0.3.0",
-    "init-skeleton": "brunch/init-skeleton#yarn",
+    "init-skeleton": "~1.0.0",
     "loggy": "~0.3.3",
     "micro-es7-shim": "^0.1.0",
     "micro-promisify": "~0.1.0",
