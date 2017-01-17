@@ -45,11 +45,11 @@ Some more:
 
 * [paulmillr/loggy](https://github.com/paulmillr/loggy) is a lightweight logging library.
 * [paulmillr/chokidar](https://github.com/paulmillr/chokidar) is behind Brunch's file watching magic.
-* [paulmillr/pushserver](https://github.com/paulmillr/pushserve) is the default http server.
+* [paulmillr/pushserver](https://github.com/paulmillr/pushserve) is the default HTTP server.
 
 Where the documentation lives:
 
-* [brunch/brunch.github.io](https://github.com/brunch/brunch.github.io) @ `source/assets/_docs`
+* [brunch/brunch.github.io](https://github.com/brunch/brunch.github.io/tree/source/app/assets/_docs)
 * [brunch/brunch-guide](https://github.com/brunch/brunch-guide)
 
 #### How to set up the dev env
