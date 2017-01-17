@@ -5,10 +5,13 @@ To install the latest version, execute `npm install -g brunch`
 * CLI improvements:
   * Allowed usage of `--config` param to specify a path to Brunch config file.
   * Fixed `--debug` option. It works now.
-* `bower install` is running automatically now.
-* Improved error messages.
-* Fixed copying of binary files.
-* Various Node 7 improvements.
+* `bower install` runs automatically now.
+* Improved error messages. Thanks @lydell.
+* Fixed double error logging. Thanks @stelmakh.
+* Fixed persistent errors in static files compilers.
+* Fixed infinite compilation caused by file writes in `preCompile`.
+* Plugins now can change file path.
+* New API for changing file extension: `.targetExtension`.
 * Other code refactorings and fixes.
 
 ## Brunch 2.9 (Oct 23, 2016)
