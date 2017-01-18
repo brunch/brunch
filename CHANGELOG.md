@@ -3,8 +3,8 @@ To install the latest version, execute `npm install -g brunch`
 ## Brunch 2.10 (Jan 13, 2017)
 * Added [yarn](https://yarnpkg.com/) support.
 * CLI improvements:
-  * Allowed usage of `--config` param to specify a path to Brunch config file.
-  * Fixed `--debug` option. It works now.
+  * Undeprecated `--config` for specifying Brunch config file. Thanks @stelmakh.
+  * Fixed `--debug` option. Thanks @denysdovhan.
 * `bower install` runs automatically now.
 * Improved error messages. Thanks @lydell.
 * Fixed double error logging. Thanks @stelmakh.
@@ -12,6 +12,7 @@ To install the latest version, execute `npm install -g brunch`
 * Fixed infinite compilation caused by file writes in `preCompile`.
 * Plugins now can change file path.
 * New API for changing file extension: `.targetExtension`.
+* Brunch now respects `NODE_ENV` variable.
 * Other code refactorings and fixes.
 
 ## Brunch 2.9 (Oct 23, 2016)
