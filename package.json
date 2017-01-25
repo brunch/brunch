@@ -32,7 +32,8 @@
   "main": "./lib/index",
   "files": [
     "bin",
-    "lib"
+    "lib",
+    "logo.png"
   ],
   "bin": {
     "brunch": "./bin/brunch"
