@@ -74,7 +74,7 @@
     "universal-path": "^0.1.0"
   },
   "devDependencies": {
-    "ava": "~0.17.0",
+    "ava": "~0.16.0",
     "eslint": "^3.0.0",
     "eslint-config-brunch": "brunch/eslint-config-brunch",
     "fixturify": "^0.2.0",
