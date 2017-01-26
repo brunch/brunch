@@ -61,7 +61,7 @@
     "deps-install": "~0.1.0",
     "fcache": "~0.3.0",
     "init-skeleton": "~1.0.0",
-    "loggy": "shvaikalesh/loggy",
+    "loggy": "~1.0.0",
     "micro-es7-shim": "^0.1.0",
     "micro-promisify": "~0.1.0",
     "mkdirp": "~0.5.0",
