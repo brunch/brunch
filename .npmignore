@@ -10,3 +10,4 @@ ISSUE_TEMPLATE.md
 *~
 *.bak
 .DS_Store
+yarn.lock
