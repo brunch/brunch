@@ -44,7 +44,8 @@ var loadBrunch = function(libPath) {
   // This approach is only needed for watch command.
   if ((cmd === 'w' || cmd === 'watch') && fs.existsSync(runCli)) {
     try {
-      return runSeparateWatchProcess(runCli);
+      runSeparateWatchProcess(runCli);
+      return;
     } catch (e) {
       // empty
     }
