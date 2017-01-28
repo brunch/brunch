@@ -21,15 +21,6 @@ if (parseInt(version) < 4) {
 global[Symbol.for('start-time')] = Date.now();
 
 var files = {old: 'cli.js', new: 'run-cli.js'};
-var exists = function(path) {
-  try {
-    fs.accessSync(path);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
-
 var runSeparateWatchProcess = function(cliPath) {
   process.env.BRUNCH_FORKED_PROCESS = 'true';
   var args = process.env.BRUNCH_DEVTOOLS ? ['--inspect', '--debug-brk'] : process.execArgv;
@@ -47,11 +38,11 @@ var runSeparateWatchProcess = function(cliPath) {
 };
 
 var loadBrunch = function(libPath) {
-  var arg = process.argv[2];
+  var cmd = process.argv[2];
+  var runCli = join(libPath, files.new);
 
   // This approach is only needed for watch command.
-  var runCli = join(libPath, files.new);
-  if ((arg === 'w' || arg === 'watch') && exists(runCli)) {
+  if ((cmd === 'w' || cmd === 'watch') && fs.existsSync(runCli)) {
     try {
       return runSeparateWatchProcess(runCli);
     } catch (e) {
@@ -69,7 +60,7 @@ var loadGlobalBrunch = function() {
 };
 
 var localPath = join(sysPath.resolve('.'), 'node_modules', 'brunch', 'lib', files.old);
-if (exists(localPath)) {
+if (fs.existsSync(localPath)) {
   try {
     loadBrunch(sysPath.dirname(localPath));
   } catch (error) {
