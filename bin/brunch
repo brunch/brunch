@@ -51,7 +51,7 @@ var loadBrunch = function(libPath) {
     }
   }
 
-  // This is needed to support cases when the local brunch is of an older version
+  // This is needed to support cases when the local Brunch is of an older version
   // and does not have a run-cli.js file.
   require(join(libPath, files.old)).run();
 };
