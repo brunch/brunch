@@ -69,6 +69,7 @@
     "since-app-start": "~0.3",
     "skemata": "~0.1",
     "source-map": "~0.5",
+    "promise.prototype.finally": "^2",
     "universal-path": "^0.1"
   },
   "devDependencies": {
