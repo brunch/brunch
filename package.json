@@ -40,8 +40,7 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && LOGGY_STACKS=true ava -s --verbose --fail-fast",
-    "test:coverage": "nyc ava -s && nyc report --reporter=html"
+    "test": "npm run lint && LOGGY_STACKS=true ava -s --verbose --fail-fast"
   },
   "engines": {
     "node": ">= 4.0",
@@ -78,7 +77,6 @@
     "eslint-config-brunch": "^1",
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
-    "nyc": "^6.4.2",
     "rewire": "^2.5",
     "test-console": "^1"
   },
