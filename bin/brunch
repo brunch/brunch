@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// Not using ES6 in that file since we want it to "launch" on older nodes.
+// Not using ES6 in that file since we want it to launch on older nodes.
 /* eslint-disable prefer-arrow-callback, prefer-template */
 /* eslint-env es6:false */
 var version = process.versions.node;
@@ -17,6 +17,7 @@ if (parseInt(version) < 4) {
   process.exit(1);
 }
 
+// See https://github.com/paulmillr/since-app-start
 var startTime = Symbol.for('start-time');
 global[startTime] = Date.now();
 
