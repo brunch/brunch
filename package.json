@@ -29,13 +29,13 @@
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
-  "main": "./lib/index",
+  "main": "lib",
   "files": [
     "bin",
     "lib"
   ],
   "bin": {
-    "brunch": "./bin/brunch"
+    "brunch": "bin/brunch"
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
@@ -63,12 +63,12 @@
     "micro-es7-shim": "^0.1",
     "micro-promisify": "~0.1",
     "mkdirp": "~0.5",
+    "promise.prototype.finally": "^2",
     "read-components": "~0.7",
     "serve-brunch": "~0.1",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
     "source-map": "~0.5",
-    "promise.prototype.finally": "^2",
     "universal-path": "^0.1"
   },
   "devDependencies": {
