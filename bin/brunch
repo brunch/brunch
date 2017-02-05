@@ -22,27 +22,16 @@ var startTime = Symbol.for('start-time');
 global[startTime] = Date.now();
 
 var sysPath = require('path');
-var fs = require('fs');
 
-var loadBrunch = function(libPath) {
+try {
+  var localPath = sysPath.join('node_modules', 'brunch');
   require(libPath).run();
-};
+} catch (error) {
+  console.error(
+    'Brunch: Local install exists, but failed to load it. ' +
+    'Continuing with global install:', error
+  );
 
-var loadGlobalBrunch = function() {
-  loadBrunch(sysPath.join(fs.realpathSync(__dirname), '..', 'lib'));
-};
-
-var localPath = sysPath.join('node_modules', 'brunch');
-if (fs.existsSync(localPath)) {
-  try {
-    loadBrunch(sysPath.dirname(localPath));
-  } catch (error) {
-    console.error(
-      'Brunch: Local install exists, but failed to load it. ' +
-      'Continuing with global install:', error
-    );
-    loadGlobalBrunch();
-  }
-} else {
-  loadGlobalBrunch();
+  var globalPath = sysPath.join(__dirname, '..');
+  require(globalPath).run();
 }
