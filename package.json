@@ -65,7 +65,7 @@
     "micro-promisify": "~0.1",
     "mkdirp": "~0.5",
     "read-components": "~0.7",
-    "serve-brunch": "~0.1",
+    "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
     "source-map": "~0.5",
