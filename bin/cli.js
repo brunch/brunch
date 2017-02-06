@@ -64,18 +64,18 @@ cli
   .option('--public-path <path>', 'relative path to `public` directory')
   .action(run(brunch.watch));
 
-const generateRemoved = `\`brunch generate / destroy\` command has been removed.
+const generateRemoved = `\`brunch generate / destroy\` command was removed.
 
 Use scaffolt (https://github.com/paulmillr/scaffolt) successor or similar:
-\tnpm install -g scaffolt
-\tscaffolt <type> <name> [options]
-\tscaffolt <type> <name> [options] --revert`;
+  npm install -g scaffolt
+  scaffolt <type> <name> [options]
+  scaffolt <type> <name> [options] --revert`;
 
-const testRemoved = `\`brunch test\` command has been removed.
+const testRemoved = `\`brunch test\` command was removed.
 
 Use mocha-phantomjs (https://github.com/nathanboktae/mocha-phantomjs) successor or similar:
-\tnpm install -g mocha-phantomjs
-\tmocha-phantomjs [options] <your-html-file-or-url>`;
+  npm install -g mocha-phantomjs
+  mocha-phantomjs [options] <your-html-file-or-url>`;
 
 cli
   .command('*')
