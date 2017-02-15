@@ -18,6 +18,11 @@ const noWarn = helpers.noWarn;
 const noError = helpers.noError;
 const fixturify = require('fixturify');
 
+const build = (options, onCompile) => {
+  options.onCompile = onCompile;
+  brunch.build(options);
+};
+
 process.setMaxListeners(0);
 
 test.beforeEach(() => {
@@ -102,7 +107,7 @@ test.serial.cb('compiler chaining: compiler.targetExtension', t => {
     'postcss-brunch': postcssBrunch,
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/style.css');
     fileContains(t, 'public/style.css', '{-webkit-backdrop');
 
@@ -156,7 +161,7 @@ test.serial.cb('compileStatic changes path', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileDoesNotExist(t, 'public/test.built');
     fileExists(t, 'public/hello.built');
     fileEquals(t, 'public/hello.built', 'Hello, world!');
@@ -212,7 +217,7 @@ test.serial.cb('compiler chaining: returning path', t => {
     'postcss-brunch': postcssBrunch,
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/style.css');
     fileContains(t, 'public/style.css', '{-webkit-backdrop');
 
@@ -240,7 +245,7 @@ test.serial.cb('basic build', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `
@@ -277,7 +282,7 @@ test.serial.cb('basic file joining', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
     fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
@@ -328,7 +333,7 @@ test.serial.cb('multi file output', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/javascripts/app.js.map');
     fileExists(t, 'public/javascripts/vendor.js.map');
     const appJs = `require.register("a.js", function(exports, require, module) {
@@ -385,7 +390,7 @@ test.serial.cb('entry points', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/bundle.js.map');
     fileContains(t, 'public/bundle.js', '//# sourceMappingURL=bundle.js.map');
     fileDoesNotContain(t, 'public/bundle.js', `notrequired`);
@@ -441,7 +446,7 @@ test.serial.cb('multi entry points', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/bundle1.js.map');
     fileExists(t, 'public/bundle2.js.map');
     fileContains(t, 'public/bundle1.js', '//# sourceMappingURL=bundle1.js.map');
@@ -502,7 +507,7 @@ test.serial.cb('customize paths.public config', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
@@ -517,19 +522,14 @@ test.serial.cb('customize paths.public config', t => {
 
 test.serial.cb('npm integration', t => {
   fixturify.writeSync('.', {
-    'package.json': `
-      {
-        "dependencies": {
-          "react": "0.14.0",
-          "react-dom": "0.14.0",
-          "socrates": "1.0.2",
-          "bignumber.js": "*"
-        },
-        "devDependencies": {
-          "javascript-brunch": "^2.0.0"
-        }
+    'package.json': `{
+      "dependencies": {
+        "react": "0.14.0",
+        "react-dom": "0.14.0",
+        "socrates": "1.0.2",
+        "bignumber.js": "*"
       }
-    `,
+    }`,
     'brunch-config.js': `
       module.exports = {
         files: {
@@ -557,7 +557,7 @@ test.serial.cb('npm integration', t => {
   });
 
   npmInstall(() => {
-    brunch.build({}, () => {
+    build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
@@ -592,20 +592,17 @@ test.serial.cb('npm integration', t => {
 
 test.serial.cb('compiling npm packages', t => {
   fixturify.writeSync('.', {
-    'package.json': `
-      {
-        "dependencies": {
-          "credit-card": "2.0.0"
-        },
-        "devDependencies": {
-          "javascript-brunch": "^2.0.0",
-          "babel-brunch": "^6.0.4",
-          "babel-preset-es2015": "^6.0.0",
-          "babel-preset-es2016": "^6.0.0",
-          "babel-plugin-syntax-exponentiation-operator": "^6.0.0"
-        }
+    'package.json': `{
+      "dependencies": {
+        "credit-card": "2.0.0"
+      },
+      "devDependencies": {
+        "babel-brunch": "^6.0.4",
+        "babel-preset-es2015": "^6.0.0",
+        "babel-preset-es2016": "^6.0.0",
+        "babel-plugin-syntax-exponentiation-operator": "^6.0.0"
       }
-    `,
+    }`,
     'brunch-config.js': `
       module.exports = {
         files: {
@@ -626,7 +623,7 @@ test.serial.cb('compiling npm packages', t => {
   });
 
   npmInstall(() => {
-    brunch.build({}, () => {
+    build({}, () => {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
@@ -667,7 +664,7 @@ test.serial.cb('config override', t => {
     },
   });
 
-  brunch.build({env: 'custom'}, () => {
+  build({env: 'custom'}, () => {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
@@ -701,7 +698,7 @@ test.serial.cb('modules.definition option', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/app.js.map');
     fileEquals(t, 'public/app.js', '(function() {console.log("hello world")\n})();\n//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
@@ -765,7 +762,7 @@ test.serial.cb('static compilation', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileDoesNotExist(t, 'public/test.emp');
     fileExists(t, 'public/test.built');
     fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
@@ -790,7 +787,7 @@ test.serial.cb('join templates according to joinTo option', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileDoesNotExist(t, 'public/a.emp');
     fileDoesNotExist(t, 'public/b.built');
     fileContains(t, 'public/all.js', 'hello^world');
@@ -816,7 +813,7 @@ test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileContains(t, 'public/all.js', 'hello^world');
     fileContains(t, 'public/all.js', 'module^exports');
     t.end();
@@ -843,7 +840,7 @@ test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t 
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileContains(t, 'public/templates.js', 'hello^world');
     fileContains(t, 'public/templates.js', 'module^exports');
     t.end();
@@ -865,7 +862,7 @@ test.serial.cb('inline source maps', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileDoesNotExist(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=data:application/json;charset=utf-8;base64,');
 
@@ -880,12 +877,8 @@ test.serial.cb('include getter', t => {
   fixturify.writeSync('.', {
     'package.json': `{
       "name": "brunch-app",
-      "description": "Description",
-      "author": "Your Name",
       "version": "0.1.0",
-      "dependencies": {},
       "devDependencies": {
-        "javascript-brunch": "^2.0.0",
         "include-brunch": "file:include-brunch"
       }
     }`,
@@ -922,7 +915,7 @@ test.serial.cb('include getter', t => {
     },
   });
 
-  brunch.build({}, () => {
+  build({}, () => {
     fileExists(t, 'public/app.js');
     fileContains(t, 'public/app.js', 'Math.pow');
     t.end();
