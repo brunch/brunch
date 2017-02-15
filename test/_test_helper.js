@@ -43,6 +43,7 @@ const createBowerJson = () => {
 const prepareTestDir = () => {
   fs.mkdirsSync(tmp);
   process.chdir(tmp);
+  fs.mkdirSync('node_modules');
   createPackageJson();
   createBowerJson();
 };
