@@ -35,8 +35,7 @@ if (fs.exists(localPath)) {
   } catch (error) {
     console.error(
       'Brunch: Local install exists, but failed to load it.\n' +
-      'Continuing with global install:\n' +
-      error
+      'Continuing with global install:\n' + error
     );
 
     loadBrunch(__dirname);
