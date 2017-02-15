@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 
 const rootPath = process.cwd();
-const tmp = path.join(require('os').tmpDir(), 'brunch-tests');
+const tmp = path.join(require('os').tmpdir(), 'brunch-tests');
 
 const createPackageJson = () => {
   const minimalJson = `{
