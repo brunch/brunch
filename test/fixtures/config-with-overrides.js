@@ -1,13 +1,14 @@
+'use strict';
 module.exports = {
   overrides: {
     test: {
       paths: {
-        public: 'tmp'
-      }
-    }
+        public: 'tmp',
+      },
+    },
   },
   files: {},
   paths: {
-    watched: ['app', 'test']
-  }
+    watched: ['app', 'test'],
+  },
 };
