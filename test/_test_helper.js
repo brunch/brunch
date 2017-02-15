@@ -10,6 +10,7 @@ const createPackageJson = () => {
   const minPackage = JSON.stringify({
     name: 'brunch-app',
     version: '0.1.0',
+    license: 'MIT',
     dependencies: {},
     devDependencies: {},
   });
