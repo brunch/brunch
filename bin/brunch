@@ -44,5 +44,3 @@ if (fs.exists(localPath)) {
 } else {
   loadBrunch(__dirname);
 }
-
-
