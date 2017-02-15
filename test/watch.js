@@ -40,10 +40,11 @@ const closeWatcher = cb => {
     // close chokidar to prevent that it understands the fixtures being copied as new files being added
     watcher.watcher.close();
     if (watcher.server) {
-      return watcher.server.close(cb);
+      watcher.server.close(cb);
+      return;
     }
   }
-  return cb();
+  cb();
 };
 
 test.beforeEach(() => {
