@@ -16,22 +16,23 @@ let watcher;
 
 const EventEmitter = require('events');
 
-const watch = (params, fn) => {
+const watch = (params, genFn) => {
   const compileEmitter = new EventEmitter();
-  const onCompile = () => {
-    compileEmitter.emit('compiled');
-  };
-
   const compilation = () => {
     compileEmitter.once('compiled', () => it.next());
+  };
+
+  params.onCompile = () => {
+    compileEmitter.emit('compiled');
   };
 
   params._onReload = newWatcher => {
     watcher = newWatcher;
   };
-  watcher = brunch.watch(params, onCompile);
 
-  const it = fn(compilation);
+  watcher = brunch.watch(params);
+
+  const it = genFn(compilation);
   it.next();
 };
 
