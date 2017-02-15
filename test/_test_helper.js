@@ -7,18 +7,14 @@ const rootPath = process.cwd();
 const tmp = path.join(require('os').tmpdir(), 'brunch-tests');
 
 const createPackageJson = () => {
-  const minimalJson = `{
-    "name": "brunch-app",
-    "description": "Description",
-    "author": "Your Name",
-    "version": "0.1.0",
-    "dependencies": {},
-    "devDependencies": {
-      "javascript-brunch": "^2.0.0"
-    }
-  }`;
+  const minPackage = JSON.stringify({
+    name: 'brunch-app',
+    version: '0.1.0',
+    dependencies: {},
+    devDependencies: {},
+  });
 
-  fs.writeFileSync('package.json', minimalJson);
+  fs.writeFileSync('package.json', minPackage);
 };
 
 const createBowerJson = () => {
