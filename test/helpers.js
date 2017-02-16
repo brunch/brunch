@@ -40,9 +40,9 @@ test('applyOverrides / should resolve plugins.on|off merge', t => {
     paths: {},
     hooks: {},
   };
-  applyOverrides(config, [
+  applyOverrides([
     'foo', 'bar', 'baz',
-  ]);
+  ])(config);
   t.deepEqual(config.plugins, {
     on: ['c', 'b'],
     off: ['a'],
