@@ -10,13 +10,14 @@ const getFolderName = path => {
 process.chdir(path.join(__dirname, 'fixtures'));
 
 test('loads the config without overriding', function* (t) {
-  const opts = {
+  const cfg = {
+    env: [],
     paths: {
       config: 'config-with-overrides.js',
     },
   };
 
-  const brunchConfig = yield loadConfig([], opts);
+  const brunchConfig = yield loadConfig(cfg);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
   t.is(getFolderName(brunchConfig.paths.public), 'public');
@@ -24,13 +25,14 @@ test('loads the config without overriding', function* (t) {
 });
 
 test('overrides the config using the specified env', function* (t) {
-  const opts = {
+  const cfg = {
+    env: ['test'],
     paths: {
       config: 'config-with-overrides.js',
     },
   };
 
-  const brunchConfig = yield loadConfig(['test'], opts);
+  const brunchConfig = yield loadConfig(cfg);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
   t.is(brunchConfig.paths.public, 'tmp');
@@ -38,13 +40,14 @@ test('overrides the config using the specified env', function* (t) {
 });
 
 test('removes trailing slash from paths', function* (t) {
-  const opts = {
+  const cfg = {
+    env: [],
     paths: {
       config: 'config-with-trailing-slashes.js',
     },
   };
 
-  const brunchConfig = yield loadConfig([], opts);
+  const brunchConfig = yield loadConfig(cfg);
 
   t.deepEqual(brunchConfig.paths.watched, ['app/assets']);
   t.is(brunchConfig.paths.public, 'app/builds');
