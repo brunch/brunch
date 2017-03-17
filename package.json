@@ -43,8 +43,7 @@
     "test": "npm run lint && LOGGY_STACKS=true ava -s --verbose --fail-fast"
   },
   "engines": {
-    "node": ">= 4.0",
-    "npm": ">= 3.0"
+    "node": ">= 6"
   },
   "dependencies": {
     "anymatch": "~1.3",
