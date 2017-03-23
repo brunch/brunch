@@ -56,7 +56,6 @@
     "debug": "~2.2",
     "deppack": "~0.7",
     "deps-install": "~0.1",
-    "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0",
     "micro-es7-shim": "^0.1",
