@@ -62,6 +62,7 @@
     "mkdirp": "~0.5",
     "pify": "^2.3.0",
     "promise.prototype.finally": "^2",
+    "quickly-copy-file": "^1.0",
     "read-components": "~0.7",
     "serve-brunch": "~0.1",
     "since-app-start": "~0.3",
