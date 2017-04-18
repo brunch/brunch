@@ -1,0 +1,13 @@
+{
+  "template": "nodejs",
+  "ports": [3000],
+  "name": "Brunch Development Environment",
+  "logo": "http://i.imgur.com/aePKLBU.png",
+  "description": "Ready made Nitrous project for creating all manner of Brunch web applications.",
+  "scripts": {
+    "Start Working Directory's Brunch Server": "brunch watch -s",
+    "Start brunch-babel-es6 Server": "cd ~/code/brunch-babel-es6 && brunch watch -s",
+    "Start brunch-exim-react Server": "cd ~/code/brunch-exim-react && brunch watch -s",
+    "Start brunch-chaplin Server": "cd ~/code/brunch-chaplin && brunch watch -s"
+  }
+}

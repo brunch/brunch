@@ -42,6 +42,16 @@ See the [CONTRIBUTING.md](https://github.com/brunch/brunch/blob/master/CONTRIBUT
 - To enable debug mode, simply pass `-d` flag to any command like that: `brunch build -d`
 - To create your own plugin, check out our [plugin boilerplate](https://github.com/brunch/brunch-boilerplate-plugin) as a starting point.
 
+## Nitrous Quickstart
+
+With [Nitrous.io](https://www.nitrous.io/) you can create a ready-made Brunch development environnment in just a few minutes at the click of a button.
+
+[Sign up](https://www.nitrous.io/app/#/signup) and [login](https://www.nitrous.io/app/#/login) to the Nitrous platform then click the button below to begin the Quickstart project creation process:
+
+[![Nitrous Quickstart](https://nitrous-image-icons.s3.amazonaws.com/quickstart.svg)](https://www.nitrous.io/quickstart?repo=https://github.com/brunch/brunch)
+
+For further detailed instructions on how to proceed - read through [this repository's Quickstart readme file](https://github.com/brunch/brunch/blob/master/nitrous.readme.md).
+
 ## License
 
 Brunch is released under the MIT License.
