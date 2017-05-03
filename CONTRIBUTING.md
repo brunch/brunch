@@ -28,16 +28,6 @@ Brunch, the tool, is split across several modules:
   It ties everything together to provide the build tool you'll love.
   Generally, if something doesn't fit into the other repos, it goes here.
 
-* [brunch/deppack](https://github.com/brunch/deppack) is at heart of Brunch 2's new NPM integration.
-  If it has to do with exposing NPM modules to the browser, it most likely belongs here.
-
-* [brunch/node-browser-modules](https://github.com/brunch/node-browser-modules) exposes browser shims for Node modules.
-  This one is used by `deppack`.
-
-* [brunch/commonjs-require-definition](https://github.com/brunch/commonjs-require-definition) is the CommonJS runtime.
-  It handles how modules are registered and required.
-  This probably shouldn't be touched unless there is a new deppack feature that needs some changes to the runtime.
-
 * [brunch/init-skeleton](https://github.com/brunch/init-skeleton) helps you create new Brunch apps.
   It uses the list of skeletons from [brunch/skeletons](https://github.com/brunch/skeletons)
 
