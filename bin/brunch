@@ -17,10 +17,6 @@ if (parseInt(version) < 4) {
   process.exit(1);
 }
 
-// See https://github.com/paulmillr/since-app-start
-var startTime = Symbol.for('start-time');
-global[startTime] = Date.now();
-
 var sysPath = require('path');
 var fs = require('fs');
 
