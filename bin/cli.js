@@ -3,18 +3,6 @@ const cli = require('commander');
 const logger = require('loggy');
 const brunch = require('..');
 
-const checkLegacyNewArgs = (path, options) => {
-  let skeleton = options.skeleton;
-  if (!skeleton && args.length > 4) {
-    path = args[4];
-    skeleton = args[3];
-
-    logger.error(`\`brunch new ${skeleton} ${path}\` is deprecated. Use \`brunch new ${path} -s ${skeleton}\``);
-  } else {
-    brunch.new(path, skeleton);
-  }
-};
-
 const list = items => items.split(/\s*,\s*/);
 const int = Math.trunc;
 
@@ -31,7 +19,6 @@ cli
   .description('Create new Brunch project in path.')
   .alias('n')
   .option('-s, --skeleton <alias>', 'skeleton alias or URL from brunch.io/skeletons')
-  .action(checkLegacyNewArgs)
   .on('--help', () => {
     require('init-skeleton').printBanner('brunch new -s');
   });
@@ -64,49 +51,16 @@ cli
   .option('--public-path <path>', 'relative path to `public` directory')
   .action(run(brunch.watch));
 
-const generateRemoved = `\`brunch generate / destroy\` command was removed.
-
-Use scaffolt (https://github.com/paulmillr/scaffolt) successor or similar:
-  npm install -g scaffolt
-  scaffolt <type> <name> [options]
-  scaffolt <type> <name> [options] --revert`;
-
-const testRemoved = `\`brunch test\` command was removed.
-
-Use mocha-phantomjs (https://github.com/nathanboktae/mocha-phantomjs) successor or similar:
-  npm install -g mocha-phantomjs
-  mocha-phantomjs [options] <your-html-file-or-url>`;
-
 cli
   .command('*')
   .action(cmd => {
-    if (['g', 'generate', 'd', 'destroy'].includes(cmd)) logger.error(generateRemoved);
-    else if (['t', 'test'].includes(cmd)) logger.error(testRemoved);
-    else cli.help();
+    cli.help();
   });
-
-const logDeprecations = () => {
-  if (args.includes('-o') || args.includes('--optimize')) {
-    logger.error('`--optimize` has been removed. Use `-p / --production`');
-  }
-
-  const pIndex = args.indexOf('-p');
-  if (pIndex === -1) return;
-
-  const port = +args[pIndex + 1];
-  if (!Number.isInteger(port)) return;
-
-  const correct = args.slice(1).map(arg => arg === '-p' ? '-P' : arg).join(' ');
-  logger.error(`The \`-p\` option is no longer used to specify the port. Use \`-P\` instead, e.g. \`${correct}\``);
-};
 
 const args = process.argv.slice();
 
 // Need this since `brunch` binary will fork and run `run-cli`,
 // but we still want to see `brunch` in help.
 args[1] = 'brunch';
-
-logDeprecations();
-if (logger.errorHappened) process.exit(1);
 
 cli.parse(args);

@@ -25,7 +25,7 @@ var loadBrunch = function(binPath) {
 };
 
 var localPath = sysPath.join('node_modules', 'brunch', 'bin');
-if (fs.exists(localPath)) {
+if (fs.existsSync(localPath)) {
   try {
     loadBrunch(localPath);
   } catch (error) {
