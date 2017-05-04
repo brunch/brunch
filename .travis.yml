@@ -5,5 +5,3 @@ os:
 node_js:
   - 6
   - 7
-before_install:
-  - npm install bower@^1 -g
