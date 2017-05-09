@@ -3,7 +3,7 @@ const cli = require('commander');
 const logger = require('loggy');
 const brunch = require('..');
 
-const list = items => items.split(/\s*,\s*/);
+const list = arg => arg.split(/\s*,\s*/);
 const int = Math.trunc;
 
 const run = start => (path, options) => {
@@ -30,7 +30,6 @@ cli
   .option('-e, --env <list>', 'specify a set of override settings to apply', list, [])
   .option('-p, --production', 'same as `--env production`')
   .option('-c, --config <path>', 'specify a path to Brunch config file')
-  .option('-d, --debug [pattern]', 'print verbose debug output to stdout')
   .option('-j, --jobs <int>', 'parallelize the build', int)
   .action(run(brunch.build));
 
@@ -41,7 +40,6 @@ cli
   .option('-e, --env <list>', 'specify a set of override settings to apply', list, [])
   .option('-p, --production', 'same as `--env production`')
   .option('-c, --config <path>', 'specify a path to Brunch config file')
-  .option('-d, --debug [pattern]', 'print verbose debug output to stdout')
   .option('-j, --jobs <int>', 'parallelize the build', int)
   // watch-specific params:
   .option('-s, --server', 'run a simple HTTP server for the public dir on localhost')
@@ -57,10 +55,4 @@ cli
     cli.help();
   });
 
-const args = process.argv.slice();
-
-// Need this since `brunch` binary will fork and run `run-cli`,
-// but we still want to see `brunch` in help.
-args[1] = 'brunch';
-
-cli.parse(args);
+cli.parse(process.argv);
