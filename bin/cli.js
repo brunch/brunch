@@ -1,6 +1,5 @@
 'use strict';
 const cli = require('commander');
-const logger = require('loggy');
 const brunch = require('..');
 
 const list = arg => arg.split(/\s*,\s*/);
