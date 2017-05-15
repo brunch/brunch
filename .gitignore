@@ -1,6 +1,3 @@
-.DS_Store
-node_modules
+node_modules/
 npm-debug.log*
-.c9/
-.idea/
 yarn.lock
