@@ -1,13 +1,3 @@
-/test
-.lock-wscript
-.git/
-.editorconfig
-.eslintrc.json
-.travis.yml
-CHANGELOG.md
-CONTRIBUTING.md
-ISSUE_TEMPLATE.md
-*~
-*.bak
-.DS_Store
+.*
+test/
 yarn.lock
