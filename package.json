@@ -36,7 +36,7 @@
   "scripts": {
     "lint": "eslint lib/config/index.js",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && mocha"
+    "test": "mocha -r chai/register-should"
   },
   "engines": {
     "node": ">= 6.10"
