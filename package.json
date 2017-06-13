@@ -36,7 +36,7 @@
   "scripts": {
     "lint": "eslint lib/config/index.js",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "mocha test/**/*.js -r test/__harness -w"
+    "test": "mocha test/**/*.js -r test/_harness -w"
   },
   "engines": {
     "node": ">= 6.10"
@@ -64,7 +64,7 @@
     "chai-as-promised": "^6.0",
     "eslint": "^3.0",
     "eslint-config-brunch": "^1.0",
-    "mocha": "^3.3"
+    "mocha": "^3.4"
   },
   "optionalDependencies": {
     "coffee-script": "^1.12"
