@@ -1,5 +1,7 @@
 'use strict';
 const cli = require('commander');
+const {version} = require('../package.json');
+const {printBanner} = require('init-skeleton');
 const brunch = require('..');
 
 const list = arg => arg.split(/\s*,\s*/);
@@ -10,7 +12,7 @@ const run = start => (path, options) => {
 };
 
 cli
-  .version(require('../package.json').version, '-v, --version')
+  .version(version, '-v, --version')
   .usage('<command> [options]');
 
 cli
@@ -19,7 +21,7 @@ cli
   .alias('n')
   .option('-s, --skeleton <alias>', 'skeleton alias or URL from brunch.io/skeletons')
   .on('--help', () => {
-    require('init-skeleton').printBanner('brunch new -s');
+    printBanner('brunch new -s');
   });
 
 cli
@@ -50,7 +52,7 @@ cli
 
 cli
   .command('*')
-  .action(cmd => {
+  .action(() => {
     cli.help();
   });
 
