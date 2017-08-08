@@ -1,9 +1,9 @@
 {
-  "PKG_JSON_MISSING": "No package.json was found. That's where Brunch plugins need to be listed. Plugins tell Brunch how to compile your files, so without any plugins Brunch won't know what to do. To get started, run `npm init` to generate a package.json file and `npm install --save-dev javascript-brunch css-brunch` to install and save plugins for regular JS and CSS.",
-  "PKG_JSON_INVALID": "package.json has invalid syntax.",
+  "PKG_JSON_MISSING": "package.json was not found in root path of Brunch application (current directory by default). To get started, run `npm init` to generate a package.json file and `npm install brunch --save-dev` to install Brunch locally.",
+  "PKG_JSON_INVALID": "package.json has invalid syntax. Make sure you did not leave any trailing commas. #{error}",
+
   "NPM_NOT_COMMONJS": "Can't use npm integration with non-CommonJS modules format (current: `#{definition}`/`#{wrapper}`). Either set `config.modules.definition` and `config.modules.wrapper` to `commonjs` or disable npm integration (`config.npm.enabled: false`).",
   "RUN_NPM_INSTALL": "You probably need to execute `npm install` to install Brunch plugins.",
-  "CWD_INVALID": "Current directory is not Brunch application root path, as it does not contain package.json.",
   "CFG_NOT_OBJECT": "#{basename} must be a valid object.",
   "CFG_INVALID": "Config is not valid.",
   "CFG_NO_FILES": "#{basename} must have `files` property. Here's a minimal brunch-config.js to get you started:\n#{minimalConfig}",
