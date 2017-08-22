@@ -1,0 +1,6 @@
+parserOptions:
+  ecmaVersion: 8
+env:
+  mocha: true
+rules:
+  space-before-function-paren: off

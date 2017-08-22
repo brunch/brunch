@@ -34,12 +34,14 @@
     "brunch": "bin/brunch"
   },
   "scripts": {
-    "lint": "eslint lib/config/index.js",
-    "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "mocha test/**/*.js -r test/_harness -w"
+    "lint": "eslint lib",
+    "lint:fix": "eslint $npm_package_config_js --fix",
+    "test:unit": "mocha test/unit/plugins -r test/unit/__harness",
+    "test:e2e": "mocha test/e2e -r test/e2e/_harness",
+    "test": "npm run lint && npm run test:unit && npm run test:e2e"
   },
-  "engines": {
-    "node": ">= 6.10"
+  "config": {
+    "js": "bin lib test"
   },
   "dependencies": {
     "anymatch": "~1.3",
@@ -51,23 +53,23 @@
     "init-skeleton": "^1",
     "joi": "~10.6",
     "loggy": "^1",
-    "micro-es7-shim": "github:paulmillr/micro-es7-shim#new-version",
+    "micro-es7-shim": "paulmillr/micro-es7-shim#new-version",
     "mkdirp": "~0.5",
     "pify": "^3",
     "quickly-copy-file": "^1",
     "serve-brunch": "~0.2",
     "source-map": "~0.5",
-    "universal-path": "github:hellyeahllc/universal-path"
+    "universal-path": "hellyeahllc/universal-path"
   },
   "devDependencies": {
     "chai": "^4",
-    "chai-as-promised": "^7",
+    "chai-fs": "^1",
     "eslint": "^4",
-    "eslint-config-brunch": "^1",
+    "eslint-config-brunch": "brunch/eslint-config-brunch",
     "mocha": "^3"
   },
-  "optionalDependencies": {
-    "coffee-script": "^1.12"
+  "engines": {
+    "node": ">= 6.10"
   },
   "eslintConfig": {
     "extends": "brunch"
