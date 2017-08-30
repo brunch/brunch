@@ -1,24 +1,21 @@
 'use strict';
 const Module = require('module');
-const fs = require('fs');
-const sysPath = require('universal-path');
+const {_load} = Module;
 
+const fs = require('fs');
+const {readdirSync} = fs;
+
+const sysPath = require('universal-path');
 const libPath = sysPath.resolve('lib');
 const configPath = require.resolve(`${libPath}/config`);
 const pluginsPath = require.resolve(`${libPath}/plugins`);
 
 module.exports = (params = {}) => {
   const {
-    modulesDir = 'node_modules',
     modules = {},
+    modulesDir = 'node_modules',
     config,
   } = params;
-
-  delete require.cache[configPath];
-  delete require.cache[pluginsPath];
-
-  const {_load} = Module;
-  const {readdirSync} = fs;
 
   Module._load = function(...args) {
     const [name] = args;
@@ -33,6 +30,9 @@ module.exports = (params = {}) => {
       Object.keys(modules) :
       readdirSync.apply(this, args);
   };
+
+  delete require.cache[configPath];
+  delete require.cache[pluginsPath];
 
   try {
     require(configPath).init(config);
