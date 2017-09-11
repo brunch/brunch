@@ -3,55 +3,108 @@ const {co} = require('../../__utils');
 const init = require('./__plugins');
 
 describe('plugins', () => {
-  return;
-
-  it('exports `plugins` array', () => {
-    init().plugins.should.be.an('array');
-  });
-
-  it('`plugins` array is frozen', () => {
-    init().plugins.should.be.frozen;
-  });
-
-  it('exports `respondTo` method', () => {
-    init().respondTo.should.be.a('function');
-  });
-
-  it('skips non-classes', () => {
-    plugins({
-      'brunch-plugin': {
-        prototype: {
-          brunchPlugin: true,
+  describe('filtering by type', () => {
+    it('rejects non-classes', () => {
+      init({
+        modules: {
+          'brunch-plugin': {
+            prototype: {
+              brunchPlugin: true,
+            },
+          },
         },
-      },
+      }).plugins.should.be.empty;
     });
 
-    init().plugins.should.be.empty;
-  });
+    it('accepts classes with thruthy `brunchPlugin`', () => {
+      const modules = {
+        'brunch-boolean': class {
+          get brunchPlugin() {
+            return true;
+          }
+        },
+        'brunch-number': class {
+          get brunchPlugin() {
+            return 42;
+          }
+        },
+        'brunch-string': class {
+          get brunchPlugin() {
+            return 'yes';
+          }
+        },
+        'brunch-symbol': class {
+          get brunchPlugin() {
+            return Symbol();
+          }
+        },
+        'brunch-object': class {
+          get brunchPlugin() {
+            return {};
+          }
+        },
+        'brunch-function': class {
+          brunchPlugin() {}
+        },
+      };
 
-  it('skips classes without `brunchPlugin`', () => {
-    plugins({
-      'brunch-plugin': class {},
+      init({modules}).plugins.should.have.lengthOf(
+        Object.keys(modules).length
+      );
     });
 
-    init().plugins.should.be.empty;
-  });
-
-  it('does not throw on arrow functions', () => {
-    plugins({
-      'brunch-plugin': () => {},
+    it('rejects classes with falsy `brunchPlugin`', () => {
+      init({
+        modules: {
+          'brunch-missing': class {},
+          'brunch-undefined': class {
+            get brunchPlugin() {}
+          },
+          'brunch-null': class {
+            get brunchPlugin() {
+              return null;
+            }
+          },
+          'brunch-boolean': class {
+            get brunchPlugin() {
+              return false;
+            }
+          },
+          'brunch-number': class {
+            get brunchPlugin() {
+              return NaN;
+            }
+          },
+          'brunch-string': class {
+            get brunchPlugin() {
+              return '';
+            }
+          },
+        },
+      }).plugins.should.be.empty;
     });
 
-    init().plugins.should.be.empty;
+    it('does not throw on arrow functions', () => {
+      init({
+        modules: {
+          'brunch-plugin': () => {},
+        },
+      }).plugins.should.be.empty;
+    });
   });
 
   it('sets `brunchPluginName` property with correct descriptor', () => {
     const name = 'brunch-plugin';
-    plugins({
-      [name]: plugin(),
-    });
+    const [plugin] = init({
+      modules: {
+        [name]: class {
+          get brunchPlugin() {
+            return true;
+          }
+        },
+      },
+    }).plugins;
 
-    const [plugin] = init().plugins;
     plugin.should.have.ownPropertyDescriptor('brunchPluginName', {
       value: name,
       writable: false,
@@ -59,6 +112,12 @@ describe('plugins', () => {
       configurable: true,
     });
   });
+
+  describe('filtering by env', () => {
+
+  });
+
+  return;
 
   ///
 

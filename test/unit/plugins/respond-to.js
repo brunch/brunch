@@ -1,7 +1,7 @@
 'use strict';
 const init = require('./__plugins');
 
-describe('plugins.respondTo', () => {
+describe('`plugins.respondTo`', () => {
   it('is a function', () => {
     init().respondTo.should.be.a('function');
   });
@@ -14,12 +14,6 @@ describe('plugins.respondTo', () => {
         }
         fn() {}
       },
-      'brunch-gen-method': class {
-        get brunchPlugin() {
-          return true;
-        }
-        * fn() {}
-      },
       'brunch-arrow': class {
         constructor() {
           this.fn = () => {};
@@ -27,6 +21,12 @@ describe('plugins.respondTo', () => {
         get brunchPlugin() {
           return true;
         }
+      },
+      'brunch-generator': class {
+        get brunchPlugin() {
+          return true;
+        }
+        * fn() {}
       },
       'brunch-function': class {
         constructor() {
