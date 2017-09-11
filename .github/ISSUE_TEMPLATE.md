@@ -15,9 +15,10 @@ If at all possible, please create a small demo app on GitHub that demonstrates t
 ### Environment
 
 1. Brunch: *(make sure you're on the latest release!)*
-2. Node:
-3. NPM: *(npm v2 is not supported)*
-4. Operating system:
+1. Node.js:
+1. NPM: *(npm v2 is not supported)*
+1. Operating system:
+1. Code editor:
 
 ### `package.json` contents
 
