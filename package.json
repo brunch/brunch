@@ -52,7 +52,7 @@
     "anysort": "~1.0",
     "check-dependencies": "~1.1.0",
     "chokidar": "^1.6",
-    "coffee-script": "~1.12.7",
+    "coffeescript": "~1.12.7",
     "commander": "~2.12",
     "commonjs-require-definition": "~0.6.2",
     "debug": "~3.1",

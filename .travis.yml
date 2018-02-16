@@ -5,7 +5,8 @@ os:
 node_js:
   - 4
   - 6
-  - 7
+  - 8
+  - 9
 before_install:
   - npm install bower@^1 -g
   - npm install npm@3 -g
