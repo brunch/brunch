@@ -46,7 +46,7 @@ See the [CONTRIBUTING.md](https://github.com/brunch/brunch/blob/master/CONTRIBUT
 
 Brunch is released under the MIT License.
 
-Copyright (c) 2011-2016 Paul Miller, Elan Shanker, Nik Graf,
+Copyright (c) 2011-2018 Paul Miller, Elan Shanker, Nik Graf,
 Thomas Schranz, Allan Berger, Jan Monschke, Martin Schürrer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
