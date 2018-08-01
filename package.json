@@ -55,7 +55,7 @@
     "coffeescript": "~1.12.7",
     "commander": "~2.9",
     "commonjs-require-definition": "~0.6.2",
-    "deppack": "~0.7",
+    "deppack": "~0.8",
     "debug": "^3.1.0",
     "deps-install": "~0.1",
     "fcache": "~0.3",
