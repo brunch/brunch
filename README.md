@@ -1,10 +1,8 @@
 # Brunch
 
-[![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch)
-[![Join the chat at https://gitter.im/brunch/brunch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/brunch/brunch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Weekly downloads](https://img.shields.io/npm/dw/chokidar.svg)](https://github.com/paulmillr/chokidar) [![Yearly downloads](https://img.shields.io/npm/dy/chokidar.svg)](https://github.com/paulmillr/chokidar) [![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch) [![Join the chat at https://gitter.im/brunch/brunch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/brunch/brunch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![NPM](https://nodei.co/npm/brunch.png?compact=true)](https://nodei.co/npm/brunch/)
-[![NPM](https://nodei.co/npm-dl/brunch.png)](https://nodei.co/npm/brunch/)
 
 > HTML5 applications made easy.
 
