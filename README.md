@@ -1,12 +1,10 @@
-# Brunch
-
-[![Weekly downloads](https://img.shields.io/npm/dw/brunch.svg)](https://github.com/brunch/brunch) [![Yearly downloads](https://img.shields.io/npm/dy/brunch.svg)](https://github.com/brunch/brunch) [![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch) [![Join the chat at https://gitter.im/brunch/brunch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/brunch/brunch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![NPM](https://nodei.co/npm/brunch.png?compact=true)](https://nodei.co/npm/brunch/)
+# Brunch [![Weekly downloads](https://img.shields.io/npm/dw/brunch.svg)](https://github.com/brunch/brunch) [![Yearly downloads](https://img.shields.io/npm/dy/brunch.svg)](https://github.com/brunch/brunch) [![Build Status](https://travis-ci.org/brunch/brunch.svg?branch=master)](https://travis-ci.org/brunch/brunch) [![Join the chat at https://gitter.im/brunch/brunch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/brunch/brunch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 > HTML5 applications made easy.
 
 Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps
+
+[![NPM](https://nodei.co/npm/brunch.png?compact=true)](https://nodei.co/npm/brunch/)
 
 ## First steps
 
