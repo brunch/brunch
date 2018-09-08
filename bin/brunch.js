@@ -4,11 +4,11 @@ const {version} = require('../package.json');
 const {printBanner} = require('init-skeleton');
 const brunch = require('..');
 
-const list = arg => arg.split(/\s*,\s*/);
+const list = str => str.split(/\s*,\s*/);
 const int = Math.trunc;
 
 const run = start => (path, options) => {
-  start(Object.assign({path}, options));
+  start({path, ...options});
 };
 
 cli
