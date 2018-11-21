@@ -29,7 +29,7 @@
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
-  "main": "lib",
+  "main": "lib/brunch",
   "bin": {
     "brunch": "bin/brunch"
   },
@@ -55,8 +55,12 @@
     "mkdirp": "~0.5.1",
     "pify": "~4.0.0",
     "quickly-copy-file": "~1.0.0",
+    "rollup": "^0.66.2",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-node-resolve": "^3.4.0",
     "serve-brunch": "~0.2.1",
-    "source-map": "~0.7.3"
+    "source-map": "~0.7.3",
+    "universal-path": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^4",

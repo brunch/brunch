@@ -1,14 +1,20 @@
+#!/usr/bin/env node
+
 'use strict';
 const cli = require('commander');
 const {version} = require('../package.json');
-const {printBanner} = require('init-skeleton');
-const brunch = require('..');
+const initSkeleton = require('init-skeleton');
+const defaultSkeleton = process.env.BRUNCH_INIT_SKELETON || 'simple';
+const loggy = require('loggy');
+const fromCLI = require('./from-cli');
 
-const list = str => str.split(/\s*,\s*/);
-const int = Math.trunc;
-
-const run = start => (path, options) => {
-  start({path, ...options});
+const parseList = str => str.split(/\s*,\s*/);
+const withBuildOptions = cmd => {
+  return cmd
+    .option('-p, --production', 'shortcut for `--env production`')
+    .option('-e, --env <list>', 'specify a set of override settings to apply', parseList, [])
+    .option('-c, --config <path>', 'specify a path to Brunch config file')
+    .option('-j, --jobs <int>', 'parallelize the build', parseInt);
 };
 
 cli
@@ -20,35 +26,40 @@ cli
   .description('Create new Brunch project in path.')
   .alias('n')
   .option('-s, --skeleton <alias>', 'skeleton alias or URL from brunch.io/skeletons')
-  .on('--help', () => {
-    printBanner('brunch new -s');
+  .action((rootPath, {skeleton = defaultSkeleton}) => {
+    initSkeleton.init(skeleton, {
+      rootPath,
+      logger: loggy,
+      commandName: 'brunch new',
+    });
+  }).on('--help', () => {
+    initSkeleton.printBanner('brunch new -s');
   });
 
-cli
-  .command('build [path]')
-  .description('Build a Brunch project.')
-  .alias('b')
-  .option('-e, --env <list>', 'specify a set of override settings to apply', list, [])
-  .option('-p, --production', 'same as `--env production`')
-  .option('-c, --config <path>', 'specify a path to Brunch config file')
-  .option('-j, --jobs <int>', 'parallelize the build', int)
-  .action(run(brunch.build));
+withBuildOptions(
+  cli
+    .command('build [path]')
+    .description('Build a Brunch project.')
+    .alias('b')
+    .action((path, cmd) => {
+      fromCLI({path, ...cmd}).build();
+    })
+);
 
-cli
-  .command('watch [path]')
-  .description('Watch Brunch directory and rebuild if something changed.')
-  .alias('w')
-  .option('-e, --env <list>', 'specify a set of override settings to apply', list, [])
-  .option('-p, --production', 'same as `--env production`')
-  .option('-c, --config <path>', 'specify a path to Brunch config file')
-  .option('-j, --jobs <int>', 'parallelize the build', int)
-  // watch-specific params:
-  .option('-s, --server', 'run a simple HTTP server for the public dir on localhost')
-  .option('-n, --network', 'if `server` was given, allow access from the network')
-  .option('-P, --port <int>', 'if `server` was given, listen on this port', int)
-  .option('--stdin', 'listen to stdin and exit when stdin closes')
-  .option('--public-path <path>', 'relative path to `public` directory')
-  .action(run(brunch.watch));
+withBuildOptions(
+  cli
+    .command('watch [path]')
+    .description('Watch Brunch directory and rebuild if something changed.')
+    .alias('w')
+    .option('-s, --server', 'run a simple HTTP server for the public dir on localhost')
+    .option('-n, --network', 'if `server` was given, allow access from the network')
+    .option('-P, --port <int>', 'if `server` was given, listen on this port', parseInt)
+    .option('--stdin', 'listen to stdin and exit when stdin closes')
+    .option('--public-path <path>', 'relative path to `public` directory')
+    .action((path, cmd) => {
+      fromCLI({path, ...cmd}).watch();
+    })
+);
 
 cli
   .command('*')

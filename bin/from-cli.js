@@ -1,19 +1,6 @@
 'use strict';
-
-const logger = require('loggy');
-Object.assign(logger.notifications, {
-  app: 'Brunch',
-  icon: `${__dirname}/logo.png`,
-});
-
-const {toArr, uniq} = require('./utils');
-const {spin} = require('./workers');
-const cpus = require('os').cpus().length;
-const defaultJobs = Math.trunc(process.env.BRUNCH_JOBS || cpus / 2);
-const defaultConfig = 'brunch-config';
-const defaultSkeleton = process.env.BRUNCH_INIT_SKELETON || 'simple';
-const initSkeleton = require('init-skeleton').init;
-const Brunch = require('./brunch');
+const {toArr, uniq} = require('../lib/utils');
+const Brunch = require('..');
 
 const getEnv = params => {
   const env = toArr(params.env);
@@ -68,36 +55,15 @@ const applyParams = params => {
         process.exit(0);
       });
   }
-
-  spin(params.jobs || defaultJobs);
 };
 
-const brunchFactory = params => {
+const fromCLI = params => {
   applyParams(params);
 
-  const configPath = params.config || defaultConfig;
+  const configPath = params.config || 'brunch-config';
   const partConfig = normPartConfig(params);
 
   return new Brunch(configPath, partConfig);
 };
 
-exports.new = (rootPath, skeleton) => {
-  return initSkeleton(skeleton || defaultSkeleton, {
-    rootPath,
-    logger,
-    commandName: 'brunch new',
-  });
-};
-
-exports.watch = brunchFactory;
-exports.build = params => {
-  const brunch = brunchFactory(params);
-
-  brunch.on('compile', () => {
-    process.on('exit', code => {
-      process.exit(logger.errorHappened ? 1 : code);
-    });
-  });
-
-  return brunch;
-};
+module.exports = fromCLI;
