@@ -1,8 +1,9 @@
 # Brunch [![Weekly downloads](https://img.shields.io/npm/dw/brunch.svg)](https://github.com/brunch/brunch) [![Yearly downloads](https://img.shields.io/npm/dy/brunch.svg)](https://github.com/brunch/brunch)
 
-> HTML5 applications made easy.
+> Web applications made easy. Since 2011.
 
-Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps.
+
+Fast front-end web app build tool with simple declarative config and seamless incremental compilation for rapid development.
 
 ## Usage
 
