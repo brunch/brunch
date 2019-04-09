@@ -35,7 +35,7 @@
     "lib"
   ],
   "bin": {
-    "brunch": "./bin/brunch"
+    "brunch": "bin/brunch"
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
