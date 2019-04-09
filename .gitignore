@@ -1,8 +1,0 @@
-.DS_Store
-node_modules
-npm-debug.log*
-.c9/
-.idea/
-.nyc_output
-coverage
-yarn.lock
