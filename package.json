@@ -1,7 +1,7 @@
 {
   "name": "brunch",
-  "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "2.10.17",
+  "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development & opinionated pipeline and workflow",
+  "version": "3.0.0-pre",
   "keywords": [
     "assembler",
     "builder",
@@ -24,8 +24,8 @@
     "chaplin",
     "html5"
   ],
-  "homepage": "http://brunch.io/",
-  "author": "Brunch team (http://brunch.io)",
+  "homepage": "https://brunch.io/",
+  "author": "Brunch team (https://brunch.io)",
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
@@ -44,44 +44,30 @@
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
-    "node": ">= 4.0",
-    "npm": ">= 3.0"
+    "node": ">= 8.16"
   },
   "dependencies": {
-    "anymatch": "^2.0",
-    "anysort": "~1.0",
-    "check-dependencies": "~1.0.1",
-    "chokidar": "^2",
-    "coffeescript": "~1.12.7",
-    "commander": "~2.9",
+    "anymatch": "^3",
+    "anysort": "github:es128/anysort",
+    "chokidar": "^3",
+    "commander": "~3",
     "commonjs-require-definition": "~0.6.2",
-    "deppack": "~0.8",
     "debug": "^3.1.0",
+    "deppack": "github:brunch/deppack",
     "deps-install": "~0.1",
     "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0.3",
-    "micro-es7-shim": "^0.1",
+    "micro-check-dependencies": "github:paulmillr/micro-check-dependencies",
     "micro-promisify": "~0.1",
     "mkdirp": "~0.5",
-    "promise.prototype.finally": "^2",
-    "read-components": "~0.7",
     "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
     "source-map": "~0.5",
     "universal-path": "^0.1"
   },
-  "devDependencies": {
-    "ava": "~0.16",
-    "eslint": "^3",
-    "eslint-config-brunch": "^1",
-    "fixturify": "^0.2",
-    "fs-extra": "^0.30",
-    "nyc": "^13.0.0",
-    "rewire": "^2.5",
-    "test-console": "^1"
-  },
+  "devDependencies": {},
   "eslintConfig": {
     "extends": "brunch"
   }
