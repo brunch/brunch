@@ -44,7 +44,7 @@
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
-    "node": ">= 8.16"
+    "node": ">= 10.8"
   },
   "dependencies": {
     "anymatch": "^3",
@@ -58,8 +58,8 @@
     "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0.3",
-    "micro-check-dependencies": "github:paulmillr/micro-check-dependencies",
-    "micro-promisify": "~0.1",
+    "micro": "^9.3.4",
+    "micro-check-dependencies": "~0.1",
     "mkdirp": "~0.5",
     "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
