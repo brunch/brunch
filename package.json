@@ -44,7 +44,7 @@
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
-    "node": ">= 10.8"
+    "node": ">= 10.16"
   },
   "dependencies": {
     "anymatch": "^3",
