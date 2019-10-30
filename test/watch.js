@@ -18,20 +18,22 @@ const EventEmitter = require('events');
 const tearDownInterval = 1000;
 
 const watch = (params, fn) => {
-  return new Promise((resolve, reject) => {
-    const onCompile = () => {
-      resolve();
-    };
+  const compileEmitter = new EventEmitter();
+  const onCompile = () => {
+    compileEmitter.emit('compiled');
+  };
 
-    // const compilation = () => {
-    //   compileEmitter.once('compiled', () => it.next());
-    // };
+  const compilation = () => {
+    compileEmitter.once('compiled', () => it.next());
+  };
 
-    params._onReload = newWatcher => {
-      watcher = newWatcher;
-    };
-    watcher = brunch.watch(params, onCompile);
-  });
+  params._onReload = newWatcher => {
+    watcher = newWatcher;
+  };
+  watcher = brunch.watch(params, onCompile);
+
+  const it = fn(compilation);
+  it.next();
 };
 
 const closeWatcher = cb => {
@@ -76,8 +78,8 @@ test.serial.cb('compile on file changes', t => {
     },
   });
 
-  watch({}, async (compilation) => {
-    await compilation();
+  watch({}, function* (compilation) {
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
@@ -87,7 +89,7 @@ console.log("hello world")
 
     fs.writeFileSync('app/initialize.js', 'console.log("changed")');
 
-    await compilation();
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
@@ -115,8 +117,8 @@ test.serial.cb('detect file addition', t => {
     },
   });
 
-  watch({}, async (compilation) => {
-    await compilation();
+  watch({}, function* (compilation) {
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
@@ -126,7 +128,7 @@ console.log("hello world")
 
     fs.writeFileSync('app/new-file.js', 'console.log("new")');
 
-    await compilation();
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
@@ -158,8 +160,8 @@ test.serial.cb('detect file removal', t => {
     },
   });
 
-  watch({}, async (compilation) => {
-    await compilation();
+  watch({}, function* (compilation) {
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
@@ -172,7 +174,7 @@ fileb
 
     fs.unlinkSync('app/b.js');
 
-    await compilation();
+    yield compilation();
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
@@ -203,47 +205,16 @@ test.serial.cb('install npm packages if package.json changes', t => {
     },
   });
 
-  watch({}, async (compilation) => {
-    await compilation();
+  watch({}, function* (compilation) {
+    yield compilation();
     t.false(fs.readdirSync('./node_modules').includes('lodash'));
 
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     packageJson.dependencies.lodash = '*';
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
-    await compilation();
+    yield compilation();
     t.true(fs.readdirSync('./node_modules').includes('lodash'));
-    t.end();
-  });
-});
-
-test.serial.cb('install bower components if bower.json changes', t => {
-  fixturify.writeSync('.', {
-    'brunch-config.js': `module.exports = {
-      files: {
-        javascripts: {
-          joinTo: 'app.js'
-        }
-      }
-    };`,
-    app: {
-      assets: {
-        'index.html': '<h1>hello world</h1>',
-      },
-      'initialize.js': 'console.log("hello world")',
-    },
-  });
-
-  watch({}, async (compilation) => {
-    await compilation();
-    t.false(fs.readdirSync('./bower_components').includes('jquery'));
-
-    const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
-    bowerJson.dependencies.jquery = '*';
-    fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
-
-    await compilation();
-    t.true(fs.readdirSync('./bower_components').includes('jquery'));
     t.end();
   });
 });
@@ -268,8 +239,8 @@ test.serial.cb('reload config if it changes', t => {
     },
   });
 
-  watch({}, async (compilation) => {
-    await compilation();
+  watch({}, function* (compilation) {
+    yield compilation();
     fileDoesNotExist(t, 'dist/app.js.map');
     fileDoesNotExist(t, 'dist/app.js');
     fileDoesNotExist(t, 'dist/index.html');
@@ -287,7 +258,7 @@ test.serial.cb('reload config if it changes', t => {
       }
     };`);
 
-    await compilation();
+    yield compilation();
     fileExists(t, 'dist/app.js.map');
     fileExists(t, 'dist/app.js');
     fileExists(t, 'dist/index.html');
@@ -312,8 +283,8 @@ test.serial.cb('brunch server works', t => {
     },
   });
 
-  watch({server: true}, async (compilation) => {
-    await compilation();
+  watch({server: true}, function* (compilation) {
+    yield compilation();
     requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>hello world</h1>');
       t.end();
@@ -338,14 +309,14 @@ test.serial.cb('brunch server reload files', t => {
     },
   });
 
-  watch({server: true}, async (compilation) => {
-    await compilation();
+  watch({server: true}, function* (compilation) {
+    yield compilation();
     requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>hello world</h1>');
       fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
     });
 
-    await compilation();
+    yield compilation();
     requestBrunchServer('/', responseText => {
       t.is(responseText, '<h1>changed</h1>');
       t.end();
@@ -381,8 +352,8 @@ module.exports = {
     },
   });
 
-  watch({server: true}, async (compilation) => {
-    await compilation();
+  watch({server: true}, function* (compilation) {
+    yield compilation();
     requestBrunchServer('/', responseText => {
       t.is(responseText, 'hello from custom server');
       t.end();

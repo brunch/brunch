@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 
 const rootPath = process.cwd();
-const tmp = path.join(require('os').tmpDir(), 'brunch-tests');
+const tmp = path.join(require('os').tmpdir(), 'brunch-tests');
 
 const createPackageJson = () => {
   const minimalJson = `{
@@ -21,34 +21,10 @@ const createPackageJson = () => {
   fs.writeFileSync('package.json', minimalJson);
 };
 
-const createBowerJson = () => {
-  const minimalJson = `{
-    "name": "brunch-app",
-    "description": "Description",
-    "main": "",
-    "authors": "Your Name",
-    "license": "MIT",
-    "homepage": "",
-    "ignore": [
-      "**/.*",
-      "node_modules",
-      "bower_components",
-      "test",
-      "tests"
-    ],
-    "dependencies": {},
-    "devDependencies": {}
-  }`;
-
-  fs.writeFileSync('bower.json', minimalJson);
-  fs.mkdirSync('bower_components');
-};
-
 const prepareTestDir = () => {
   fs.mkdirsSync(tmp);
   process.chdir(tmp);
   createPackageJson();
-  createBowerJson();
 };
 
 const teardownTestDir = () => {
