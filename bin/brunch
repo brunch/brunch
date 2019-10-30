@@ -10,11 +10,10 @@ var fs = require('fs');
 var childProcessFork = require('child_process').fork;
 
 var version = process.versions.node;
-if (parseInt(version) < 4) {
-  console.error(
-    'Error: Brunch 2+ requires Node.js v4 or higher (you have v' + version + ') ' +
-    'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1'
-  );
+if (Number.parseInt(version, 10) < 10) {
+  const str = `Error: Brunch 3+ requires Node.js v10 or higher (you have v${version})
+  Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1`;
+  console.error(str);
   process.exit(1);
 }
 
@@ -65,10 +64,8 @@ if (fs.existsSync(localPath)) {
   try {
     loadBrunch(sysPath.dirname(localPath));
   } catch (error) {
-    console.error(
-      'Brunch: Local install exists, but failed to load it. ' +
-      'Continuing with global install:', error
-    );
+    const str = `Brunch: Local install exists, but failed to load it. Continuing with global install: ${error}`;
+    console.error(str);
     loadGlobalBrunch();
   }
 } else {
