@@ -7,7 +7,7 @@ const getFolderName = path => {
   return /([^/]*)\/*$/.exec(path)[1];
 };
 
-test('config: loads the config without overriding', async (t) => {
+test('config: loads the config without overriding', async t => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
   };
@@ -19,7 +19,7 @@ test('config: loads the config without overriding', async (t) => {
   t.deepEqual(watched, ['app', 'test']);
 });
 
-test('config: overrides the config using the specified env', async (t) => {
+test('config: overrides the config using the specified env', async t => {
   const opts = {
     env: 'meh',
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
@@ -32,7 +32,7 @@ test('config: overrides the config using the specified env', async (t) => {
   t.deepEqual(watched, ['app', 'test']);
 });
 
-test('config: removes trailing slash from paths', async (t) => {
+test('config: removes trailing slash from paths', async t => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-trailing-slashes.js'),
   };
