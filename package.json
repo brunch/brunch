@@ -43,8 +43,7 @@
     "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
-    "node": ">= 4.0",
-    "npm": ">= 3.0"
+    "node": ">= 10.16"
   },
   "dependencies": {
     "anymatch": "^2.0",
