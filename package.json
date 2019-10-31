@@ -49,7 +49,7 @@
     "anymatch": "^2.0",
     "anysort": "~1.0",
     "chokidar": "github:paulmillr/chokidar",
-    "commander": "~2.9",
+    "commander": "~2.20",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^3.1.0",
     "deppack": "~0.8",
@@ -59,7 +59,6 @@
     "loggy": "~1.0.3",
     "micro-check-dependencies": "github:paulmillr/micro-check-dependencies",
     "mkdirp": "~0.5",
-    "read-components": "~0.7",
     "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
@@ -87,7 +86,10 @@
     }
   },
   "ava": {
-    "files": ["test/*.js", "!test/_*.js"],
+    "files": [
+      "test/*.js",
+      "!test/_*.js"
+    ],
     "failFast": true,
     "verbose": true
   }
