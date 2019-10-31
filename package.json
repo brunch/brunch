@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "2.10.17",
+  "version": "3.0.0-pre",
   "keywords": [
     "assembler",
     "builder",
@@ -24,8 +24,8 @@
     "chaplin",
     "html5"
   ],
-  "homepage": "http://brunch.io/",
-  "author": "Brunch team (http://brunch.io)",
+  "homepage": "https://brunch.io/",
+  "author": "Brunch team (https://brunch.io)",
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
