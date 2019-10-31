@@ -2,7 +2,7 @@
 const test = require('ava');
 const fs = require('fs');
 const brunch = require('../lib');
-const helpers = require('./_test_helper');
+const helpers = require('./utils');
 const prepareTestDir = helpers.prepareTestDir;
 const teardownTestDir = helpers.teardownTestDir;
 const fileContains = helpers.fileContains;
@@ -215,37 +215,6 @@ test.serial.cb('install npm packages if package.json changes', t => {
 
     yield compilation();
     t.true(fs.readdirSync('./node_modules').includes('lodash'));
-    t.end();
-  });
-});
-
-test.serial.cb('install bower components if bower.json changes', t => {
-  fixturify.writeSync('.', {
-    'brunch-config.js': `module.exports = {
-      files: {
-        javascripts: {
-          joinTo: 'app.js'
-        }
-      }
-    };`,
-    app: {
-      assets: {
-        'index.html': '<h1>hello world</h1>',
-      },
-      'initialize.js': 'console.log("hello world")',
-    },
-  });
-
-  watch({}, function* (compilation) {
-    yield compilation();
-    t.false(fs.readdirSync('./bower_components').includes('jquery'));
-
-    const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
-    bowerJson.dependencies.jquery = '*';
-    fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
-
-    yield compilation();
-    t.true(fs.readdirSync('./bower_components').includes('jquery'));
     t.end();
   });
 });

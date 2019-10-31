@@ -4,6 +4,11 @@ module.exports = {
       paths: {
         public: 'tmp'
       }
+    },
+    meh: {
+      paths: {
+        public: 'public'
+      }
     }
   },
   files: {},

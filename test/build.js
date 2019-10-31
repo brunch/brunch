@@ -1,7 +1,7 @@
 'use strict';
 const test = require('ava');
 const brunch = require('../lib');
-const helpers = require('./_test_helper');
+const helpers = require('./utils');
 const prepareTestDir = helpers.prepareTestDir;
 const teardownTestDir = helpers.teardownTestDir;
 const npmInstall = helpers.npmInstall;

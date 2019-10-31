@@ -40,7 +40,7 @@
   "scripts": {
     "lint": "eslint bin/brunch lib test",
     "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && LOGGY_STACKS=1 ava -s --verbose --fail-fast",
+    "test": "npm run lint && LOGGY_STACKS=1 ava -s --verbose --fail-fast test/*.js",
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
@@ -51,8 +51,7 @@
     "anymatch": "^2.0",
     "anysort": "~1.0",
     "check-dependencies": "~1.0.1",
-    "chokidar": "^2",
-    "coffeescript": "~1.12.7",
+    "chokidar": "github:paulmillr/chokidar",
     "commander": "~2.9",
     "commonjs-require-definition": "~0.6.2",
     "deppack": "~0.8",
@@ -61,10 +60,7 @@
     "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0.3",
-    "micro-es7-shim": "^0.1",
-    "micro-promisify": "~0.1",
     "mkdirp": "~0.5",
-    "promise.prototype.finally": "^2",
     "read-components": "~0.7",
     "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
@@ -73,9 +69,9 @@
     "universal-path": "^0.1"
   },
   "devDependencies": {
-    "ava": "~0.16",
-    "eslint": "^3",
-    "eslint-config-brunch": "^1",
+    "ava": "^2.4.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
     "nyc": "^13.0.0",
@@ -83,6 +79,9 @@
     "test-console": "^1"
   },
   "eslintConfig": {
-    "extends": "brunch"
+    "extends": "prettier",
+    "parserOptions": {
+      "ecmaVersion": "2020"
+    }
   }
 }

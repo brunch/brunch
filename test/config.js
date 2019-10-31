@@ -7,37 +7,37 @@ const getFolderName = path => {
   return /([^/]*)\/*$/.exec(path)[1];
 };
 
-test('loads the config without overriding', function* (t) {
+test('config: loads the config without overriding', async (t) => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
   };
 
-  const brunchConfig = yield config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(false, opts, true);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
-  t.is(getFolderName(brunchConfig.paths.public), 'public');
+  t.is(getFolderName(brunchConfig.paths.public), 'tmp');
   t.deepEqual(watched, ['app', 'test']);
 });
 
-test('overrides the config using the specified env', function* (t) {
+test('config: overrides the config using the specified env', async (t) => {
   const opts = {
-    env: 'test',
+    env: 'meh',
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
   };
 
-  const brunchConfig = yield config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(false, opts, true);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
-  t.is(brunchConfig.paths.public, 'tmp');
+  t.is(brunchConfig.paths.public, 'public');
   t.deepEqual(watched, ['app', 'test']);
 });
 
-test('removes trailing slash from paths', function* (t) {
+test('config: removes trailing slash from paths', async (t) => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-trailing-slashes.js'),
   };
 
-  const brunchConfig = yield config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(false, opts, true);
 
   t.deepEqual(brunchConfig.paths.watched, [
     'app/assets',
