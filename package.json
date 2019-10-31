@@ -39,8 +39,7 @@
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
-    "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && LOGGY_STACKS=1 ava -s --verbose --fail-fast test/*.js",
+    "test": "LOGGY_STACKS=1 ava -s --verbose --fail-fast test/*.js",
     "test:coverage": "nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
