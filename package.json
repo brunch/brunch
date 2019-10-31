@@ -39,7 +39,7 @@
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
-    "test": "ava -s --verbose --fail-fast",
+    "test": "ava -s",
     "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
   },
   "engines": {
@@ -86,5 +86,10 @@
     "rules": {
       "comma-dangle": 0
     }
+  },
+  "ava": {
+    "files": ["test/*.js", "!test/_*.js"],
+    "failFast": true,
+    "verbose": true
   }
 }
