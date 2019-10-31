@@ -49,16 +49,16 @@
   "dependencies": {
     "anymatch": "^2.0",
     "anysort": "~1.0",
-    "check-dependencies": "~1.0.1",
     "chokidar": "github:paulmillr/chokidar",
     "commander": "~2.9",
     "commonjs-require-definition": "~0.6.2",
-    "deppack": "~0.8",
     "debug": "^3.1.0",
+    "deppack": "~0.8",
     "deps-install": "~0.1",
     "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0.3",
+    "micro-check-dependencies": "github:paulmillr/micro-check-dependencies",
     "mkdirp": "~0.5",
     "read-components": "~0.7",
     "serve-brunch": "~0.2",
@@ -82,6 +82,9 @@
     "extends": "brunch",
     "parserOptions": {
       "ecmaVersion": "2020"
+    },
+    "rules": {
+      "comma-dangle": 0
     }
   }
 }
