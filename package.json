@@ -48,7 +48,7 @@
   "dependencies": {
     "anymatch": "^2.0",
     "anysort": "~1.0",
-    "chokidar": "github:paulmillr/chokidar",
+    "chokidar": "github:paulmillr/chokidar#584fe1fdc0b1b1bd77a560a77908dc9f003b1713",
     "commander": "~2.20",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^4.1.1",
@@ -56,7 +56,7 @@
     "fcache": "~0.3",
     "init-skeleton": "~1.0",
     "loggy": "~1.0.3",
-    "micro-check-dependencies": "github:brunch/micro-check-dependencies",
+    "micro-check-dependencies": "~0.2.0",
     "serve-brunch": "~0.2",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
