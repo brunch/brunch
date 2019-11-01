@@ -36,29 +36,21 @@ const watch = (params, fn) => {
   it.next();
 };
 
-const closeWatcher = cb => {
-  if (watcher) {
-    // close chokidar to prevent that it understands the fixtures being copied as new files being added
-    watcher.watcher.close();
-    if (watcher.server) {
-      return watcher.server.close(cb);
-    }
-  }
-  return cb();
-};
-
 test.beforeEach(() => {
   teardownTestDir();
   prepareTestDir();
 });
 
 test.afterEach.always.cb(t => {
-  closeWatcher(() => {
+  (async () => {
+    if (watcher) {
+      await watcher.close();
+    }
     setTimeout(() => {
       teardownTestDir();
       t.end();
     }, tearDownInterval);
-  });
+  })();
 });
 
 test.serial.cb('compile on file changes', t => {
@@ -189,6 +181,7 @@ fileb
 });
 
 test.serial.cb('install npm packages if package.json changes', t => {
+  t.timeout(10000);
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -206,14 +199,21 @@ test.serial.cb('install npm packages if package.json changes', t => {
   });
 
   watch({}, function* (compilation) {
+    console.log(1);
     yield compilation();
     t.false(fs.readdirSync('./node_modules').includes('lodash'));
+
+    console.log(2);
 
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     packageJson.dependencies.lodash = '*';
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
+    console.log(3);
+
     yield compilation();
+    console.log(4);
+
     t.true(fs.readdirSync('./node_modules').includes('lodash'));
     t.end();
   });
