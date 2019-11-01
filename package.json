@@ -16,16 +16,20 @@
   "dependencies": {
     "anymatch": "^3.1.1",
     "anysort": "github:es128/anysort",
+    "brunch-skeletons": "^0.1.6",
     "chokidar": "github:paulmillr/chokidar#584fe1fdc0b1b1bd77a560a77908dc9f003b1713",
     "commander": "~2.20",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^4.1.1",
     "deppack": "github:brunch/deppack",
     "fcache": "~0.3",
+    "hosted-git-info": "^3.0.2",
     "init-skeleton": "github:brunch/init-skeleton",
     "loggy": "~1.0.8",
     "micro": "^9.3.5-canary.3",
     "micro-check-dependencies": "~0.2.0",
+    "ncp": "^2.0.0",
+    "normalize-git-url": "^3.0.2",
     "serve-handler": "^6.1.2",
     "since-app-start": "~0.3",
     "skemata": "~0.1",
@@ -89,7 +93,6 @@
       "test/*.js",
       "!test/_*.js"
     ],
-    "failFast": true,
     "verbose": true
   }
 }
