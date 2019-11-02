@@ -42,7 +42,7 @@ test.beforeEach(() => {
 });
 
 test.afterEach.always.cb(t => {
-  (async () => {
+  (async function() {
     if (watcher) {
       await watcher.close();
     }
@@ -199,21 +199,13 @@ test.serial.cb('install npm packages if package.json changes', t => {
   });
 
   watch({}, function* (compilation) {
-    console.log(1);
     yield compilation();
     t.false(fs.readdirSync('./node_modules').includes('lodash'));
-
-    console.log(2);
-
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     packageJson.dependencies.lodash = '*';
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
-    console.log(3);
-
     yield compilation();
-    console.log(4);
-
     t.true(fs.readdirSync('./node_modules').includes('lodash'));
     t.end();
   });
@@ -324,7 +316,7 @@ test.serial.cb('brunch server reload files', t => {
   });
 });
 
-test.serial.cb('brunch server accepts custom server', t => {
+test.serial.cb('brunch server accepts custom server 1', t => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -338,10 +330,10 @@ var http = require('http');
 
 module.exports = {
   startServer: function(port, path, callback) {
-    const server = http.createServer(function (req, res) {
+    var server = http.createServer(function (req, res) {
       res.end('hello from custom server');
     });
-    return server.listen(port, callback);
+    return server.listen(port, function() { callback(undefined, server); });
   }
 };`,
     app: {
