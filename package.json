@@ -18,7 +18,7 @@
     "anysort": "github:es128/anysort",
     "brunch-skeletons": "^0.1.6",
     "chokidar": "github:paulmillr/chokidar#584fe1fdc0b1b1bd77a560a77908dc9f003b1713",
-    "commander": "~2.20",
+    "commander": "~4.0",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^4.1.1",
     "deppack": "github:brunch/deppack",
@@ -26,7 +26,6 @@
     "hosted-git-info": "^3.0.2",
     "init-skeleton": "github:brunch/init-skeleton",
     "loggy": "~1.0.8",
-    "micro": "^9.3.5-canary.3",
     "micro-check-dependencies": "~0.2.0",
     "ncp": "^2.0.0",
     "normalize-git-url": "^3.0.2",
@@ -64,14 +63,13 @@
     "config",
     "react",
     "webpack",
-    "browserify",
+    "vue",
     "grunt",
     "gulp",
-    "broccoli",
     "backbone",
     "ember",
     "angular",
-    "chaplin",
+    "react",
     "html5"
   ],
   "homepage": "https://brunch.io/",
@@ -85,7 +83,8 @@
       "ecmaVersion": "2020"
     },
     "rules": {
-      "comma-dangle": 0
+      "comma-dangle": 0,
+      "func-style": 0
     }
   },
   "ava": {

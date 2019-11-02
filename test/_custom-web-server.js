@@ -1,3 +1,4 @@
+'use strict';
 const bodyParser = require('body-parser');
 const express = require('express');
 const http = require('http');
@@ -5,7 +6,7 @@ const logger = require('morgan');
 const Path = require('path');
 
 // Our server start function
-module.exports = function startServer(port, path, callback) {
+module.exports = (port, path, callback) => {
   const app = express();
   const server = http.createServer(app);
 
@@ -15,7 +16,7 @@ module.exports = function startServer(port, path, callback) {
   // Basic middlewares: static files, logs, form fields
   app.use(express.static(Path.join(__dirname, path)));
   app.use(logger('dev'));
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.urlencoded({extended: true}));
 
   // GET `/items` -> JSON for the entries array
   app.get('/items', (req, res) => {
@@ -31,7 +32,7 @@ module.exports = function startServer(port, path, callback) {
 
     items.push(item);
     res.status(201).end('Created!');
-  })
+  });
 
   // Listen on the right port, and notify Brunch once ready through `callback`.
   server.listen(port, callback);
