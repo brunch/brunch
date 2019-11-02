@@ -24,7 +24,6 @@
     "deppack": "github:brunch/deppack",
     "fcache": "~0.3",
     "hosted-git-info": "^3.0.2",
-    "init-skeleton": "github:brunch/init-skeleton",
     "loggy": "~1.0.8",
     "micro-check-dependencies": "~0.2.0",
     "ncp": "^2.0.0",
