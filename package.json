@@ -37,8 +37,7 @@
   "devDependencies": {
     "ava": "^2.4.0",
     "eslint": "^6.6.0",
-    "eslint-config-brunch": "^1.0.0",
-    "eslint-config-prettier": "^6.5.0",
+    "eslint-config-brunch": "^1.1.0",
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
     "nyc": "^14.1.1",
@@ -77,14 +76,7 @@
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
   "eslintConfig": {
-    "extends": "brunch",
-    "parserOptions": {
-      "ecmaVersion": "2020"
-    },
-    "rules": {
-      "comma-dangle": 0,
-      "func-style": 0
-    }
+    "extends": "brunch"
   },
   "ava": {
     "files": [
