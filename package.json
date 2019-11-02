@@ -76,7 +76,10 @@
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
   "eslintConfig": {
-    "extends": "brunch"
+    "extends": "brunch",
+    "rules": {
+      "func-names": [2, "never"]
+    }
   },
   "ava": {
     "files": [
