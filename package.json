@@ -17,7 +17,7 @@
     "anymatch": "^3.1.1",
     "anysort": "github:es128/anysort",
     "brunch-skeletons": "^0.1.6",
-    "chokidar": "github:paulmillr/chokidar#584fe1fdc0b1b1bd77a560a77908dc9f003b1713",
+    "chokidar": "^3.3.0",
     "commander": "~4.0",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^4.1.1",
