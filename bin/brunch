@@ -10,9 +10,9 @@ var fs = require('fs');
 var childProcessFork = require('child_process').fork;
 
 var version = process.versions.node;
-if (parseInt(version) < 4) {
+if (parseInt(version) < 10) {
   console.error(
-    'Error: Brunch 2+ requires Node.js v4 or higher (you have v' + version + ') ' +
+    'Error: Brunch 3+ requires Node.js v10.16 or higher (you have v' + version + ') ' +
     'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1'
   );
   process.exit(1);
