@@ -1,7 +1,6 @@
-# Brunch [![Weekly downloads](https://img.shields.io/npm/dw/brunch.svg)](https://github.com/brunch/brunch) [![Yearly downloads](https://img.shields.io/npm/dy/brunch.svg)](https://github.com/brunch/brunch)
+# Brunch [![Weekly downloads](https://img.shields.io/npm/dw/brunch.svg)](https://www.npmjs.com/package/brunch) [![Yearly downloads](https://img.shields.io/npm/dy/brunch.svg)](https://www.npmjs.com/package/brunch)
 
 > Web applications made easy. Since 2011.
-
 
 Fast front-end web app build tool with simple declarative config and seamless incremental compilation for rapid development.
 
@@ -26,10 +25,10 @@ Install Brunch with a simple node.js package manager command:
 
 ## Learn
 
-* Visit [**brunch.io**](https://brunch.io)
-* Read [**brunch docs**](https://brunch.io/docs/getting-started)
-* Follow us on Twitter: [@brunch](https://twitter.com/brunch)
-* Ask questions on Stack Overflow with [#brunch](https://stackoverflow.com/questions/tagged/brunch) tag
+- Visit [**brunch.io**](https://brunch.io)
+- Read [**brunch docs**](https://brunch.io/docs/getting-started)
+- Follow us on Twitter: [@brunch](https://twitter.com/brunch)
+- Ask questions on Stack Overflow with [#brunch](https://stackoverflow.com/questions/tagged/brunch) tag
 
 ## Contributing
 
@@ -41,7 +40,7 @@ See the [CONTRIBUTING.md](https://github.com/brunch/brunch/blob/master/CONTRIBUT
 
 ## License
 
-MIT license (c) Paul Miller [paulmillr.com](https://paulmillr.com), Elan Shanker,
+MIT license (c) 2019 Paul Miller [paulmillr.com](https://paulmillr.com), Elan Shanker,
 Nik Graf, Thomas Schranz, Allan Berger, Jan Monschke, Martin Schürrer
 
 See LICENSE file.
