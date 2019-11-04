@@ -21,7 +21,7 @@
     "commander": "~4.0",
     "commonjs-require-definition": "~0.6.2",
     "debug": "^4.1.1",
-    "deppack": "^0.9.0",
+    "deppack": "github:brunch/deppack",
     "fcache": "~0.3",
     "hosted-git-info": "^3.0.2",
     "loggy": "~1.0.8",
@@ -78,7 +78,10 @@
   "eslintConfig": {
     "extends": "brunch",
     "rules": {
-      "func-names": [2, "never"]
+      "func-names": [
+        2,
+        "never"
+      ]
     }
   },
   "ava": {
