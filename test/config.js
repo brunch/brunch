@@ -10,9 +10,11 @@ const getFolderName = path => {
 test('config: loads the config without overriding', async t => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
+    persistent: false,
+    fromWorker: true,
   };
 
-  const brunchConfig = await config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(opts);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
   t.is(getFolderName(brunchConfig.paths.public), 'tmp');
@@ -23,9 +25,11 @@ test('config: overrides the config using the specified env', async t => {
   const opts = {
     env: 'meh',
     config: path.join(__dirname, './fixtures/config-with-overrides.js'),
+    persistent: false,
+    fromWorker: true,
   };
 
-  const brunchConfig = await config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(opts);
   const watched = brunchConfig.paths.watched.map(getFolderName);
 
   t.is(brunchConfig.paths.public, 'public');
@@ -35,9 +39,11 @@ test('config: overrides the config using the specified env', async t => {
 test('config: removes trailing slash from paths', async t => {
   const opts = {
     config: path.join(__dirname, './fixtures/config-with-trailing-slashes.js'),
+    persistent: false,
+    fromWorker: true,
   };
 
-  const brunchConfig = await config.loadConfig(false, opts, true);
+  const brunchConfig = await config.loadConfig(opts);
 
   t.deepEqual(brunchConfig.paths.watched, [
     'app/assets',

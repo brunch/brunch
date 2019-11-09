@@ -102,7 +102,7 @@ test.serial.cb('compiler chaining: compiler.targetExtension', t => {
     'postcss-brunch': postcssBrunch,
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/style.css');
     fileContains(t, 'public/style.css', '{-webkit-backdrop');
 
@@ -110,7 +110,7 @@ test.serial.cb('compiler chaining: compiler.targetExtension', t => {
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('compileStatic changes path', t => {
@@ -156,12 +156,12 @@ test.serial.cb('compileStatic changes path', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileDoesNotExist(t, 'public/test.built');
     fileExists(t, 'public/hello.built');
     fileEquals(t, 'public/hello.built', 'Hello, world!');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('compiler chaining: returning path', t => {
@@ -212,7 +212,7 @@ test.serial.cb('compiler chaining: returning path', t => {
     'postcss-brunch': postcssBrunch,
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/style.css');
     fileContains(t, 'public/style.css', '{-webkit-backdrop');
 
@@ -220,7 +220,7 @@ test.serial.cb('compiler chaining: returning path', t => {
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('basic build', t => {
@@ -240,7 +240,7 @@ test.serial.cb('basic build', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/app.js', `
@@ -255,7 +255,7 @@ console.log("hello world")
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('basic file joining', t => {
@@ -277,7 +277,7 @@ test.serial.cb('basic file joining', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/app.js.map');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
     fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
@@ -298,7 +298,7 @@ filec
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('multi file output', t => {
@@ -328,7 +328,7 @@ test.serial.cb('multi file output', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/javascripts/app.js.map');
     fileExists(t, 'public/javascripts/vendor.js.map');
     const appJs = `require.register("a.js", function(exports, require, module) {
@@ -359,7 +359,7 @@ vendora
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('entry points', t => {
@@ -385,7 +385,7 @@ test.serial.cb('entry points', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/bundle.js.map');
     fileContains(t, 'public/bundle.js', '//# sourceMappingURL=bundle.js.map');
     fileDoesNotContain(t, 'public/bundle.js', `notrequired`);
@@ -412,7 +412,7 @@ require("./c"); initialize
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('multi entry points', t => {
@@ -441,7 +441,7 @@ test.serial.cb('multi entry points', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/bundle1.js.map');
     fileExists(t, 'public/bundle2.js.map');
     fileContains(t, 'public/bundle1.js', '//# sourceMappingURL=bundle1.js.map');
@@ -479,7 +479,7 @@ require("./c"); entry2
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('customize paths.public config', t => {
@@ -502,7 +502,7 @@ test.serial.cb('customize paths.public config', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
@@ -512,7 +512,7 @@ test.serial.cb('customize paths.public config', t => {
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('npm integration', t => {
@@ -557,7 +557,7 @@ test.serial.cb('npm integration', t => {
   });
 
   npmInstall(() => {
-    brunch.build({}, () => {
+    brunch.build({onCompile() {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
@@ -586,7 +586,7 @@ test.serial.cb('npm integration', t => {
       noError(t);
 
       t.end();
-    });
+    }});
   });
 });
 
@@ -626,7 +626,7 @@ test.serial.cb('compiling npm packages', t => {
   });
 
   npmInstall(() => {
-    brunch.build({}, () => {
+    brunch.build({onCompile() {
       const contains = text => fileContains(t, 'public/app.js', text);
       const doesntContain = text => fileDoesNotContain(t, 'public/app.js', text);
 
@@ -639,7 +639,7 @@ test.serial.cb('compiling npm packages', t => {
       noError(t);
 
       t.end();
-    });
+    }});
   });
 });
 
@@ -667,12 +667,12 @@ test.serial.cb('config override', t => {
     },
   });
 
-  brunch.build({env: 'custom'}, () => {
+  brunch.build({env: 'custom', onCompile() {
     fileExists(t, 'dist/app.js.map');
     fileContains(t, 'dist/index.html', '<h1>hello world</h1>');
     fileContains(t, 'dist/app.js', 'console.log("hello world")');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('modules.definition option', t => {
@@ -701,7 +701,7 @@ test.serial.cb('modules.definition option', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/app.js.map');
     fileEquals(t, 'public/app.js', '(function() {console.log("hello world")\n})();\n//# sourceMappingURL=app.js.map');
     fileContains(t, 'public/index.html', '<h1>hello world</h1>');
@@ -711,7 +711,7 @@ test.serial.cb('modules.definition option', t => {
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 const TempCompiler = {
@@ -765,12 +765,12 @@ test.serial.cb('static compilation', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileDoesNotExist(t, 'public/test.emp');
     fileExists(t, 'public/test.built');
     fileEquals(t, 'public/test.built', 'Some^stuff^is^better^expressed^with^dashes.^Oh^wait^or^should^it^be^carets?');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('join templates according to joinTo option', t => {
@@ -790,13 +790,13 @@ test.serial.cb('join templates according to joinTo option', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileDoesNotExist(t, 'public/a.emp');
     fileDoesNotExist(t, 'public/b.built');
     fileContains(t, 'public/all.js', 'hello^world');
     fileContains(t, 'public/all.js', 'module^exports');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
@@ -816,11 +816,11 @@ test.serial.cb('reuse javascripts.joinTo for templates.joinTo', t => {
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileContains(t, 'public/all.js', 'hello^world');
     fileContains(t, 'public/all.js', 'module^exports');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t => {
@@ -843,11 +843,11 @@ test.serial.cb('reuse javascripts.joinTo only if templates.joinTo are empty', t 
 
   fixturify.writeSync('.', Object.assign(files, TempCompiler));
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileContains(t, 'public/templates.js', 'hello^world');
     fileContains(t, 'public/templates.js', 'module^exports');
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('inline source maps', t => {
@@ -865,7 +865,7 @@ test.serial.cb('inline source maps', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileDoesNotExist(t, 'public/app.js.map');
     fileContains(t, 'public/app.js', '//# sourceMappingURL=data:application/json;charset=utf-8;base64,');
 
@@ -873,7 +873,7 @@ test.serial.cb('inline source maps', t => {
     noError(t);
 
     t.end();
-  });
+  }});
 });
 
 test.serial.cb('include getter', t => {
@@ -922,9 +922,9 @@ test.serial.cb('include getter', t => {
     },
   });
 
-  brunch.build({}, () => {
+  brunch.build({onCompile() {
     fileExists(t, 'public/app.js');
     fileContains(t, 'public/app.js', 'Math.pow');
     t.end();
-  });
+  }});
 });

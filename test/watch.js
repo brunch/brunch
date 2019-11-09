@@ -30,7 +30,8 @@ const watch = (params, fn) => {
   params._onReload = newWatcher => {
     watcher = newWatcher;
   };
-  watcher = brunch.watch(params, onCompile);
+  params.onCompile = onCompile;
+  watcher = brunch.watch(params);
 
   const it = fn(compilation);
   it.next();
