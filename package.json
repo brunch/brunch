@@ -36,10 +36,12 @@
   },
   "devDependencies": {
     "ava": "^2.4.0",
+    "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "eslint-config-brunch": "^1.1.0",
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "rewire": "^2.5",
     "test-console": "^1"
