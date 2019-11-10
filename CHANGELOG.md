@@ -1,4 +1,17 @@
-To install the latest version, execute `npm install -g brunch`
+## Brunch 3.0-pre (unreleased)
+
+* Configuration file is now optional; and you could have it in package.json
+* Built-in webserver is now using serve-handler from micro(1) webserver.
+  Custom webservers are unaffected.
+* **Breaking:** Require node.js 10.16 or higher
+* **Breaking:** Remove Bower and AMD support
+* **Breaking:** Remove support for CoffeeScript brunch configs,
+  emit a command that would compile coffee file to js
+* **Breaking:** New node.js API - use `brunch.build()` from node without hassle
+* Decrease package size by a huge amount:
+    * Update Chokidar to 3.0
+    * Remove or integrate many dependencies
+    * Update dependencies to latest versions
 
 ## Brunch 2.10 (Jan 13, 2017)
 * Added [yarn](https://yarnpkg.com/) support.

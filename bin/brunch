@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 
-// Not using ES6 in that file since we want it to "launch" on older nodes.
 /* eslint-disable prefer-arrow-callback, prefer-template */
 /* eslint-env es6:false */
+// Not using ES6 in that file since we want it to "launch" on older nodes.
 var sysPath = require('path');
 var join = sysPath.join;
 var fs = require('fs');
@@ -13,7 +13,7 @@ var version = process.versions.node;
 if (parseInt(version) < 10) {
   console.error(
     'Error: Brunch 3+ requires Node.js v10.16 or higher (you have v' + version + ') ' +
-    'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@1'
+    'Upgrade Node.js or use older Brunch (not recommended): npm i -g brunch@2'
   );
   process.exit(1);
 }
