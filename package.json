@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "ava": "~0.16",
-    "eslint": "^3",
+    "eslint": "^6",
     "eslint-config-brunch": "^1",
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
