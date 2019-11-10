@@ -2,7 +2,6 @@
 const path = require('path');
 const fs = require('fs-extra');
 const cp = require('child_process');
-const {expect} = require('chai');
 
 const rootPath = process.cwd();
 const tmp = path.join(require('os').tmpdir(), 'brunch-tests');
@@ -37,7 +36,7 @@ function fileExists(path) {
   fs.accessSync(path, fs.F_OK);
 };
 
-const fileDoesNotExist = (path) => {
+const fileDoesNotExist = path => {
   const msg = `File ${path} should not exist`;
   try {
     fs.accessSync(path, fs.F_OK);
@@ -50,21 +49,21 @@ const fileDoesNotExist = (path) => {
 const fileContains = (path, content) => {
   const file = fs.readFileSync(path, 'utf8');
   if (!file.includes(content)) {
-    throw new Error(`file ${path} does not contain '${content}'`)
+    throw new Error(`file ${path} does not contain '${content}'`);
   }
 };
 
 const fileEquals = (path, content) => {
   const file = fs.readFileSync(path, 'utf8');
   if (file !== content) {
-    throw new Error(`file ${path} is not equal to '${content}'`)
+    throw new Error(`file ${path} is not equal to '${content}'`);
   }
 };
 
 const fileDoesNotContain = (path, content) => {
   const file = fs.readFileSync(path, 'utf8');
   if (file.includes(content)) {
-    throw new Error(`file ${path} contains '${content}', it should not`)
+    throw new Error(`file ${path} contains '${content}', it should not`);
   }
 };
 
@@ -87,43 +86,31 @@ const restoreConsole = () => {
   _inspectE = null;
 };
 
-const outputContains = (msg) => {
+const outputContains = msg => {
   if (typeof msg === 'string') {
-    if (_inspect.output.join('\n').includes(msg)) {
-      // good
-    } else {
+    if (!_inspect.output.join('\n').includes(msg)) {
       throw new Error(`Expected console output (stdout) to contain '${msg}' but it didn't`);
     }
-  } else {
-    if (_inspect.output.some(line => msg.test(line))) {
-      // good
-    } else {
-      throw new Error(`Expected console output (stdout) to match '${msg}' but it didn't`);
-    }
+  } else if (!_inspect.output.some(line => msg.test(line))) {
+    throw new Error(`Expected console output (stdout) to match '${msg}' but it didn't`);
   }
 };
 
-const outputDoesNotContain = (msg) => {
+const outputDoesNotContain = msg => {
   if (_inspect.output.join('\n').includes(msg)) {
     throw new Error(`Expected console output (stdout) not to contain '${msg}' but it did`);
-  } else {
-    // pass
   }
 };
 
-const eOutputContains = (msg) => {
-  if (_inspectE.output.join('\n').includes(msg)) {
-    // pass
-  } else {
+const eOutputContains = msg => {
+  if (!_inspectE.output.join('\n').includes(msg)) {
     throw new Error(`Expected console output (stderr) to contain '${msg}' but it didn't`);
   }
 };
 
-const eOutputDoesNotContain = (msg) => {
+const eOutputDoesNotContain = msg => {
   if (_inspectE.output.join('\n').includes(msg)) {
     throw new Error(`Expected console output (stderr) not to contain '${msg}' but it did`);
-  } else {
-    // pass
   }
 };
 

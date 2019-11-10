@@ -58,4 +58,4 @@ describe('fs_utils.is_ignored', () => {
     const expectedIgnoredFiles = ['app/assets/#index.html#', 'app/assets/.index.html.swp'];
     expect(files.filter(isIgnored)).to.deep.equal(expectedIgnoredFiles);
   });
-})
+});

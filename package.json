@@ -35,7 +35,6 @@
     "universal-path": "^0.1"
   },
   "devDependencies": {
-    "ava": "^2.4.0",
     "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "eslint-config-brunch": "^1.1.0",
@@ -48,7 +47,7 @@
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
-    "test": "ava -s",
+    "test": "LOGGY_STACKS=1 NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'",
     "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
   },
   "keywords": [
@@ -79,18 +78,15 @@
   "license": "MIT",
   "eslintConfig": {
     "extends": "brunch",
+    "env": {
+      "node": true,
+      "mocha": true
+    },
     "rules": {
       "func-names": [
         2,
         "never"
       ]
     }
-  },
-  "ava": {
-    "files": [
-      "test/*.js",
-      "!test/_*.js"
-    ],
-    "verbose": true
   }
 }

@@ -14,21 +14,22 @@ describe('config', () => {
       persistent: false, fromWorker: true
     });
   }
-  it('loads the config without overriding', async () => {
+
+  it('loads the config without overriding', async() => {
     const brunchConfig = await load('config-with-overrides.js');
     const watched = brunchConfig.paths.watched.map(getFolderName);
     expect(getFolderName(brunchConfig.paths.public)).to.equal('tmp');
     expect(watched).to.deep.equal(['app', 'test']);
   });
 
-  it('overrides the config using the specified env', async () => {
+  it('overrides the config using the specified env', async() => {
     const brunchConfig = await load('config-with-overrides.js', {env: 'meh'});
     const watched = brunchConfig.paths.watched.map(getFolderName);
     expect(brunchConfig.paths.public).to.equal('public');
     expect(watched).to.deep.equal(['app', 'test']);
   });
 
-  it('removes trailing slash from paths', async () => {
+  it('removes trailing slash from paths', async() => {
     const brunchConfig = await load('config-with-trailing-slashes.js');
     expect(brunchConfig.paths.watched).to.deep.equal(['app/assets']);
     expect(brunchConfig.paths.public).to.equal('app/builds');
