@@ -2,6 +2,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const cp = require('child_process');
+const {expect} = require('chai');
 
 const rootPath = process.cwd();
 const tmp = path.join(require('os').tmpdir(), 'brunch-tests');
@@ -32,45 +33,38 @@ const teardownTestDir = () => {
   fs.removeSync(tmp);
 };
 
-const fileExists = (t, path) => {
+function fileExists(path) {
+  fs.accessSync(path, fs.F_OK);
+};
+
+const fileDoesNotExist = (path) => {
+  const msg = `File ${path} should not exist`;
   try {
     fs.accessSync(path, fs.F_OK);
-    t.pass();
+    throw new Error(msg);
   } catch (e) {
-    t.fail(e.message);
+    if (e.message === msg) throw e;
   }
 };
 
-const fileDoesNotExist = (t, path) => {
-  try {
-    fs.accessSync(path, fs.F_OK);
-    t.fail(`File ${path} should not exist`);
-  } catch (e) {
-    t.pass();
+const fileContains = (path, content) => {
+  const file = fs.readFileSync(path, 'utf8');
+  if (!file.includes(content)) {
+    throw new Error(`file ${path} does not contain '${content}'`)
   }
 };
 
-const fileContains = (t, path, content) => {
-  try {
-    t.true(fs.readFileSync(path, 'utf8').includes(content));
-  } catch (e) {
-    t.fail(e.message);
+const fileEquals = (path, content) => {
+  const file = fs.readFileSync(path, 'utf8');
+  if (file !== content) {
+    throw new Error(`file ${path} is not equal to '${content}'`)
   }
 };
 
-const fileEquals = (t, path, content) => {
-  try {
-    t.is(fs.readFileSync(path, 'utf8'), content);
-  } catch (e) {
-    t.fail(e.message);
-  }
-};
-
-const fileDoesNotContain = (t, path, content) => {
-  try {
-    t.false(fs.readFileSync(path, 'utf8').includes(content));
-  } catch (e) {
-    t.fail(e.message);
+const fileDoesNotContain = (path, content) => {
+  const file = fs.readFileSync(path, 'utf8');
+  if (file.includes(content)) {
+    throw new Error(`file ${path} contains '${content}', it should not`)
   }
 };
 
@@ -93,50 +87,48 @@ const restoreConsole = () => {
   _inspectE = null;
 };
 
-const outputContains = (t, msg) => {
+const outputContains = (msg) => {
   if (typeof msg === 'string') {
     if (_inspect.output.join('\n').includes(msg)) {
-      t.pass();
+      // good
     } else {
-      t.fail(`Expected console output (stdout) to contain '${msg}' but it didn't`);
+      throw new Error(`Expected console output (stdout) to contain '${msg}' but it didn't`);
     }
-    return;
-  }
-
-  const test = line => msg.test(line);
-  if (_inspect.output.some(test)) {
-    t.pass();
   } else {
-    t.fail(`Expected console output (stdout) to match '${msg}' but it didn't`);
+    if (_inspect.output.some(line => msg.test(line))) {
+      // good
+    } else {
+      throw new Error(`Expected console output (stdout) to match '${msg}' but it didn't`);
+    }
   }
 };
 
-const outputDoesNotContain = (t, msg) => {
+const outputDoesNotContain = (msg) => {
   if (_inspect.output.join('\n').includes(msg)) {
-    t.fail(`Expected console output (stdout) not to contain '${msg}' but it did`);
+    throw new Error(`Expected console output (stdout) not to contain '${msg}' but it did`);
   } else {
-    t.pass();
+    // pass
   }
 };
 
-const eOutputContains = (t, msg) => {
+const eOutputContains = (msg) => {
   if (_inspectE.output.join('\n').includes(msg)) {
-    t.pass();
+    // pass
   } else {
-    t.fail(`Expected console output (stderr) to contain '${msg}' but it didn't`);
+    throw new Error(`Expected console output (stderr) to contain '${msg}' but it didn't`);
   }
 };
 
-const eOutputDoesNotContain = (t, msg) => {
+const eOutputDoesNotContain = (msg) => {
   if (_inspectE.output.join('\n').includes(msg)) {
-    t.fail(`Expected console output (stderr) not to contain '${msg}' but it did`);
+    throw new Error(`Expected console output (stderr) not to contain '${msg}' but it did`);
   } else {
-    t.pass();
+    // pass
   }
 };
 
-const noWarn = t => eOutputDoesNotContain(t, 'warn');
-const noError = t => eOutputDoesNotContain(t, 'error');
+const noWarn = () => eOutputDoesNotContain('warn');
+const noError = () => eOutputDoesNotContain('error');
 
 const requestBrunchServer = (path, callback) => {
   const http = require('http');
