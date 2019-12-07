@@ -1,0 +1,24 @@
+name: Node
+on: [push, pull_request]
+env:
+  CI: true
+
+jobs:
+  build:
+    name: v${{ matrix.node-version }} @ ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [10, 12]
+        os: [ubuntu-latest, macOS-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - name: Run ava tests
+        run: npm run test

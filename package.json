@@ -1,7 +1,55 @@
 {
   "name": "brunch",
   "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "2.10.17",
+  "version": "3.0.0-pre",
+  "main": "./lib/index",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "bin": {
+    "brunch": "bin/brunch"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  },
+  "dependencies": {
+    "anymatch": "^3.1.1",
+    "anysort": "^2.0.0",
+    "brunch-skeletons": "^0.1.6",
+    "chokidar": "^3.3.0",
+    "commander": "~4.0",
+    "commonjs-require-definition": "~0.6.2",
+    "debug": "^4.1.1",
+    "deppack": "^0.9.1",
+    "deps-install": "~0.2.1",
+    "fcache": "~0.3",
+    "hosted-git-info": "^3.0.2",
+    "loggy": "~1.0.8",
+    "ncp": "^2.0.0",
+    "normalize-git-url": "^3.0.2",
+    "serve-handler": "^6.1.2",
+    "since-app-start": "~0.3",
+    "skemata": "~0.1",
+    "source-map": "~0.5",
+    "universal-path": "^0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^6.6.0",
+    "eslint-config-brunch": "^1.1.0",
+    "fixturify": "^0.2",
+    "fs-extra": "^0.30",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "rewire": "^2.5",
+    "test-console": "^1"
+  },
+  "scripts": {
+    "lint": "eslint bin/brunch lib test",
+    "test": "LOGGY_STACKS=1 NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'",
+    "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
+  },
   "keywords": [
     "assembler",
     "builder",
@@ -14,75 +62,31 @@
     "config",
     "react",
     "webpack",
-    "browserify",
+    "vue",
     "grunt",
     "gulp",
-    "broccoli",
     "backbone",
     "ember",
     "angular",
-    "chaplin",
+    "react",
     "html5"
   ],
-  "homepage": "http://brunch.io/",
-  "author": "Brunch team (http://brunch.io)",
+  "homepage": "https://brunch.io/",
+  "author": "Brunch team (https://brunch.io)",
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
-  "main": "./lib/index",
-  "files": [
-    "bin",
-    "lib"
-  ],
-  "bin": {
-    "brunch": "bin/brunch"
-  },
-  "scripts": {
-    "lint": "eslint bin/brunch lib test",
-    "lint:fix": "eslint --fix bin/brunch lib test",
-    "test": "npm run lint && LOGGY_STACKS=1 ava -s --verbose --fail-fast",
-    "test:coverage": "nyc ava -s && nyc report --reporter=html"
-  },
-  "engines": {
-    "node": ">= 4.0",
-    "npm": ">= 3.0"
-  },
-  "dependencies": {
-    "anymatch": "^2.0",
-    "anysort": "~1.0",
-    "check-dependencies": "~1.0.1",
-    "chokidar": "^2",
-    "coffeescript": "~1.12.7",
-    "commander": "~2.9",
-    "commonjs-require-definition": "~0.6.2",
-    "deppack": "~0.8",
-    "debug": "^3.1.0",
-    "deps-install": "~0.1",
-    "fcache": "~0.3",
-    "init-skeleton": "~1.0",
-    "loggy": "~1.0.3",
-    "micro-es7-shim": "^0.1",
-    "micro-promisify": "~0.1",
-    "mkdirp": "~0.5",
-    "promise.prototype.finally": "^2",
-    "read-components": "~0.7",
-    "serve-brunch": "~0.2",
-    "since-app-start": "~0.3",
-    "skemata": "~0.1",
-    "source-map": "~0.5",
-    "universal-path": "^0.1"
-  },
-  "devDependencies": {
-    "ava": "~0.16",
-    "eslint": "^6",
-    "eslint-config-brunch": "^1",
-    "fixturify": "^0.2",
-    "fs-extra": "^0.30",
-    "nyc": "^13.0.0",
-    "rewire": "^2.5",
-    "test-console": "^1"
-  },
   "eslintConfig": {
-    "extends": "brunch"
+    "extends": "brunch",
+    "env": {
+      "node": true,
+      "mocha": true
+    },
+    "rules": {
+      "func-names": [
+        2,
+        "never"
+      ]
+    }
   }
 }

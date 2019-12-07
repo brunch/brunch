@@ -1,8 +1,8 @@
 'use strict';
-const test = require('ava');
 const fs = require('fs');
+const {expect} = require('chai');
 const brunch = require('../lib');
-const helpers = require('./_test_helper');
+const helpers = require('./_utils');
 const prepareTestDir = helpers.prepareTestDir;
 const teardownTestDir = helpers.teardownTestDir;
 const fileContains = helpers.fileContains;
@@ -30,38 +30,31 @@ const watch = (params, fn) => {
   params._onReload = newWatcher => {
     watcher = newWatcher;
   };
-  watcher = brunch.watch(params, onCompile);
+  params.onCompile = onCompile;
+  watcher = brunch.watch(params);
 
   const it = fn(compilation);
   it.next();
 };
 
-const closeWatcher = cb => {
-  if (watcher) {
-    // close chokidar to prevent that it understands the fixtures being copied as new files being added
-    watcher.watcher.close();
-    if (watcher.server) {
-      return watcher.server.close(cb);
-    }
-  }
-  return cb();
-};
-
-test.beforeEach(() => {
+beforeEach(() => {
   teardownTestDir();
   prepareTestDir();
 });
 
-test.afterEach.always.cb(t => {
-  closeWatcher(() => {
+afterEach(done => {
+  (async function() {
+    if (watcher) {
+      await watcher.close();
+    }
     setTimeout(() => {
       teardownTestDir();
-      t.end();
+      done();
     }, tearDownInterval);
-  });
+  })();
 });
 
-test.serial.cb('compile on file changes', t => {
+it('compile on file changes', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -80,27 +73,27 @@ test.serial.cb('compile on file changes', t => {
 
   watch({}, function* (compilation) {
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains('public/index.html', '<h1>hello world</h1>');
 
     fs.writeFileSync('app/initialize.js', 'console.log("changed")');
 
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("changed")
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-    t.end();
+    fileContains('public/index.html', '<h1>hello world</h1>');
+    done();
   });
 });
 
-test.serial.cb('detect file addition', t => {
+it('detect file addition', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -119,30 +112,30 @@ test.serial.cb('detect file addition', t => {
 
   watch({}, function* (compilation) {
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains('public/index.html', '<h1>hello world</h1>');
 
     fs.writeFileSync('app/new-file.js', 'console.log("new")');
 
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("initialize.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("initialize.js", function(exports, require, module) {
 console.log("hello world")
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-    fileContains(t, 'public/app.js', `require.register("new-file.js", function(exports, require, module) {
+    fileContains('public/index.html', '<h1>hello world</h1>');
+    fileContains('public/app.js', `require.register("new-file.js", function(exports, require, module) {
 console.log("new")
 });`);
-    t.end();
+    done();
   });
 });
 
-test.serial.cb('detect file removal', t => {
+it('detect file removal', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -162,33 +155,33 @@ test.serial.cb('detect file removal', t => {
 
   watch({}, function* (compilation) {
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("a.js", function(exports, require, module) {
 filea
 });`);
-    fileContains(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
+    fileContains('public/app.js', `require.register("b.js", function(exports, require, module) {
 fileb
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
+    fileContains('public/index.html', '<h1>hello world</h1>');
 
     fs.unlinkSync('app/b.js');
 
     yield compilation();
-    fileExists(t, 'public/app.js.map');
-    fileContains(t, 'public/app.js', '//# sourceMappingURL=app.js.map');
-    fileContains(t, 'public/app.js', `require.register("a.js", function(exports, require, module) {
+    fileExists('public/app.js.map');
+    fileContains('public/app.js', '//# sourceMappingURL=app.js.map');
+    fileContains('public/app.js', `require.register("a.js", function(exports, require, module) {
 filea
 });`);
-    fileDoesNotContain(t, 'public/app.js', `require.register("b.js", function(exports, require, module) {
+    fileDoesNotContain('public/app.js', `require.register("b.js", function(exports, require, module) {
 fileb
 });`);
-    fileContains(t, 'public/index.html', '<h1>hello world</h1>');
-    t.end();
+    fileContains('public/index.html', '<h1>hello world</h1>');
+    done();
   });
 });
 
-test.serial.cb('install npm packages if package.json changes', t => {
+it('install npm packages if package.json changes', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -207,50 +200,18 @@ test.serial.cb('install npm packages if package.json changes', t => {
 
   watch({}, function* (compilation) {
     yield compilation();
-    t.false(fs.readdirSync('./node_modules').includes('lodash'));
-
+    expect(fs.readdirSync('./node_modules').includes('lodash')).to.be.false;
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     packageJson.dependencies.lodash = '*';
     fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
 
     yield compilation();
-    t.true(fs.readdirSync('./node_modules').includes('lodash'));
-    t.end();
+    expect(fs.readdirSync('./node_modules').includes('lodash')).to.be.true;
+    done();
   });
 });
 
-test.serial.cb('install bower components if bower.json changes', t => {
-  fixturify.writeSync('.', {
-    'brunch-config.js': `module.exports = {
-      files: {
-        javascripts: {
-          joinTo: 'app.js'
-        }
-      }
-    };`,
-    app: {
-      assets: {
-        'index.html': '<h1>hello world</h1>',
-      },
-      'initialize.js': 'console.log("hello world")',
-    },
-  });
-
-  watch({}, function* (compilation) {
-    yield compilation();
-    t.false(fs.readdirSync('./bower_components').includes('jquery'));
-
-    const bowerJson = JSON.parse(fs.readFileSync('bower.json', 'utf8'));
-    bowerJson.dependencies.jquery = '*';
-    fs.writeFileSync('bower.json', JSON.stringify(bowerJson, null, 2));
-
-    yield compilation();
-    t.true(fs.readdirSync('./bower_components').includes('jquery'));
-    t.end();
-  });
-});
-
-test.serial.cb('reload config if it changes', t => {
+it('reload config if it changes', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -272,12 +233,12 @@ test.serial.cb('reload config if it changes', t => {
 
   watch({}, function* (compilation) {
     yield compilation();
-    fileDoesNotExist(t, 'dist/app.js.map');
-    fileDoesNotExist(t, 'dist/app.js');
-    fileDoesNotExist(t, 'dist/index.html');
-    fileExists(t, 'public/app.js.map');
-    fileExists(t, 'public/app.js');
-    fileExists(t, 'public/index.html');
+    fileDoesNotExist('dist/app.js.map');
+    fileDoesNotExist('dist/app.js');
+    fileDoesNotExist('dist/index.html');
+    fileExists('public/app.js.map');
+    fileExists('public/app.js');
+    fileExists('public/index.html');
     fs.writeFileSync('brunch-config.js', `module.exports = {
       files: {
         javascripts: {
@@ -290,14 +251,14 @@ test.serial.cb('reload config if it changes', t => {
     };`);
 
     yield compilation();
-    fileExists(t, 'dist/app.js.map');
-    fileExists(t, 'dist/app.js');
-    fileExists(t, 'dist/index.html');
-    t.end();
+    fileExists('dist/app.js.map');
+    fileExists('dist/app.js');
+    fileExists('dist/index.html');
+    done();
   });
 });
 
-test.serial.cb('brunch server works', t => {
+it('brunch server works', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -317,13 +278,13 @@ test.serial.cb('brunch server works', t => {
   watch({server: true}, function* (compilation) {
     yield compilation();
     requestBrunchServer('/', responseText => {
-      t.is(responseText, '<h1>hello world</h1>');
-      t.end();
+      expect(responseText).to.equal('<h1>hello world</h1>');
+      done();
     });
   });
 });
 
-test.serial.cb('brunch server reload files', t => {
+it('brunch server reload files', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -343,19 +304,19 @@ test.serial.cb('brunch server reload files', t => {
   watch({server: true}, function* (compilation) {
     yield compilation();
     requestBrunchServer('/', responseText => {
-      t.is(responseText, '<h1>hello world</h1>');
+      expect(responseText).to.equal('<h1>hello world</h1>');
       fs.writeFileSync('app/assets/index.html', '<h1>changed</h1>');
     });
 
     yield compilation();
     requestBrunchServer('/', responseText => {
-      t.is(responseText, '<h1>changed</h1>');
-      t.end();
+      expect(responseText).to.equal('<h1>changed</h1>');
+      done();
     });
   });
 });
 
-test.serial.cb('brunch server accepts custom server', t => {
+it('brunch server accepts custom server 1', done => {
   fixturify.writeSync('.', {
     'brunch-config.js': `module.exports = {
       files: {
@@ -369,10 +330,10 @@ var http = require('http');
 
 module.exports = {
   startServer: function(port, path, callback) {
-    const server = http.createServer(function (req, res) {
+    var server = http.createServer(function (req, res) {
       res.end('hello from custom server');
     });
-    return server.listen(port, callback);
+    return server.listen(port, function() { callback(undefined, server); });
   }
 };`,
     app: {
@@ -386,8 +347,8 @@ module.exports = {
   watch({server: true}, function* (compilation) {
     yield compilation();
     requestBrunchServer('/', responseText => {
-      t.is(responseText, 'hello from custom server');
-      t.end();
+      expect(responseText).to.equal('hello from custom server');
+      done();
     });
   });
 });
