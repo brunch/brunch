@@ -47,7 +47,7 @@
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
-    "test": "LOGGY_STACKS=1 NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'",
+    "test": "NODE_ENV=test || set NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'",
     "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
   },
   "keywords": [
