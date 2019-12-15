@@ -16,7 +16,7 @@
   "dependencies": {
     "anymatch": "^3.1.1",
     "anysort": "^2.0.0",
-    "brunch-skeletons": "^0.1.6",
+    "brunch-skeletons": "^0.2.0",
     "chokidar": "^3.3.0",
     "commander": "~4.0",
     "commonjs-require-definition": "~0.6.2",
