@@ -41,14 +41,12 @@
     "fixturify": "^0.2",
     "fs-extra": "^0.30",
     "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
     "rewire": "^2.5",
     "test-console": "^1"
   },
   "scripts": {
     "lint": "eslint bin/brunch lib test",
-    "test": "NODE_ENV=test || set NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'",
-    "test:coverage": "LOGGY_STACKS=1 nyc ava -s && nyc report --reporter=html"
+    "test": "NODE_ENV=test || set NODE_ENV=test npx mocha --timeout=20s --ignore 'test/_*.js'"
   },
   "keywords": [
     "assembler",
@@ -65,8 +63,6 @@
     "vue",
     "grunt",
     "gulp",
-    "backbone",
-    "ember",
     "angular",
     "react",
     "html5"
@@ -77,16 +73,6 @@
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
   "eslintConfig": {
-    "extends": "brunch",
-    "env": {
-      "node": true,
-      "mocha": true
-    },
-    "rules": {
-      "func-names": [
-        2,
-        "never"
-      ]
-    }
+    "extends": "brunch"
   }
 }
