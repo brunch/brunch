@@ -1,6 +1,7 @@
 ## Brunch 3.0-pre (unreleased)
 
-* Configuration file is now optional; and you could have it in package.json
+* Make config optional; and you could have it in package.json
+* Build speed-ups up to 1.5x for some cases.
 * Built-in webserver is now using serve-handler from micro(1) webserver.
   Custom webservers are unaffected.
 * **Breaking:** Require node.js 10.16 or higher
