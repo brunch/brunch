@@ -8,7 +8,7 @@ Fast front-end web app build tool with simple declarative config and seamless in
 
 Install Brunch with a simple node.js package manager command:
 
-    $ npm install -g brunch
+    npm install -g brunch
 
 1. **Create** a new Brunch project: `brunch new [--skeleton url]`
     - skeleton specifies a skeleton from which your application will be initialized.
