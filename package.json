@@ -1,7 +1,7 @@
 {
   "name": "brunch",
   "description": "Fast front-end web app build tool with simple declarative config, seamless incremental compilation for rapid development, an opinionated pipeline and workflow, and core support for source maps",
-  "version": "3.0.0",
+  "version": "3.1.0-pre",
   "main": "./lib/index",
   "files": [
     "bin",
@@ -21,7 +21,7 @@
     "commander": "~5.0.0",
     "commonjs-require-definition": "^0.6.3",
     "debug": "^4.1.1",
-    "deppack": "^0.9.2",
+    "deppack": "^0.10.0",
     "deps-install": "~0.2.1",
     "fcache": "~0.3",
     "hosted-git-info": "^3.0.4",
