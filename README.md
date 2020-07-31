@@ -18,8 +18,6 @@ Install Brunch with a simple node.js package manager command:
 2. **Develop** with Brunch: `brunch watch --server`
     - tells Brunch to watch your project and incrementally rebuild it when source files are changed.
     The optional server flag launches a simple web server with push state support.
-    - If you use OS X and want brunch to show system notification every time compilation error happens, you will need to install terminal notifier:
-    `brew install terminal-notifier`
 3. **Deploy** with Brunch: `brunch build --production`
     - builds a project for distribution. By default it enables minification.
 
