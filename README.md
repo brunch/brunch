@@ -38,7 +38,7 @@ See the [CONTRIBUTING.md](https://github.com/brunch/brunch/blob/master/CONTRIBUT
 
 ## License
 
-MIT license (c) 2019 Paul Miller [paulmillr.com](https://paulmillr.com), Elan Shanker,
+MIT license (c) 2021 Paul Miller [paulmillr.com](https://paulmillr.com), Elan Shanker,
 Nik Graf, Thomas Schranz, Allan Berger, Jan Monschke, Martin Schürrer
 
 See LICENSE file.

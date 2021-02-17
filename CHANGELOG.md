@@ -1,4 +1,15 @@
-## Brunch 3.0-pre (Dec 16, 2019)
+## Brunch 4.0.0 (Feb 18, 2021)
+
+* **Breaking:** Require node.js 12.13 or higher
+* **Breaking:** Remove `node-browser-modules`:
+    * This part of Brunch shimmed well-known node.js built-in modules
+    and provided them for browsers - such as `buffer` and `util`
+    * It increased Brunch package size massively and the modules themselves
+    were outdated
+    * Now, if you need to use "node.js" module, install proper shim from NPM
+    * NPM packages can be used as before, this change only affects built-ins
+
+## Brunch 3.0.0 (Dec 16, 2019)
 
 * Make config optional; and you could have it in package.json
 * Build speed-ups up to 1.5x for some cases.
