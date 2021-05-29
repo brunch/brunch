@@ -54,6 +54,83 @@ const postcssBrunch = {
   `,
 };
 
+it('plugins order', done => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "babel-brunch": "^6.0.4",
+        "terser-brunch": "^4.0.0",
+        "gzip-brunch": "^2.0.0"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      },
+      plugins: {
+        order: {
+          before: ['babel-brunch'],
+          after: ['gzip-brunch']
+        }
+      }
+    };`,
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
+      },
+      'initialize.js': 'console.log("hello world")',
+    },
+  });
+
+  brunch.build({onCompile() {
+    fileExists('public/app.js');
+    done();
+  }});
+});
+
+it('plugins order missing', done => {
+  fixturify.writeSync('.', {
+    'package.json': `{
+      "name": "brunch-app",
+      "version": "0.1.0",
+      "devDependencies": {
+        "javascript-brunch": "^2.0.0",
+        "babel-brunch": "^6.0.4",
+        "terser-brunch": "^4.0.0",
+        "gzip-brunch": "^2.0.0"
+      }
+    }`,
+    'brunch-config.js': `module.exports = {
+      files: {
+        javascripts: {
+          joinTo: 'app.js'
+        }
+      },
+      plugins: {
+        order: {
+          before: ['missing'],
+        }
+      }
+    };`,
+    app: {
+      assets: {
+        'index.html': '<h1>hello world</h1>',
+      },
+      'initialize.js': 'console.log("hello world")',
+    },
+  });
+
+  brunch.build({onCompile() {
+    eOutputContains("Plugin 'missing' is found in 'plugins.order', but is not declared in package.json");
+    done();
+  }});
+});
+
 it('compiler chaining: compiler.targetExtension', done => {
   fixturify.writeSync('.', {
     'package.json': `{
