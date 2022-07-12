@@ -24,7 +24,7 @@
     "deppack": "^0.10.0",
     "deps-install": "~0.2.1",
     "fcache": "~0.3",
-    "hosted-git-info": "^3.0.4",
+    "hosted-git-info": "5.0.0",
     "loggy": "~1.0.8",
     "ncp": "^2.0.0",
     "normalize-git-url": "^3.0.2",
