@@ -4,21 +4,20 @@ What's the essence of the issue?
 
 ### Expected behavior
 
-Tell us what you think should happend.
+Tell us what you think should happen.
 
 ### Actual behavior
 
 Tell us what actually happens.
 
-If at all possible, please create a small demo app on GitHub that demonstrates the issue so it's easier for us to check and debug.
+If possible, please create a small demo app on GitHub that demonstrates the issue so it's easier for us to check and debug.
 
 ### Environment
 
-1. Brunch: *(make sure you're on the latest release!)*
-1. Node.js:
-1. NPM: *(npm v2 is not supported)*
-1. Operating system:
-1. Code editor:
+1. Brunch Version: *(make sure you're on the latest release!)*
+2. Node.js Version:
+3. NPM Version:
+4. Operating system:
 
 ### `package.json` contents
 
@@ -34,4 +33,4 @@ If at all possible, please create a small demo app on GitHub that demonstrates t
 
 If there's an unexpected error during `brunch build`/`brunch watch`, please attach the compilation log with the debug flag (`-d`) **and** stack traces enabled (`export LOGGY_STACKS=true`).
 
-If something worked with previous versions of brunch, but stopped with a newer one, please include these details as well.
+If something worked with previous versions of brunch, but stopped working with a newer one, please include those details as well.
