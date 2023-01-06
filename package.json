@@ -14,7 +14,7 @@
     "node": ">= 12.13"
   },
   "dependencies": {
-    "anymatch": "^3.1.1",
+    "anymatch": "3.1.2",
     "anysort": "^2.0.0",
     "brunch-skeletons": "^0.2.0",
     "chokidar": "^3.5.1",
