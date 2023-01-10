@@ -40,7 +40,7 @@
     "eslint-config-brunch": "^1.2.0",
     "fixturify": "^2.1",
     "fs-extra": "^0.30",
-    "mocha": "^7.1.1",
+    "mocha": "^10",
     "rewire": "^5.0.0",
     "test-console": "^1"
   },
