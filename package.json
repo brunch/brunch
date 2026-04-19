@@ -67,8 +67,8 @@
     "react",
     "html5"
   ],
-  "homepage": "https://brunch.io/",
-  "author": "Brunch team (https://brunch.io)",
+  "homepage": "https://brunch.github.io/",
+  "author": "Brunch team (https://brunch.github.io)",
   "repository": "https://github.com/brunch/brunch.git",
   "bugs": "https://github.com/brunch/brunch/issues",
   "license": "MIT",
