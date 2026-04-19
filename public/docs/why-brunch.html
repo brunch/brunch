@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><span class="active">Why Brunch</span></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="why-brunch-and-not-webpack-grunt-or-gulp">Why Brunch... And not Webpack, Grunt, or Gulp</h1>
+<div class="toc-placeholder"></div>
+
+<h2 id="philosophy-behind-brunch">Philosophy behind Brunch</h2>
+<p>Brunch was built with two things in mind: <strong>speed</strong> and <strong>simplicity</strong>.</p>
+<p>You will find that the <a href="https://github.com/brunch/with-react/blob/master/brunch-config.js">typical config of a Brunch application</a> is an order of magnitude simpler, compared to Webpack, <a href="https://gist.github.com/paulmillr/eb3ae139aadbbb87ab9b#file-grunt-js">Grunt</a>, or <a href="https://gist.github.com/paulmillr/eb3ae139aadbbb87ab9b#file-gulp-js">Gulp</a>.</p>
+<p>And that the time it takes to perform a fresh compilation?
+It&#39;s times faster.
+Even more so if you run the watcher — it will only rebuild what was changed, not everything, getting you incremental compilations in under 500ms.
+(Obviously, you don&#39;t have to take our word for it. See <a href="https://github.com/brunch/brunch/issues/1234">this story</a> shared with us by a webpack user.)</p>
+<p>In order to achieve both goals, Brunch does have to make certain assumptions about your application, and thus be opinionated.
+See the <a href="/docs/concepts">core concepts page</a> for more on this.</p>
+<p>Besides configs, brunch is also <strong>simpler in terms of commands</strong>.
+Grunt / Gulp commands replicate all plugins it loads.
+Brunch always has three commands: <code>new</code>, <code>build</code> and <code>watch</code>.
+Build / watch commands may receive optional <code>production</code> flag which will tell Brunch to optimize assets, javascripts and stylesheets.</p>
+<p>You can find a more in-depth discussion of what sets Brunch apart in <a href="https://github.com/brunch/brunch-guide/blob/master/content/en/chapter01-whats-brunch.md#readme">chapter 1 of the community-contributed guide</a>.</p>
+<h2 id="brunch-vs-webpack">Brunch vs Webpack</h2>
+<p>Webpack has been gaining quite some popularity lately.
+Wondering how it compares with Brunch?</p>
+<p>Where both are similar:</p>
+<ul>
+<li>module support is first-class</li>
+<li>have Hot Module Replacement (<a href="http://github.com/brunch/hmr-brunch"><code>hmr-brunch</code></a>)</li>
+<li>have a notion of &quot;compiler&quot; / &quot;loader&quot; (although loaders are more than that)</li>
+<li>can <code>require</code> stylesheets</li>
+</ul>
+<p>What Brunch can&#39;t do that Webpack can:</p>
+<ul>
+<li>asynchronous module loading / code splitting — brunch does have entry points functionality and can produce several js bundles though</li>
+<li>have clever processing of non-js/non-css assets</li>
+</ul>
+<p>Unlike Webpack, Brunch:</p>
+<ul>
+<li>does not make you specify how to compile a file, every time you use it. Just add a compiler plugin and everything will Just Work™</li>
+<li>achieves faster build times</li>
+</ul>
+<h2 id="brunch-vs-grunt-gulp">Brunch vs Grunt/Gulp</h2>
+<p>These are more of task runners that allow you to create custom pipelines with lots of code.
+Imperative.</p>
+<p>To get first-class module support you would have to additionally configure and use Browserify or similar.</p>
+<p>But even then, your rebuilds during <code>watch</code> won&#39;t be incremental — they will always start afresh and be slow.</p>
+<h2 id="brunch-vs-rails-asset-pipeline-livereload-codekit">Brunch vs Rails Asset pipeline / LiveReload / CodeKit</h2>
+<p>With Asset pipeline there are similar disadvantages. With Brunch:</p>
+<ul>
+<li>You can use any backend you like, be it Node.js, Rails or Lift. You can even keep frontend and backend as separate projects.</li>
+<li>You&#39;ll get automated module support</li>
+<li>You&#39;ll have NPM &amp; Bower support</li>
+<li>Rebuilds would be fast and incremental</li>
+</ul>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/concepts">&larr; Core concepts</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/using-plugins">Using plugins &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/why-brunch.md">Edit why-brunch.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

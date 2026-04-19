@@ -1,0 +1,36 @@
+{
+  "name": "brunch.github.io",
+  "description": "The Brunch.io web site",
+  "author": "Brunch team (http://brunch.io)",
+  "version": "1.0.0",
+  "repository": "git@github.com:brunch/brunch.github.io.git",
+  "license": "MIT",
+  "scripts": {
+    "start": "brunch watch --server",
+    "prod": "npm run lint && brunch build --production",
+    "lint": "eslint app && ./validateJSON.js"
+  },
+  "dependencies": {
+    "inferno": "1.1.1",
+    "inferno-component": "1.1.2",
+    "inferno-create-element": "1.1.2"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2",
+    "autoprefixer": "^6",
+    "babel-brunch": "^6",
+    "babel-plugin-inferno": "^1.5.0",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "babel-preset-latest": "^6.22.0",
+    "brunch": "^3",
+    "clean-css-brunch": "^3",
+    "eslint": "^6.7",
+    "eslint-config-brunch": "^1",
+    "eslint-plugin-react": "^6.9.0",
+    "jade-brunch": "^2.8",
+    "jstransformer-marked": "^1.0.1",
+    "postcss-brunch": "^3",
+    "sass-brunch": "brunch/sass-brunch",
+    "terser-brunch": "^4.0"
+  }
+}

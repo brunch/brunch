@@ -1,0 +1,15 @@
+{
+  "short_name": "brunch.io",
+  "name": "Brunch - ultra-fast HTML5 build tool",
+  "description": "Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess.",
+  "default_locale": "en",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone"
+}

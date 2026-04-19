@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><span class="active">Troubleshooting</span></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-troubleshooting">Brunch: Troubleshooting</h1>
+<div class="toc-placeholder"></div>
+
+<p><a name="emfile"></a></p>
+<h2 id="i-get-an-emfile-error-when-i-build-a-brunch-project">I get an EMFILE error when I build a Brunch project</h2>
+<p><code>EMFILE</code> means there are too many open files.
+Brunch watches all your project files and it&#39;s usually a pretty big number.
+You can fix this error with setting max opened file count to a bigger number
+using the command <code>ulimit -n &lt;number&gt;</code> (10000 should be enough).</p>
+<h2 id="my-module-is-not-included-after-changing-sometimes">My module is not included after changing sometimes</h2>
+<p>If you are running <code>brunch watch</code> and change something, to later find out that the changed file was included as completely <em>empty</em>... what do you do?</p>
+<p>It is caused by the way some editors write to files.
+It also can happen when you edit files over ssh.
+You can see these threads for more details:</p>
+<ul>
+<li><a href="https://github.com/brunch/brunch/issues/1250">brunch/brunch#1250</a></li>
+<li><a href="https://github.com/brunch/brunch/issues/1219">brunch/brunch#1219</a></li>
+<li><a href="https://github.com/brunch/brunch/issues/1303">brunch/brunch#1303</a></li>
+</ul>
+<p>Here&#39;s a quick summary on how to fix this:</p>
+<ul>
+<li><p>see if there are write-related configuration options in your editor. In Sublime, <code>atomic_save: true</code> seems to do the trick.</p>
+</li>
+<li><p>try add this to your config:</p>
+<pre><code class="lang-js">watcher: {
+  awaitWriteFinish: true,
+  usePolling: true
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="i-experience-another-issue">I experience another issue</h2>
+<p>See our <a href="https://github.com/brunch/brunch/blob/master/CONTRIBUTING.md#did-you-find-a-bug">contributing guideline</a> on how to debug and report issues. Don&#39;t forget to search GitHub issues to see if similar has already been reported, resolved, or fixed.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/plugins">&larr; Plugin API</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/architecture">Architecture &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/troubleshooting.md">Edit troubleshooting.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

@@ -1,0 +1,33 @@
+extends /_layouts/_content-only
+
+block content
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      // FIXME: Do not use globals
+      Inferno.render(
+        createElement(require('skeletons'), null),
+        document.querySelector('#skeletons-body')
+      );
+    });
+
+  :marked
+    # Skeletons
+
+    A Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Skeleton can start you on your way with a specific pattern.
+
+    Creating new application with any skeleton is pretty simple:
+
+        # Simply create "dead simple" app without any opinions.
+        brunch new
+        # Create ES6 skeleton. "es6" is an alias from the table.
+        brunch new -s es6
+        # Same thing as above:
+        brunch new --skeleton brunch/with-es6
+        brunch new --skeleton https://github.com/brunch/with-es6
+
+    <span class="note">
+      The [complete skeletons list](https://github.com/brunch/skeletons) is hosted on GitHub — feel free to add any skeleton you create on your own!
+    </span>
+
+  div#skeletons-body

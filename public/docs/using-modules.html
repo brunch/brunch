@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><span class="active">Using JS modules and NPM</span></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-using-js-modules-and-npm">Brunch: Using JS modules and NPM</h1>
+<div class="toc-placeholder"></div>
+
+<h2 id="intro">Intro</h2>
+<p>Organizing your JS code by modules is a central idea in Brunch.
+It allows your files to each have a separate scope, and also execute only when needed.</p>
+<p>A file&#39;s name is also its module name.
+To make things a bit nicer, Brunch cuts the <code>app</code> portion from the module name.
+For example, <code>app/config.js</code> will have a module name of <code>config.js</code>.
+With CommonJS, your modules will return values by putting them into <code>module.exports</code>, just like you would with Node.</p>
+<pre><code class="lang-js">// app/config.js
+module.exports = {
+  api: {
+    host: &#39;brunch.io&#39;
+  }
+};
+</code></pre>
+<p>To use it in other modules, just <code>require</code> it! Note that you can require using both a name with extension (like <code>config.js</code>) or a name without extension (<code>config</code>):</p>
+<pre><code class="lang-js">const config = require(&#39;config&#39;);
+
+makeRequest(config.api, &#39;GET&#39;, &#39;plugins&#39;);
+</code></pre>
+<p>Your application should have an entry point module which will load other modules and bootstrap your app.
+When the HTML loads in the browser, you need to tell it to load your entry module.
+You can do it by either:</p>
+<ul>
+<li>adding <code>&lt;script&gt;require(&#39;initialize&#39;);&lt;/script&gt;</code> — where <code>initialize</code> is the name of the entry module (which would be located in <code>app/initialize.js</code>); <strong>OR</strong></li>
+<li><p>adding an <a href="/docs/config#-modules-"><code>autoRequire</code></a> to config, to make Brunch do the above for you:</p>
+<pre><code class="lang-js">// brunch-config
+module.exports = {
+  modules: {
+    autoRequire: {
+      // outputFileName : [ entryModule ]
+      &#39;javascripts/app.js&#39;: [&#39;initialize&#39;]
+    }
+ }
+};
+</code></pre>
+</li>
+</ul>
+<h2 id="kinds-of-modules">Kinds of modules</h2>
+<p>Brunch supports several JS module styles:</p>
+<ul>
+<li>CommonJS (default)</li>
+<li>AMD</li>
+<li>Custom wrapper &amp; definition</li>
+</ul>
+<p>You can use either of these in your projects, however CommonJS is becoming the universal standard, and certain Brunch features, namely the NPM integration, only work with CommonJS.
+Additionally, most of the docs will assume you use CommonJS.</p>
+<h2 id="npm-integration">NPM integration</h2>
+<p>Brunch supports handling client-side dependencies using the <a href="https://npmjs.com">NPM</a> package manager.</p>
+<h3 id="using-node-modules">Using node modules</h3>
+<p>NPM integration is enabled by default starting Brunch 2.3 so there&#39;s no additional setup!
+Simply <code>npm install --save</code> your front-end packages as you normally would, <code>require</code> them in your app, and Brunch will figure out the rest.</p>
+<p>Just make sure that you don&#39;t forget to join <code>/^node_modules/</code> somewhere!</p>
+<pre><code class="lang-js">files: {
+  javascripts: {
+    joinTo: {
+      &#39;js/app.js&#39;: /^app/,
+      &#39;js/vendor.js&#39;: /^(?!app)/ // We could also use /node_modules/ regex.
+    }
+  }
+}
+</code></pre>
+<h3 id="including-modules-styles">Including modules&#39; styles</h3>
+<p>Brunch can also handle styles of client-side libraries, by providing <code>styles</code> attribute which is key-value object where key is package name and value is an array with relative to package path of styles which should be included.</p>
+<pre><code class="lang-js">npm: {
+  styles: {
+    leaflet: [&#39;dist/leaflet.css&#39;]
+  }
+},
+files: {
+  javascripts: {
+    joinTo: {&#39;js/vendor.js&#39;: /^node_modules/}
+  },
+  stylesheets: {
+    joinTo: {&#39;css/vendor.css&#39;: /^node_modules/}
+  }
+}
+</code></pre>
+<p>Note that for other assets that come from NPM packages (like images, fonts, etc), you will have to manually copy them to your public folder. You can use the npm&#39;s <code>postinstall</code> hook to do the copying. See <a href="/docs/faq">FAQ</a>.</p>
+<h3 id="making-packages-global">Making packages global</h3>
+<p>It&#39;s possible to expose npm packages to <code>window</code> — so that you can access the module without requiring it. See <a href="/docs/config#-npm-">docs</a>.</p>
+<h2 id="hot-module-replacement">Hot Module Replacement</h2>
+<p>Brunch also supports Hot Module Replacement with the <a href="http://github.com/brunch/hmr-brunch"><code>hmr-brunch</code></a> plugin. Refer to its README for more details.</p>
+<h2 id="using-bower">Using Bower</h2>
+<p>Brunch does support <a href="http://bower.io">Bower</a>, however NPM is becoming de-facto standard for front-end packages.
+You may still want/need to use bower for some of your packages that aren&#39;t on NPM yet, or just copy these to <code>vendor</code>.</p>
+<p>For more details on NPM integration, see the previous section.</p>
+<p>To add packages to your project:</p>
+<ul>
+<li>Make sure you have <code>bower.json</code>, which can be generated with <code>bower init</code></li>
+<li>Add packages to the <code>dependencies</code> field of your <code>bower.json</code></li>
+<li>Optionally specify the <a href="https://github.com/paulmillr/read-components#read-components"><code>overrides</code> property</a> for packages without <code>bower.json</code>. This is needed because brunch automatically compiles bower dependencies in right order.</li>
+<li>Note that <code>overrides</code> do not impact Bower&#39;s behavior, so the original dependency graph will still be copied by <code>bower install</code>. But specifying <code>overrides</code> is effective for changing the dependencies that actually get built into your project.</li>
+</ul>
+<p>As for now, you can solve it in different ways - by using <code>npm post-install</code> script, <code>onCompile</code> handler in config <code>hooks</code> etc.</p>
+<pre><code class="lang-json">&quot;scripts&quot;: {
+  &quot;postinstall&quot;: &quot;cp -r node_modules/font-awesome/fonts public/fonts&quot;
+}
+</code></pre>
+<p>You can override some dependent package manifest using <code>overrides</code> attribute in <code>package.json</code> / <code>bower.json</code>.</p>
+<p>Be aware, that <code>main</code> attribute in <code>package.json</code> is a string, but array in <code>bower.json</code>.</p>
+<pre><code class="lang-json">&quot;dependencies&quot;: {
+  &quot;some-awesome-package&quot;: &quot;~0.0.1&quot;
+},
+&quot;overrides&quot;: {
+  &quot;some-awesome-package&quot;: {
+    &quot;main&quot;: &quot;./lib/just_one_component.js&quot;
+  }
+}
+</code></pre>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/using-plugins">&larr; Using plugins</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/testing">Testing &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/using-modules.md">Edit using-modules.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

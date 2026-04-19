@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><span class="active">Using plugins</span></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-using-plugins">Brunch: Using plugins</h1>
+<p>Brunch uses Node.js plugins to provide compilation / linting / optimization functionality.</p>
+<p>Brunch has a plugin ecosystem to achieve interoperability with various tools simply via <a href="/docs/plugins.html">plugin API</a>.</p>
+<p>For example, if you use JavaScript files in your project,
+you’ll need a plugin that adds JS support.
+Same with styles, templates, minifiers, linters and much more.</p>
+<div class="toc-placeholder"></div>
+
+<h2 id="kinds-of-plugins">Kinds of plugins</h2>
+<p>Brunch plugins can fall into three broad categories (one plugin can belong to several at the same time!):</p>
+<ul>
+<li><p><strong>Compilers</strong>.
+These are responsible for compiling your source files into something a browser would understand.
+For example, a CoffeeScript (to JS) compiler; or a Stylus (to CSS) compiler.</p>
+</li>
+<li><p><strong>Linters</strong>.
+These allow to prevent certain kinds of mistakes, or enforce a particular coding style, at the build time.</p>
+</li>
+<li><p><strong>Optimizers</strong>.
+As the name implies, they optimize compiled JS or CSS files.
+Examples of optimizers include: a JavaScript uglifier; a CSS prefixer and minifier.</p>
+</li>
+</ul>
+<p>You can browse some of the community-supported plugins in the <a href="/plugins">Plugins</a> section.</p>
+<h2 id="installation">Installation</h2>
+<p>Plugins can be installed with a simple console command:</p>
+<p><code>npm install --save-dev sass-brunch</code> - would add <code>&quot;sass-brunch&quot;: &quot;^2.0.2&quot;</code> to package.json of your brunch app.</p>
+<p>Sometimes you&#39;ll want to use plugins which have not yet been published to NPM and are available only through GIT.
+In this case you can specify Git URL for the command: <code>npm install --save-dev brunch/sass-brunch</code>.</p>
+<p>To remove a plugin, just delete its line from <code>package.json</code>.
+See <a href="http://npmjs.org/doc/json.html#dependencies">npm docs</a> for more docs on packages.</p>
+<h2 id="configuration">Configuration</h2>
+<p>Plugins are usable out-of-the-box.
+However, sometimes you will need to customize how they work, to make them suit your application.
+Refer to the plugin&#39;s <code>README</code> on details regarding configuration.</p>
+<p>Typically it would go under the <code>config.plugins.&lt;plugin&gt;</code>:</p>
+<pre><code class="lang-js">module.exports = {
+  plugins: {
+    babel: {
+      presets: [&#39;react&#39;]
+    }
+  }
+}
+</code></pre>
+<h2 id="order-of-execution">Order of execution</h2>
+<p>Plugins are executed in order they are specified in <code>package.json</code>: when they operate on the same files (usually target files), their order can impact their ability to work. For instance, <a href="https://www.npmjs.com/package/groundskeeper-brunch">groundskeeper-brunch</a> requires running before any minifiers, as these will obfuscate some code constructs the former relies on to detect trimmable code.</p>
+<h2 id="advanced-plugin-features">Advanced plugin features</h2>
+<p>There are some additional ways plugins can enhance your development experience.
+Here are a few:</p>
+<h3 id="exporting-js-from-stylesheets">Exporting JS from stylesheets</h3>
+<p>A CSS compiler plugin can choose to produce some JS output for each source file, <em>in addition</em> to the stylesheet.</p>
+<p>One of the cases where it comes in handy is CSS modules:</p>
+<pre><code class="lang-stylus">.button
+  margin: 0
+</code></pre>
+<p>Which gets turned into something like:</p>
+<pre><code class="lang-css">._button_xkplk_42 {
+  margin: 0;
+}
+</code></pre>
+<p>To make your JS component aware of the actual class name, a compiler can allow you to <code>require</code> that css file to get information about its class name mappings:</p>
+<pre><code class="lang-js">const style = require(&#39;./button.styl&#39;);
+// ...
+
+// style.button will return the obfuscated class name (something like &quot;_button_xkplk_42&quot; perhaps)
+&lt;div className={style.button}&gt;...&lt;/div&gt;
+</code></pre>
+<p>Note: this example is real. CSS modules are supported by several core stylesheet compilers with a configuration option: <a href="https://github.com/brunch/stylus-brunch#css-modules">stylus-brunch</a>, <a href="https://github.com/brunch/sass-brunch#css-modules">sass-brunch</a>, and <a href="https://github.com/brunch/css-brunch#css-modules">css-brunch</a>.</p>
+<h3 id="asset-compilation">Asset compilation</h3>
+<p>Sometimes you will want to transform a different kind of file, one that doesn&#39;t fit into the Brunch&#39;s general JS/CSS/template flow.
+One example of that would be compiling Jade into HTML.
+Starting with Brunch 2.8, this is made available for plugins to implement.</p>
+<h2 id="tips">Tips</h2>
+<p>Don&#39;t include plugins for languages or technologies your app does not use. They may unnecessarily slow down the build process.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/why-brunch">&larr; Why Brunch</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/using-modules">Using JS modules and NPM &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/using-plugins.md">Edit using-plugins.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

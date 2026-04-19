@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><span class="active">Plugin API</span></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-plugin-api">Brunch: Plugin API</h1>
+<p>Brunch plugins are plain JS classes which are initialized with Brunch configs.</p>
+<div class="toc-placeholder"></div>
+
+<h2 id="reference">Reference</h2>
+<p>Plugins work with so-called <code>File</code> entities:</p>
+<pre><code class="lang-json">{
+  &quot;data&quot;: &quot;var hello = 42;\n&quot;,
+  &quot;path&quot;: &quot;app/file.js&quot;
+}
+</code></pre>
+<p>As you can see, <code>File</code>s are bald JS <code>Object</code>s, which may contain fields like:</p>
+<ul>
+<li><code>path</code> - system path to the file</li>
+<li><code>data</code> - file data as JS <code>String</code></li>
+<li><code>map</code> - source map</li>
+<li>and anything else that could be consumed by next plugins.</li>
+</ul>
+<h3 id="pipeline">Pipeline</h3>
+<p>The Brunch execution pipeline looks like this:</p>
+<pre><code>// [internal] Watch files with Chokidar.
+// When any file is added or changed, start the pipeline.
+watch(files)
+|
+// When any file is added or changed, start the pipeline.
+// Check whether the file is correct.
+lint(file): Boolean
+|
+// Transform file contents into js, css etc.
+compile(file): File
+|
+// Extract file&#39;s dependants &amp; dependencies
+getDependencies(file): Array[Path]
+|
+// [internal] wrap file into a module definition
+wrap(file): File
+|
+// [internal] concat many files into one
+concat(files): File
+|
+// Transform the output JS / CSS into different JS / CSS.
+optimize(file): File
+|
+// The compilation is finished.
+onCompile(files, assets)
+</code></pre><h3 id="method-getdependencies-file-array-path-">Method: <code>getDependencies(file): Array[Path]</code></h3>
+<p>Given a file, this should return a list of file paths that depend on this one.</p>
+<h3 id="method-lint-file-promise-ok-error-">Method: <code>lint(file): Promise(ok, Error)</code></h3>
+<p>Check whether the file is correct.</p>
+<h3 id="method-compile-file-file">Method: <code>compile(file): File</code></h3>
+<p>Compile a source file into JS or CSS.</p>
+<p>CSS compilers can optionally produce the result with the <code>exports</code> key, which should be a string of JavaScript code (with <code>module.exports</code>), that will be added into the bundle if the project code <code>require</code>s a stylesheet.</p>
+<h3 id="method-compilestatic-file-file">Method: <code>compileStatic(file): File</code></h3>
+<p>Compile a static asset.</p>
+<h3 id="method-optimize-file-file">Method: <code>optimize(file): File</code></h3>
+<p>Transform the compiled js/css into optimized js/css.</p>
+<h3 id="hook-precompile">Hook: <code>preCompile</code></h3>
+<p>Called only before first compilation.</p>
+<h3 id="hook-oncompile">Hook: <code>onCompile</code></h3>
+<p>Is called after every compilation pipeline is completed.</p>
+<h3 id="hook-teardown">Hook: <code>teardown</code></h3>
+<p>Allows to stop web-servers &amp; other long-running entities.
+Executed before Brunch process is closed.</p>
+<h3 id="property-type">Property: <code>type</code></h3>
+<p><code>String</code>.
+Specifies the file type the plugin works on.
+Can be either of <code>javascript</code>, <code>stylesheet</code>, or <code>template</code>.</p>
+<h3 id="property-include">Property: <code>include</code></h3>
+<p><code>Array</code>.
+Specifies additional files which will be included into build.</p>
+<h3 id="property-extension">Property: <code>extension</code></h3>
+<p><code>String</code>.
+Specifies the file extension that will be processed by this plugin.</p>
+<h3 id="property-pattern">Property: <code>pattern</code></h3>
+<p><code>RegExp</code>.
+Allows more flexibility than <code>extension</code>, e.g. to process several extensions.
+If this is specified, <code>extension</code> will be <strong>ignored</strong>.
+Either <code>pattern</code> or <code>extension</code> needs to be specified for <em>compilers</em> and <em>linters</em>.
+<em>Optimizers</em> don&#39;t need it.</p>
+<h3 id="property-targetextension">Property: <code>targetExtension</code></h3>
+<p><code>String</code>.
+Convenience for making chains of compilers.
+Specifies the new extension of processed file.
+For example, <code>less-brunch</code> changes <code>.less</code> to <code>.css</code> so <code>postcss-brunch</code> matches file by extension.</p>
+<h3 id="property-staticextension">Property: <code>staticExtension</code></h3>
+<p><code>String</code>.
+Optional.
+Same as <code>extension</code> but allow to pick a different extension when processing static assets.
+If this is not specified, it falls back to <code>extension</code>.</p>
+<h3 id="property-staticpattern">Property: <code>staticPattern</code></h3>
+<p><code>String</code>.
+Optional.
+Same as <code>pattern</code> but allow to pick a different extension when processing static assets.
+If this is not specified, it falls back to <code>pattern</code>.</p>
+<h3 id="property-statictargetextension">Property: <code>staticTargetExtension</code></h3>
+<p><code>String</code>.
+Required for static compilers.
+Specifies the new extension of the processed static asset.
+In case <code>extension</code> was specified, this will just replace it.
+If <code>pattern</code> was specified, everything pattern matches will be replaced with <code>staticTargetExtension</code>.</p>
+<h2 id="samples">Samples</h2>
+<h3 id="boilerplate-plugin">Boilerplate plugin</h3>
+<p>Let&#39;s take a look at the <a href="https://github.com/brunch/brunch-boilerplate-plugin">boilerplate plugin</a>. Feel free to use it to create your own plugins:</p>
+<pre><code class="lang-js">&#39;use strict&#39;;
+
+// Documentation for Brunch plugins:
+// https://github.com/brunch/brunch/blob/master/docs/plugins.md
+
+// Remove everything your plugin doesn&#39;t need.
+class BrunchPlugin {
+  constructor(config) {
+    // Replace &#39;plugin&#39; with your plugin&#39;s name.
+    // Don&#39;t include &#39;brunch&#39; or &#39;plugin&#39; words in configuration key.
+    this.config = config.plugins.plugin || {};
+  }
+
+  // Optional
+  // Specifies additional files which will be included into build.
+  // get include() { return [&#39;path-to-file-1&#39;, &#39;path-to-file-2&#39;]; }
+
+  // file: File =&gt; Promise[Boolean]
+  // Called before every compilation. Stops it when the error is returned.
+  // Examples: ESLint, JSHint, CSSCheck.
+  // lint(file) { return Promise.resolve(true); }
+
+  // file: File =&gt; Promise[File]
+  // Transforms a file data to different data. Could change the source map etc.
+  // Examples: JSX, CoffeeScript, Handlebars, SASS.
+  // compile(file) { return Promise.resolve(file); }
+
+  // file: File =&gt; Promise[Array: Path]
+  // Allows Brunch to calculate dependants of the file and recompile them too.
+  // Examples: SASS &#39;@import&#39;s, Jade &#39;include&#39;-s.
+  // getDependencies(file) { return Promise.resolve([&#39;dep.js&#39;]); }
+
+  // file: File =&gt; Promise[File]
+  // Usually called to minify or optimize the end-result.
+  // Examples: UglifyJS, CSSMin.
+  // optimize(file) { return Promise.resolve({data: minify(file.data)}); }
+
+  // files: [File] =&gt; null
+  // Executed when each compilation is finished.
+  // Examples: Hot-reload (send a websocket push).
+  // onCompile(files) {}
+
+  // Allows to stop web-servers &amp; other long-running entities.
+  // Executed before Brunch process is closed.
+  // teardown() {}
+}
+
+// Required for all Brunch plugins.
+BrunchPlugin.prototype.brunchPlugin = true;
+
+// Required for compilers, linters &amp; optimizers.
+// &#39;javascript&#39;, &#39;stylesheet&#39; or &#39;template&#39;
+// BrunchPlugin.prototype.type = &#39;javascript&#39;;
+
+// Required for compilers &amp; linters.
+// It would filter-out the list of files to operate on.
+// BrunchPlugin.prototype.extension = &#39;js&#39;;
+// BrunchPlugin.prototype.pattern = /\.jsx?$/;
+// `pattern` is preferred over `extension` by Brunch.
+// Please, specify only one of them.
+
+// Indicates which environment a plugin should be applied to.
+// The default value is &#39;*&#39; for usual plugins and
+// &#39;production&#39; for optimizers.
+// BrunchPlugin.prototype.defaultEnv = &#39;production&#39;;
+
+module.exports = BrunchPlugin;
+</code></pre>
+<h3 id="css-compiler-example">CSS compiler example</h3>
+<p>The plugin would simply read the file and return its contents.</p>
+<pre><code class="lang-js">class CSSCompiler {
+  compile(file) {
+    return Promise.resolve(file);
+  }
+}
+
+CSSCompiler.prototype.brunchPlugin = true;
+CSSCompiler.prototype.type = &#39;stylesheet&#39;;
+CSSCompiler.prototype.extension = &#39;css&#39;;
+
+module.exports = CSSCompiler;
+</code></pre>
+<h3 id="minifier-example">Minifier example</h3>
+<p>An abstract minifier that consumes source maps.</p>
+<pre><code class="lang-js">class UglifyOptimizer {
+  constructor(config) {
+    this.config = config.plugins.uglify;
+    this.isPretty = this.config.pretty;
+  }
+
+  optimize(file) {
+    try {
+      const optimized = minifier(file.data, {
+        fromString: true,
+        inSourceMap: file.map,
+        pretty: this.isPretty
+      });
+      return Promise.resolve(optimized);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+}
+
+UglifyOptimizer.prototype.brunchPlugin = true;
+UglifyOptimizer.prototype.type = &#39;javascript&#39;;
+UglifyOptimizer.prototype.extension = &#39;js&#39;;
+
+module.exports = UglifyOptimizer;
+</code></pre>
+<p>See the <a href="http://brunch.io/plugins">plugins page</a> for a list of plugins. Feel free to add new plugins by editing <a href="https://github.com/brunch/brunch.github.io/blob/master/plugins.json">plugins.json</a> and sending a Pull Request.</p>
+<h3 id="exporting-js-from-stylesheets">Exporting JS from stylesheets</h3>
+<p>Starting Brunch 2.6, it is possible for non-JS compilers to output JavaScript modules <strong>in addition</strong> to whatever they do.</p>
+<p>A use case could be a styles compiler with CSS modules support that allows you to do something like this:</p>
+<pre><code class="lang-stylus">.button
+  margin: 0
+</code></pre>
+<pre><code class="lang-js">const style = require(&#39;./button.styl&#39;);
+// ...
+
+// style.button will return the obfuscated class name (something like &quot;_button_xkplk_42&quot; perhaps)
+&lt;div className={style.button}&gt;...&lt;/div&gt;
+</code></pre>
+<p>All compiler needs to do is return <code>exports</code> in addition to <code>{data, map}</code>:</p>
+<pre><code class="lang-js">class MyCompiler {
+  compile({data, path}) {
+    const compiled = magic(data);
+    const mapping = mappingMagic(data);
+    const exports = `module.exports = ${JSON.stringify(mapping)};`;
+
+    return Promise.resolve({ data: compiled, exports });
+  }
+}
+</code></pre>
+<p>Note: exported JS will not be compiled or linted by any other plugin and its <code>require</code> statements will not be resolved. Make sure your exported JS is self-contained.</p>
+<h3 id="static-file-compilers">Static file compilers</h3>
+<p>Sometimes, you would want to process different kinds of files, to which the Brunch&#39;s general compile-join-write logic does not apply.
+Jade templates to HTML is one example.
+You want to have a <code>.jade</code> file compiled into <code>.html</code>.
+Previously, what you would do in this case was to hook into <code>onCompile</code> and look for jade files... and then compile them and write them manually. Sucks.</p>
+<p>So starting Brunch <code>2.8.0</code>, there is a better way.</p>
+<pre><code class="lang-js">class JadeCompiler {
+  compileStatic({data, path}) {
+    return new Promise((resolve, reject) =&gt; {
+      toHtml(path, data, (err, data) =&gt; {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+  }
+}
+JadeCompiler.prototype.brunchPlugin = true;
+JadeCompiler.prototype.type = &#39;template&#39;;
+JadeCompiler.prototype.extension = &#39;jade&#39;;
+// alternatively, a static extension can be different from `extension`:
+// JadeCompiler.prototype.staticExtension = &#39;static.jade&#39;;
+// this is used to tell Brunch which extension to use after static compilation
+JadeCompiler.prototype.staticTargetExtension = &#39;html&#39;;
+</code></pre>
+<p>A plugin can handle both <code>compile</code> and <code>compileStatic</code>.</p>
+<p>Unlike usual compilers, static compilers process files from the assets folder (<code>app/assets</code> by default) instead of just copying.
+So, with the example plugin above, <code>app/assets/index.jade</code> will be transformed into <code>public/index.html</code>.</p>
+<p><code>getDependencies</code> will be called for <em>both</em> regular files and assets.</p>
+<h2 id="publishing">Publishing</h2>
+<p>Making your plugin available to everyone is as simple as
+<a href="https://docs.npmjs.com/getting-started/publishing-npm-packages">publishing a new NPM package</a>.</p>
+<p>After that, add the plugin to <a href="http://brunch.io/plugins">brunch.io/plugins</a>.
+This will make more people aware of it.</p>
+<h2 id="tips">Tips</h2>
+<p>Make Brunch plugins as simple as possible. Don&#39;t try to copy Grunt, Gulp or other task runners approaches.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/config">&larr; Config</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/troubleshooting">Troubleshooting &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/plugins.md">Edit plugins.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

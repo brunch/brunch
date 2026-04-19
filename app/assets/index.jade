@@ -1,0 +1,97 @@
+extends /_layouts/_content-only
+
+block hero
+  .hero
+    .container
+      .grid
+        .grid__item.one-whole.lap-and-up-one-quarter
+          img.brunch-napkin-logo(src="/images/logos/brunch-napkin.svg", alt="", width="256", height="256")
+        .grid__item.one-whole.lap-and-up-three-quarters
+          .hero__content
+            h1.kilo Seeing your build tool in nightmares?<br> Try Brunch!
+            h2 Brunch lets you focus on what matters most &mdash; solving real problems instead of messing around with the glue.
+
+        .grid_item.one-whole
+          a(class='button' href='/docs/getting-started')
+           | &#127860;
+           | Get Started
+
+  .highlights
+    .container
+      .grid
+        .grid__item.one-whole.lap-and-up-one-third
+          h2 Small configs
+          p By being opinionated about your build pipeline, Brunch is able to provide a smooth and fast experience, and makes your config files take a drastic cut.
+
+        .grid__item.one-whole.lap-and-up-one-third
+          h2 Three simple commands
+          p It doesn't take much to get around with brunch:
+          p
+            ul
+              li
+                <code>brunch new</code> to create a new project<br>
+              li
+                <code>brunch build</code> to build<br>
+              li
+                <code>brunch watch</code> to live-compile
+
+        .grid__item.one-whole.lap-and-up-one-third
+          h2 Productivity and happiness
+
+          ul
+            li NPM support
+            li source maps out-of-the-box
+            li fast from-zero builds
+            li incremental builds
+            li and more
+
+  .comparison
+    .container
+      .grid
+        .grid__item.one-whole.big-head
+          h2 Yes, the configs are <b>much</b> simpler
+
+        .grid__item.one-whole.lap-and-up-two-fifths.left-side-head
+          h3 Typical Gulp config
+        .grid__item.one-whole.lap-and-up-one-fifth.vs
+          h3 vs
+        .grid__item.one-whole.lap-and-up-two-fifths.right-side-head
+          h3 Typical Brunch config
+
+        .grid__item.one-whole.lap-and-up-one-half.gulp
+          include:marked ./_gulp_config.md
+
+        .grid__item.one-whole.lap-and-up-one-half.brunch
+          include:marked ./_brunch_config.md
+
+block content
+  .grid
+    .grid__item.one-whole.lap-and-up-one-half
+      :marked
+        ## Install
+
+        Installation is one-line, once you have [node.js](https://nodejs.org/en/download/). In your console, run:
+
+            npm install -g brunch
+
+        To learn more about Brunch, head over to the [docs](/docs/getting-started).
+
+        (For some unbiased perspective, see <a href="http://alxhill.com/blog/articles/brunch-coffeescript-angular/">this article</a>.)
+
+      h2 Brought to you by
+
+      ul.block-list.builders
+        li
+          <a href="http://paulmillr.com/" rel="author"><img src="https://secure.gravatar.com/avatar/d342e4ef045c54a6a6f41d070d8a0406?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Paul Miller"><span class="name">Paul</span> Miller</a>
+        li
+          <a href="https://github.com/es128"><img src="https://secure.gravatar.com/avatar/c8c06173c01b4e95594e4af3a8a815f1?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Elan Shanker"><span class="name">Elan</span> Shanker</a>
+        li
+          <a href="http://nikgraf.com/"><img src="https://secure.gravatar.com/avatar/8fc75580dbacd91ff28514b68baf1a8a?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Nik Graf"><span class="name">Nik</span> Graf</a>
+        li
+          <a href="http://ramen.io/"><img src="https://secure.gravatar.com/avatar/37c5132eed30539456c79906dd8c6065?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Thomas Schranz"><span class="name">Thomas</span> Schranz</a>
+
+    .grid__item.one-whole.lap-and-up-one-half
+      :marked
+        ## A Quick Demo
+
+        <div class="defer-iframe" data-src="https://player.vimeo.com/video/75702540" data-style="width: 100%; height: 388px"></div>

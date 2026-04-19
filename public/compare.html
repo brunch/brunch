@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><h2 id="compare">Compare</h2>
+<p>Brunch is similar to <a href="http://gruntjs.com">Grunt</a>, LiveReload and CodeKit.</p>
+<p>And it’s also different.</p>
+<p>LiveReload and CodeKit partly resemble Brunch compilation pipeline, file watching and auto reloading, but they don’t support advanced features like modules, Bower support or source maps generation</p>
+<p>Grunt task manager is in some ways more flexible than Brunch, but its flexibility and explicitness can quickly become complexity.</p>
+<table>
+  <tr>
+    <th>Feature</th>
+    <th>Brunch</th>
+    <th>Grunt</th>
+    <th><span title="The Rails asset pipeline">Rails</span></th>
+    <th>Comment</th>
+  </tr>
+  <tr>
+    <th>Builder, linter, concatenator, minifier</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td>Brunch can compile your JS, CoffeeScript, Stylus, Sass (+ Compass), LESS, Mustache, Handlebars, Jade, Eco (and much more) files, concatenate output to and minify it. It just doesn’t care about languages or frameworks you use.</td>
+  </tr>
+  <tr>
+    <th>File watcher</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td>Brunch recompiles and concats all your stuff automatically on any change, headlessly. No more need in complicated Makefiles and watchers.</td>
+  </tr>
+  <tr>
+    <th>Auto-reload</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td>Brunch reloads your browser window every time you change stuff (with autoreload plugin)</td>
+  </tr>
+  <tr>
+    <th>Framework-agnostic</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td>Brunch just doesn’t care about stuff you’re using for structure. You can use any backend you like, be it node.js, Rails or Lift. You can even keep frontend and backend as separate projects.</td>
+  </tr>
+  <tr>
+    <th>Auto-support for modules</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td>All script and template files may be wrapped in modules (CommonJS or AMD) to prohibit global public access and encapsulate code. Brunch may also do the job of r.js optimizer automatically.</td>
+  </tr>
+  <tr>
+    <th>Skeletons / boilerplates</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td>Brunch can generate your project from predefined template. There’s a lot of great skeleton projects you can use already.</a></td>
+  </tr>
+  <tr>
+    <th>Blazing fast</th>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td class="hasnt-feature">✗</td>
+    <td>Speed is important for app watchers. Usual brunch compilation takes less time than you need to alt-tab to browser window. Unlike Grunt, Brunch recompiles only changed parts of your app and extensively uses caching for others.</td>
+  </tr>
+  <tr>
+    <th>Incredibly simple</th>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td class="hasnt-feature">✗</td>
+    <td>All you need to do with Brunch is run one command and everything will be managed for you, without need to write <a href="https://gist.github.com/paulmillr/3697384">sophisticated 300LOC build configs</a>.</td>
+  </tr>
+  <tr>
+    <th>Headless <a href="http://bower.io">Bower</a> integration</th>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td class="hasnt-feature">✗</td>
+    <td>Brunch supports <a href="https://github.com/brunch/brunch/blob/master/docs/faq.md#how-to-use-bower">headless integration</a> with Bower package manager. Unlike with Grunt, you don’t need to specify all used files in details — brunch will auto-detect them in most cases and automatically concat in correct order</td>
+  </tr>
+  <tr>
+    <th>Headless source maps generation</th>
+    <td class="has-feature">✓</td>
+    <td class="hasnt-feature">✗</td>
+    <td class="hasnt-feature">✗</td>
+    <td>Brunch automatically generates source maps for all your files so debugging becomes very simple even when all files are concatenated and minified. <!--Brunch simply generates even sophisticated source maps (compile coffeescript and templates -> concatenate all files -> minify with uglify.js)--></td>
+  </tr>
+  <tr>
+    <th>Cross-platform and free</th>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td class="has-feature">✓</td>
+    <td>Brunch is free, both as in beer and as in speech and works everywhere.</td>
+  </tr>
+</table><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><span class="active">Commands</span></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-commands">Brunch: Commands</h1>
+<h2 id="brunch-new-brunch-n"><code>brunch new</code> / <code>brunch n</code></h2>
+<p>Create new brunch project. Full syntax: <code>brunch new [path] [-s skeleton]</code></p>
+<ul>
+<li><code>path</code> (optional, default: <code>.</code>): name of project directory that would be created.</li>
+<li><code>-s, --skeleton</code> (optional, default: <code>simple</code>): skeleton name or URL from <a href="http://brunch.io/skeletons">brunch.io/skeletons</a></li>
+</ul>
+<p>Example:</p>
+<ul>
+<li><code>brunch new</code>: The <a href="#default-skeleton">default skeleton</a> does not add any libraries or frameworks</li>
+<li><code>brunch new -s es6</code> would init a simple app that supports ECMAScript 6 compilation with Babel.</li>
+<li><code>brunch new -s react</code> and <code>brunch new -s redux</code> are lovely skeletons for React fans.</li>
+</ul>
+<p>You can specify environment variable <code>BRUNCH_INIT_SKELETON</code> for this command.</p>
+<ul>
+<li><code>BRUNCH_INIT_SKELETON=es6 brunch new</code> do the same as <code>brunch new -s es6</code></li>
+</ul>
+<p>Firstly Brunch looks for the skeleton provided in command options, then for the env variable <code>BRUNCH_INIT_SKELETON</code> and if skeleton wasn&#39;t provided Brunch apply <a href="#default-skeleton">default skeleton</a>.</p>
+<h2 id="brunch-build-brunch-b"><code>brunch build</code> / <code>brunch b</code></h2>
+<p>Builds a brunch project and places the output into <code>public</code> directory.</p>
+<ul>
+<li><code>-e, --env SETTING</code> apply settings from <code>config.overrides[SETTING]</code></li>
+<li><code>-p, --production</code> would create optimized production build. Same as <code>-e production</code></li>
+<li><code>-j, --jobs WORKERS</code> - enables <em>experimental</em> multi-process support.
+May improve compilation speed of large projects.
+Try different <code>WORKERS</code> amount to see which one works best for your system.</li>
+<li><code>-d, --debug</code> - enables verbose debug output.</li>
+</ul>
+<h2 id="brunch-watch-brunch-w"><code>brunch watch</code> / <code>brunch w</code></h2>
+<p>Watches brunch app directory for changes and rebuilds the whole project when they happen. Options:</p>
+<ul>
+<li><em>all the same options</em> available in <code>brunch build</code>, plus:</li>
+<li><code>-s, --server</code>: run a simple HTTP + pushstate server that would serve <code>public</code> dir in <code>/</code><ul>
+<li><code>-P PORT, --port PORT</code>: define on which port the server would run</li>
+</ul>
+</li>
+</ul>
+<h2 id="default-skeleton">Default skeleton</h2>
+<ul>
+<li>This is the best option for starting from scratch with Brunch.</li>
+<li><code>brunch new</code> initializes new Brunch project already configured to start work.</li>
+<li>Clean folder structure, little and simple Brunch config and few default Brunch plugins.</li>
+<li>How to start and what skeleton includes you can see in it&#39;s <a href="https://github.com/brunch/dead-simple">repo</a>.</li>
+<li>More about default Brunch settings and behavior you can learn in <a href="https://github.com/brunch/brunch-guide/blob/master/content/en/chapter03-conventions-and-defaults.md">Conventions and defaults</a> of Brunch <a href="https://github.com/brunch/brunch-guide">guide</a>.</li>
+</ul>
+<p>There are more <a href="http://brunch.io/skeletons">other available skeletons</a> with already preinstalled and configured stuff for different purposes.</p>
+<h2 id="tips">Tips</h2>
+<p>Install <a href="https://github.com/alloy/terminal-notifier"><code>terminal-notifier</code></a> (<code>brew install terminal-notifier</code> on Macs) to get system notifications for any build errors.</p>
+<p>A few useful shortcuts for your shell environment, to type less and be more productive.
+Add those to your <code>bashrc</code> or <code>zshrc</code>:</p>
+<pre><code>alias bb=&#39;brunch build&#39;
+alias bbp=&#39;brunch build --production&#39;
+alias bw=&#39;brunch watch&#39;
+alias bws=&#39;brunch watch --server&#39;
+</code></pre><p>If you need to understand in which environment Brunch was run, take a look in <code>process.env.NODE_ENV</code> variable. The content of this variable will be replaced with strings <code>&#39;production&#39;</code> or <code>&#39;development&#39;</code> during build time.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/config">Config &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/commands.md">Edit commands.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

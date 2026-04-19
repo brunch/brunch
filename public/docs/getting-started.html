@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><span class="active">Getting started</span></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-getting-started">Brunch: Getting started</h1>
+<p><em>How to learn 90% of Brunch in 8 minutes? Follow the guide!</em></p>
+<div class="toc-placeholder"></div>
+
+<hr>
+<h2 id="tasting-your-first-brunch">Tasting your first Brunch</h2>
+<p>So, you&#39;ve installed Node.js and Brunch itself (<code>npm install -g brunch</code>).
+You&#39;re probably starving at this point. Let&#39;s get <em>straight to the business</em>.</p>
+<p><code>brunch new</code> helps to init new Brunch project from one of
+community-provided <a href="http://brunch.io/skeletons">skeletons</a>.
+The popular &quot;ES6 skeleton&quot; may sound scary, but it&#39;s actually very modern and nice.
+Let&#39;s try to create a new app from it!</p>
+<p>Type</p>
+<pre><code class="lang-sh">$ brunch new proj -s es6
+</code></pre>
+<p> in your shell prompt. Executing the command will:</p>
+<ul>
+<li>Create directory <code>proj</code></li>
+<li>Clone git repo <code>git://github.com/brunch/with-es6.git</code> to the dir.
+The Git URL is basically full name of our <code>&quot;es6&quot;</code> skeleton.</li>
+<li>Run <code>npm install</code> to install app dependencies and brunch plugins</li>
+</ul>
+<p>After the project is created, let&#39;s try to build it:</p>
+<pre><code class="lang-sh">$ brunch build
+01 Apr 10:45:30 - info: compiled initialize.js into app.js, copied index.html in 857ms
+</code></pre>
+<h2 id="what-is-the-dish-made-of-">What is the dish made of?</h2>
+<p>The app is there, let&#39;s take a quick look into the project&#39;s structure</p>
+<pre><code>README.md
+app/
+  assets/           // Files inside `assets` would be simply copied to `public` dir.
+    index.html
+  initialize.js
+brunch-config.js    // Basic assumptions about the project, like paths &amp; outputs.
+node_modules
+package.json        // Describes which dependencies and Brunch plugins your app uses.
+
+public/             // The &quot;output&quot; Brunch will re-generate on every build.
+  index.html        // This was simply copied from our `app/assets`
+  app.js            // `app.js`, in turn, was generated from `initialize.js`.
+  app.js.map        // Source mappings for simple debugging.
+</code></pre><h2 id="pouring-some-syrup">Pouring some syrup</h2>
+<p>Let&#39;s add a few files to our app, then build the app one more time:</p>
+<pre><code class="lang-sh">$ echo &quot;body {font-family: &#39;Comic Sans MS&#39;}&quot; &gt; app/main.css
+$ echo &quot;console.log(&#39;Hello, world&#39;)&quot; &gt; app/logger.js
+$ brunch build
+01 Apr 10:50:10 - info: compiled 3 files into 2 files, copied index.html in 947ms
+</code></pre>
+<p>Let&#39;s inspect files in <code>public</code> to understand what happened at this point:</p>
+<ul>
+<li><code>app.css</code> simply has content of <code>app/main.css</code> and nothing else</li>
+<li><code>app.js</code> has require definition and contents of both <code>initialize.js</code> and <code>logger.js</code>. Each file is wrapped into a JS function, which defines a module. This allows us to do things like <code>require(&#39;./logger&#39;)</code>. Indeed, your <code>logger.js</code> file will not execute without you first requiring it inside <code>initialize.js</code>, so go ahead and require it in <code>initialize.js</code>. You can use the require command as follows, <code>require(&#39;./logger&#39;)</code>.</li>
+</ul>
+<h2 id="serving-the-brunch">Serving the Brunch</h2>
+<p>Executing <code>brunch build</code> every time seems to take too much effort. Instead, let&#39;s just do <code>brunch watch --server</code>. The <code>watch</code> would <strong>automatically &amp; efficiently rebuild the app on every change</strong>. <code>--server</code> flag would also launch a HTTP server. The default location for the server is <a href="http://localhost:3333"><code>http://localhost:3333</code></a>, so open this URL in a browser of your choice. You&#39;ll see our app and everything which was located in <code>public</code> directory.</p>
+<p>Since the shell console would be busy with <code>brunch watch</code> command, we&#39;ll need to open a new window.</p>
+<h2 id="including-third-party-ingredients">Including third-party ingredients</h2>
+<p>Let&#39;s try to add <strong>jQuery</strong> to our app. Brunch makes the process <em>absolutely effortless</em>.</p>
+<p>Execute <code>npm install --save jquery</code>, while keeping our Brunch watcher running.
+You may think that Brunch is too damn smart, but the command alone would not add
+jQuery to our app - we&#39;ll need to use it somewhere too.</p>
+<p>Add the following code anywhere in <code>initialize.js</code>:</p>
+<pre><code class="lang-js">var $ = require(&#39;jquery&#39;);
+console.log(&#39;Tasty Brunch, just trying to use jQuery!&#39;, $(&#39;body&#39;));
+</code></pre>
+<p>Check our tiny web-server at <a href="http://localhost:3333"><code>localhost:3333</code></a> - and the browser console would
+output exactly what you&#39;ve entered here. jQuery is up and running now.</p>
+<h2 id="plugging-alternative-tableware">Plugging alternative tableware</h2>
+<p>Let&#39;s say you want to try the new fancy <strong>ECMAScript 201X</strong> thing. Maybe your OCD would be eased by conforming
+to 66 <strong>ESLint</strong> rules. It doesn&#39;t matter, <a href="http://brunch.io/plugins">more than 50 Brunch plugins</a> aim to help with all kinds of crazy cases.</p>
+<p>Install Babel plugin by executing <code>npm install --save-dev babel-brunch</code>.
+Hmm...that&#39;s exactly the same command from our previous step. Whatever. Let&#39;s create the <code>index.js</code> file with some content:</p>
+<pre><code>$ echo &#39;console.log([1, 2, 3].reduce((s, n) =&gt; s + n ** 2))&#39; &gt; app/index.js
+</code></pre><p>Since you&#39;ve added Babel plugin to the board, Brunch would <em>magically</em> recompile the app and include <em>compiled</em> content of <code>index.js</code> in the output file. <strong>Voila!</strong></p>
+<h2 id="becoming-a-professional-cook">Becoming a professional cook</h2>
+<p>Keen to learn the remaining 10%? Check out the <a href="https://github.com/brunch/brunch-guide#readme">advanced guide to Brunch</a>, which also describes using Brunch on a legacy codebase. Happy cooking!</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/concepts">Core concepts &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/getting-started.md">Edit getting-started.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

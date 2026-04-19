@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav active">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="hero"><div class="container"><div class="grid"><div class="grid__item one-whole lap-and-up-one-quarter"><img src="/images/logos/brunch-napkin.svg" alt="" width="256" height="256" class="brunch-napkin-logo"></div><div class="grid__item one-whole lap-and-up-three-quarters"><div class="hero__content"><h1 class="kilo">Seeing your build tool in nightmares?<br> Try Brunch!</h1><h2>Brunch lets you focus on what matters most &mdash; solving real problems instead of messing around with the glue.</h2></div></div><div class="grid_item one-whole"><a href="/docs/getting-started" class="button">&#127860;
+Get Started</a></div></div></div></div><div class="highlights"><div class="container"><div class="grid"><div class="grid__item one-whole lap-and-up-one-third"><h2>Small configs</h2><p>By being opinionated about your build pipeline, Brunch is able to provide a smooth and fast experience, and makes your config files take a drastic cut.</p></div><div class="grid__item one-whole lap-and-up-one-third"><h2>Three simple commands</h2><p>It doesn't take much to get around with brunch:</p><p><ul><li><code>brunch new</code> to create a new project<br></li><li><code>brunch build</code> to build<br></li><li><code>brunch watch</code> to live-compile</li></ul></p></div><div class="grid__item one-whole lap-and-up-one-third"><h2>Productivity and happiness</h2><ul><li>NPM support</li><li>source maps out-of-the-box</li><li>fast from-zero builds</li><li>incremental builds</li><li>and more</li></ul></div></div></div></div><div class="comparison"><div class="container"><div class="grid"><div class="grid__item one-whole big-head"><h2>Yes, the configs are <b>much</b> simpler</h2></div><div class="grid__item one-whole lap-and-up-two-fifths left-side-head"><h3>Typical Gulp config</h3></div><div class="grid__item one-whole lap-and-up-one-fifth vs"><h3>vs</h3></div><div class="grid__item one-whole lap-and-up-two-fifths right-side-head"><h3>Typical Brunch config</h3></div><div class="grid__item one-whole lap-and-up-one-half gulp"><pre><code class="lang-js">var app, base, concat, directory, gulp, gutil, hostname, path, refresh, sass, uglify, del, connect, autoprefixer, babel;
+
+var autoPrefixBrowserList = [&#39;last 2 version&#39;, &#39;safari 5&#39;, &#39;ie 8&#39;, &#39;ie 9&#39;, &#39;opera 12.1&#39;, &#39;ios 6&#39;, &#39;android 4&#39;];
+
+gulp        = require(&#39;gulp&#39;);
+gutil       = require(&#39;gulp-util&#39;);
+concat      = require(&#39;gulp-concat&#39;);
+uglify      = require(&#39;gulp-uglify&#39;);
+sass        = require(&#39;gulp-sass&#39;);
+connect     = require(&#39;gulp-connect&#39;);
+del         = require(&#39;del&#39;);
+autoprefixer = require(&#39;gulp-autoprefixer&#39;);
+babel        = require(&#39;gulp-babel&#39;);
+
+gulp.task(&#39;connect&#39;, function() {
+  connect.server({
+    root: &#39;app&#39;,
+    livereload: true
+  });
+});
+
+gulp.task(&#39;images-deploy&#39;, function() {
+    gulp.src([&#39;app/images/**/*&#39;])
+        .pipe(gulp.dest(&#39;dist/images&#39;));
+});
+
+gulp.task(&#39;scripts&#39;, function() {
+    //this is where our dev JS scripts are
+    return gulp.src(&#39;app/scripts/src/**/*.js&#39;)
+               .pipe(babel({ presets: [&#39;es2015&#39;, &#39;react&#39;] })
+               .pipe(concat(&#39;app.js&#39;))
+               .on(&#39;error&#39;, gutil.log)
+               .pipe(uglify())
+               .pipe(gulp.dest(&#39;app/scripts&#39;))
+               .pipe(connect.reload());
+});
+
+gulp.task(&#39;scripts-deploy&#39;, function() {
+    return gulp.src(&#39;app/scripts/src/**/*.js&#39;)
+               .pipe(concat(&#39;app.js&#39;))
+               .pipe(uglify())
+               .pipe(gulp.dest(&#39;dist/scripts&#39;));
+});
+
+gulp.task(&#39;styles&#39;, function() {
+    return gulp.src(&#39;app/styles/scss/init.scss&#39;)
+               .pipe(sass({
+                      errLogToConsole: true,
+                      includePaths: [
+                          &#39;app/styles/scss/&#39;
+                      ]
+               }))
+               .pipe(autoprefixer({
+                   browsers: autoPrefixBrowserList,
+                   cascade:  true
+               }))
+               .on(&#39;error&#39;, gutil.log)
+               .pipe(concat(&#39;styles.css&#39;))
+               .pipe(gulp.dest(&#39;app/styles&#39;))
+               .pipe(connect.reload());
+});
+
+gulp.task(&#39;styles-deploy&#39;, function() {
+    return gulp.src(&#39;app/styles/scss/init.scss&#39;)
+               .pipe(sass({
+                      includePaths: [
+                          &#39;app/styles/scss&#39;,
+                      ]
+               }))
+               .pipe(autoprefixer({
+                   browsers: autoPrefixBrowserList,
+                   cascade:  true
+               }))
+               .pipe(concat(&#39;styles.css&#39;))
+               .pipe(gulp.dest(&#39;dist/styles&#39;));
+});
+
+gulp.task(&#39;html&#39;, function() {
+    return gulp.src(&#39;app/*.html&#39;)
+        .pipe(connect.reload())
+         .on(&#39;error&#39;, gutil.log);
+});
+
+gulp.task(&#39;html-deploy&#39;, function() {
+    gulp.src(&#39;app/*&#39;)
+        .pipe(gulp.dest(&#39;dist&#39;));
+
+    gulp.src(&#39;app/.*&#39;)
+        .pipe(gulp.dest(&#39;dist&#39;));
+
+    gulp.src(&#39;app/fonts/**/*&#39;)
+        .pipe(gulp.dest(&#39;dist/fonts&#39;));
+
+    gulp.src([&#39;app/styles/*.css&#39;, &#39;!app/styles/styles.css&#39;])
+        .pipe(gulp.dest(&#39;dist/styles&#39;));
+});
+
+gulp.task(&#39;clean&#39;, function() {
+    del(&#39;dist&#39;);
+});
+
+//this is our master task when you run `gulp` in CLI / Terminal
+//this is the main watcher to use when in active development
+//  this will:
+//  startup the web server,
+//  start up livereload
+//  compress all scripts and SCSS files
+gulp.task(&#39;default&#39;, [&#39;connect&#39;, &#39;scripts&#39;, &#39;styles&#39;], function() {
+    gulp.watch(&#39;app/scripts/src/**&#39;, [&#39;scripts&#39;]);
+    gulp.watch(&#39;app/styles/scss/**&#39;, [&#39;styles&#39;]);
+    gulp.watch(&#39;app/*.html&#39;, [&#39;html&#39;]);
+});
+
+gulp.task(&#39;deploy&#39;, [&#39;clean&#39;], function () {
+  gulp.start(&#39;scripts-deploy&#39;, &#39;styles-deploy&#39;, &#39;html-deploy&#39;, &#39;images-deploy&#39;);
+});
+</code></pre>
+</div><div class="grid__item one-whole lap-and-up-one-half brunch"><pre><code class="lang-js">exports.files = {
+  javascripts: {
+    joinTo: {
+      &#39;vendor.js&#39;: /^(?!app)/,
+      &#39;app.js&#39;: /^app/
+    }
+  },
+  stylesheets: {joinTo: &#39;app.css&#39;}
+};
+
+exports.plugins = {
+  babel: {presets: [&#39;latest&#39;, &#39;react&#39;]},
+  postcss: {processors: [require(&#39;autoprefixer&#39;)]}
+};
+</code></pre>
+<p><code>package.json</code>:</p>
+<pre><code class="lang-js">{
+  &quot;devDependencies&quot;: {
+    &quot;brunch&quot;: &quot;^2&quot;,
+    &quot;babel-brunch&quot;: &quot;^6&quot;,
+    &quot;postcss-brunch&quot;: &quot;^2&quot;,
+    &quot;sass-brunch&quot;: &quot;^2&quot;,
+    &quot;uglify-js-brunch&quot;: &quot;^2&quot;,
+    &quot;autoprefixer&quot;: &quot;^6&quot;,
+    &quot;babel-preset-react&quot;: &quot;^6&quot;,
+    &quot;babel-preset-latest&quot;: &quot;^6&quot;
+  }
+}
+</code></pre>
+<p>Both configs are functionally similar.</p>
+<p>The example is meant to highlight the difference in terms of boilerplate for a pretty common front-end dev setup, as well as in terms of approaches (imperative vs declarative).</p>
+<p>Take a look at <a href="/docs/getting-started.html">the docs</a> to learn more about Brunch.</p>
+</div></div></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><h2 id="install">Install</h2>
+<p>Installation is one-line, once you have <a href="https://nodejs.org/en/download/">node.js</a>. In your console, run:</p>
+<pre><code>npm install -g brunch
+</code></pre><p>To learn more about Brunch, head over to the <a href="/docs/getting-started">docs</a>.</p>
+<p>(For some unbiased perspective, see <a href="http://alxhill.com/blog/articles/brunch-coffeescript-angular/">this article</a>.)</p>
+<h2>Brought to you by</h2><ul class="block-list builders"><li><a href="http://paulmillr.com/" rel="author"><img src="https://secure.gravatar.com/avatar/d342e4ef045c54a6a6f41d070d8a0406?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Paul Miller"><span class="name">Paul</span> Miller</a></li><li><a href="https://github.com/es128"><img src="https://secure.gravatar.com/avatar/c8c06173c01b4e95594e4af3a8a815f1?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Elan Shanker"><span class="name">Elan</span> Shanker</a></li><li><a href="http://nikgraf.com/"><img src="https://secure.gravatar.com/avatar/8fc75580dbacd91ff28514b68baf1a8a?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Nik Graf"><span class="name">Nik</span> Graf</a></li><li><a href="http://ramen.io/"><img src="https://secure.gravatar.com/avatar/37c5132eed30539456c79906dd8c6065?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" alt="Thomas Schranz"><span class="name">Thomas</span> Schranz</a></li></ul></div><div class="grid__item one-whole lap-and-up-one-half"><h2 id="a-quick-demo">A Quick Demo</h2>
+<div class="defer-iframe" data-src="https://player.vimeo.com/video/75702540" data-style="width: 100%; height: 388px"></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

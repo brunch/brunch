@@ -1,0 +1,46 @@
+extends _default
+
+
+block main
+  .grid
+    .grid__item.one-whole.desk-one-quarter
+      .doc-sidebar
+        each section in docSidebar
+          .doc-section
+            h3 #{section.section}
+            ul
+              each item in section.items
+                li
+                  if item.path
+                    if filename != 'docs/' + item.path + '.jade'
+                      a(href='/docs/' + item.path) #{item.title}
+                    else
+                      span.active #{item.title}
+                  else
+                    a(href=item.link, target='_blank', class='external') #{item.title}
+
+    .grid__item.one-whole.desk-three-quarters.doc-content
+      block content
+
+      - var _path = filename.replace('docs/', '').replace('.jade', '')
+      - var section = docSidebar.find(function(sec) { return sec.items.map(function(i) { return i.path; }).indexOf(_path) !== -1 })
+      - var secItems = section ? section.items.filter(function(i) { return i.path; }) : []
+      - var currIdx = secItems.map(function(i) { return i.path; }).indexOf(_path)
+      - var prev = secItems[currIdx - 1]
+      - var next = secItems[currIdx + 1]
+
+      .container.doc-nav
+        .grid
+          .grid__item.one-whole.lap-and-up-one-half
+            if prev
+              a(href='/docs/' + prev.path) &larr; #{prev.title}
+          .grid__item.one-whole.lap-and-up-one-half(style="text-align: right;")
+            if next
+              a(href='/docs/' + next.path) #{next.title} &rarr;
+          .grid__item.one-whole
+              - var _split = filename.split('/')
+              - var mdName = _split[_split.length - 1].replace('.jade', '.md')
+              - var mdPath = 'app/assets/_docs/' + mdName
+              - var ghUrl = 'https://github.com/brunch/brunch.github.io/blob/source/' + mdPath;
+              span.note
+                a(href=ghUrl) Edit #{mdName} on GitHub

@@ -1,0 +1,431 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><a href="/docs/concepts">Core concepts</a></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><span class="active">Config</span></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-config">Brunch: Config</h1>
+<p>Brunch uses configuration file <code>brunch-config.js</code> <em>(or <code>.coffee</code>)</em> to manage various aspects of your app.</p>
+<ul>
+<li><a href="#paths"><strong><code>paths</code></strong></a> — where to take files from and where to put generated ones</li>
+<li><a href="#files"><strong><code>files</code></strong></a> — which files exactly should Brunch generate and how.</li>
+<li><a href="#npm"><strong><code>npm</code></strong></a> — NPM dependencies settings</li>
+<li><a href="#plugins"><strong><code>plugins</code></strong></a> — individual plugin settings.</li>
+</ul>
+<p>Less common options:</p>
+<ul>
+<li><a href="#modules"><code>modules</code></a> — specifies details of JS module implementation, such as <code>wrapper</code>, <code>definition</code>, <code>autoRequire</code> and <code>nameCleaner</code>.</li>
+<li><a href="#conventions"><code>conventions</code></a> — defines which files are treated as assets and which ones are ignored in your app.</li>
+<li><a href="#watcher"><code>watcher</code></a> — low-level configuration of the file watcher which empowers Brunch.</li>
+<li><a href="#server"><code>server</code></a> — allows to describe custom web-servers instead of the built-in one.</li>
+<li><a href="#notifications"><code>notifications</code></a> — configures the levels of notifications, their title, icon, etc.</li>
+<li><a href="#sourcemaps"><code>sourceMaps</code></a>, <a href="#optimize"><code>optimize</code></a> — simple true/false options</li>
+<li><a href="#hooks"><code>hooks</code></a> — allows to specify handlers for different moments of building cycle</li>
+</ul>
+<p><span class="note">
+  You can see the config schema, and all the defaults, in the <code>configBaseSchema</code> of <a href="https://github.com/brunch/brunch/blob/master/lib/utils/config-validate.js#L9"><code>lib/utils/config-validate.js</code></a> in the Brunch source code.
+</span></p>
+<h2 id="example">Example</h2>
+<p>Simplest Brunch config looks like that. Just 6 lines of pure configuration:</p>
+<pre><code class="lang-js">module.exports = {
+  files: {
+    javascripts: {joinTo: &#39;app.js&#39;},
+    stylesheets: {joinTo: &#39;app.css&#39;},
+  }
+}
+</code></pre>
+<p>Each Brunch config is an executable script,
+so you can also execute arbitrary JS and import Node.js modules there.</p>
+<h2 id="pattern-matching">Pattern matching</h2>
+<p>Internally, Brunch uses <a href="https://github.com/es128/anymatch">anymatch</a> for pattern matching — it&#39;s a module to match strings against configurable strings, globs, regular expressions or functions. If you want to define specific file pattern, you can use:</p>
+<ul>
+<li><p><strong>String</strong> — path to your source files to be directly matched. You can use <a href="https://en.wikipedia.org/wiki/Glob_(programming">globs</a>), so these strings may contain <a href="https://en.wikipedia.org/wiki/Wildcard_character">wildcard characters</a> (<code>*</code>, <code>?</code>, etc). Example:</p>
+<pre><code class="lang-js">joinTo: {
+  &#39;app.css&#39;: &#39;path/to/*.css&#39; // matches all CSS files
+}
+</code></pre>
+</li>
+<li><p><strong>Regular expression</strong> — feel free to define a pattern using regular expression if you used to. Example:</p>
+<pre><code class="lang-js">joinTo: {
+  &#39;app.js&#39;: /\.js$/ // matches all JavaScript files
+}
+</code></pre>
+</li>
+<li><p><strong>Function</strong> — if you need especially specific pattern, you can define it using function that takes the string as an argument and returns a truthy or falsy value (like <code>Array.filter</code> function do). Example:</p>
+<pre><code class="lang-js">joinTo: {
+  // matches all JavaScript files with filenames longer that 3 characters
+  &#39;app.js&#39;: path =&gt; path.endsWith(&#39;.js&#39;) &amp;&amp; path.length &gt; 3
+}
+</code></pre>
+</li>
+<li><p><strong>Array</strong> — an array of any number and mix of the above types. Example:</p>
+<pre><code class="lang-js">joinTo: {
+  &#39;app.js&#39;: [
+    &#39;path/to/specific/file.js&#39;,   // include specific file
+    &#39;any/**/*.js&#39;,                // all files with .js extension
+    /\.test\.js$/,                // all files with .test.js extension
+    path =&gt; path.includes(&#39;tmp&#39;)  // contains `tmp` substring
+  ]
+}
+</code></pre>
+</li>
+</ul>
+<h2 id="paths"><code>paths</code></h2>
+<p><code>Object</code>: <code>paths</code> contains application paths to key directories. Paths are simple strings.</p>
+<ul>
+<li><code>public</code> key: path to build directory that would contain output.</li>
+<li><code>watched</code> key: list of all watched paths by brunch. Default:
+<code>[&#39;app&#39;, &#39;test&#39;, &#39;vendor&#39;]</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-js">paths: {
+  public: &#39;/user/www/deploy&#39;
+}
+</code></pre>
+<p>If you need to change the default directory for application&#39;s code, don&#39;t forget to add this directory to the <code>watched</code> field, like so:</p>
+<pre><code class="lang-javascript">paths: {
+  watched: [&#39;src&#39;]
+}
+</code></pre>
+<p>Also, consider <a href="#-modules-"><code>module.nameCleaner</code> option</a>, if you need to require your modules without prefixing with folder name.</p>
+<h2 id="files"><code>files</code></h2>
+<p>(<code>javascripts, stylesheets, templates</code>; <code>joinTo</code>s and <code>order</code>)</p>
+<p><code>Required, object</code>: <code>files</code> configures handling of application files: which compiler would be used on which file, what name should output file have etc. Any paths specified here must be listed in <code>paths.watched</code> as described above, for building.</p>
+<ul>
+<li><code>&lt;type&gt;</code>: <code>javascripts</code>, <code>stylesheets</code> or <code>templates</code><ul>
+<li>joinTo: (required when no <code>entryPoints</code> was declared) describes how files will be compiled &amp; joined together.
+Available formats:<ul>
+<li><code>&#39;outputFilePath&#39;</code> in order to have all source files compiled together to one</li>
+<li>map of <code>&#39;outputFilePath&#39;</code> (see <a href="#pattern-matching">Pattern matching</a> section)</li>
+</ul>
+</li>
+<li>entryPoints: (optional) describes the entry points of an application. The specified file and all of its dependencies will then be joined into a single file (or if you have specified a mapping, into several files). Resembles <code>joinTo</code> but allows to included only required files. Because <code>entryPoints</code> is so similar to <code>joinTo</code>, it is better to choose only one of them in most cases. See the example below.
+Available formats:<ul>
+<li><code>&#39;entryFile.js&#39;: &#39;outputFilePath&#39;</code></li>
+<li><code>&#39;entryFile.js&#39;:</code> map of <code>&#39;outputFilePath&#39;</code> (see <a href="#pattern-matching">Pattern matching</a> section)</li>
+</ul>
+</li>
+<li>order: (optional) defines compilation order. <code>vendor</code> files will be compiled before other ones even if they are not present here.<ul>
+<li>before: <a href="#pattern-matching">matching pattern</a> defining files that will be loaded before other files</li>
+<li>after: <a href="#pattern-matching">matching pattern</a> defining files that will be loaded after other files</li>
+</ul>
+</li>
+<li>pluginHelpers: (optional) specify which output file (or array of files) plugins&#39; include files concatenate into. Defaults to the output file that <code>vendor</code> files are being joined to, the first one with <code>vendor</code> in its name/path, or just the first output file listed in your joinTo object.</li>
+</ul>
+</li>
+</ul>
+<p>All files from <code>vendor</code> directory are by default concatenated before all files from <code>app</code> directory. So, <code>vendor/scripts/jquery.js</code> would be loaded before <code>app/script.js</code> even if order config is empty. Files from Bower packages are included by default before the <code>vendor</code> files.</p>
+<p>Overall ordering is [before] -&gt; [bower] -&gt; [vendor] -&gt; [everything else] -&gt; [after]</p>
+<p>Common example:</p>
+<pre><code class="lang-js">files: {
+  javascripts: {
+    joinTo: {
+      &#39;javascripts/app.js&#39;: /^app/,
+      &#39;javascripts/vendor.js&#39;: /^(?!app)/
+    }
+   // or
+   // entryPoints: {
+   //   &#39;entryPoints.js&#39;: {
+   //     &#39;javascripts/app.js&#39;: /^app/,
+   //     &#39;javascripts/vendor.js&#39;: /^(?!app)/
+   //   }
+   // }
+
+  },
+  stylesheets: {
+    joinTo: &#39;stylesheets/app.css&#39;
+  },
+  templates: {
+    joinTo: &#39;javascripts/app.js&#39;
+  }
+}
+</code></pre>
+<h3 id="a-note-on-entry-points">A note on entry points</h3>
+<p>It is important to keep a few things in mind regarding entry points &amp; their known limitations:</p>
+<ul>
+<li>only the things you <code>require</code> will be included into an entryPoint bundle. This means non-app/non-npm dependencie won&#39;t be included. Also means only statically analyzable <code>require</code>s will work:<ul>
+<li><code>require(&#39;something&#39;)</code> — :+1:</li>
+<li><code>[&#39;a&#39;, &#39;b&#39;, &#39;c&#39;].forEach(dep =&gt; require(dep))</code> — :-1:</li>
+<li><code>match(&#39;/&#39;, &#39;app/Home&#39;)</code> (where <code>app/Home</code> gets translated into <code>require(&#39;components/app/Home&#39;)</code>) — :-1:</li>
+</ul>
+</li>
+<li><p>two entry points can&#39;t write to the same file</p>
+<pre><code class="lang-js">javascripts: {
+  entryPoints: {
+    &#39;app/initialize.js&#39;: &#39;javascripts/bundle.js&#39;,
+    // INVALID
+    &#39;app/bookmarklet.js&#39;: &#39;javascripts/bundle.js&#39;
+  }
+}
+</code></pre>
+</li>
+<li>all <code>config.npm.globals</code> will be included in <strong>every</strong> entry point and joinTo</li>
+<li><code>entryPoints</code> only work with javascript files. If you want to also include your templates, keep a <code>joinTo</code> for them</li>
+</ul>
+<h2 id="npm"><code>npm</code></h2>
+<p><code>Object</code>: configures NPM integration for front-end packages. Make sure you also declare the packages you depend on in your <code>package.json</code> dependencies section.</p>
+<ul>
+<li><code>npm.enabled</code>: <code>Boolean</code>: a toggle of whether the integration is enabled, defaults to <code>true</code>.</li>
+<li><code>npm.globals</code>: <code>Object</code>: a mapping from global name (as a key) to the corresponding module name (string) to expose.</li>
+<li><code>npm.styles</code>: <code>Object</code>: a mapping from package name (string) to an array of stylesheet paths (relative to package root) to be included into the build.</li>
+<li><code>npm.static</code>: <code>Array</code>: a list of javascript files from npm packages to be included as-is, without analyzing their dependencies or wrapping them into modules.</li>
+<li><code>npm.aliases</code>: <code>Object</code>: a mapping of files from an alias to a real package name. For example, if you are using <code>exoskeleton</code> fork of Backbone, setting this to <code>{&quot;backbone&quot;: &quot;exoskeleton&quot;}</code> would load Exoskeleton when requiring backbone.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-js">npm: {
+  styles: {pikaday: [&#39;css/pikaday.css&#39;]},
+  globals: {Pikaday: &#39;pikaday&#39;}
+}
+</code></pre>
+<h2 id="plugins"><code>plugins</code></h2>
+<p><code>Object</code>: Optional control to modify how plugins are loaded by default, as well as containing plugin-specific configuration.</p>
+<ul>
+<li><code>off</code>: Plugins that may be installed, but should not be run.</li>
+<li><code>on</code>: Forces listed plugins to be run, such as an optimizer even when the <code>optimize</code> flag is off.</li>
+<li><code>only</code>: Explicitly list the plugins to be used, ignoring any others that are installed.</li>
+<li><code>npm</code>: An array list of plugin names that will compile <code>node_modules/</code>. Defaults to <code>[]</code>. <em>(Note: for the time being, it works only with <code>.js</code> files)</em></li>
+<li><em>Per-Plugin</em>: Refer to each plugin&#39;s documentation for usage information.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-js">plugins: {
+  on: [&#39;postcss-brunch&#39;],
+  off: [&#39;jade-brunch&#39;, &#39;handlebars-brunch&#39;],
+  npm: [&#39;babel-brunch&#39;],
+  autoReload: {enabled: true}
+}
+</code></pre>
+<h2 id="conventions"><code>conventions</code></h2>
+<p><code>Object</code>: <code>conventions</code> define tests, against which all file pathnames will be checked.</p>
+<ul>
+<li><code>ignored</code> key: <a href="#pattern-matching">matching pattern</a>. Will check against files that should be ignored by brunch compiler, but are still watched by the watcher. For example, when you have <code>common.styl</code> file that you import in every stylus file, <code>common.styl</code> will be compiled on its own too which will result in duplicated code. When prefixing it with underscore (<code>_common.styl</code>) you are still able to import it in dependent files, but it won’t be compiled twice. The feature is very similar to <a href="http://wiseheartdesign.com/articles/2010/01/22/structuring-a-sass-project/">Sass partials</a>. By default, files and directories that start with underscore (<code>_</code>) will be ignored.</li>
+<li><code>assets</code> key: <a href="#pattern-matching">matching pattern</a>. If test gives true, file won&#39;t be compiled and will be just moved to public directory instead.</li>
+<li><code>vendor</code> key: <a href="#pattern-matching">matching pattern</a>. If test gives true, file won&#39;t be wrapped in module, if there are any.</li>
+</ul>
+<p>Keep in mind that default brunch regexps, as you see, consider <strong>all</strong> <code>vendor/</code> (etc.) directories as vendor (etc.) files. So, <code>app/views/vendor/thing/file.js</code> will be treated as vendor file.</p>
+<p>Example:</p>
+<pre><code class="lang-javascript">conventions: {
+  ignored: () =&gt; false, // override defaults for no ignored files
+  assets: /files\//     // vendor/jquery/files/jq.img
+}
+</code></pre>
+<p>You may find default values for <code>ignored</code>, <code>assets</code> and <code>vendor</code> fields in <a href="https://github.com/brunch/brunch/blob/master/lib/utils/config-validate.js">Brunch sources</a>.</p>
+<h2 id="modules"><code>modules</code></h2>
+<p><code>Object</code>: consists of <code>wrapper</code> and <code>definition</code> subsettings.</p>
+<p><code>modules.wrapper</code>: <code>String, Boolean or Function</code>: a wrapper that will be wrapped around compiled-to-javascript code in non-vendor directories. Values:</p>
+<ul>
+<li><code>commonjs</code> (Default) — CommonJS wrapper.</li>
+<li><code>amd</code> — AMD <code>r.js</code>-like wrapper.</li>
+<li><code>false</code> — no wrapping. Files will be compiled as-is.</li>
+<li>Function that takes path, data, and a boolean set to <code>true</code> if the file is in a vendor directory.</li>
+</ul>
+<p><code>modules.definition</code>: <code>String, Boolean or Function</code> a code that will be added on top of every generated JavaScript file. Values:</p>
+<ul>
+<li><code>commonjs</code> (Default) — CommonJS require definition.</li>
+<li><code>amd</code>, <code>false</code> — no definition.</li>
+<li>Function that takes path and data</li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-js">// Same as &#39;commonjs&#39;.
+modules: {
+  wrapper: (path, data) =&gt; {
+    return `
+require.define({${path}: function(exports, require, module) {
+  ${data}
+}});\n\n
+    `
+  }
+}
+</code></pre>
+<p><code>modules.autoRequire</code>: <code>Object</code> specifies requires to be automatically added at the end of joined file. The example below will require both &#39;app&#39; and &#39;foo&#39;:</p>
+<pre><code class="lang-js">// Default behaviour.
+modules: {
+  autoRequire: {
+    &#39;javascripts/app.js&#39;: [&#39;app&#39;, &#39;foo&#39;]
+  }
+}
+</code></pre>
+<p><code>modules.nameCleaner</code>: <code>Function</code> Allows you to set filterer function for module names,
+for example, change all &#39;app/file&#39; to &#39;file&#39;. Example:</p>
+<pre><code class="lang-js">// Default behaviour.
+modules: {
+  nameCleaner: path =&gt; path.replace(/^app\//, &#39;&#39;)
+}
+</code></pre>
+<pre><code class="lang-js">// Add namespacing to a project.
+const {name} = require(&#39;./package.json&#39;);
+modules: {
+  nameCleaner: path =&gt; path.replace(/^app/, name)
+}
+</code></pre>
+<p>Also <code>nameCleaner</code> option may help you when you need to change the default directory for app code to <code>src</code>, for example:</p>
+<pre><code class="lang-js">modules: {
+  nameCleaner: path =&gt; path.replace(/^src\//, &#39;&#39;)
+}
+</code></pre>
+<h2 id="notifications"><code>notifications</code></h2>
+<p>Notifications are on by default.</p>
+<ul>
+<li><p><strong><code>false</code></strong>: deactivate notifications.</p>
+</li>
+<li><p><strong>Array</strong>:</p>
+<ul>
+<li><code>notifications.levels</code> (<code>Array</code>): By default, only errors trigger notifications. If you want to display success, warning, or informational messages, set this to an array of strings with the levels you want to see, e.g. <code>[&#39;error&#39;, &#39;warn&#39;, &#39;info&#39;]</code>.</li>
+<li><code>notifications.app</code> (<code>String</code>): Sets the title used in notifications. Default value is Brunch.</li>
+<li><code>notifications.icon</code> (<code>String</code>): Sets the icon of the notification popup.</li>
+</ul>
+</li>
+</ul>
+<p>See <a href="https://github.com/paulmillr/loggy">documentation for the Loggy package</a> for complete details.</p>
+<h2 id="optimize"><code>optimize</code></h2>
+<p><code>Boolean</code>: determines if minifiers should be enabled or not. Default value is <code>false</code> (<code>true</code> if you run <code>brunch build --production</code>).</p>
+<h2 id="server"><code>server</code></h2>
+<p><strong>TL;DR:</strong> To launch a custom Brunch webserver, you&#39;ll need to create a file <code>brunch-server.js</code> with a code similar to this:</p>
+<pre><code class="lang-javascript">
+const express = require(&#39;express&#39;);
+const app = express();
+
+app.use(express.static(__dirname + &#39;/public&#39;));
+
+// AJAX to /action.
+app.post(&#39;/action&#39;, (req, res, next) =&gt; {
+  res.send(&#39;POST action completed!&#39;);
+});
+
+// Export the module like this for Brunch.
+module.exports = (config, callback) =&gt; {
+  // Server config is passed within the `config` variable.
+  app.listen(config.port, function () {
+    console.log(`Example app listening on port ${config.port}!`);
+    callback();
+  });
+
+  // Return the app; it has the `close()` method, which would be ran when
+  // Brunch server is terminated
+  return app;
+};
+</code></pre>
+<p><code>brunch watch --server</code> would <em>automatically</em> load the file.</p>
+<p><code>Object</code>: contains params of webserver that runs on <code>brunch watch --server</code>.</p>
+<p>If a <code>brunch-server.js</code> or <code>brunch-server.coffee</code> file exists at the root of your project, Brunch will treat this as your custom web server. This can be overridden with the <code>server.path</code> option.</p>
+<p>The server script must export a function that starts your custom server, either as the default exported module. This function should return an instance of <a href="https://nodejs.org/api/http.html#http_class_http_server"><code>http.Server</code></a> or an object containing a <code>close</code> property assigned to a function that shuts down the server. Examples:</p>
+<pre><code class="lang-js">// javascript example using default export and node http core module
+module.exports = (port, path, callback) =&gt; {
+  // your custom server code
+  // callback doesn&#39;t take any parameters and (if provided) should be called after server is started
+  // up to you to respect the `port` argument allowing users to change it from the CLI
+  const myServer = http.createServer();
+  myServer.listen(port, callback);
+  myServer.on(&#39;request&#39;, (req, res) =&gt; { /* do stuff */ });
+  return myServer;
+};
+</code></pre>
+<pre><code class="lang-js">// Example using custom `close` method.
+module.exports = (port, path, callback) =&gt; {
+  // custom server code
+  return {
+    close() { /* code for shutting down server */ }
+  };
+}
+</code></pre>
+<ul>
+<li><code>path</code>: (optional) custom path to Node.js file that will be loaded to run your custom server.</li>
+</ul>
+<p>If a custom server is not present, Brunch will use <a href="https://github.com/paulmillr/pushserve">pushserve</a>. If using your own, only <code>port</code> from the following options can be set from the config.</p>
+<ul>
+<li><code>port</code>: port on which server will run. Default: <code>3333</code></li>
+<li><code>hostname</code>: hostname on which server will run. Default <code>localhost</code>, which only permits connections from the same computer. Set to <code>0.0.0.0</code> to permit access from other computers.</li>
+<li><code>base</code>: base URL from which to serve the app. Default: <code>&#39;&#39;</code></li>
+<li><code>indexPath</code>: path to serve when base URL is requested. Default <code>index.html</code></li>
+<li><code>noPushState</code>: respond with 404 instead of <code>indexPath</code> for unknown paths. Default <code>false</code></li>
+<li><code>noCors</code>: disables CORS headers. Default <code>false</code></li>
+<li><code>stripSlashes</code>: removes trailing slashes from URLs. Default <code>false</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-js">server: {
+  port: 6832,
+  base: &#39;/myapp&#39;,
+  stripSlashes: true
+}
+</code></pre>
+<ul>
+<li><code>command</code>: command to launch a non-Node.js server as a child process. Ex: <code>server: command: &#39;php -S 0.0.0.0:3000 -t public&#39;</code></li>
+</ul>
+<h2 id="sourcemaps"><code>sourceMaps</code></h2>
+<p><code>Boolean</code>: enables or disables Source Map generation. Default value is <code>true</code> (enabled), <code>false</code> (disabled) if you run <code>brunch build --production</code>.</p>
+<p><code>String</code>:</p>
+<ul>
+<li>set to <code>&#39;old&#39;</code> to use the old <code>@</code> control character instead of <code>#</code>.</li>
+<li>set to <code>&#39;absoluteUrl&#39;</code> to set the <code>sourceMappingURL</code> to the complete URL path starting from <code>config.paths.public</code></li>
+<li>set to <code>&#39;inline&#39;</code> to set the <code>sourceMappingURL</code> to a data URI containing the source map (no .map file will be written)</li>
+</ul>
+<h2 id="filelistinterval"><code>fileListInterval</code></h2>
+<p><code>Integer</code>: Sets an interval in ms which determines how often brunch file list should be
+checked for new files. Default <code>65</code>.</p>
+<p>On large projects and/or environments with slow disk I/O, the value may need to be increased
+to ensure a <code>brunch build</code> completes properly in one cycle. However, higher values harm
+<code>brunch watch</code> performance, so consider changing it in an environment-specific way using
+<code>overrides</code>.</p>
+<h2 id="overrides"><code>overrides</code></h2>
+<p><code>Object</code>: Alternate config settings to activate via command line switches (<code>--env SETTING</code>). Multiple sets of overrides can be applied at once using a comma-separated list (<code>--env foo,bar</code>).</p>
+<p>It is also possible to set an additional environment value using the <code>BRUNCH_ENV</code> or <code>NODE_ENV</code> environment variable. This can be especially useful when combined with <a href="https://npmjs.org/package/dotenv">dotenv</a>.</p>
+<p>Examples:</p>
+<pre><code class="lang-sh">brunch watch --env testing
+BRUNCH_ENV=testing brunch build
+NODE_ENV=production brunch build
+</code></pre>
+<p>Defaults:</p>
+<pre><code class="lang-js">overrides: {
+  production: {
+    optimize: true,
+    sourceMaps: false,
+    plugins: {autoReload: {enabled: false}}
+  }
+}
+</code></pre>
+<p>Caveats:</p>
+<ul>
+<li>If both <code>files[&lt;type&gt;].joinTo</code> and <code>overrides[&lt;env&gt;].files[&lt;type&gt;].joinTo</code> are defined, the value of <code>files[&lt;type&gt;].joinTo</code> will be overwritten by, not merged with, <code>overrides</code>.</li>
+<li>If both <code>files[&lt;type&gt;].order</code> and <code>overrides[&lt;env&gt;].files[&lt;type&gt;].order</code> are defined, the value of <code>files[&lt;type&gt;].order</code> will be overwritten by, not merged with, <code>overrides</code>.</li>
+</ul>
+<p>In other words, <code>joinTo</code> and <code>order</code> don&#39;t merge if defined under <code>overrides</code>, but you still can override one while inheriting the base setting for the other.</p>
+<h2 id="watcher"><code>watcher</code></h2>
+<p><code>Object</code>: Optional settings for
+<a href="https://github.com/paulmillr/chokidar">chokidar</a>
+file watching library used in Brunch.</p>
+<ul>
+<li><code>usePolling</code> (default: <code>false</code>) Whether to use <code>fs.watchFile</code>
+  (backed by polling), or <code>fs.watch</code>.
+  Polling is slower but can be more reliable.</li>
+</ul>
+<h2 id="hooks"><code>hooks</code></h2>
+<p><code>Object</code>: Optional setting to specify handlers for different moments of building cycle.
+Possible values:</p>
+<ul>
+<li><p><code>preCompile</code> - <code>Function</code>: Optional callback to be called before brunch starts a compilation cycle. If Promise is returned, it will be awaited.</p>
+<p>  Example:</p>
+<pre><code class="lang-javascript">  hooks: {
+    preCompile() {
+      console.log(&quot;About to compile...&quot;);
+      return Promise.resolve();
+    }
+  }
+</code></pre>
+</li>
+<li><p><code>onCompile</code> - <code>Function</code>: Optional callback to be called every time brunch completes a compilation cycle. It is passed a <code>generatedFiles</code> array, as well as <code>changedAssets</code> array. Each member of <code>generatedFiles</code> array is an object with:</p>
+<ul>
+<li><code>path</code> — path of the compiled file</li>
+<li><code>sourceFiles</code> — array of objects representing each source file</li>
+<li><code>allSourceFiles</code> array of objects representing each source file — this one also includes files that don&#39;t belong to the original type (e.g. if a styles compiler adds a JS module, path would be the concatenated JS file, and one of the <code>allSourceFiles</code> will be a style file</li>
+</ul>
+<p>Each member of <code>changedAssets</code> array is an object with:</p>
+<ul>
+<li><code>path</code> — original path of an asset</li>
+<li><code>destinationPath</code> — path of an asset in the public directory</li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-javascript">  hooks: {
+    onCompile(generatedFiles, changedAssets) {
+      console.log(generatedFiles.map(f =&gt; f.path));
+    }
+  }
+</code></pre>
+</li>
+</ul>
+<h2 id="tips">Tips</h2>
+<p>You can use CoffeeScript to write configuration files. This way they&#39;ll be
+much shorter and concise. Simply create a file called <code>brunch-config.coffee</code>.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/commands">&larr; Commands</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/plugins">Plugin API &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/config.md">Edit config.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

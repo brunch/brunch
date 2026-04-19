@@ -1,0 +1,732 @@
+{
+  "plugins": [
+    {
+      "name": "brunch-feature-switcher",
+      "url": "shalimov/brunch-feature-switcher",
+      "category": "Compilers",
+      "description": "Plugin that hepls to add/remove/replace code based on included features, acts as conditional code replacer."
+    },
+    {
+      "name": "spritesheet-js-brunch",
+      "url": "blackmirror1980/spritesheet-js-brunch",
+      "category": "Compilers",
+      "description": "Adds spritesheet-js support to brunch"
+    },
+    {
+      "name": "replacer-brunch",
+      "url": "tkesgar/replacer-brunch",
+      "category": "Compilers",
+      "description": "Ruthlessly simple string replacement plugin to Brunch."
+    },
+    {
+      "name": "brunch-tumblr-theme-parser",
+      "url": "silbinarywolf/brunch-tumblr-theme-parser",
+      "category": "Compilers",
+      "description": "Compile your tumblr template into plain HTML."
+    },
+    {
+      "name": "elm-css-brunch",
+      "url": "dustinfarris/elm-css-brunch",
+      "category": "Compilers",
+      "description": "Compile your elm-css stylesheets in to css files."
+    },
+    {
+      "name": "HMR-brunch",
+      "url": "brunch/hmr-brunch",
+      "category": "Others",
+      "description": "Allows to use Hot Module Replacement in your Brunch projects."
+    },
+    {
+      "name": "CoffeeScript",
+      "url": "brunch/coffee-script-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://coffeescript.org/\">CoffeeScript</a> is unfancy JavaScript."
+    },
+    {
+      "name": "IcedCoffeeScript-brunch",
+      "url": "brunch/iced-coffee-script-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://maxtaco.github.com/coffee-script/\">IcedCoffeeScript</a> is a CoffeeScript with async syntax."
+    },
+    {
+      "name": "LiveScript-brunch",
+      "url": "brunch/LiveScript-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://gkz.github.com/LiveScript/\">LiveScript</a> is more functional and feature rich CoffeeScript dialect."
+    },
+    {
+      "name": "EmberScript",
+      "url": "huafu/ember-script-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://emberscript.com/\">EmberScript</a> is Ember tasted CoffeeScript."
+    },
+    {
+      "name": "Roy-brunch",
+      "url": "brunch/roy-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://roy.brianmckenna.org/\">Roy</a> is a small functional language that compiles to js."
+    },
+    {
+      "name": "typescript-brunch",
+      "url": "brunch/typescript-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://www.typescriptlang.org/\">typescript</a> is a typed superset of JavaScript that compiles to plain JavaScript."
+    },
+    {
+      "name": "jsenv-brunch",
+      "url": "rcs/jsenv-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Add support for compiling environment variables into javascript includes. Useful for Heroku and production/development configuration differences."
+    },
+    {
+      "name": "wisp-brunch",
+      "url": "sandy98/wisp-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds support for <a href=\"https://github.com/Gozala/wisp\">Wisp</a>, which is a cute Clojure-like Lisp."
+    },
+    {
+      "name": "es6-module-transpiler-brunch",
+      "url": "gcollazo/es6-module-transpiler-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds ES6 module syntax support via <a href=\"https://github.com/square/es6-module-transpiler\">es6-module-transpiler</a>."
+    },
+    {
+      "name": "traceur-brunch",
+      "url": "peterjosling/traceur-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds ES6 to ES5 transpiling with Google's <a href=\"https://github.com/google/traceur-compiler\">Traceur</a>."
+    },
+    {
+      "name": "babel-brunch",
+      "url": "babel/babel-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds ES6 to ES5 transpiling with <a href=\"https://babeljs.io/\">Babel</a>.",
+      "featured": true
+    },
+    {
+      "name": "sweet-js-brunch",
+      "url": "e-jigsaw/sweet-js-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds support for <a href=\"http://sweetjs.org/\">sweet.js</a>."
+    },
+    {
+      "name": "riot-brunch",
+      "url": "yavorsky/riot-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds support for <a href=\"https://muut.com/riotjs/\">Riot</a>, a React-like, 2.5kb user interface library."
+    },
+    {
+      "name": "glslify-brunch",
+      "url": "bmatcuk/glslify-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Transpile GLSL to javascript strings through <a href=\"https://github.com/stackgl/glslify\">glslify</a>, a node-like module system for GLSL."
+    },
+    {
+      "name": "Stylus-brunch",
+      "url": "brunch/stylus-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "<a href=\"http://learnboost.github.com/stylus/\">Stylus</a> is robust &amp; powerful style lang. Comes with <a href=\"http://visionmedia.github.com/nib/\"><strong>nib</strong></a> — library of CSS3 cross-browser mixins. See <a href=\"https://gist.github.com/2005644#gistcomment-89957\">why Stylus is better than LESS / Sass</a>."
+    },
+    {
+      "name": "Sass-brunch",
+      "url": "brunch/sass-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "<a href=\"http://sass-lang.com\">Sass</a> is pretty popular in ruby community. Comes with <a href=\"http://compass-style.org\"><strong>compass</strong></a> support."
+    },
+    {
+      "name": "LESS-brunch",
+      "url": "brunch/less-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "<a href=\"http://lesscss.org\">LESS</a> is the most popular dynamic stylesheet language."
+    },
+    {
+      "name": "Rework",
+      "url": "visionmedia/rework",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "with support for the configuration file."
+    },
+    {
+      "name": "Pleeease-brunch",
+      "url": "iamvdo/pleeease-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "desc": "<a href=\"pleeease.io\">Pleeease</a> is a css post-processor built with PostCSS. It adds prefixes, packs media queries, minification and provides some polyfills too."
+    },
+    {
+      "name": "postcss-brunch",
+      "url": "brunch/postcss-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "(a CSS postprocessor). Add as many PostCSS plugins as you want (like <a href=\"https://github.com/postcss/autoprefixer\">Autoprefixer</a>)."
+    },
+    {
+      "name": "cssnano-brunch",
+      "url": "dlepaux/cssnano-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"http://cssnano.co/\">CSSNano</a> is a modular minifier, composed of single-responsibility PostCSS plugins."
+    },
+    {
+      "name": "csscomb-brunch",
+      "url": "garetht/csscomb-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "<a href=\"http://http://csscomb.com/\">CSSComb</a> sorts your CSS properties in a specified order and keeps related properties together."
+    },
+    {
+      "name": "stylus-spritesmith-brunch",
+      "url": "jas/stylus-spritesmith-brunch",
+      "category": "Compilers",
+      "subcategory": "Style languages",
+      "description": "Adds Stylus support with <a href=\"http://visionmedia.github.com/nib/\">nib</a> and sprite sheet generation via <a href=\"https://github.com/Ensighten/spritesmith\">Spritesmith</a>."
+    },
+    {
+      "name": "Handlebars-brunch",
+      "url": "brunch/handlebars-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://handlebarsjs.com/\">Handlebars</a> are semantic logic-less templates, compatible with Mustache."
+    },
+    {
+      "name": "Ember-handlebars-brunch",
+      "url": "bartsqueezy/ember-handlebars-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Adds support for pre-compiling Handlebars templates for specific use within <a href=\"http://emberjs.com/\">Ember.js</a> applications."
+    },
+    {
+      "name": "Eco-brunch",
+      "url": "brunch/eco-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"https://github.com/sstephenson/eco\">Eco</a> is embedded coffeescript templates that features ERB-like syntax."
+    },
+    {
+      "name": "Mustache (hogan)-brunch",
+      "url": "mdp/hoganjs-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://twitter.github.com/hogan.js/\">Mustache</a> templates are logic-less and supported in many languages. Hogan is twitter implementation of mustache."
+    },
+    {
+      "name": "Jade-brunch",
+      "url": "brunch/jade-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://jade-lang.com/\">Jade</a> is a haml big brother with much cleaner syntax."
+    },
+    {
+      "name": "PugJS-brunch",
+      "url": "aMarCruz/pugjs-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Adds <a href=\"https://pugjs.org/\">Pug</a> support to brunch (dynamic and static templates)."
+    },
+    {
+      "name": "Dust-brunch",
+      "url": "sandosh/dustjs-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://akdubya.github.com/dustjs/\">Dust</a> is a templating engine designed to provide a clean separation between presentation and logic without sacrificing ease of use."
+    },
+    {
+      "name": "Dust-linkedin-brunch",
+      "url": "mgarbacz/dustjs-linkedin-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://linkedin.github.com/dustjs/\">Dust(LinkedIn)</a> is a fork of the original <a href=\"http://akdubya.github.com/dustjs/\">Dust</a>. LinkedIn will gradually be extending this library with core feature enhancements, helper functions and bug fixes."
+    },
+    {
+      "name": "Jade-angularjs-brunch",
+      "url": "GulinSS/jade-angularjs-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Jade to AngularJS module compiler. A la <a href=\"https://npmjs.org/package/grunt-angular-templates\">Grunt-angular-templates</a> but for Brunch and Jade."
+    },
+    {
+      "name": "Emblem-brunch",
+      "url": "machty/emblem-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://emblemjs.com/\">Emblem</a> is a concise, beautiful and compatible templating alternative for handlebars."
+    },
+    {
+      "name": "Markdown-brunch",
+      "url": "jupl/markdown-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">Markdown</a> allows you to write using an easy-to-read, easy-to-write plain text format, then convert it to structurally valid XHTML (or HTML)."
+    },
+    {
+      "name": "Yaml-front-matter-brunch",
+      "url": "sir-dunxalot/yaml-front-matter-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "compiles markdown files with <a href=\"https://www.npmjs.org/package/yaml-front-matter\">YAML front matter</a> into javascript objects with markdown support."
+    },
+    {
+      "name": "Swig-brunch",
+      "url": "wmdmark/swig-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://paularmstrong.github.io/swig/\">Swig</a> is a Django-like templating engine for node.js and the browser."
+    },
+    {
+      "name": "Ractive-brunch",
+      "url": "obmarg/ractive-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"http://www.ractivejs.org/\">RactiveJS</a> is a client side templating and DOM binding engine."
+    },
+    {
+      "name": "nunjucks-brunch",
+      "url": "brunch/nunjucks-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"https://mozilla.github.io/nunjucks/\">Nunjucks</a> is a rich and powerful templating language for JavaScript."
+    },
+    {
+      "name": "html2js-brunch",
+      "url": "aberman/html2js-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"https://github.com/aberman/html2js-brunch\">Html2JS</a> mimics the functionality of <a href=\"https://github.com/karlgoldstein/grunt-html2js\">grunt-html2js</a> by converting Angular templates into JavaScript."
+    },
+    {
+      "name": "react-templates-brunch",
+      "url": "fraisse/react-templates-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "<a href=\"https://github.com/wix/react-templates\">React Templates</a> Lightweight templates for <a href=\"http://facebook.github.io/react/index.html\">React</a>."
+    },
+    {
+      "name": "UglifyJS-brunch",
+      "url": "brunch/uglify-js-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"https://github.com/mishoo/UglifyJS\">UglifyJS</a> is a popular JavaScript minifier.",
+      "featured": true
+    },
+    {
+      "name": "uglify-es-brunch",
+      "url": "paulmedynski/uglify-es-brunch",
+      "category": "Minifiers",
+      "description": "Adds <a href=\"https://github.com/mishoo/UglifyJS2/tree/harmony\">uglify-es</a> support to Brunch.",
+      "featured": true
+    },
+    {
+      "name": "CleanCSS-brunch",
+      "url": "brunch/clean-css-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"https://github.com/GoalSmashers/clean-css\">CleanCSS</a> is CSS minifier."
+    },
+    {
+      "name": "html-pages-brunch",
+      "url": "tolyo/html-pages-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"https://github.com/kangax/html-minifier\">HTMLMinifier</a> is HTML compressor/minifier."
+    },
+    {
+      "name": "Bless-brunch",
+      "url": "ThomasConner/bless-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"https://github.com/ThomasConner/bless-brunch.git\">Bless-brunch</a> Blesses css files to help out IE browsers with their restrictions for large css files."
+    },
+    {
+      "name": "JSHint-brunch",
+      "url": "brunch/jshint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"http://www.jshint.com/\">JSHint</a> is a community-driven tool to detect errors and potential problems in JavaScript code and to enforce your team's coding conventions."
+    },
+    {
+      "name": "CoffeeLint-brunch",
+      "url": "ilkosta/coffeelint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"http://www.coffeelint.org/\">CoffeeLint</a> is a style checker that helps keep <a href=\"http://coffeescript.org/\">CoffeeScript</a> code clean and consistent.<br>"
+    },
+    {
+      "name": "JSXHint-brunch",
+      "url": "banyan/jsxhint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"https://github.com/STRML/JSXHint/\">JSXHint</a> is a Wrapper around JSHint for linting JSX files."
+    },
+    {
+      "name": "ESLint-brunch",
+      "url": "spyl94/eslint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"http://eslint.org/\">ESLint</a> a pluggable linting utility for JavaScript and JSX."
+    },
+    {
+      "name": "stylelint-brunch",
+      "url": "hweeks/stylelint-brunch",
+      "category": "Linters",
+      "description": "Allows stylelint to be added as a linter for your project."
+    },
+    {
+      "name": "tslint-brunch",
+      "url": "paulmedynski/tslint-brunch",
+      "category": "Linters",
+      "description": "Adds <a href=\"https://palantir.github.io/tslint\">TSLint</a> support for linting TypeScript files."
+    },
+    {
+      "name": "static-site-brunch",
+      "url": "devinus/static-site-brunch",
+      "category": "Others",
+      "description": "Develop a static site using Brunch. Compiles Handlebars templates with YAML front matter. Supports automatic partials registration."
+    },
+    {
+      "name": "Static-jade-brunch",
+      "url": "ilkosta/static-jade-brunch",
+      "category": "Others",
+      "description": "compiles static asset files to html. With it you can get rid of <code>index.html</code> and use <code>index.jade</code> instead."
+    },
+    {
+      "name": "Static-underscore-brunch",
+      "url": "slattery/static-underscore-brunch",
+      "category": "Others",
+      "description": "same, but for underscore.js."
+    },
+    {
+      "name": "html-brunch-static",
+      "url": "bmatcuk/html-brunch-static",
+      "category": "Others",
+      "description": "Compile static html with support for layouts, partial views, and multiple languages such as markdown, jade, handlebars, etc."
+    },
+    {
+      "name": "Docco-brunch",
+      "url": "jcruz2us/docco-brunch",
+      "category": "Others",
+      "description": "adds <a href=\"http://jashkenas.github.com/docco/\">Docco</a> documentation generator for your <code>app/</code> directory."
+    },
+    {
+      "name": "JSDoc-brunch",
+      "url": "MazeMap/jsdoc-brunch",
+      "category": "Others",
+      "description": "adds <a href=\"https://github.com/jsdoc3/jsdoc\">JSDoc</a> documentation generator for your <code>app/</code> directory."
+    },
+    {
+      "name": "Auto-reload-brunch",
+      "url": "brunch/auto-reload-brunch",
+      "category": "Others",
+      "description": "Adds automatic browser reloading support to brunch.",
+      "featured": true
+    },
+    {
+      "name": "browser-sync-brunch",
+      "url": "ocombe/browser-sync-brunch",
+      "category": "Others",
+      "description": "Adds <a href=\"http://www.browsersync.io/\">BrowserSync</a> support to brunch for automatic browser reloading and much more!"
+    },
+    {
+      "name": "fb-flo-brunch",
+      "url": "deliciousinsights/fb-flo-brunch",
+      "category": "Others",
+      "description": "Adds <a href=\"https://facebook.github.io/fb-flo/\">fb-flo</a> support to brunch for live, no-reloading CSS/JS injection in your browser!"
+    },
+    {
+      "name": "Process-env-brunch",
+      "url": "mikeedwards/process-env-brunch",
+      "category": "Others",
+      "description": "Parses brunch files and replaces the <code>_PROCESS_ENV_FOO</code> token with the value of <code>process.env.FOO</code>."
+    },
+    {
+      "name": "dependency-brunch",
+      "url": "shiwano/dependency-brunch",
+      "category": "Others",
+      "description": "Adds <code>dependOn</code> option to brunch config."
+    },
+    {
+      "name": "keyword-brunch",
+      "url": "bolasblack/keyword-brunch",
+      "category": "Others",
+      "description": "Adds <code>keyword</code> option to brunch config, replace the keyword after every time compiled."
+    },
+    {
+      "name": "keyword-brunch",
+      "url": "huafu/keyword-brunch",
+      "category": "Others",
+      "description": "An updated version of <code>keyword-brunch</code>, faster, more flexible and available in the npm repository."
+    },
+    {
+      "name": "sprite-brunch",
+      "url": "mllrsohn/sprite-brunch",
+      "category": "Others",
+      "description": "Language agnostic sprite generator for brunch"
+    },
+    {
+      "name": "jscc-brunch",
+      "url": "aMarCruz/jscc-brunch",
+      "category": "Others",
+      "description": "Adds conditional compilation and variable replacement support to brunch."
+    },
+    {
+      "name": "jspreprocess-brunch",
+      "url": "jonuy/jspreprocess-brunch",
+      "category": "Others",
+      "description": "Adds C-style preprocessor directive support to JS brunch compilations."
+    },
+    {
+      "name": "js-preprocess-brunch",
+      "url": "walts81/js-preprocess-brunch",
+      "category": "Others",
+      "description": "Replaces jspreprocess-brunch to add C-style preprocessor directive support to both JS and CoffeeScript brunch compilations. (This will need to ordered prior to other JS compliation plugins)"
+    },
+    {
+      "name": "html-preprocess-brunch",
+      "url": "walts81/html-preprocess-brunch",
+      "category": "Others",
+      "description": "Similar to js-preprocess-brunch but adds C-style preprocessor directive support to HTML template brunch compilation. (This will need to be ordered prior to other HTML compilation plugins)"
+    },
+    {
+      "name": "groundskeeper-brunch",
+      "url": "aliel/groundskeeper-brunch",
+      "category": "Others",
+      "description": "Clean javascript files (remove console.log ect...) using <a href=\"https://github.com/Couto/groundskeeper\">groundskeeper</a>."
+    },
+    {
+      "name": "gzip-brunch",
+      "url": "banyan/gzip-brunch",
+      "category": "Others",
+      "description": "Adds gzip support to brunch."
+    },
+    {
+      "name": "appcache-brunch",
+      "url": "brunch/appcache-brunch",
+      "category": "Others",
+      "description": "Adds HTML5 .appcache generation to brunch."
+    },
+    {
+      "name": "after-brunch",
+      "url": "Creative-Licence-Digital/after-brunch",
+      "category": "Others",
+      "description": "Execute arbitrary system commands after each compile cycle."
+    },
+    {
+      "name": "brunch-signature",
+      "url": "mutewinter/brunch-signature",
+      "category": "Others",
+      "description": "generates a unique signature as part of the build process."
+    },
+    {
+      "name": "digest-brunch",
+      "url": "mutewinter/digest-brunch",
+      "category": "Others",
+      "description": "appends a unique SHA digest to asset filenames."
+    },
+    {
+      "name": "git-digest-brunch",
+      "url": "meleyal/git-digest-brunch",
+      "category": "Others",
+      "description": "cache busts urls using the SHA digest of the current git revision."
+    },
+    {
+      "name": "hg-digest-brunch",
+      "url": "BoLaMN/hg-digest-brunch",
+      "category": "Others",
+      "description": "cache busts urls using the current mercurial revision."
+    },
+    {
+      "name": "fingerprint-brunch",
+      "url": "dlepaux/fingerprint-brunch",
+      "category": "Others",
+      "description": "rename desired generated files with a unique SHA and generate a map file"
+    },
+    {
+      "name": "yaml-i18n-brunch",
+      "url": "ktmud/yaml-i18n-brunch",
+      "category": "Others",
+      "description": "use yaml to edit i18n translations."
+    },
+    {
+      "name": "constangular-brunch",
+      "url": "Tomtomgo/constangular-brunch",
+      "category": "Others",
+      "description": "environment aware YAML configurations for AngularJS."
+    },
+    {
+      "name": "package-brunch",
+      "url": "pierr/package-brunch",
+      "category": "Others",
+      "description": "Appends a js file containing configuration information."
+    },
+    {
+      "name": "copyfilemon-brunch",
+      "url": "kasselTrankos/copyfilemon-brunch",
+      "category": "Others",
+      "description": "You can copy files or folder content from vendor folder(or any other desired)"
+    },
+    {
+      "name": "environment-brunch",
+      "url": "colinbate/environment-brunch",
+      "category": "Others",
+      "description": "Replace a token in your JS/TS files with the current Brunch environment."
+    },
+    {
+      "name": "Vue Brunch",
+      "url": "nblackburn/vue-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Adds support to Brunch for pre-compiling single file Vue components."
+    },
+    {
+      "name": "karma-brunch",
+      "url": "denar90/karma-brunch",
+      "category": "Others",
+      "description": "Adds karma support to brunch."
+    },
+    {
+      "name": "marko-brunch",
+      "url": "bkuri/marko-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Adds marko template support to brunch."
+    },
+    {
+      "name": "static-marko-brunch",
+      "url": "thomastorfs/static-marko-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "Adds static marko template support to brunch."
+    },
+    {
+      "name": "sw-precache-brunch",
+      "url": "denar90/sw-precache-brunch",
+      "category": "Others",
+      "description": "Service Worker Precache support for brunch"
+    },
+    {
+      "name": "ejs-brunch",
+      "url": "munshkr/ejs-brunch",
+      "category": "Compilers",
+      "description": "Embedded Javascript template (EJS) support for brunch"
+    },
+    {
+      "name": "imageoptmizer-brunch",
+      "url": "steffenmllr/imageoptmizer-brunch",
+      "category": "Minifiers",
+      "description": "Optimize PNG and JPG images with optipng & jpegtran"
+    },
+    {
+      "name": "closure-compiler-brunch",
+      "url": "prashnts/closure-compiler-brunch",
+      "category": "Minifiers",
+      "description": "JavaScript optimization with Closure Compiler in JS for brunch"
+    },
+    {
+      "name": "typeset-brunch",
+      "url": "prashnts/typeset-brunch",
+      "category": "Others",
+      "description": "Brunch interface for Typeset, an html preprocessor for web typography."
+    },
+    {
+      "name": "elm-lang-brunch",
+      "url": "karlspalding/elm-lang-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "<a href=\"http://elm-lang.org/\">Elm</a> is a functional language that compiles to JavaScript."
+    },
+    {
+      "name": "sass-lint-brunch",
+      "url": "karlspalding/sass-lint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"https://github.com/sasstools/sass-lint\">Sass Lint</a> is a linter for sass and scss syntax."
+    },
+    {
+      "name": "grunticon-brunch",
+      "url": "roperzh/grunticon-brunch",
+      "category": "Others",
+      "description": "<a href=\"https://github.com/roperzh/grunticon-brunch\">grunticon-brunch</a> adds <a href=\"https://github.com/filamentgroup/grunticon-lib\">Grunticon</a> support to Brunch."
+    },
+    {
+      "name": "pegjs-brunch",
+      "url": "caleb531/pegjs-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds support for <a href=\"https://github.com/pegjs/pegjs\">PEG.js</a>, a parser generator for JavaScript."
+    },
+    {
+      "name": "raw-brunch",
+      "url": "denysdovhan/raw-brunch",
+      "category": "Compilers",
+      "subcategory": "Pre-compiled templates",
+      "description": "A Brunch plugins for raw modules."
+    },
+    {
+      "name": "kssbrunch",
+      "url": "FaKeller/kss-brunch",
+      "category": "Others",
+      "description": "Integrate <a href=\"https://github.com/kss-node/kss-node\">kss-node</a> to generate a living style guide from <a href=\"http://warpspire.com/kss/\">KSS</a> documentation."
+    },
+    {
+      "name": "imagemin-brunch",
+      "url": "stawberri/imagemin-brunch",
+      "category": "Minifiers",
+      "description": "Minify images with <a href=\"https://github.com/imagemin/imagemin\">imagemin</a>."
+    },
+    {
+      "name": "svelte-brunch",
+      "url": "kazzkiq/svelte-brunch",
+      "category": "Compilers",
+      "subcategory": "Script languages",
+      "description": "Adds support to <a href=\"https://svelte.technology/\">Svelte</a> components to your project"
+    },
+    {
+      "name": "stylint-brunch",
+      "url": "tomquirk/stylint-brunch",
+      "category": "Linters",
+      "description": "<a href=\"https://github.com/tomquirk/stylint-brunch\">stylint-brunch</a> adds <a href=\"https://github.com/SimenB/stylint\">Stylint</a> (a <a href=\"http://stylus-lang.com/\">Stylus</a> linter) support to Brunch.<br>"
+    },
+    {
+      "name": "obfuscator-brunch",
+      "url": "tungd/obfuscator-brunch",
+      "category": "Minifiers",
+      "description": "<a href=\"https://github.com/tungd/obfuscator-brunch\">obfuscator-brunch</a> adds <a href=\"https://github.com/javascript-obfuscator/javascript-obfuscator\">JavaScript Obfuscator</a> support to Brunch.<br>"
+    },
+    {
+      "name": "ractive-component-brunch",
+      "url": "tungd/ractive-component-brunch",
+      "category": "Compilers",
+      "description": "<a href=\"https://github.com/tungd/ractive-component-brunch\">ractive-component-brunch</a> adds support for compiling <a href=\"https://ractive.js.org/\">RactiveJS</a> component files.<br>"
+    },
+    {
+      "name": "adaptive-brunch",
+      "url": "ciming/adaptive-brunch",
+      "category": "Compilers",
+      "description": "<a href=\"https://github.com/ciming/adaptive-brunch\">adaptive-brunch</a> adds support forcalculates and generates adaptive css code, such as `rem` and `0.5px borders for retina devices`<br>"
+    },
+    {
+      "name": "purgecss-brunch",
+      "url": "jeffreyguenther/purgecss-brunch",
+      "category": "Optimizers",
+      "description": "<a href=\"https://github.com/jeffreyguenther/purgecss-brunch\">purgecss-brunch</a> adds support for purgecss.<br>"
+    },
+    {
+      "name": "elm-fancy-brunch",
+      "url": "MattCheely/elm-fancy-brunch",
+      "category": "Compilers",
+      "description": "Elm compiler plugin with in-browser error message display."
+    },
+    {
+      "name": "workbox-brunch",
+      "url": "kamilpiskorski/workbox-brunch",
+      "category": "Others",
+      "description": "Workbox Build support for brunch"
+    }
+  ]
+}

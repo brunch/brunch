@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav active">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><script>document.addEventListener('DOMContentLoaded', function() {
+  // FIXME: Do not use globals
+  Inferno.render(
+    createElement(require('skeletons'), null),
+    document.querySelector('#skeletons-body')
+  );
+});
+</script><h1 id="skeletons">Skeletons</h1>
+<p>A Brunch skeleton is basically an application boilerplate that provides a good starting point for new applications. Skeleton can start you on your way with a specific pattern.</p>
+<p>Creating new application with any skeleton is pretty simple:</p>
+<pre><code># Simply create &quot;dead simple&quot; app without any opinions.
+brunch new
+# Create ES6 skeleton. &quot;es6&quot; is an alias from the table.
+brunch new -s es6
+# Same thing as above:
+brunch new --skeleton brunch/with-es6
+brunch new --skeleton https://github.com/brunch/with-es6
+</code></pre><p><span class="note">
+  The <a href="https://github.com/brunch/skeletons">complete skeletons list</a> is hosted on GitHub — feel free to add any skeleton you create on your own!
+</span></p>
+<div id="skeletons-body"></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

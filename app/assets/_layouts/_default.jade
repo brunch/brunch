@@ -1,0 +1,46 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title
+      | Brunch - ultra-fast HTML5 build tool
+      block title
+    meta(name='description', content='Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess.')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='shortcut icon', type="image/x-icon", href='/favicon.ico')
+    link(rel='stylesheet', href='/app.css')
+    link(rel='manifest', href='/manifest.json')
+
+  body
+
+    #navbar
+      .container
+        a.brunch-header-logo(href="/")
+          img(src="/images/logos/brunch-label.svg", alt="", width="107", height="40")
+
+        ul.nav.nav--main-nav
+          each item in nav
+            - var active = (filename == item.path + '.jade') || (filename == 'index.jade' && !item.path) || (item.activeOn && filename.indexOf(item.activeOn) !== -1)
+            if item.path.indexOf('http') == 0
+              li: a.nav__item--main-nav(href=item.path, class=active?'active':null)= item.title
+            else
+              li: a.nav__item--main-nav(href='/'+item.path+(item.path?'':''), class=active?'active':null)= item.title
+
+
+    block hero
+
+    .page__content.container
+      block main
+
+      block below
+
+      footer
+        hr.rule
+        p: small Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a>
+
+        script(src='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js' defer onload="hljs.initHighlightingOnLoad()")
+        script(src='/app.js' defer onload="require('init')")
+
+        link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic')
+        link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Source+Code+Pro:400,700')
+        link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css')

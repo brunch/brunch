@@ -1,0 +1,27 @@
+extends _default
+
+block main
+
+  .grid
+    .grid__item.one-whole.desk-one-third(style="float:right")
+      .social-buttons
+        each service in social
+          span: iframe(class="social-button-#{service.classname}", allowtransparency="true", frameborder="0", scrolling="no", src=service.src, style="width: #{service.width}px; height:30px;")
+      block sidebar
+      a(href="/docs/why-brunch").others
+        h3
+          | Why Brunch instead of competitors?
+        img(src="/images/logos/grunt.svg", alt="", width="128", height="128")
+        img(src="/images/logos/gulp.svg", alt="", width="128", height="128")
+      .tweets
+        h3 People love Brunch!
+        | <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/brunch/favorites" data-widget-id="397311715655684096">Favorite Tweets by @brunch</a>
+        | <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      h3(style="margin-top: 20px") Community
+      p
+        | Report any bugs or request features on our <a href="http://github.com/brunch/brunch">GitHub Issues</a>.
+        | We have a <a href="http://ost.io/@brunch/brunch">Forum</a> and
+        | <a href="http://stackoverflow.com/questions/tagged/brunch">Stack Overflow tag</a>.
+        | We also provide a <a href="http://hellyeah.is/">paid support</a>.
+    .grid__item.one-whole.desk-two-thirds
+      block content

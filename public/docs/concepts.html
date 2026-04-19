@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Brunch - ultra-fast HTML5 build tool</title><meta name="description" content="Brunch builds, lints, compiles, concatenates and shrinks your HTML5 app in an ultra-simple way. No more Grunt / Gulp mess."><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"><link rel="stylesheet" href="/app.css"><link rel="manifest" href="/manifest.json"></head><body><div id="navbar"><div class="container"><a href="/" class="brunch-header-logo"><img src="/images/logos/brunch-label.svg" alt="" width="107" height="40"></a><ul class="nav nav--main-nav"><li><a href="/" class="nav__item--main-nav">Home</a></li><li><a href="/docs/getting-started" class="nav__item--main-nav active">Docs</a></li><li><a href="/plugins" class="nav__item--main-nav">Plugins</a></li><li><a href="/skeletons" class="nav__item--main-nav">Skeletons</a></li><li><a href="/examples" class="nav__item--main-nav">In Production</a></li><li><a href="https://github.com/brunch/brunch" class="nav__item--main-nav">GitHub</a></li></ul></div></div><div class="page__content container"><div class="grid"><div class="grid__item one-whole desk-one-quarter"><div class="doc-sidebar"><div class="doc-section"><h3>Quick Start</h3><ul><li><a href="/docs/getting-started">Getting started</a></li><li><span class="active">Core concepts</span></li><li><a href="/docs/why-brunch">Why Brunch</a></li><li><a href="/docs/using-plugins">Using plugins</a></li><li><a href="/docs/using-modules">Using JS modules and NPM</a></li><li><a href="/docs/testing">Testing</a></li><li><a href="/docs/deploying">Deploying</a></li></ul></div><div class="doc-section"><h3>Reference</h3><ul><li><a href="/docs/commands">Commands</a></li><li><a href="/docs/config">Config</a></li><li><a href="/docs/plugins">Plugin API</a></li><li><a href="/docs/troubleshooting">Troubleshooting</a></li><li><a href="/docs/architecture">Architecture</a></li><li><a href="https://github.com/brunch/brunch/blob/master/CHANGELOG.md" target="_blank" class="external">Changelog</a></li></ul></div><div class="doc-section"><h3>Community Resources</h3><ul><li><a href="https://github.com/brunch/brunch-guide" target="_blank" class="external">The Brunch Guide</a></li></ul></div></div></div><div class="grid__item one-whole desk-three-quarters doc-content"><h1 id="brunch-core-concepts">Brunch: Core concepts</h1>
+<p>Brunch operates on a set of assumptions about how your app is authored and compiled — this allows to make your configs drastically simpler and achieve faster build times.</p>
+<p>Any Brunch <strong>project</strong> consists of the following:</p>
+<ul>
+<li>a <strong>config</strong>, which allows you to customize various aspects of Brunch, as well as configure plugins (see <a href="/docs/config">config reference</a>)</li>
+<li><strong><code>package.json</code></strong>, which lists the plugins you want Brunch to use, as well as your app&#39;s own dependencies<ul>
+<li>a <strong>plugin</strong> is what allows Brunch to provide any custom behavior or handle all the various JS-/CSS- transpiled languages for you (see <a href="/docs/using-plugins">Using plugins</a> and <a href="/plugins">plugins list</a> to get an idea)</li>
+</ul>
+</li>
+<li><strong>source files</strong> — files that you author in your preferred language, which later get compiled into either JS or CSS</li>
+<li><strong>assets</strong> — files that are copied as-is (in some cases these can be compiled too, e.g. Jade &rarr; HTML)</li>
+<li><strong>vendor files</strong> — JS and CSS files that do not need any processing</li>
+<li><strong>output files</strong> refer to the browser-ready JS bundles or stylesheets, which are obtained by joining your source files into one</li>
+</ul>
+<p>What Brunch does, in essence, is this:</p>
+<ol>
+<li>compile your source files using appropriate plugins</li>
+<li>concatenate several compiled source files into one</li>
+<li>write the result into a file</li>
+<li>copy assets</li>
+</ol>
+<p>That&#39;s all there is, really. While Brunch does assume your code is going to live under <code>app/</code> and your assets under <code>app/assets/</code>, and build result is put under <code>public/</code>, you are by all means free to use your own structure. Just <a href="/docs/config.html#paths">tell Brunch what it is</a>.</p>
+<p>The only required piece of configuration is telling Brunch which output files you want — and it couldn&#39;t be simpler:</p>
+<pre><code class="lang-js">module.exports = {
+  files: {
+    javascripts: {joinTo: &#39;app.js&#39;},
+    stylesheets: {joinTo: &#39;app.css&#39;}
+  }
+}
+</code></pre>
+<p>This will concatenate all your javascript files into <code>public/app.js</code>.</p>
+<p>If you want a little more control, like splitting your app code from vendor files into separate bundles, that&#39;s just as easy:</p>
+<pre><code class="lang-js">module.exports = {
+  files: {
+    javascripts: {joinTo: {
+      &#39;app.js&#39;: /^app/,       // all code from &#39;app/&#39;,
+      &#39;vendor.js&#39;: /^(?!app)/ // all BUT app code - &#39;vendor/&#39;, &#39;node_modules/&#39;, etc
+    }},
+    stylesheets: {joinTo: &#39;app.css&#39;}
+  }
+}
+</code></pre>
+<p>The Brunch config is <strong>declarative</strong>, not <strong>imperative</strong> — you tell Brunch what you want to get, not how to actually do it.</p>
+<div class="container doc-nav"><div class="grid"><div class="grid__item one-whole lap-and-up-one-half"><a href="/docs/getting-started">&larr; Getting started</a></div><div style="text-align: right;" class="grid__item one-whole lap-and-up-one-half"><a href="/docs/why-brunch">Why Brunch &rarr;</a></div><div class="grid__item one-whole"><span class="note"><a href="https://github.com/brunch/brunch.github.io/blob/source/app/assets/_docs/concepts.md">Edit concepts.md on GitHub</a></span></div></div></div></div></div><footer><hr class="rule"><p><small>Hosted on <a href="https://github.com/brunch/brunch.github.com">GitHub Pages</a>. The content on this website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">CC BY 3.0</a>. Logo by <a href="http://helle.in">Michael Hellein</a></small></p><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js" defer onload="hljs.initHighlightingOnLoad()"></script><script src="/app.js" defer onload="require('init')"></script><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,400italic"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400,700"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/tomorrow.min.css"></footer></div></body></html>

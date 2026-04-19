@@ -1,0 +1,26 @@
+extends /_layouts/_content-only
+
+block content
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      // FIXME: Do not use globals
+      Inferno.render(
+        createElement(require('plugins'), null),
+        document.querySelector('#plugins-body')
+      );
+    });
+
+  :marked
+    # Plugins
+
+    To install new plugin, simply execute `npm install --save-dev plugin-name`.
+    This will install its Node.js dependencies and save them to `package.json`.
+
+    Search for ["brunch" on npm](https://www.npmjs.org/search?q=brunch) for even more plug-ins.
+
+    <span class="note">
+      If you want to **add your project here**, simply [edit this file](https://github.com/brunch/brunch.github.io/blob/source/app/assets/plugins.json) and submit a pull request.
+    </span>
+
+  div#plugins-body
