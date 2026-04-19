@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "from": "collection-view.coffee.hbs",
+      "to": "app/views/{{name}}-view.coffee"
+    }
+  ]
+}

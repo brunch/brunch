@@ -1,0 +1,34 @@
+{
+  "name": "terser-brunch",
+  "version": "4.1.0",
+  "description": "Adds Terser mangler/compressor support to Brunch",
+  "keywords": [
+    "brunch-plugin",
+    "terser",
+    "uglify",
+    "minifier",
+    "optimizer"
+  ],
+  "homepage": "https://github.com/brunch/terser-brunch",
+  "bugs": "https://github.com/brunch/terser-brunch/issues",
+  "license": "MIT",
+  "author": "Paul Miller (https://paulmillr.com)",
+  "repository": "brunch/terser-brunch",
+  "scripts": {
+    "test": "mocha -r chai/register-should test"
+  },
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "terser": "^5.7.1",
+    "anymatch": "^3.1.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3",
+    "mocha": "^9.0.2"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "javascript-brunch",
+  "version": "2.10.0",
+  "description": "Adds JavaScript support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/javascript-brunch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/javascript-brunch.git"
+  },
+  "scripts": {
+    "test": "eslint index.js && eslint --env mocha test.js && mocha"
+  },
+  "dependencies": {
+    "esprima": "~3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
+    "eslint": "^3.4.0"
+  }
+}

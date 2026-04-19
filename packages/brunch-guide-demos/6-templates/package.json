@@ -1,0 +1,14 @@
+{
+  "name": "simple-brunch",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.2.1"
+  },
+  "devDependencies": {
+    "brunch": "^2.4.2",
+    "jade-brunch": "^2.0.0",
+    "javascript-brunch": "^2.0.0",
+    "sass-brunch": "^2.0.0"
+  }
+}

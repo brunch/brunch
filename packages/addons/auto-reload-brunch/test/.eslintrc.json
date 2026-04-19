@@ -1,0 +1,13 @@
+{
+  "globals": {
+    "describe": true,
+    "it": true,
+    "expect": true,
+    "beforeEach": true,
+    "context": true
+  },
+  "rules": {
+    "prefer-arrow-callback": 0,
+    "no-unused-expressions": 0
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "from": "controller.coffee.hbs",
+      "to": "app/controllers/{{name}}-controller.coffee"
+    }
+  ]
+}

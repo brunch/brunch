@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "from": "controller.coffee.hbs",
+      "to": "app/controllers/{{name}}-controller.coffee"
+    },
+    {
+      "from": "route.coffee.hbs",
+      "to": "app/routes.coffee",
+      "method": "append"
+    }
+  ],
+  "dependencies": [
+    {"type": "model"},
+    {"type": "collection"},
+
+    {"type": "view", "name": "{{name}}-item"},
+    {"type": "style", "name": "{{name}}-item"},
+    {"type": "template", "name": "{{name}}-item"},
+
+    {"type": "view", "name": "{{name}}-page"},
+    {"type": "style", "name": "{{name}}-page"},
+    {"type": "template", "name": "{{name}}-page"},
+
+    {"type": "collection-view", "name": "{{pluralName}}"},
+    {"type": "style", "name": "{{pluralName}}"},
+    {"type": "template", "name": "{{pluralName}}"}
+  ]
+}

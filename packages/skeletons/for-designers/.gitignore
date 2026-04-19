@@ -1,0 +1,31 @@
+# Extensions
+*.diff
+*.err
+*.log
+*.map
+*.orig
+*.pid
+*.rej
+*.sass-cache
+*.swo
+*.swp
+*.vi
+*~
+
+# Files
+.DS_Store
+.cache
+.project
+.settings
+.tmproj
+nbproject
+Thumbs.db
+
+# Directories
+node_modules/
+misc/
+tmp/
+/public/
+
+# Generated
+app.css

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>es6-shim tests</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="mocha.css" />
+  <script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js"></script>
+  <script src="https://raw.github.com/visionmedia/mocha/c9935e7c168afb2ebb2cebf6f161f842b8677295/mocha.js"></script>
+  <script src="https://github.com/LearnBoost/expect.js/raw/master/expect.js"></script>
+  <script src="unit/models/todo.coffee" type="text/coffeescript"></script>
+  <script>
+    var require = function(name) {
+      return expect;
+    };
+    mocha.setup('bdd')
+  </script>
+  <script>
+    window.onload = function() {
+      var runner = mocha.run();
+    };
+  </script>
+</head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>

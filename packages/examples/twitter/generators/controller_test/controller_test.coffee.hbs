@@ -1,0 +1,5 @@
+{{#camelize}}{{name}}{{/camelize}} = require 'controllers/{{name}}'
+
+describe '{{#camelize}}{{name}}{{/camelize}}', ->
+  beforeEach ->
+    @controller = new {{#camelize}}{{name}}{{/camelize}}()

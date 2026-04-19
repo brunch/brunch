@@ -1,0 +1,66 @@
+.ecc-form {
+  /* font-family: -apple-system, Sans-Serif; */
+}
+
+.ecc-form h3 {
+  font-size: 22px;
+}
+
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.ecc-form small {
+  font-size: 0.5em;
+}
+.ecc-form code {
+  word-break: break-all;
+  font-size: 0.8em;
+}
+.ecc-form textarea {
+  width: 100%;
+  height: 100px;
+  resize: vertical;
+}
+.ecc-form .gen-random-key {
+  margin-left: 15px;
+}
+
+.ecc-form .ed::before {
+  content: "ed: "
+}
+.ecc-form .secp::before {
+  content: "secp: "
+}
+.ecc-form .bls::before {
+  content: "bls: "
+}
+
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 2px;
+  box-sizing: border-box;
+  border: 8px solid #000;
+  border-color: #000 transparent #000 transparent;
+  animation: lds-hourglass 1.0s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}

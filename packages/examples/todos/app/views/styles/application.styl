@@ -1,0 +1,281 @@
+@import 'nib'
+
+html
+  background: #A1AFC9
+
+body
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif
+  font-size: 14px
+  line-height: 1.4em
+  background: #A1AFC9
+  color: #000
+
+ul
+  list-style-type: none
+
+#todo-app
+  width: 480px
+  margin: 0 auto 40px
+  background: white
+  padding: 20px
+  box-shadow: rgba(0, 0, 0, 0.2) 0 5px 6px 0
+
+  h1
+    font-size: 36px
+    font-weight: bold
+    text-align: center
+    padding: 20px 0 30px 0
+    line-height: 1
+
+#new-todo-view
+  position: relative
+
+  input
+    width: 466px
+    font-size: 24px
+    font-family: inherit
+    line-height: 1.4em
+    border: 1px solid #999
+    outline: none
+    padding: 6px
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset
+
+  input::-webkit-input-placeholder
+    font-style: italic
+
+  .ui-tooltip-top
+    display: none
+    position: absolute
+    z-index: 999
+    width: 170px
+    left: 50%
+    margin-left: -85px
+
+#todos
+  margin-top: 10px
+  padding-left: 0
+
+  li
+    padding: 12px 20px 11px 0
+    position: relative
+    font-size: 24px
+    line-height: 1.1em
+    border-bottom: 1px solid #ccc
+
+  li:after
+    content: "\0020"
+    display: block
+    height: 0
+    clear: both
+    overflow: hidden
+    visibility: hidden
+
+  li.editing
+    padding: 0
+    border-bottom: 0
+    width: 160 + 120px
+
+  .editing .display, .edit
+    display: none
+
+  .editing
+    .edit
+      display: block
+
+    input
+      width: 444px
+      font-size: 24px
+      font-family: inherit
+      margin: 0
+      line-height: 1.6em
+      border: 1px solid #999
+      outline: none
+      padding: 10px 7px 0px 27px
+      box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset
+
+  .check
+    position: relative
+    top: 9px
+    margin: 0 10px 0 7px
+    float: left
+
+  .done .todo-content
+    text-decoration: line-through
+    color: #777
+
+  .todo-destroy
+    position: absolute
+    right: 5px
+    top: 14px
+    display: none
+    cursor: pointer
+    width: 20px
+    height: 20px
+    background: url("../images/destroy.png") no-repeat 0 0
+
+  li:hover .todo-destroy
+    display: block
+
+  .todo-destroy:hover
+    background-position: 0 -20px
+
+#stats-view:after
+  content: "\0020"
+  display: block
+  height: 0
+  clear: both
+  overflow: hidden
+  visibility: hidden
+
+#stats-view
+  margin-top: 10px
+  color: #777
+
+  .todo-count
+    float: left
+
+  .todo-count .number
+    font-weight: bold
+    color: #333
+
+  .todo-clear
+    float: right
+    text-decoration: underline
+    cursor: pointer
+
+  .todo-clear
+    a
+      color: #777
+      font-size: 12px
+
+    a:visited
+      color: #777
+
+    a:hover
+      color: #336699
+
+#instructions
+  width: 520px
+  margin: 10px auto
+  padding-left: 0
+  color: #777
+  text-shadow: rgba(200, 210, 230, 0.8) 0 1px 0
+  text-align: center
+
+  a
+    color: #369
+
+#credits
+  width: 520px
+  margin: 30px auto
+  color: #333
+  text-shadow: rgba(200, 210, 230, 0.8) 0 1px 0
+  text-align: center
+
+  span, a
+    display: block
+
+  a
+    color: #555
+
+.ui-tooltip:after, .ui-tooltip-top:after, .ui-tooltip-right:after, .ui-tooltip-bottom:after, .ui-tooltip-left:after
+  content: "\25B8"
+  display: block
+  font-size: 2em
+  height: 0
+  line-height: 0
+  position: absolute
+
+.ui-tooltip:after, .ui-tooltip-bottom:after
+  color: #2a2a2a
+  bottom 0
+  left: 1px
+  text-align: center
+  text-shadow: 1px 0 2px #000
+  transform: rotate(90deg)
+  width: 100%
+
+.ui-tooltip-top:after
+  bottom auto
+  color: #4f4f4f
+  left: -2px
+  top: 0
+  text-align: center
+  text-shadow: none
+  transform: rotate(-90deg)
+  width: 100%
+
+.ui-tooltip-right:after
+  color: #222
+  right -0.375em
+  top: 50%
+  margin-top: -.05em
+  text-shadow: 0 1px 2px #000
+  transform: rotate(0)
+
+.ui-tooltip-left:after
+  color: #222
+  left: -0.375em
+  top: 50%
+  margin-top: .1em
+  text-shadow: 0 -1px 2px #000
+  transform: rotate(180deg)
+
+.ui-tooltip, .ui-tooltip-top, .ui-tooltip-right,
+.ui-tooltip-bottom, .ui-tooltip-left
+  color: #FFF
+  cursor: normal
+  display: inline-block
+  font-size: 12px
+  font-family: arial
+  padding: 0.5em 1em
+  position: relative
+  text-align: center
+  text-shadow: 0 -1px 1px #111
+  border-radius: 4px
+  box-shadow: 0 1px 2px #000\, inset 0 0 0 1px #222\, inset 0 2px #666666\, inset 0 -2px 2px #444
+  background-color: #3b3b3b
+  background-image: linear-gradient(top, #555, #222)
+
+.ui-tooltip:after, .ui-tooltip-top:after, .ui-tooltip-right:after, .ui-tooltip-bottom:after, .ui-tooltip-left:after
+  content: "\25B8"
+  display: block
+  font-size: 2em
+  height: 0
+  line-height: 0
+  position: absolute
+
+.ui-tooltip:after, .ui-tooltip-bottom:after
+  color: #2a2a2a
+  bottom: 0
+  left: 1px
+  text-align: center
+  text-shadow: 1px 0 2px #000
+  transform: rotate(90deg)
+  width: 100%
+
+.ui-tooltip-top:after
+  bottom: auto
+  color: #4f4f4f
+  left: -2px
+  top: 0
+  text-align: center
+  text-shadow: none
+  transform: rotate(-90deg)
+  width: 100%
+
+.ui-tooltip-right:after
+  color: #222
+  right: -0.375em
+  top: 50%
+  margin-top: -0.05em
+  text-shadow: 0 1px 2px #000
+  transform: rotate(0)
+
+.ui-tooltip-left:after
+  color: #222
+  left: -0.375em
+  top: 50%
+  margin-top: 0.1em
+  text-shadow: 0 -1px 2px #000
+  transform: rotate(180deg)

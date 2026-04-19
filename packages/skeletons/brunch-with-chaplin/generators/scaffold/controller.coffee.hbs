@@ -1,0 +1,16 @@
+Controller = require 'controllers/base/controller'
+{{#camelize}}{{name}}{{/camelize}} = require 'models/{{name}}'
+{{#camelize}}{{name}}{{/camelize}}PageView = require 'views/{{name}}-page-view'
+{{#camelize}}{{pluralName}}{{/camelize}}Collection = require 'models/{{pluralName}}-collection'
+{{#camelize}}{{pluralName}}{{/camelize}}CollectionView = require 'views/{{pluralName}}-collection-view'
+
+module.exports = class {{#camelize}}{{pluralName}}{{/camelize}}Controller extends Controller
+  index: ->
+    @collection = new {{#camelize}}{{pluralName}}{{/camelize}}Collection()
+    @view = new {{#camelize}}{{pluralName}}{{/camelize}}CollectionView {@collection}
+    @collection.fetch().then @view.render
+
+  show: (params) ->
+    @model = new {{#camelize}}{{name}}{{/camelize}} id: params.id
+    @view = new {{#camelize}}{{name}}{{/camelize}}PageView {@model}
+    @model.fetch().then @view.render

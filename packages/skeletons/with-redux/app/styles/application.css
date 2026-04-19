@@ -1,0 +1,20 @@
+.brunch {
+  font-family: -apple-system, Sans-Serif;
+  text-align: center;
+  font-size: 24pt;
+  color: #3f894a;
+}
+
+a {
+  color: #3f894a;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+}
+
+a:hover {
+  color: #27552e;
+}
+
+h5 > a {
+  text-decoration: underline;
+}

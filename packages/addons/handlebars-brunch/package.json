@@ -1,0 +1,29 @@
+{
+  "name": "handlebars-brunch",
+  "version": "2.10.0",
+  "description": "Adds Handlebars.js support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/handlebars-brunch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/handlebars-brunch.git"
+  },
+  "scripts": {
+    "postinstall": "node ./postinstall.js",
+    "test": "eslint index.js && mocha test/test.js"
+  },
+  "dependencies": {
+    "handlebars": ">=2.0.0 <5.0.0",
+    "umd-wrapper": "~0.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.12.2",
+    "eslint-config-brunch": "brunch/eslint-config-brunch",
+    "mocha": "^3.2.0"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  }
+}

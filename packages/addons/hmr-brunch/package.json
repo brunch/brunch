@@ -1,0 +1,37 @@
+{
+  "name": "hmr-brunch",
+  "version": "0.1.1",
+  "description": "Hot Module Replacement runtime for Brunch",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunch/hmr-brunch.git"
+  },
+  "keywords": [
+    "brunch",
+    "hmr"
+  ],
+  "author": "Paul Miller (http://paulmillr.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunch/hmr-brunch/issues"
+  },
+  "homepage": "https://github.com/brunch/hmr-brunch#readme",
+  "dependencies": {
+    "escodegen": "~1.8.0",
+    "esprima": "~2.7.2"
+  },
+  "peerDependencies": {
+    "auto-reload-brunch": "^2.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.14.1",
+    "eslint-config-brunch": "brunch/eslint-config-brunch"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  }
+}

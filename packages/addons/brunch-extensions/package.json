@@ -1,0 +1,41 @@
+{
+  "name": "brunch-extensions",
+  "version": "0.3.0",
+  "description": "Official brunch extensions. Adds support of many languages to brunch.",
+  "author": "Brunch team (http://brunch.io)",
+  "homepage": "https://github.com/brunch/brunch-extensions",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/brunch-extensions.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "postinstall": "./node_modules/coffee-script/bin/coffee -o lib/ src/",
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "engines": {
+    "node": "~0.6.6"
+  },
+  "dependencies": {
+    "async": "0.1.15",
+    "ncp": "0.2.3",
+
+    "coffee-script": "1.2.0",
+    "roy": "0.1.4",
+
+    "eco": "1.1.0-rc-3",
+    "jade": "0.19.0",
+    "hogan.js": "1.0.4-dev",
+
+    "stylus": "0.22.4",
+    "nib": "0.3.2",
+    "less": "1.1.6",
+
+    "uglify-js": "1.2.4",
+    "clean-css": "0.3.1"
+  },
+  "devDependencies": {
+    "mocha": "0.3.6",
+    "expect.js": "0.1.1"
+  }
+}

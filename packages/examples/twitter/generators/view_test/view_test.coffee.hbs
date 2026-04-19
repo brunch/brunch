@@ -1,0 +1,5 @@
+{{#camelize}}{{name}}{{/camelize}}View = require 'views/{{name}}_view'
+
+describe '{{#camelize}}{{name}}{{/camelize}}View', ->
+  beforeEach ->
+    @view = new {{#camelize}}{{name}}{{/camelize}}View()

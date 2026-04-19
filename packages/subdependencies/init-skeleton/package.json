@@ -1,0 +1,42 @@
+{
+  "name": "init-skeleton",
+  "version": "2.0.0-pre",
+  "description": "A simple interface that clones or copies skeletons aka base projects for your apps.",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brunch/init-skeleton"
+  },
+  "keywords": [
+    "init",
+    "skeleton",
+    "clone",
+    "simple"
+  ],
+  "author": "Paul Miller (https://paulmillr.com)",
+  "license": "MIT",
+  "dependencies": {
+    "brunch-skeletons": "~0.1.4",
+    "hosted-git-info": "~3.0.2",
+    "loggy": "^1.0.8",
+    "micro-check-dependencies": "~0.2.0",
+    "ncp": "^2.0.0",
+    "normalize-git-url": "~3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-brunch": "^1"
+  },
+  "scripts": {
+    "test": "eslint index.js"
+  },
+  "eslintConfig": {
+    "extends": "brunch",
+    "parserOptions": {
+      "ecmaVersion": "2020"
+    }
+  }
+}

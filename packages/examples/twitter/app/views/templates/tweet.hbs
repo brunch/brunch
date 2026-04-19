@@ -1,0 +1,28 @@
+{{#transform_if_retweeted}}
+  <div class="tweet-content">
+    <header class="tweet-header">
+      <a href="https://twitter.com/{{user.screen_name}}">
+        <img class="avatar" src="{{user.profile_image_url}}" alt="" />
+        <strong class="tweet-author-full-name">
+          {{user.name}}
+        </strong>
+      </a>
+    </header>
+    <p class="tweet-text">{{#auto_link}}{{text}}{{/auto_link}}</p>
+    <footer class="tweet-footer">
+      <a href="http://twitter.com/{{user.screen_name}}/status/{{id_str}}">
+        <time class="tweet-created-at" datetime="{{created_at}}">
+          {{#format_date}}{{created_at}}{{/format_date}}
+        </time>
+      </a>
+      {{#unless_is_web source}}
+        via <span class="tweet-source">{{{source}}}</span>
+      {{/unless_is_web}}
+      {{#if retweeter}}
+        <p class="tweet-retweeter">
+          Retweeted by <a class="tweet-retweeter-username" href="https://twitter.com/{{retweeter.screen_name}}">{{retweeter.screen_name}}</a>
+        </p>
+      {{/if}}
+    </footer>
+  </div>
+{{/transform_if_retweeted}}

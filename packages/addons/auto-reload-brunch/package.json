@@ -1,0 +1,37 @@
+{
+  "name": "auto-reload-brunch",
+  "version": "3.0.1",
+  "description": "Adds automatic browser reloading support to brunch.",
+  "files": ["index.js", "vendor"],
+  "author": {
+    "name": "Paul Miller",
+    "url": "https://paulmillr.com/"
+  },
+  "homepage": "https://github.com/brunch/auto-reload-brunch",
+  "keywords": [
+    "brunchplugin",
+    "auto-reload",
+    "websocket",
+    "auto reload"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/auto-reload-brunch.git"
+  },
+  "scripts": {
+    "test": "eslint index.js && mocha test"
+  },
+  "dependencies": {
+    "anymatch": "^3.1.2",
+    "ws": "^7.5.3"
+  },
+  "devDependencies": {
+    "chai": "^4",
+    "eslint": "^7",
+    "eslint-config-brunch": "brunch/eslint-config-brunch",
+    "mocha": "^9"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  }
+}

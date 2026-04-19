@@ -1,0 +1,29 @@
+{
+  "name": "brunch-for-designers",
+  "version": "0.0.1",
+  "description": "brunch-for-designers",
+  "author": "Paul Miller <paul@paulmillr.com>",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "brunch watch --server",
+    "clean": "rm -rf public node_modules",
+    "reset": "rm -rf public node_modules && npm install"
+  },
+  "dependencies": {
+    "jquery": "^3.1.0",
+    "page": "^1.7.1"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2.7.1",
+    "autoprefixer": "^6.3.7",
+    "brunch": "^2.8.2",
+    "clean-css-brunch": "^2.0.0",
+    "coffee-script-brunch": "^2.0.0",
+    "eco-brunch": "^2.0.0",
+    "stylus-brunch": "^2.6.0",
+    "uglify-js-brunch": "^2.0.1"
+  }
+}

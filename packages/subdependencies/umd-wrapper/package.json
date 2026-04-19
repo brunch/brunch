@@ -1,0 +1,21 @@
+{
+  "name": "umd-wrapper",
+  "version": "0.1.0",
+  "description": "UMD wrapper.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/umd-wrapper.git"
+  },
+  "keywords": [
+    "umd"
+  ],
+  "author": "Paul Miller (https://paulmillr.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunch/umd-wrapper/issues"
+  }
+}

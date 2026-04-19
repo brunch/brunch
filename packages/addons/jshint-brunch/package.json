@@ -1,0 +1,32 @@
+{
+  "name": "jshint-brunch",
+  "version": "2.0.1",
+  "description": "Adds JSHint support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/jshint-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/jshint-brunch.git"
+  },
+  "license": "MIT",
+  "main": "./index",
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "jshint": "^2.9.6",
+    "loggy": "^1.0.4",
+    "chalk": "~1.0.0",
+    "pluralize": "~1.1.2"
+  },
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "eslint": "^4.19.1",
+    "eslint-config-brunch": "brunch/eslint-config-brunch",
+    "fake-fs": "^0.5.0",
+    "mocha": "^5.2.0"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  }
+}

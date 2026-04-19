@@ -1,0 +1,23 @@
+{
+  "name": "roy-brunch",
+  "version": "1.5.1",
+  "description": "Adds Roy support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/roy-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/roy-brunch.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "prepublish": "rm -rf lib && coffee --bare --output lib/ src/",
+    "test": "node_modules/.bin/mocha --require test/common.js"
+  },
+  "dependencies": {
+    "roy": "~0.1.x"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0"
+  }
+}

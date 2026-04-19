@@ -1,0 +1,34 @@
+{
+  "name": "brunch-app",
+  "description": "Brunch.io application",
+  "private": true,
+  "author": "Brunch",
+  "version": "0.0.1",
+  "repository": "",
+  "scripts": {
+    "start": "brunch watch --server",
+    "build": "brunch build --production"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0",
+    "react": "^16.2",
+    "react-dom": "^16.2",
+    "react-redux": "~5.0.6",
+    "redux": "~3.7.2"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2",
+    "babel-brunch": "~6.1.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "~6.24",
+    "brunch": "^2",
+    "clean-css-brunch": "^2",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "hmr-brunch": "^0.1",
+    "uglify-js-brunch": "^2"
+  }
+}

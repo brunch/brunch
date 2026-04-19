@@ -1,0 +1,12 @@
+Collection = require 'models/base/collection'
+{{#camelize}}{{name}}{{/camelize}} = require 'models/{{name}}'
+{{#camelize}}{{pluralName}}{{/camelize}} = require 'models/{{pluralName}}'
+
+describe '{{#camelize}}{{name}}{{/camelize}}', ->
+  beforeEach ->
+    @model = new {{#camelize}}{{name}}{{/camelize}}()
+    @collection = new {{#camelize}}{{pluralName}}{{/camelize}}()
+
+  afterEach ->
+    @model.dispose()
+    @collection.dispose()

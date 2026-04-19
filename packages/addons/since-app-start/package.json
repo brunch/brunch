@@ -1,0 +1,27 @@
+{
+  "name": "since-app-start",
+  "version": "0.3.3",
+  "description": "Get time passed since node.js app start. Similar to performance.now() from browsers.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:paulmillr/since-app-start.git"
+  },
+  "keywords": [
+    "since",
+    "app",
+    "start",
+    "performance",
+    "now",
+    "timing"
+  ],
+  "author": "Paul Miller (http://paulmillr.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paulmillr/since-app-start/issues"
+  },
+  "dependencies": {
+    "debug": "~3.1.0"
+  },
+  "homepage": "https://github.com/paulmillr/since-app-start#readme"
+}

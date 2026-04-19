@@ -1,0 +1,23 @@
+{
+  "name": "iced-coffee-script-brunch",
+  "version": "1.7.0",
+  "description": "Adds IcedCoffeeScript support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/iced-coffee-script-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/iced-coffee-script-brunch.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "prepublish": "rm -rf lib && coffee --bare --output lib/ src/",
+    "test": "node_modules/.bin/mocha --require test/common.js"
+  },
+  "dependencies": {
+    "iced-coffee-script": "~1.6.2d"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0"
+  }
+}

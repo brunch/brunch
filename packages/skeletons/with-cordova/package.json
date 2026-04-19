@@ -1,0 +1,22 @@
+{
+  "name": "your-app",
+  "description": "Description",
+  "author": "Your Name",
+  "version": "0.0.1",
+  "repository": "",
+  "scripts": {
+    "start": "brunch watch --server",
+    "build": "brunch build --production"
+  },
+  "dependencies": {
+    "cordova": "~6.0.0"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2",
+    "babel-brunch": "~6",
+    "babel-preset-es2015": "~6.3",
+    "brunch": "^2",
+    "clean-css-brunch": "^2",
+    "uglify-js-brunch": "^2"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "typescript-brunch",
+  "version": "3.0.0-pre",
+  "description": "Adds TypeScript support to Brunch.",
+  "author": "Baptiste Donaux <baptiste.donaux@gmail.com>",
+  "contributors": [
+    "Colin Bate <colin@colinbate.com>"
+  ],
+  "homepage": "https://github.com/brunch/typescript-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/brunch/typescript-brunch.git"
+  },
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "transpile.js"
+  ],
+  "bugs": {
+    "url": "https://github.com/brunch/typescript-brunch/issues"
+  },
+  "scripts": {
+    "test": "eslint ."
+  },
+  "keywords": [
+    "typescript",
+    "brunch",
+    "tsc"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "anymatch": "^3.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.7",
+    "eslint-config-brunch": "^1.2"
+  },
+  "peerDependencies": {
+    "typescript": "^3.0.0"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

@@ -1,0 +1,20 @@
+{{#if_logged_in}}
+  <div class="navbar-inner">
+    <div class="container">
+      <div class="nav-collapse">
+        <ul class="nav">
+          {{#each items}}
+            <li class="nav-item">
+              <a class="nav-item-link" href="#{{this.href}}">
+                <div class="nav-item-icon-container">
+                  <span class="nav-item-icon"></span>
+                </div>
+                <span class="nav-item-title">{{this.title}}</span>
+              </a>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+{{/if_logged_in}}

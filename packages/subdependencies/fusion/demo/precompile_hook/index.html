@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#navigation a').click(function(event) {
+          event.preventDefault();
+          switch($(this).attr('href')) {
+            case '#designer':
+              $('#content').html(templates.designers());
+              break;
+            case '#python-programmers':
+              $('#content').html(templates.programmers.python());
+              break;
+            case '#javascript-programmers':
+              $('#content').html(templates.programmers.javascript());
+          }
+        });
+      });
+    </script>
+    <script src="templates.js"></script>
+  </head>
+  <body>
+    <ul id="navigation">
+      <li><a href="#designer">Designer</a></li>
+      <li><a href="#python-programmers">Python programmers</a></li>
+      <li><a href="#javascript-programmers">Javascript programmers</a></li>
+    </ul>
+    <div id="content"></div>
+  </body>
+</html>

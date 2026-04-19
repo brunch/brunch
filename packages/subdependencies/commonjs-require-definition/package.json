@@ -1,0 +1,23 @@
+{
+  "name": "commonjs-require-definition",
+  "version": "0.6.3",
+  "description": "Simple common.js `require()` definition.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/brunch/commonjs-require-definition.git"
+  },
+  "keywords": [
+    "commonjs",
+    "module",
+    "require",
+    "define"
+  ],
+  "author": "Paul Miller (https://paulmillr.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunch/commonjs-require-definition/issues"
+  }
+}

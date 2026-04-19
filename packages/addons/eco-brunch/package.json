@@ -1,0 +1,24 @@
+{
+  "name": "eco-brunch",
+  "version": "2.0.0",
+  "description": "Adds eco support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/eco-brunch",
+  "keywords": ["brunchplugin", "eco", "templates"],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/eco-brunch.git"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "eco": "1.1.0-rc-3",
+    "umd-wrapper": "~0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0",
+    "eslint": "^2.1.0"
+  }
+}

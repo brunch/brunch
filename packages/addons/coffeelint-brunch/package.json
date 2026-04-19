@@ -1,0 +1,21 @@
+{
+  "name": "coffeelint-brunch",
+  "version": "2.10.0",
+  "description": "Adds CoffeeLint support to brunch.",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/coffeelint-brunch.git"
+  },
+  "main": "./index",
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "coffeelint": "~1.16.0"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*",
+    "eslint": "^2.1.0"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "brunch-app",
+  "description": "Brunch.io application",
+  "private": true,
+  "author": "Brunch",
+  "version": "0.0.1",
+  "repository": "",
+  "scripts": {
+    "start": "brunch watch --server",
+    "build": "brunch build --production"
+  },
+  "dependencies": {
+    "noble-bls12-381": "^0.8.0",
+    "noble-ed25519": "^1.0.2",
+    "noble-secp256k1": "^1.1.1",
+    "preact": "^10.0.4"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "babel-brunch": "^7.0.1",
+    "brunch": "github:brunch/brunch"
+  },
+  "brunch": {
+    "sourceMaps": false,
+    "plugins": {
+      "babel": {
+        "presets": [
+          [
+            "@babel/preset-env",
+            {
+              "targets": {
+                "browsers": "safari >= 14"
+              }
+            }
+          ],
+          "@babel/preset-react"
+        ]
+      }
+    }
+  }
+}

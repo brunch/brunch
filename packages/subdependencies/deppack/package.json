@@ -1,0 +1,41 @@
+{
+  "name": "deppack",
+  "version": "0.10.0",
+  "description": "Extract nodejs dependencies to browser.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib"
+  ],
+  "scripts": {
+    "test": "eslint index.js lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunch/deppack.git"
+  },
+  "keywords": [
+    "deppack",
+    "dependency",
+    "dependencies",
+    "module",
+    "brunch",
+    "pack"
+  ],
+  "author": "Paul Miller (https://paulmillr.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunch/deppack/issues"
+  },
+  "homepage": "https://github.com/brunch/deppack#readme",
+  "dependencies": {
+    "anymatch": "^3.0.0",
+    "async-each": "^1.0.3",
+    "browser-resolve": "^1.11.1",
+    "deep-assign": "^2.0.0",
+    "detective": "^5.2.0",
+    "glob": "^7.1.5",
+    "loggy": "^1.0.8",
+    "true-case-path": "^1.0.2"
+  }
+}

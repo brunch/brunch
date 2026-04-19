@@ -1,0 +1,40 @@
+{
+  "name":         "fusion",
+  "description":  "Merge Files into Javascript Namespace",
+  "version":      "0.0.8",
+  "keywords":     ["jst", "templates", "namespace", "merge", "fusion"],
+  "homepage":     "https://github.com/brunch/fusion",
+  "author":       "Nik Graf @nikgraf",
+  "licenses":     [{
+    "type":       "MIT",
+    "url":        "http://github.com/brunch/fusion/raw/master/LICENSE"
+  }],
+  "engines":      {
+    "node":       ">=0.3.2"
+  },
+  "directories" : {
+    "lib" : "./lib"
+  },
+  "main" : "./lib/fusion",
+  "bin":          {
+    "fusion": "./bin/fusion"
+  },
+  "dependencies": {
+    "watch": "0.3.0",
+    "yaml":  "0.1.1",
+    "underscore": "1.1.4"
+  },
+  "devDependencies": {
+    "coffee-script": ">= 1.0.1",
+    "vows": "0.5.6"
+  },
+  "engines": ["node"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brunch/fusion.git"
+  },
+  "bugs": {
+    "url": "http://github.com/brunch/fusion/issues"
+  }
+}
+

@@ -1,0 +1,19 @@
+$default-bg: white;
+$default-text: black;
+
+body {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  background: $default-bg;
+  color: $default-text;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.5em 0 1em;
+
+  & > small {
+    color: gray;
+    font-size: 70%;
+  }
+}

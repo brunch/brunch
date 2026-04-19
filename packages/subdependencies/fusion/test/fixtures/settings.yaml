@@ -1,0 +1,5 @@
+templateExtension: html
+input: "test/fixtures/templates"
+output: "test/fixtures/templates.js"
+namespace: "window"
+hook: "hook.js"

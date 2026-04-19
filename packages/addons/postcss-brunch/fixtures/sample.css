@@ -1,0 +1,13 @@
+@media screen {
+  .a {
+    color: #000;
+  }
+}
+.sample {
+  display: flex;
+}
+@media screen {
+  .b {
+    color: #000;
+  }
+}

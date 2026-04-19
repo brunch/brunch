@@ -1,0 +1,48 @@
+{
+  "name": "buble-brunch",
+  "version": "2.0.0",
+  "description": "Adds support to transform ES6 to ES5 with Bublé to Brunch.",
+  "files": [
+    "*.js"
+  ],
+  "contributors": [
+    {
+      "name": "Roberto Dip",
+      "email": "dip.jesusr@gmail.com",
+      "url": "http://roperzh.com/"
+    },
+    {
+      "name": "aMarCruz",
+      "email": "amarcruzbox-git@yahoo.com",
+      "url": "https://github.com/aMarCruz"
+    }
+  ],
+  "homepage": "https://github.com/brunch/buble-brunch",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/buble-brunch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brunch/buble-brunch/issues"
+  },
+  "engines": {
+    "node": ">=4.0",
+    "npm": ">=3.0"
+  },
+  "scripts": {
+    "test": "eslint ."
+  },
+  "dependencies": {
+    "buble": "^0.15.2",
+    "anymatch": "^1.3.0",
+    "flatten-brunch-map": "^2.8.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.14.0",
+    "eslint-config-brunch": "^1"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  }
+}

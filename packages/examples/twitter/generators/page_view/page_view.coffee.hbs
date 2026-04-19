@@ -1,0 +1,5 @@
+PageView = require 'views/base/page_view'
+template = require 'views/templates/{{name}}_page'
+
+module.exports = class {{#camelize}}{{name}}{{/camelize}}PageView extends PageView
+  template: template

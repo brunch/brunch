@@ -1,0 +1,3 @@
+input: "templates"
+output: "templates.js"
+namespace: "window"

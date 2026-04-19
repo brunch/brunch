@@ -1,0 +1,36 @@
+{
+  "name": "styl-brunch",
+  "version": "2.0.0",
+  "description": "Adds styl CSS preprocessor support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/styl-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/styl-brunch.git"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js styl.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "css-whitespace": "~1.1.0",
+    "progeny": "~0.2.1",
+    "rework": "paulmillr/rework",
+    "rework-import": "paulmillr/rework-import",
+    "rework-inherit": "~0.2.3",
+    "rework-mixins": "1.1.1",
+    "rework-plugin-at2x": "~1.0.2",
+    "rework-plugin-colors": "~1.0.3",
+    "rework-plugin-ease": "~1.0.1",
+    "rework-plugin-function": "~1.0.2",
+    "rework-plugin-mixin": "~1.0.0",
+    "rework-plugin-references": "~1.0.1",
+    "rework-shade": "~1.4.3",
+    "rework-variant": "~0.2.2"
+  },
+  "devDependencies": {
+    "mocha": "1.10.0",
+    "chai": "1.7.0",
+    "color-parser": "0.1.0",
+    "eslint": "^1.10.3"
+  }
+}

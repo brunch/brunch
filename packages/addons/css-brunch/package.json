@@ -1,0 +1,24 @@
+{
+  "name": "css-brunch",
+  "version": "2.10.0",
+  "description": "Adds CSS support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/css-brunch",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/css-brunch.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "postcss": "~5.1.2",
+    "postcss-modules": "~0.5.0"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0",
+    "eslint": "^2.1.0"
+  }
+}

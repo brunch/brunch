@@ -1,0 +1,29 @@
+{
+  "name": "eslint-brunch",
+  "version": "6.0.0-pre",
+  "description": "Adds ESLint support to Brunch",
+  "keywords": [
+    "brunch-plugin",
+    "eslint",
+    "lint"
+  ],
+  "homepage": "https://github.com/brunch/eslint-brunch",
+  "bugs": "https://github.com/brunch/eslint-brunch/issues",
+  "license": "MIT",
+  "author": "Aurélien David <adavid@jolicode.com>",
+  "repository": "brunch/eslint-brunch",
+  "files": ["index.js"],
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "eslint": "^6.7"
+  },
+  "devDependencies": {
+    "chai": "^4",
+    "mocha": "^6.2"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

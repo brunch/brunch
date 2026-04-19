@@ -1,0 +1,9 @@
+{
+  "files": [
+    {
+      "from": "controller_test.coffee.hbs",
+      "to": "test/controllers/{{name}}_controller_test.coffee"
+    }
+  ],
+  "dependencies": []
+}

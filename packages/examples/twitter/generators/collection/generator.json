@@ -1,0 +1,11 @@
+{
+  "files": [
+    {
+      "from": "collection.coffee.hbs",
+      "to": "app/models/{{pluralName}}.coffee"
+    }
+  ],
+  "dependencies": [
+    {"name": "collection_test", "params": "{{name}}"}
+  ]
+}

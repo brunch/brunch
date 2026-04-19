@@ -1,0 +1,46 @@
+{
+  "name": "sass-brunch",
+  "version": "3.0.1",
+  "description": "Adds Sass support to Brunch.",
+  "author": "Paul Miller (https://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/sass-brunch",
+  "license": "MIT",
+  "keywords": [
+    "brunch",
+    "brunch-plugin",
+    "brunch-compiler",
+    "sass",
+    "scss",
+    "dart-sass"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/sass-brunch.git"
+  },
+  "scripts": {
+    "test": "eslint index.js && mocha"
+  },
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "anymatch": "~3.1.1",
+    "node-sass-glob-importer": "^5.3.2",
+    "postcss": "^7.0.27",
+    "postcss-modules": "~1.4.0",
+    "progeny": "~0.12.0",
+    "sass": "^1.26.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2",
+    "eslint": "^6.8.0",
+    "eslint-config-brunch": "^1.2.1",
+    "mocha": "^6.2.2"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

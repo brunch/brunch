@@ -1,0 +1,9 @@
+{
+  "files": [
+    {
+      "from": "template.hbs.hbs",
+      "to": "app/views/templates/{{name}}.hbs"
+    }
+  ],
+  "dependencies": []
+}

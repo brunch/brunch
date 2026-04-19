@@ -1,0 +1,24 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="stylesheets/test.css" />
+
+  <script src="../javascripts/vendor.js"></script>
+  <script src="../javascripts/app.js"></script>
+  <script src="javascripts/test-vendor.js"></script>
+  <script>
+    mocha.setup('bdd');
+    window.expect = chai.expect;
+  </script>
+  <script src="javascripts/test.js"></script>
+  <script>
+    $(function() {
+      mocha.run();
+    });
+  </script>
+</head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>

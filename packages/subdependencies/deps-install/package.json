@@ -1,0 +1,27 @@
+{
+  "name": "deps-install",
+  "version": "0.2.2",
+  "description": "Check if node_modules match package.json versions. npm / yarn install shortcut.",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "check-dependencies",
+    "dependency",
+    "check",
+    "micro",
+    "install"
+  ],
+  "author": "Paul Miller (https://paulmillr.com)",
+  "repository": "https://github.com/brunch/deps-install.git",
+  "bugs": "https://github.com/brunch/deps-install/issues",
+  "license": "MIT",
+  "dependencies": {
+    "readdirp": "^3.2.0",
+    "semver": "^6.3.0"
+  }
+}

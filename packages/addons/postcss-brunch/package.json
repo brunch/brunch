@@ -1,0 +1,42 @@
+{
+  "name": "postcss-brunch",
+  "version": "3.0.0",
+  "author": "Vincent De Oliveira",
+  "description": "Adds PostCSS support to brunch.",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "postcss",
+    "brunch",
+    "postprocessor",
+    "postcss-runner"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brunch/postcss-brunch.git"
+  },
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "anymatch": "^3.0.0",
+    "loggy": "^1.0.8",
+    "postcss": "^7.0.24",
+    "postcss-modules": "^1.3.2",
+    "progeny": "^0.12.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^7.1.2",
+    "css-mqpacker": "^6.0.1",
+    "csswring": "^6.0.0",
+    "mocha": "^6.2",
+    "postcss-import": "^10.0.0",
+    "postcss-scss": "^1.0.2",
+    "should": "^11.1.0"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

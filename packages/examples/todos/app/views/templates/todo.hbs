@@ -1,0 +1,10 @@
+<div class="todo {{#if todo.done}}done{{/if}}">
+  <div class="display">
+    <input class="check" type="checkbox" {{#if todo.done}}checked="checked"{{/if}}>
+  <div class="todo-content">{{todo.content}}</div>
+    <span class="todo-destroy"></span>
+  </div>
+  <div class="edit">
+    <input class="todo-input" type="text" value="{{todo.content}}">
+  </div>
+</div>

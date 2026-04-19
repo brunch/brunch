@@ -1,0 +1,25 @@
+{
+  "name": "livescript-brunch",
+  "version": "2.0.0",
+  "description": "Adds LiveScript support to brunch.",
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/livescript-brunch",
+  "keywords": ["brunch", "plugin", "livescript"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/livescript-brunch.git"
+  },
+  "files": ["index.js"],
+  "scripts": {
+    "test": "node_modules/.bin/eslint index.js && node_modules/.bin/mocha"
+  },
+  "dependencies": {
+    "livescript": "~1.4.0"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0",
+    "eslint": "^2.1.0"
+  }
+}

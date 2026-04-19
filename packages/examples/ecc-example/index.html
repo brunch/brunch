@@ -1,0 +1,37 @@
+---
+layout: base
+title: 'Elliptic curve calculator'
+---
+
+<section class="cell post">
+  <h2>Elliptic curve calculator</h2>
+  <section class="post-content ecc-form">
+    <p>Generate public keys from private keys for ed25519, secp256k1 and bls12-381.</p>
+    <div class="ecc-calculator-container">
+      <div>
+				<h3>Your browser does not support <a href="https://caniuse.com/#feat=bigint"></a>BigInt</a>. Try latest Brave, Firefox or Chrome</h3>
+			</div>
+    </div>
+    <p>The form uses <a href="https://github.com/paulmillr/noble-ed25519">noble</a> libraries; they don't use any dependencies and are easily auditable. "Random" button uses <code>window.crypto.getRandomValues</code> built-in function,
+      which is cryptographically secure.</p>
+    <p>
+      You're welcome to audit the source code:
+      <ul>
+        <li>ed25519:
+          <a href="https://github.com/paulmillr/noble-ed25519">noble-ed25519</a>
+          <a href="https://ed25519.cr.yp.to/ed25519-20110926.pdf">spec</a>,
+          <a href="https://ed25519.cr.yp.to/python/ed25519.py">reference implementation</a>,
+          <a href="https://ed25519.cr.yp.to/python/sign.input">vectors</a>,
+          <a href="https://ed25519.cr.yp.to/python/sign.py">test script</a>
+        </li>
+        <li>secp256k1: <a href="https://github.com/paulmillr/noble-secp256k1">noble-secp256k1</a>, <a href="https://www.secg.org/sec2-v2.pdf">spec</a></li>
+        <li>bls12: <a href="https://github.com/paulmillr/noble-bls12-381">noble-bls12-381</a>, <a href="https://eprint.iacr.org/2002/088">spec</a></li>
+      </ul>
+    </p>
+    <small>SEO stuff: Generate secp256k1 public key online. Generate ed25519 public key online. Generate bls12-381 public key online. Generate secp256k1, ed25519, bls12-381 signature online.</small>
+  </section>
+</section>
+
+<link rel="stylesheet" href="/ecc/public/app.css">
+<script src="/ecc/public/app.js"></script>
+<script>require('initialize');</script>

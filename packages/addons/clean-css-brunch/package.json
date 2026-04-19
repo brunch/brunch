@@ -1,0 +1,31 @@
+{
+  "name": "clean-css-brunch",
+  "version": "3.0.0",
+  "description": "Adds CleanCSS support to brunch.",
+  "author": "Paul Miller (https://paulmillr.com/)",
+  "homepage": "https://github.com/brunch/clean-css-brunch",
+  "license": "MIT",
+  "scripts": {
+    "test": "eslint index.js && mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunch/clean-css-brunch.git"
+  },
+  "files": ["index.js"],
+  "dependencies": {
+    "clean-css": "~4.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2",
+    "eslint": "^6.7",
+    "eslint-config-brunch": "^1.2",
+    "mocha": "^6.2"
+  },
+  "eslintConfig": {
+    "extends": "brunch"
+  },
+  "engines": {
+    "node": ">= 10.16"
+  }
+}

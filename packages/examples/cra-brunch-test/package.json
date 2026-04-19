@@ -1,0 +1,17 @@
+{
+  "name": "my-app",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
+  },
+  "devDependencies": {
+    "react-scripts-brunch": "file:///Users/user/Developer/cra/react-scripts-brunch"
+  },
+  "scripts": {
+    "start": "react-scripts-brunch start",
+    "build": "react-scripts-brunch build",
+    "eject": "react-scripts-brunch eject"
+  }
+}

@@ -1,0 +1,4 @@
+<div class="index">
+  <%- include "logo" %>
+  <main class="content"><%- include "welcome" %></main>
+</div>

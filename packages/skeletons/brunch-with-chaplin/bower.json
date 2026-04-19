@@ -1,0 +1,8 @@
+{
+  "name": "example-app",
+  "version": "0.1.0",
+  "main": "public/javascripts/app.js",
+  "dependencies": {
+    "h5bp-helpers": "~0.1.0"
+  }
+}

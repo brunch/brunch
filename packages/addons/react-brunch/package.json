@@ -1,0 +1,33 @@
+{
+  "name": "react-brunch",
+  "version": "1.0.9",
+  "description": "Adds React.js support to brunch.",
+  "author": "Matt McCray",
+  "license": "MIT",
+  "homepage": "https://github.com/darthapo/react-brunch",
+  "keywords": [
+    "react",
+    "brunch",
+    "plugin",
+    "jsx",
+    "js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:darthapo/react-brunch.git"
+  },
+  "main": "./lib/index",
+  "scripts": {
+    "prepublish": "rm -rf lib && coffee --bare --output lib/ src/",
+    "test": "node_modules/.bin/mocha --require test/common.js"
+  },
+  "dependencies": {
+    "react-tools": "0.12.1",
+    "babel-core": "^5.0.7",
+    "lodash.omit": "^3.1.0"
+  },
+  "devDependencies": {
+    "mocha": "1.11.0",
+    "chai": "1.7.0"
+  }
+}

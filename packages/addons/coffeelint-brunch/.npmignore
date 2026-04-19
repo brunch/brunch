@@ -1,0 +1,11 @@
+.lock-wscript
+.svn/
+.hg/
+.git/
+CVS/
+*~
+*.bak
+.DS_Store
+.package.json.kate-swp
+node_modules/
+npm-debug.log

@@ -1,0 +1,17 @@
+{{#if_logged_in}}
+  <div class="account-summary-container">
+    <div class="account-summary">
+      <img class="account-summary-avatar avatar size32" src="{{profile_image_url}}" alt="{{name}}">
+      <div class="account-summary-content">
+        <strong class="account-summary-full-name">{{name}}</strong>
+        <small class="account-summary-metadata">View my profile page</small>
+      </div>
+    </div>
+  </div>
+  <div class="stats-container" id="stats-container"></div>
+  <div class="status-container" id="status-container"></div>
+{{else}}
+  <div class="app-description">
+    Tweet your brunch is a simple twitter client built with <a href="http://brunch.io/">Brunch</a> &amp; <a href="https://github.com/paulmillr/brunch-with-chaplin">Brunch with Chaplin</a>.
+  </div>
+{{/if_logged_in}}

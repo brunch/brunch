@@ -1,0 +1,5 @@
+Collection = require 'models/base/collection'
+{{#camelize}}{{name}}{{/camelize}} = require 'models/{{name}}'
+
+module.exports = class {{#camelize}}{{pluralName}}{{/camelize}} extends Collection
+  model: {{#camelize}}{{name}}{{/camelize}}
